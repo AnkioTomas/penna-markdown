@@ -1,0 +1,28 @@
+:root {
+  --md-primary: #1976d2;
+  --md-primary-dark: #1565c0;
+  --md-primary-light: #63a4ff;
+  --md-accent: #ff4081;
+  --md-bg: #fafafa;
+  --md-surface: #fff;
+  --md-border: #e0e0e0;
+  --md-text: #212121;
+  --md-text-light: #fff;
+  --md-secondary-text: #757575;
+  --md-shadow: 0 2px 8px rgba(33,33,33,0.08);
+}
+
+// 夜间模式变量
+.theme__dark {
+  --md-primary: #90caf9;
+  --md-primary-dark: #1976d2;
+  --md-primary-light: #e3f2fd;
+  --md-accent: #f48fb1;
+  --md-bg: #181a1b;
+  --md-surface: #23272e;
+  --md-border: #333a41;
+  --md-text: #e3e3e3;
+  --md-text-light: #23272e;
+  --md-secondary-text: #b0b0b0;
+  --md-shadow: 0 2px 8px rgba(0,0,0,0.32);
+}
