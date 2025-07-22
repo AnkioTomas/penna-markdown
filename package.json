@@ -1,0 +1,17 @@
+{
+  "name": "markdown-editor",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "codemirror": "^5.65.16",
+    "markdown-it": "^13.0.1"
+  },
+  "devDependencies": {
+    "terser": "^5.43.1",
+    "vite": "^5.0.0"
+  }
+}
