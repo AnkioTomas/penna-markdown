@@ -18,8 +18,8 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/penna.js'), // 主入口文件
       name: 'Penna', // 作为浏览器全局变量 window.Penna
-      formats: ['umd', 'es'], // 输出两种格式
-      fileName: (format) => `penna.${format === 'es' ? 'esm' : 'umd'}.js`
+      formats: ['umd'], // 输出两种格式
+      fileName: (format) => `penna.min.js`
     },
     outDir: './dist',
     minify: 'terser',
