@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "codemirror": "^5.65.16",
-    "markdown-it": "^13.0.1"
+    "markdown-it": "^13.0.1",
+    "mitt": "^3.0.1"
   },
   "devDependencies": {
     "sass": "^1.89.2",

@@ -3,6 +3,7 @@ import CodeMirror from 'codemirror';
 import 'codemirror/mode/markdown/markdown.js';
 
 import './penna.scss';
+import Logger from "./utils/Logger.js";
 
 // 创建 markdown-it 实例
 const md = new MarkdownIt({
@@ -19,6 +20,7 @@ class Penna {
     this.options = {};
     this.dom = {}; // 存放 UI 节点引用
     this.cm = null; // CodeMirror 实例
+    Logger.info("欢迎使用Penna")
   }
 
   /**

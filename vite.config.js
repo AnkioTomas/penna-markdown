@@ -18,7 +18,7 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/penna.js'),
+      entry: resolve(__dirname, 'src/Penna.js'),
       name: 'Penna',
       formats: ['umd'],
       fileName: () => `penna.min.js`
