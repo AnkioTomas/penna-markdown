@@ -2,7 +2,7 @@ import MarkdownIt from 'markdown-it';
 import CodeMirror from 'codemirror';
 import 'codemirror/mode/markdown/markdown.js';
 import 'codemirror/lib/codemirror.css';
-import './style/penna.css';
+import './penna.scss';
 
 // 创建 markdown-it 实例
 const md = new MarkdownIt({
