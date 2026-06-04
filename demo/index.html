@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cherry Markdown Next · Demo 入口</title>
+    <link rel="stylesheet" href="./home.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="header">
+        <h1>Cherry Markdown Next Demo</h1>
+        <p>选择一个功能开始使用。</p>
+      </header>
+
+      <section class="cards">
+        <a class="card" href="./editor/index.html">
+          <div class="card-title">编辑器</div>
+          <div class="card-desc">Markdown 实时预览（CodeMirror + Transformer）</div>
+        </a>
+        <a class="card" href="./converter/index.html">
+          <div class="card-title">转换器</div>
+          <div class="card-desc">Markdown -> HTML（查看渲染结果与预览）</div>
+        </a>
+        <a class="card" href="./ast/index.html">
+          <div class="card-title">AST 调试台</div>
+          <div class="card-desc">左侧输入 Markdown，右侧查看 AST 与解析耗时</div>
+        </a>
+        <a class="card" href="./gfm/index.html">
+          <div class="card-title">GFM 测试</div>
+          <div class="card-desc">GFM 官方用例（断言渲染 HTML 是否一致）</div>
+        </a>
+        <a class="card" href="./commonmark/index.html">
+          <div class="card-title">CommonMark 测试</div>
+          <div class="card-desc">CommonMark 官方用例（断言渲染 HTML 是否一致）</div>
+        </a>
+      </section>
+    </div>
+  </body>
+</html>

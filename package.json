@@ -1,0 +1,58 @@
+{
+  "name": "cherry-markdown-next",
+  "version": "0.1.0",
+  "packageManager": "pnpm@11.5.0",
+  "type": "module",
+  "main": "./dist/editor.cjs",
+  "module": "./dist/editor.mjs",
+  "unpkg": "./dist/editor.iife.js",
+  "jsdelivr": "./dist/editor.iife.js",
+  "exports": {
+    ".": {
+      "import": "./dist/editor.mjs",
+      "require": "./dist/editor.cjs",
+      "default": "./dist/editor.mjs"
+    },
+    "./transformer": {
+      "import": "./dist/transformer.mjs",
+      "require": "./dist/transformer.cjs",
+      "default": "./dist/transformer.mjs"
+    },
+    "./renderer": {
+      "import": "./dist/renderer.mjs",
+      "require": "./dist/renderer.cjs",
+      "default": "./dist/renderer.mjs"
+    },
+    "./editor": {
+      "import": "./dist/editor.mjs",
+      "require": "./dist/editor.cjs",
+      "default": "./dist/editor.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "demo": "vite --config demo/vite.config.js --host",
+    "demo:build": "vite build --config demo/vite.config.js",
+    "fetch:gfm": "node scripts/fetch-gfm-spec.js",
+    "fetch:gfm:split": "node scripts/fetch-gfm-spec.js --split",
+    "fetch:commonmark": "node scripts/fetch-commonmark-spec.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist dist-demo"
+  },
+  "dependencies": {
+    "@codemirror/commands": "^6.8.1",
+    "@codemirror/lang-markdown": "^6.3.4",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.6"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "vite": "^6.3.5",
+    "vitest": "^2.1.8"
+  }
+}

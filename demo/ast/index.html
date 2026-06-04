@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AST 调试台 · Cherry Markdown Next</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="header">
+      <a class="back" href="../index.html">返回入口</a>
+      <div class="title">AST 调试台</div>
+      <div id="timing" class="timing">解析耗时: - ms</div>
+    </div>
+
+    <div class="layout">
+      <section class="panel">
+        <div class="panel-title">Markdown 输入</div>
+        <textarea id="markdown" class="textarea"></textarea>
+        <button id="reset-btn" class="btn" type="button">恢复示例</button>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">AST 树</div>
+        <div id="ast-tree" class="tree-wrap"></div>
+      </section>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

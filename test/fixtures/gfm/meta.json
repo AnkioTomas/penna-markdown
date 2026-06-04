@@ -1,0 +1,12 @@
+{
+  "source": {
+    "type": "remote",
+    "ref": "master",
+    "url": "https://raw.githubusercontent.com/github/cmark-gfm/master/test/spec.txt"
+  },
+  "fetched_at": "2026-06-01T11:46:44.392Z",
+  "spec_url": "https://github.github.com/gfm/",
+  "repository": "https://github.com/github/cmark-gfm",
+  "total": 670,
+  "sections": 30
+}
