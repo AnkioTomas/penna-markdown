@@ -13,7 +13,6 @@ const indexHtml = resolve(demoDir, "index.html");
 const editorHtml = resolve(demoDir, "editor/index.html");
 const converterHtml = resolve(demoDir, "converter/index.html");
 const gfmHtml = resolve(demoDir, "gfm/index.html");
-const commonmarkHtml = resolve(demoDir, "commonmark/index.html");
 const astHtml = resolve(demoDir, "ast/index.html");
 
 export default defineConfig({
@@ -36,7 +35,6 @@ export default defineConfig({
         editor: editorHtml,
         converter: converterHtml,
         gfm: gfmHtml,
-        commonmark: commonmarkHtml,
         ast: astHtml,
       },
     },

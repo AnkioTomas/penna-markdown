@@ -39,7 +39,6 @@
     "demo:build": "vite build --config demo/vite.config.js",
     "fetch:gfm": "node scripts/fetch-gfm-spec.js",
     "fetch:gfm:split": "node scripts/fetch-gfm-spec.js --split",
-    "fetch:commonmark": "node scripts/fetch-commonmark-spec.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "clean": "rm -rf dist dist-demo"

@@ -8,11 +8,11 @@ const cases = JSON.parse(
 ).filter((c) => c.id >= 602 && c.id <= 620);
 
 describe("GFM Autolinks #602-620", () => {
-  const transformer = createTransformer();
+  const transformer = createTransformer({ extensions: [] });
 
   for (const c of cases) {
     it(`example ${c.id}`, () => {
-      const { html } = transformer.render(c.markdown);
+      const { html } = transformer.render(c.markdown, { extensions: [] });
       expect(html).toBe(c.html);
     });
   }

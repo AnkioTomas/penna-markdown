@@ -37,7 +37,9 @@ describe("GFM conformance (optional smoke)", () => {
   it("runs first 20 examples without throw", async () => {
     const cases = await loadCases();
     for (const c of cases.slice(0, 20)) {
-      const { html } = transformer.render(c.markdown);
+      const { html } = transformer.render(c.markdown, {
+        extensions: c.extensions ?? [],
+      });
       expect(typeof html).toBe("string");
     }
   });

@@ -127,7 +127,9 @@ function matchesFilter(item, { q, section }) {
 }
 
 function runCase(item) {
-  const { html } = transformer.render(item.markdown);
+  const { html } = transformer.render(item.markdown, {
+    extensions: item.extensions ?? [],
+  });
   const check = compareHtml(html, item.html);
   return {
     ok: check.ok,
