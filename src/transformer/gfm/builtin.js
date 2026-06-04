@@ -3,7 +3,7 @@
  */
 
 import escape from "@/transformer/gfm/inline/escape.js";
-import autolink, { BareAutolinkInlineParser } from "@/transformer/gfm/inline/autolinks.js";
+import autolink from "@/transformer/gfm/inline/autolinks.js";
 import text from "@/transformer/gfm/inline/text.js";
 import codeSpan from "@/transformer/gfm/inline/code.js";
 import emphasis from "@/transformer/gfm/inline/emphasis.js";
@@ -25,7 +25,6 @@ export const builtinInlineSyntax = [
   images,
   links,
   autolink,
-  new BareAutolinkInlineParser(),
   codeSpan,
   strikethrough,
   strong,

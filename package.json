@@ -48,7 +48,9 @@
     "@codemirror/commands": "^6.8.1",
     "@codemirror/lang-markdown": "^6.3.4",
     "@codemirror/state": "^6.5.2",
-    "@codemirror/view": "^6.38.6"
+
+    "@codemirror/view": "^6.38.6",
+    "esbuild": "^0.28.0"
   },
   "devDependencies": {
     "jsdom": "^26.1.0",
