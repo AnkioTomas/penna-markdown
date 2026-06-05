@@ -27,7 +27,6 @@ export class BlockParseEngine {
     this.store = store;
     this.__parseInline = parseInline;
     /** @type {import('./MarkdownNode.js').MarkdownNode | null} */
-    this._root = null;
   }
 
   /**
@@ -48,7 +47,7 @@ export class BlockParseEngine {
    */
   checkInterrupt(lines, index) {
     for (const parser of this.registry.getBlockParsers()) {
-      if (parser.canInterruptParagraph && parser.parse(lines, index, this)) {
+      if (parser.canInterruptParagraph && parser.parse(lines, index, this, undefined, this.store)) {
         return true;
       }
     }
@@ -69,16 +68,14 @@ export class BlockParseEngine {
    */
   parse(lines) {
     let root = createNode("root", { children: [] });
-    if(!this._root){
-      this._root = root;
-    }
+
     let index = 0;
 
     while (index < lines.length) {
       let result = null;
 
       for (const parser of this.registry.getBlockParsers()) {
-        result = parser.parse(lines, index, this,root.children);
+        result = parser.parse(lines, index, this, root.children, this.store);
         if (result) break;
       }
 
