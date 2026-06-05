@@ -3,7 +3,7 @@
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
-import { escapeHtml } from "@/transformer/utils/escape.js";
+import { escapeAngleBrackets, escapeHtml } from "@/transformer/utils/escape.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 
 const SCHEME_RE = /^[A-Za-z][A-Za-z0-9+.-]{1,31}$/;
@@ -191,12 +191,20 @@ class AutolinksInlineParser extends BaseInlineParser {
     if (close === -1) return null;
 
     const inner = src.slice(index + 1, close);
-    if (inner.length === 0) return null;
+    if (inner.length === 0) {
+      return {
+        node: createNode("text", { value: "<>", bracketLiteral: true }),
+        nextIndex: close + 1,
+      };
+    }
 
     for (const ch of inner) {
       if (ch === " " || ch === "\t" || ch === "\n" || ch === "\r") {
         return {
-          node: createNode("text", { value: `<${literalBracketInner(inner)}>` }),
+          node: createNode("text", {
+            value: `<${literalBracketInner(inner)}>`,
+            bracketLiteral: true,
+          }),
           nextIndex: close + 1,
         };
       }
@@ -205,7 +213,10 @@ class AutolinksInlineParser extends BaseInlineParser {
     const link = parseBracketEmailAutolink(inner) ?? parseUriAutolink(inner);
     if (!link) {
       return {
-        node: createNode("text", { value: `<${literalBracketInner(inner)}>` }),
+        node: createNode("text", {
+          value: `<${literalBracketInner(inner)}>`,
+          bracketLiteral: true,
+        }),
         nextIndex: close + 1,
       };
     }

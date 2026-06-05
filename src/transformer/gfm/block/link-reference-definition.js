@@ -12,18 +12,18 @@ export function lookupLinkReference(store, refId) {
   return references[normalizeRefLabel(refId)] ?? null;
 }
 
-const LABEL_LINE_RE = /^[ \t]{0,3}\[((?:\\.|[^\[\]])+)\]:[ \t]*(.*)$/;
+const LABEL_LINE_RE = /^[ \t]{0,3}\[((?:\\.|[^\[\]\n])+)\]:[ \t]*(.*)$/;
 
-function unescape(text) {
-  return text.replace(/\\(.)/g, "$1");
+function isAsciiPunct(ch) {
+  return /[!-/:-@\[-`{-~]/.test(ch);
 }
 
-function parseHref(raw) {
-  const text = raw.trim();
-  if (text.startsWith("<") && text.endsWith(">")) {
-    return unescape(text.slice(1, -1));
-  }
-  return unescape(text);
+function readEscaped(src, i) {
+  if (src[i] !== "\\") return null;
+  if (i + 1 >= src.length) return { text: "\\", next: i + 1 };
+  const next = src[i + 1];
+  if (isAsciiPunct(next)) return { text: next, next: i + 2 };
+  return { text: `\\${next}`, next: i + 2 };
 }
 
 function skipWhitespace(src, i) {
@@ -41,27 +41,38 @@ function parseDestination(src, i) {
 
   if (src[i] === "<") {
     let j = i + 1;
+    let href = "";
     while (j < src.length) {
-      if (src[j] === "\\") {
-        j += 2;
+      const esc = readEscaped(src, j);
+      if (esc) {
+        href += esc.text;
+        j = esc.next;
         continue;
       }
       if (src[j] === ">") {
-        return { href: src.slice(i + 1, j), next: j + 1 };
+        return { href, next: j + 1, angle: true };
       }
       if (src[j] === "\n") return null;
+      href += src[j];
       j++;
     }
     return null;
   }
 
   let j = i;
+  let href = "";
   while (j < src.length && !/[ \t\n\r]/.test(src[j])) {
-    if (src[j] === "\\") j += 2;
-    else j++;
+    const esc = readEscaped(src, j);
+    if (esc) {
+      href += esc.text;
+      j = esc.next;
+      continue;
+    }
+    href += src[j];
+    j++;
   }
-  if (j === i) return null;
-  return { href: src.slice(i, j), next: j };
+  if (!href) return null;
+  return { href, next: j, angle: false };
 }
 
 function parseTitle(src, i) {
@@ -75,9 +86,10 @@ function parseTitle(src, i) {
     let title = "";
 
     while (j < src.length) {
-      if (src[j] === "\\") {
-        if (j + 1 < src.length) title += src[j + 1];
-        j += 2;
+      const esc = readEscaped(src, j);
+      if (esc) {
+        title += esc.text;
+        j = esc.next;
         continue;
       }
       if (src[j] === closer) {
@@ -90,37 +102,71 @@ function parseTitle(src, i) {
     return null;
   }
 
-  let j = i;
-  let title = "";
-  while (j < src.length && src[j] !== "\n") {
-    title += src[j];
-    j++;
-  }
-
-  return { title: title.trim(), next: j };
+  return null;
 }
 
-function parseDefinitionBody(body) {
+function analyzeDefinitionBody(body) {
   let i = 0;
   while (i < body.length && /[ \t\r\n]/.test(body[i])) i++;
 
   const dest = parseDestination(body, i);
-  if (!dest) return null;
-  i = dest.next;
+  if (!dest) return { complete: false, parsed: null };
 
-  i = skipWhitespace(body, i);
-  const titleResult = parseTitle(body, i);
-  if (titleResult === null) return null;
-  i = titleResult.next;
+  const afterDest = dest.next;
+  let ti = skipWhitespace(body, afterDest);
+  if (ti >= body.length) {
+    return { complete: true, parsed: { href: dest.href, title: "" } };
+  }
 
-  while (i < body.length && /[ \t\r\n]/.test(body[i])) i++;
-  if (i < body.length) return null;
+  if (ti === afterDest && (body[ti] === '"' || body[ti] === "'" || body[ti] === "(")) {
+    return { complete: false, parsed: null };
+  }
 
-  return { href: parseHref(dest.href), title: unescape(titleResult.title) };
+  const titleResult = parseTitle(body, ti);
+  if (titleResult === null) {
+    const opener = body[ti];
+    if (opener === '"' || opener === "'" || opener === "(") {
+      return { complete: false, parsed: null };
+    }
+    return { complete: false, parsed: null };
+  }
+
+  let end = titleResult.next;
+  while (end < body.length && /[ \t\r\n]/.test(body[end])) end++;
+  if (end < body.length) return { complete: false, parsed: null };
+
+  return { complete: true, parsed: { href: dest.href, title: titleResult.title } };
+}
+
+function hasMoreDefinitionLines(lines, end) {
+  if (end >= lines.length || lines[end].trim() === "") return false;
+  if (/^[ \t]{0,3}\[/.test(lines[end])) return false;
+  return true;
+}
+
+function findLabelCloseLine(lines, index) {
+  if (!/^[ \t]{0,3}\[/.test(lines[index] ?? "")) return null;
+  for (let i = index; i < lines.length; i++) {
+    if (/\]:[ \t]/.test(lines[i])) return i;
+    if (i > index && lines[i].trim() === "") return null;
+  }
+  return null;
 }
 
 export function parseDefinitionAt(lines, index) {
   const line = lines[index] ?? "";
+
+  if (/^[ \t]{0,3}\[/.test(line) && !LABEL_LINE_RE.test(line)) {
+    const labelEnd = findLabelCloseLine(lines, index);
+    if (labelEnd !== null) {
+      const merged = lines.slice(index, labelEnd + 1).join("\n");
+      const multi = merged.match(/^[ \t]{0,3}\[([\s\S]*?)\]:[ \t]*(.*)$/);
+      if (multi && /\n/.test(multi[1])) {
+        return { invalid: true, nextIndex: labelEnd + 1 };
+      }
+    }
+  }
+
   const match = line.match(LABEL_LINE_RE);
   if (!match) return null;
 
@@ -128,33 +174,46 @@ export function parseDefinitionAt(lines, index) {
   const chunks = [match[2]];
   let end = index + 1;
 
-  while (end < lines.length && lines[end].trim() !== "") {
-    if (/^[ \t]{0,3}\[/.test(lines[end])) break;
+  let state = analyzeDefinitionBody(chunks.join("\n"));
+
+  while (true) {
+    if (state.complete && state.parsed) {
+      if (state.parsed.title) break;
+      if (!hasMoreDefinitionLines(lines, end)) break;
+      const cont = lines[end].match(/^[ \t]{0,3}(.*)$/);
+      if (!cont) break;
+      const peek = analyzeDefinitionBody([...chunks, cont[1]].join("\n"));
+      if (!peek.complete || !peek.parsed?.title) break;
+    }
+
+    if (!hasMoreDefinitionLines(lines, end)) break;
     const cont = lines[end].match(/^[ \t]{0,3}(.*)$/);
     if (!cont) break;
     chunks.push(cont[1]);
     end++;
+    state = analyzeDefinitionBody(chunks.join("\n"));
   }
 
-  const body = chunks.join("\n");
-  const parsed = parseDefinitionBody(body);
-  if (!parsed) return null;
+  if (!state.complete || !state.parsed) return null;
 
-  return { id, href: parsed.href, title: parsed.title, nextIndex: end };
+  return { id, href: state.parsed.href, title: state.parsed.title, nextIndex: end };
 }
 
 class LinkReferenceDefinitionParser extends BaseBlockParser {
   constructor() {
-    super({ type: "linkReferenceDef", priority: 190 });
+    super({ type: "linkReferenceDef", priority: 190, canInterruptParagraph: false });
   }
 
   parse(lines, index, ctx) {
     const def = parseDefinitionAt(lines, index);
     if (!def) return null;
+    if (def.invalid) return { node: null, nextIndex: def.nextIndex };
 
     const references = ctx.store.get("references") ?? {};
-    references[def.id] = { href: def.href, title: def.title };
-    ctx.store.set("references", references);
+    if (!references[def.id]) {
+      references[def.id] = { href: def.href, title: def.title };
+      ctx.store.set("references", references);
+    }
 
     return { node: null, nextIndex: def.nextIndex };
   }

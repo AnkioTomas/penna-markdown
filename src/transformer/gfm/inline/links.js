@@ -156,8 +156,7 @@ class LinkInlineParser extends BaseInlineParser {
   }
 
   normalizeHref(href) {
-    href = href.replace(/\\(.)/g, "$1");
-    return href.replace(/ /g, "%20");
+    return encodeURI(href);
   }
 
   render(node, ctx) {

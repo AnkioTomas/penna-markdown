@@ -2,7 +2,7 @@
  * 行内语法：纯文本兜底（priority 最低）
  */
 
-import { escapeHtml } from "@/transformer/utils/escape.js";
+import { escapeAngleBrackets, escapeText } from "@/transformer/utils/escape.js";
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 
@@ -21,7 +21,10 @@ class TextInlineParser extends BaseInlineParser {
   }
 
   render(node) {
-    return escapeHtml(node.value);
+    if (node.props?.bracketLiteral) {
+      return escapeAngleBrackets(node.value);
+    }
+    return escapeText(node.value);
   }
 }
 
