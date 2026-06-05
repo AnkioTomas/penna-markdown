@@ -20,6 +20,8 @@ import link_ref from "@/transformer/gfm/block/link-reference-definition.js"
 import links from "@/transformer/gfm/inline/links.js";
 import __break from "@/transformer/gfm/inline/break.js";
 import images from "@/transformer/gfm/inline/images.js";
+import rawhtmlInline from "@/transformer/gfm/inline/html.js";
+import rawhtmlBlock from "@/transformer/gfm/block/html.js";
 
 export const builtinInlineSyntax = [
   escape,
@@ -27,6 +29,7 @@ export const builtinInlineSyntax = [
   links,
   autolink,
   autolinkExt,
+  rawhtmlInline,
   codeSpan,
   strikethrough,
   strong,
@@ -36,6 +39,7 @@ export const builtinInlineSyntax = [
 ];
 
 export const builtinBlockSyntax = [
+  rawhtmlBlock,
   heading,
   blockquote,
   link_ref,
