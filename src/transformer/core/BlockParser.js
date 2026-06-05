@@ -47,7 +47,7 @@ export class BlockParseEngine {
    */
   checkInterrupt(lines, index) {
     for (const parser of this.registry.getBlockParsers()) {
-      if (parser.canInterruptParagraph && parser.parse(lines, index, this, undefined, this.store)) {
+      if (parser.canInterruptParagraph && parser.parse(lines, index, this)) {
         return true;
       }
     }
@@ -75,7 +75,7 @@ export class BlockParseEngine {
       let result = null;
 
       for (const parser of this.registry.getBlockParsers()) {
-        result = parser.parse(lines, index, this, root.children, this.store);
+        result = parser.parse(lines, index, this, root.children);
         if (result) break;
       }
 

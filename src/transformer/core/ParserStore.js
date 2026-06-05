@@ -2,8 +2,12 @@
  * @file 解析过程共享存储
  * @module transformer/core/ParserStore
  *
- * 在单次 parse 过程中，块级/行内 Parser 通过 BlockParseEngine / InlineParseEngine
- * 读写同一 Store 实例，用于跨语法传递状态（如链接引用定义）。
+ * 由 TransformerEngine 在构造时创建，并注入 BlockParseEngine / InlineParseEngine。
+ * Parser 插件为单例，不在自身 constructor 中持有 store，而是通过已有上下文访问：
+ *
+ * - 块级：`blockParser.store`
+ * - 行内：`parseInline.store`
+ * - 渲染：`renderInline.store` / `renderBlock.store`
  */
 
 export class ParserStore {

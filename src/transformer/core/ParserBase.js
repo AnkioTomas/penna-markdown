@@ -36,7 +36,8 @@ export class BaseInlineParser {
    * @param {string} src - 待解析的整段行内文本
    * @param {number} index - 当前扫描位置（字符下标）
    * @param {function(string): import('./MarkdownNode.js').MarkdownNode[]} parseInline -
-   *   递归解析子串的回调，用于嵌套语法（如 `**a *b* c**` 的内部）
+   *   递归解析子串的回调，用于嵌套语法（如 `**a *b* c**` 的内部）；
+   *   共享存储通过 `parseInline.store` 访问
    * @returns {{
    *   node: import('./MarkdownNode.js').MarkdownNode,
    *   nextIndex: number
@@ -51,7 +52,7 @@ export class BaseInlineParser {
    *
    * @param {import('./MarkdownNode.js').MarkdownNode} node - 本 type 对应的 AST 节点
    * @param {function(import('./MarkdownNode.js').MarkdownNode[]): string} renderInline -
-   *   渲染子节点列表的回调
+   *   渲染子节点列表的回调；共享存储通过 `renderInline.store` 访问
    * @returns {string}
    */
   render(node, renderInline) {
@@ -89,7 +90,8 @@ export class BaseBlockParser {
    * @param {string[]} lines - 全文按换行符拆分后的行数组（不含 \r）
    * @param {number} index - 当前行下标
    * @param {import('./BlockParser.js').BlockParseEngine} blockParser -
-   *   块级引擎实例，提供 parseInline 等协作方法
+   *   块级引擎实例，提供 parseInline 等协作方法；
+   *   共享存储通过 `blockParser.store` 访问
    * @param {import('./MarkdownNode.js').MarkdownNode[]} [prevNodes] -
    *   当前已解析完成的块级节点列表，用于「后瞻」逻辑（如 Setext 标题）
    * @returns {{
@@ -107,9 +109,9 @@ export class BaseBlockParser {
    *
    * @param {import('./MarkdownNode.js').MarkdownNode} node
    * @param {function(import('./MarkdownNode.js').MarkdownNode[]): string} renderInline -
-   *   渲染节点内行内子树
+   *   渲染节点内行内子树；共享存储通过 `renderInline.store` 访问
    * @param {function(import('./MarkdownNode.js').MarkdownNode[]): string} renderBlock -
-   *   渲染块级子树（用于含嵌套块的语法）
+   *   渲染块级子树（用于含嵌套块的语法）；共享存储通过 `renderBlock.store` 访问
    * @returns {string}
    */
   render(node, renderInline, renderBlock) {

@@ -21,6 +21,8 @@ export class InlineParseEngine {
   constructor({ registry, store }) {
     this.registry = registry;
     this.store = store;
+    this.parseInline = (sub) => this.parse(sub);
+    this.parseInline.store = store;
   }
 
   /**
@@ -48,7 +50,7 @@ export class InlineParseEngine {
 
       let lastNode = null;
       for (const parser of parsers) {
-        const result = parser.parse(src, index, (sub) => this.parse(sub));
+        const result = parser.parse(src, index, this.parseInline);
 
         if (!result) {
           continue;
