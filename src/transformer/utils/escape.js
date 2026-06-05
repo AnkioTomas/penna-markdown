@@ -11,15 +11,12 @@ export function escapeHtml(text) {
     .replace(/"/g, "&quot;");
 }
 
-/** CommonMark 行内文本：转义 & 与 "，保留 < > */
+/** CommonMark 行内文本：全面转义以匹配 GFM 期望 */
 export function escapeText(text) {
-  return String(text).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+  return escapeHtml(text);
 }
 
-/** 无效尖括号 autolink 字面量：转义 & < > */
+/** 无效尖括号内容：转义所有 HTML 特殊字符 */
 export function escapeAngleBrackets(text) {
-  return String(text)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+  return escapeHtml(text);
 }
