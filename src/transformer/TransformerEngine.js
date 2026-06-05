@@ -63,15 +63,6 @@ export class TransformerEngine {
         return this;
     }
 
-    disableInline(name) {
-        this.registry.disableInline(name);
-        return this;
-    }
-
-    disableBlock(name) {
-        this.registry.disableBlock(name);
-        return this;
-    }
 
     _hookBefore(node) {
         if (typeof this.beforeRender !== "function") {

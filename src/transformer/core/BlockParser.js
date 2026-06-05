@@ -23,6 +23,8 @@ export class BlockParseEngine {
   constructor({ registry, parseInline }) {
     this.registry = registry;
     this.__parseInline = parseInline;
+    /** @type {import('./MarkdownNode.js').MarkdownNode | null} */
+    this._root = null;
   }
 
   /**
@@ -33,6 +35,18 @@ export class BlockParseEngine {
    */
   parseInline(text) {
     return this.__parseInline(text);
+  }
+
+  getRootProp(key) {
+    return this._root?.props?.[key];
+  }
+
+  setRootProp(key, value) {
+    if (this._root) this._root.props[key] = value;
+  }
+
+  deleteRootProp(key) {
+    if (this._root) delete this._root.props[key];
   }
 
   /**
@@ -63,9 +77,7 @@ export class BlockParseEngine {
    * @returns {import('./MarkdownNode.js').MarkdownNode} root 节点
    */
   parse(lines) {
-    const root = createNode("root", {
-      children: [],
-    });
+    this._root = createNode("root", { children: [] });
 
     let index = 0;
 
@@ -73,7 +85,7 @@ export class BlockParseEngine {
       let result = null;
 
       for (const parser of this.registry.getBlockParsers()) {
-        result = parser.parse(lines, index, this, root.children);
+        result = parser.parse(lines, index, this, this._root.children);
         if (result) break;
       }
 
@@ -82,13 +94,13 @@ export class BlockParseEngine {
         continue;
       }
 
-      if (result.replaceLast && root.children.length > 0) {
-        root.children.pop();
+      if (result.replaceLast && this._root.children.length > 0) {
+        this._root.children.pop();
       }
-      root.children.push(result.node);
+      this._root.children.push(result.node);
       index = result.nextIndex ?? index + 1;
     }
 
-    return root;
+    return this._root;
   }
 }
