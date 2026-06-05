@@ -1,0 +1,7 @@
+    indented code
+
+```js
+fenced();
+```
+
+---

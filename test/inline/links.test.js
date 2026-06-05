@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { createTransformer } from "../src/transformer/index.js";
+import { createTransformer } from "../../src/transformer/index.js";
 
-describe("Links and Images", () => {
+describe("inline/links", () => {
   const transformer = createTransformer();
 
   it("Example 493: Inline link with title", () => {
@@ -11,19 +11,19 @@ describe("Links and Images", () => {
   });
 
   it("Example 494: Inline link without title", () => {
-    const markdown = '[link](/uri)';
+    const markdown = "[link](/uri)";
     const { html } = transformer.render(markdown);
     expect(html.trim()).toBe('<p><a href="/uri">link</a></p>');
   });
 
   it("Example 496: Inline link with empty brackets", () => {
-    const markdown = '[link](<>)';
+    const markdown = "[link](<>)";
     const { html } = transformer.render(markdown);
     expect(html.trim()).toBe('<p><a href="">link</a></p>');
   });
 
   it("Example 525: Inline image", () => {
-    const markdown = '![alt](moon.jpg)';
+    const markdown = "![alt](moon.jpg)";
     const { html } = transformer.render(markdown);
     expect(html.trim()).toBe('<p><img src="moon.jpg" alt="alt" /></p>');
   });

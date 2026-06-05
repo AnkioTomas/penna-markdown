@@ -1,12 +1,11 @@
 /**
  * Link Reference Definitions 测试
- *
- * 测试用例基于 CommonMark / PEP 8 规范
  */
 
+import { beforeAll, describe, expect, test } from "vitest";
 import { createTransformer } from "@/transformer/index.js";
 
-describe("Link Reference Definitions", () => {
+describe("inline/link-reference", () => {
     let engine;
 
     beforeAll(() => {
