@@ -15,9 +15,12 @@ export class InlineParseEngine {
   /**
    * @param {Object} options
    * @param {import('./Registry.js').Registry} options.registry
+   * @param {import('./ParserStore.js').ParserStore} options.store -
+   *   解析过程共享存储，由 TransformerEngine 注入
    */
-  constructor({ registry }) {
+  constructor({ registry, store }) {
     this.registry = registry;
+    this.store = store;
   }
 
   /**

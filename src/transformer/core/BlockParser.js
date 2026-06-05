@@ -17,11 +17,14 @@ export class BlockParseEngine {
   /**
    * @param {Object} options
    * @param {import('./Registry.js').Registry} options.registry - 语法注册表
+   * @param {import('./ParserStore.js').ParserStore} options.store -
+   *   解析过程共享存储，由 TransformerEngine 注入
    * @param {function(string): import('./MarkdownNode.js').MarkdownNode[]} options.parseInline -
    *   行内解析入口，由 TransformerEngine 注入，避免块/行内循环依赖
    */
-  constructor({ registry, parseInline }) {
+  constructor({ registry, store, parseInline }) {
     this.registry = registry;
+    this.store = store;
     this.__parseInline = parseInline;
     /** @type {import('./MarkdownNode.js').MarkdownNode | null} */
     this._root = null;
@@ -37,22 +40,10 @@ export class BlockParseEngine {
     return this.__parseInline(text);
   }
 
-  getRootProp(key) {
-    return this._root?.props?.[key];
-  }
-
-  setRootProp(key, value) {
-    if (this._root) this._root.props[key] = value;
-  }
-
-  deleteRootProp(key) {
-    if (this._root) delete this._root.props[key];
-  }
-
   /**
    * 检查当前行是否会被其他语法中断（主要用于段落）
-   * @param {string[]} lines 
-   * @param {number} index 
+   * @param {string[]} lines
+   * @param {number} index
    * @returns {boolean}
    */
   checkInterrupt(lines, index) {
@@ -77,15 +68,17 @@ export class BlockParseEngine {
    * @returns {import('./MarkdownNode.js').MarkdownNode} root 节点
    */
   parse(lines) {
-    this._root = createNode("root", { children: [] });
-
+    let root = createNode("root", { children: [] });
+    if(!this._root){
+      this._root = root;
+    }
     let index = 0;
 
     while (index < lines.length) {
       let result = null;
 
       for (const parser of this.registry.getBlockParsers()) {
-        result = parser.parse(lines, index, this, this._root.children);
+        result = parser.parse(lines, index, this,root.children);
         if (result) break;
       }
 
@@ -94,13 +87,15 @@ export class BlockParseEngine {
         continue;
       }
 
-      if (result.replaceLast && this._root.children.length > 0) {
-        this._root.children.pop();
+      if (result.replaceLast &&root.children.length > 0) {
+       root.children.pop();
       }
-      this._root.children.push(result.node);
+      if (result.node) {
+        root.children.push(result.node);
+      }
       index = result.nextIndex ?? index + 1;
     }
 
-    return this._root;
+    return root;
   }
 }
