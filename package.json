@@ -18,6 +18,11 @@
       "require": "./dist/transformer.cjs",
       "default": "./dist/transformer.mjs"
     },
+    "./transformer.extends": {
+      "import": "./dist/transformer.extends.mjs",
+      "require": "./dist/transformer.extends.cjs",
+      "default": "./dist/transformer.extends.mjs"
+    },
     "./renderer": {
       "import": "./dist/renderer.mjs",
       "require": "./dist/renderer.cjs",

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>自定义语法扩展 · Cherry Markdown Next</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <h1>扩展</h1>
+        <p class="sub">
+          <a href="../index.html">返回入口</a>
+        </p>
+        <p class="sub">
+          这是一个用于测试自定义语法扩展的页面。
+        </p>
+        <div class="toolbar">
+          <button id="rerun-btn" type="button">重新渲染</button>
+        </div>
+        <div id="extensions-container">
+          <h2>可用扩展</h2>
+          <div id="extensions-list"></div>
+        </div>
+      </aside>
+      <main class="main">
+        <div class="editor-container">
+          <textarea id="markdown-input" rows="10" placeholder="输入 Markdown..."></textarea>
+        </div>
+        <div class="preview-container">
+          <h2>预览</h2>
+          <div id="preview" class="cherry-markdown"></div>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

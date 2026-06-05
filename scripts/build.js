@@ -22,6 +22,7 @@ const shared = {
 /** 三个子系统入口与全局变量名（IIFE） */
 const entries = [
   { in: "src/transformer/index.js", name: "transformer", globalName: "CherryNextTransformer" },
+  { in: "src/transformer/extends/extends.js", name: "transformer.extends", globalName: "CherryNextTransformerExtends" },
   { in: "src/renderer/index.js", name: "renderer", globalName: "CherryNextRenderer" },
   { in: "src/editor/index.js", name: "editor", globalName: "CherryNextEditor" },
 ];

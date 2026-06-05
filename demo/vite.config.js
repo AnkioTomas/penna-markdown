@@ -14,6 +14,7 @@ const editorHtml = resolve(demoDir, "editor/index.html");
 const converterHtml = resolve(demoDir, "converter/index.html");
 const gfmHtml = resolve(demoDir, "gfm/index.html");
 const astHtml = resolve(demoDir, "ast/index.html");
+const extendsHtml = resolve(demoDir, "extends/index.html");
 
 export default defineConfig({
   root: demoDir,
@@ -36,6 +37,7 @@ export default defineConfig({
         converter: converterHtml,
         gfm: gfmHtml,
         ast: astHtml,
+        extends: extendsHtml,
       },
     },
   },
