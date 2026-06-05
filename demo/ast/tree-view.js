@@ -1,33 +1,33 @@
 /**
- * 扁平化 AST 树视图：单行一节点，缩进 + 连线，便于浏览深层结构。
+ * 扁平化 AST 树视图：缩进导轨 + 类型胶囊 + 属性标签。
  */
 
-const TYPE_COLORS = {
-  root: "#38bdf8",
-  paragraph: "#94a3b8",
-  heading: "#f472b6",
-  text: "#a3e635",
-  strong: "#fb923c",
-  emphasis: "#fbbf24",
-  link: "#60a5fa",
-  image: "#34d399",
-  code: "#c4b5fd",
-  code_block: "#a78bfa",
-  blockquote: "#94a3b8",
-  list: "#2dd4bf",
-  list_item: "#5eead4",
-  hr: "#64748b",
-  break: "#64748b",
-  strikethrough: "#f87171",
-  html: "#e879f9",
-};
-
 const SKIP_KEYS = new Set(["children", "value", "type"]);
+
+const CHEVRON_SVG = `<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M6 4l4 4-4 4V4z"/></svg>`;
+
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 function preview(text, max = 48) {
   const oneLine = String(text).replace(/\r\n/g, "\n").replace(/\n/g, "↵");
   if (oneLine.length <= max) return oneLine;
   return `${oneLine.slice(0, max)}…`;
+}
+
+function formatChipValue(value) {
+  if (typeof value === "string") return preview(value, 36);
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  try {
+    return preview(JSON.stringify(value), 28);
+  } catch {
+    return "…";
+  }
 }
 
 function extraProps(node) {
@@ -36,46 +36,34 @@ function extraProps(node) {
 
   for (const [key, value] of Object.entries(raw)) {
     if (SKIP_KEYS.has(key) || value === undefined) continue;
-    rows.push([key, value]);
+    rows.push({ key, value });
   }
 
   if (node.length !== undefined && raw.length === undefined) {
-    rows.push(["length", node.length]);
+    rows.push({ key: "length", value: node.length });
   }
 
   return rows;
 }
 
-function nodeLabel(node) {
+/** @returns {{ value?: string, chips: { key: string, value: string }[] }} */
+function nodeMeta(node) {
   const { type } = node;
 
   if (type === "text" && node.value !== undefined) {
-    return `"${preview(node.value)}"`;
+    return { value: preview(node.value, 64), chips: [] };
   }
 
-  const parts = [];
-  const props = extraProps(node);
-
-  for (const [key, value] of props) {
-    if (typeof value === "string") {
-      parts.push(`${key}="${preview(value, 32)}"`);
-    } else if (typeof value === "number" || typeof value === "boolean") {
-      parts.push(`${key}=${value}`);
-    } else {
-      try {
-        parts.push(`${key}=${preview(JSON.stringify(value), 24)}`);
-      } catch {
-        parts.push(`${key}=…`);
-      }
-    }
-  }
-
-  return parts.join(" ");
+  return {
+    chips: extraProps(node).map(({ key, value }) => ({
+      key,
+      value: formatChipValue(value),
+    })),
+  };
 }
 
 function countNodes(node) {
-  let n = 1;
-  let depth = 0;
+  let count = 1;
   let maxDepth = 0;
 
   function walk(nd, d) {
@@ -83,14 +71,13 @@ function countNodes(node) {
     const kids = nd.children;
     if (!Array.isArray(kids)) return;
     for (const child of kids) {
-      n += 1;
+      count += 1;
       walk(child, d + 1);
     }
   }
 
   walk(node, 0);
-  depth = maxDepth;
-  return { count: n, depth };
+  return { count, depth: maxDepth };
 }
 
 export class AstTreeView {
@@ -142,16 +129,11 @@ export class AstTreeView {
     this._render();
   }
 
-  /** @param {boolean} collapse - true 表示加入 collapsed */
   _collectPaths(node, path, collapse, depth = 0, maxDepth = Infinity) {
     const kids = node.children;
     if (!Array.isArray(kids) || kids.length === 0) return;
 
-    const shouldCollapse = collapse
-      ? true
-      : depth >= maxDepth;
-
-    if (shouldCollapse) {
+    if (collapse ? true : depth >= maxDepth) {
       this.collapsed.add(path);
     }
 
@@ -212,7 +194,7 @@ export class AstTreeView {
     return kids.some((child) => this._matchesFilter(child));
   }
 
-  *_visibleRows(node, path = "0", depth = 0) {
+  *_visibleRows(node, path = "0", depth = 0, guides = [], isLast = true) {
     if (!this._matchesFilter(node)) return;
 
     const kids = Array.isArray(node.children) ? node.children : [];
@@ -223,8 +205,10 @@ export class AstTreeView {
     yield {
       path,
       depth,
+      guides,
+      isLast,
       type,
-      label: nodeLabel(node),
+      meta: nodeMeta(node),
       childCount: kids.length,
       hasKids,
       collapsed,
@@ -234,7 +218,13 @@ export class AstTreeView {
     if (!hasKids || collapsed) return;
 
     for (let i = 0; i < kids.length; i += 1) {
-      yield* this._visibleRows(kids[i], `${path}.${i}`, depth + 1);
+      yield* this._visibleRows(
+        kids[i],
+        `${path}.${i}`,
+        depth + 1,
+        [...guides, !isLast],
+        i === kids.length - 1,
+      );
     }
   }
 
@@ -243,7 +233,7 @@ export class AstTreeView {
     this.container.replaceChildren();
 
     if (!ast) {
-      this.container.innerHTML = '<div class="ast-empty">暂无 AST</div>';
+      this.container.innerHTML = '<div class="ast-empty"><span class="ast-empty-icon">◇</span>暂无 AST</div>';
       return;
     }
 
@@ -252,7 +242,10 @@ export class AstTreeView {
 
     const statsEl = document.createElement("div");
     statsEl.className = "ast-stats";
-    statsEl.textContent = `${stats.count} 个节点 · 最大深度 ${stats.depth}`;
+    statsEl.innerHTML = `
+      <span class="stat-pill"><span class="stat-label">节点</span><span class="stat-value">${stats.count}</span></span>
+      <span class="stat-pill"><span class="stat-label">深度</span><span class="stat-value">${stats.depth}</span></span>
+    `;
     frag.append(statsEl);
 
     const list = document.createElement("div");
@@ -264,33 +257,46 @@ export class AstTreeView {
     }
 
     if (list.childElementCount === 0) {
-      list.innerHTML = '<div class="ast-empty">无匹配节点</div>';
+      list.innerHTML = '<div class="ast-empty"><span class="ast-empty-icon">◇</span>无匹配节点</div>';
     }
 
     frag.append(list);
     this.container.append(frag);
   }
 
-  _createRow({ path, depth, type, label, childCount, hasKids, collapsed, node }) {
+  _createIndent(guides, isLast, depth) {
+    const indent = document.createElement("div");
+    indent.className = "ast-indent";
+    indent.setAttribute("aria-hidden", "true");
+
+    if (depth === 0) return indent;
+
+    for (let i = 0; i < guides.length; i += 1) {
+      const rail = document.createElement("span");
+      rail.className = guides[i] ? "ast-rail continue" : "ast-rail";
+      indent.append(rail);
+    }
+
+    const branch = document.createElement("span");
+    branch.className = isLast ? "ast-branch last" : "ast-branch";
+    indent.append(branch);
+
+    return indent;
+  }
+
+  _createRow({ path, depth, guides, isLast, type, meta, childCount, hasKids, collapsed, node }) {
     const row = document.createElement("div");
     row.className = "ast-row";
     row.dataset.path = path;
+    row.dataset.type = type;
+    row.dataset.depth = String(depth);
     row.setAttribute("role", "treeitem");
-    row.style.setProperty("--depth", String(depth));
 
     if (path === this.selectedPath) {
       row.classList.add("selected");
     }
 
-    const guides = document.createElement("span");
-    guides.className = "ast-guides";
-    guides.setAttribute("aria-hidden", "true");
-    for (let i = 0; i < depth; i += 1) {
-      const g = document.createElement("span");
-      g.className = "ast-guide";
-      guides.append(g);
-    }
-    row.append(guides);
+    row.append(this._createIndent(guides, isLast, depth));
 
     if (hasKids) {
       const btn = document.createElement("button");
@@ -298,26 +304,39 @@ export class AstTreeView {
       btn.className = "ast-toggle";
       btn.dataset.action = "toggle";
       btn.setAttribute("aria-label", collapsed ? "展开" : "折叠");
-      btn.textContent = collapsed ? "▸" : "▾";
+      if (collapsed) btn.classList.add("collapsed");
+      btn.innerHTML = CHEVRON_SVG;
       row.append(btn);
     } else {
-      const leaf = document.createElement("span");
-      leaf.className = "ast-leaf";
-      leaf.textContent = "·";
-      row.append(leaf);
+      const dot = document.createElement("span");
+      dot.className = "ast-dot";
+      row.append(dot);
     }
 
     const typeEl = document.createElement("span");
     typeEl.className = "ast-type";
     typeEl.textContent = type;
-    typeEl.style.color = TYPE_COLORS[type] ?? "#e2e8f0";
     row.append(typeEl);
 
-    if (label) {
-      const labelEl = document.createElement("span");
-      labelEl.className = "ast-label";
-      labelEl.textContent = label;
-      row.append(labelEl);
+    const body = document.createElement("div");
+    body.className = "ast-body";
+
+    if (meta.value !== undefined) {
+      const val = document.createElement("span");
+      val.className = "ast-value";
+      val.textContent = meta.value;
+      body.append(val);
+    }
+
+    for (const chip of meta.chips) {
+      const el = document.createElement("span");
+      el.className = "ast-chip";
+      el.innerHTML = `<span class="chip-key">${escapeHtml(chip.key)}</span><span class="chip-val">${escapeHtml(chip.value)}</span>`;
+      body.append(el);
+    }
+
+    if (body.childElementCount > 0) {
+      row.append(body);
     }
 
     if (hasKids) {
@@ -337,8 +356,7 @@ export class AstTreeView {
       const clone = { type: node.type };
       if (node.value !== undefined) clone.value = node.value;
       if (node.children) clone.children = `[${node.children.length}]`;
-      const extras = extraProps(node);
-      for (const [k, v] of extras) clone[k] = v;
+      for (const { key, value } of extraProps(node)) clone[key] = value;
       return JSON.stringify(clone, null, 2);
     } catch {
       return node.type;

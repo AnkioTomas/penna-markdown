@@ -1,5 +1,6 @@
 import { CherryTransformer } from "../../src/transformer/index.js";
 import { AstTreeView } from "./tree-view.js";
+import { highlightJson } from "./json-highlight.js";
 import example from "./test.md?raw";
 
 const transformer = new CherryTransformer();
@@ -8,6 +9,7 @@ const markdownInput = document.querySelector("#markdown");
 const resetBtn = document.querySelector("#reset-btn");
 const astTree = document.querySelector("#ast-tree");
 const nodeDetail = document.querySelector("#node-detail");
+const copyDetailBtn = document.querySelector("#copy-detail");
 const timing = document.querySelector("#timing");
 const expandAllBtn = document.querySelector("#expand-all");
 const collapseAllBtn = document.querySelector("#collapse-all");
@@ -16,9 +18,13 @@ const filterInput = document.querySelector("#type-filter");
 
 markdownInput.value = example;
 
+function showNodeDetail(node) {
+  nodeDetail.innerHTML = highlightJson(serializeNode(node));
+}
+
 const treeView = new AstTreeView(astTree, {
   onSelect(node) {
-    nodeDetail.textContent = JSON.stringify(serializeNode(node), null, 2);
+    showNodeDetail(node);
   },
 });
 
@@ -47,14 +53,14 @@ function renderNow() {
     ast = transformer.parse(md).ast;
   } catch (e) {
     astTree.innerHTML = `<div class="error-msg">解析错误: ${e.message}</div>`;
-    nodeDetail.textContent = "";
+    nodeDetail.innerHTML = "";
     timing.textContent = "解析耗时: -";
     return;
   }
 
-  timing.textContent = `解析耗时: ${(performance.now() - start).toFixed(3)} ms`;
+  timing.textContent = `${(performance.now() - start).toFixed(2)} ms`;
   treeView.setAst(ast);
-  nodeDetail.textContent = JSON.stringify(serializeNode(ast), null, 2);
+  showNodeDetail(ast);
 }
 
 let timer = 0;
@@ -76,6 +82,20 @@ expandDepthBtn.addEventListener("click", () => treeView.expandToDepth(2));
 
 filterInput.addEventListener("input", () => {
   treeView.setFilter(filterInput.value);
+});
+
+copyDetailBtn?.addEventListener("click", async () => {
+  const text = nodeDetail.textContent ?? "";
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+    copyDetailBtn.textContent = "已复制";
+    setTimeout(() => {
+      copyDetailBtn.textContent = "复制";
+    }, 1200);
+  } catch {
+    copyDetailBtn.textContent = "失败";
+  }
 });
 
 renderNow();

@@ -4,43 +4,68 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AST 调试台 · Cherry Markdown Next</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="header">
-      <a class="back" href="../index.html">返回入口</a>
-      <div class="title">AST 调试台</div>
-      <div id="timing" class="timing">解析耗时: - ms</div>
-    </div>
+    <header class="header">
+      <a class="back" href="../index.html">← 返回</a>
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">◈</span>
+        <h1 class="title">AST 调试台</h1>
+      </div>
+      <div id="timing" class="timing">— ms</div>
+    </header>
 
     <div class="layout">
-      <section class="panel">
-        <div class="panel-title">Markdown 输入</div>
-        <textarea id="markdown" class="textarea"></textarea>
-        <button id="reset-btn" class="btn" type="button">恢复示例</button>
+      <section class="panel panel-input">
+        <div class="panel-head">
+          <span class="panel-label">Markdown</span>
+        </div>
+        <textarea id="markdown" class="textarea" spellcheck="false"></textarea>
+        <footer class="panel-foot">
+          <button id="reset-btn" class="btn btn-primary" type="button">恢复示例</button>
+        </footer>
       </section>
 
       <section class="panel panel-ast">
-        <div class="panel-title">
-          <span>AST 树</span>
+        <div class="panel-head panel-head-split">
+          <span class="panel-label">语法树</span>
           <div class="toolbar">
-            <input
-              id="type-filter"
-              class="filter-input"
-              type="search"
-              placeholder="筛选 type…"
-              autocomplete="off"
-            />
-            <button id="expand-depth" class="btn btn-ghost" type="button" title="展开到第 2 层">
-              展开 2 层
-            </button>
-            <button id="expand-all" class="btn btn-ghost" type="button">全部展开</button>
-            <button id="collapse-all" class="btn btn-ghost" type="button">全部折叠</button>
+            <label class="search-box">
+              <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M8.5 3a5.5 5.5 0 104.227 8.984l3.264 3.265-1.06 1.06-3.265-3.264A5.5 5.5 0 008.5 3zm0 2a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"
+                />
+              </svg>
+              <input
+                id="type-filter"
+                type="search"
+                placeholder="筛选 type"
+                autocomplete="off"
+              />
+            </label>
+            <div class="btn-group">
+              <button id="expand-depth" class="btn btn-ghost" type="button">2 层</button>
+              <button id="expand-all" class="btn btn-ghost" type="button">展开</button>
+              <button id="collapse-all" class="btn btn-ghost" type="button">折叠</button>
+            </div>
           </div>
         </div>
+
         <div id="ast-tree" class="tree-wrap"></div>
+
         <div class="detail-bar">
-          <div class="detail-title">选中节点</div>
+          <div class="detail-head">
+            <span class="detail-label">节点 JSON</span>
+            <button id="copy-detail" class="btn btn-ghost btn-sm" type="button">复制</button>
+          </div>
           <pre id="node-detail" class="node-detail"></pre>
         </div>
       </section>
