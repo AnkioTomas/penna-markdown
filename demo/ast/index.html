@@ -20,9 +20,29 @@
         <button id="reset-btn" class="btn" type="button">恢复示例</button>
       </section>
 
-      <section class="panel">
-        <div class="panel-title">AST 树</div>
+      <section class="panel panel-ast">
+        <div class="panel-title">
+          <span>AST 树</span>
+          <div class="toolbar">
+            <input
+              id="type-filter"
+              class="filter-input"
+              type="search"
+              placeholder="筛选 type…"
+              autocomplete="off"
+            />
+            <button id="expand-depth" class="btn btn-ghost" type="button" title="展开到第 2 层">
+              展开 2 层
+            </button>
+            <button id="expand-all" class="btn btn-ghost" type="button">全部展开</button>
+            <button id="collapse-all" class="btn btn-ghost" type="button">全部折叠</button>
+          </div>
+        </div>
         <div id="ast-tree" class="tree-wrap"></div>
+        <div class="detail-bar">
+          <div class="detail-title">选中节点</div>
+          <pre id="node-detail" class="node-detail"></pre>
+        </div>
       </section>
     </div>
 
