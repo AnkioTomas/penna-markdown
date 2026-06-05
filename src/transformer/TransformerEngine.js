@@ -1,6 +1,7 @@
 import { BlockParseEngine } from "@/transformer/core/BlockParser.js";
-import { Registry } from "@/transformer/core/Registry.js";
 import { InlineParseEngine } from "@/transformer/core/InlineParser.js";
+import { ParserStore } from "@/transformer/core/ParserStore.js";
+import { Registry } from "@/transformer/core/Registry.js";
 
 function normalizeMarkdown(markdown) {
     let text = String(markdown).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
@@ -20,9 +21,14 @@ export class TransformerEngine {
         for (const p of options.blockParsers ?? []) {
             this.registry.registerBlockParser(p, {force: true});
         }
-        this.inlineParser = new InlineParseEngine({registry: this.registry});
+        this.store = new ParserStore();
+        this.inlineParser = new InlineParseEngine({
+            registry: this.registry,
+            store: this.store,
+        });
         this.blockParser = new BlockParseEngine({
             registry: this.registry,
+            store: this.store,
             parseInline: (text) => this.inlineParser.parse(text),
         });
     }
@@ -33,6 +39,7 @@ export class TransformerEngine {
         if (lines.length > 0 && lines[lines.length - 1] === "") {
             lines.pop();
         }
+        this.store.clear();
         const ast = this.blockParser.parse(lines);
         return {ast, source, errors: []};
     }
