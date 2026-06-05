@@ -188,7 +188,12 @@ class AutolinksInlineParser extends BaseInlineParser {
     if (src[index] !== "<") return null;
 
     const close = src.indexOf(">", index + 1);
-    if (close === -1) return null;
+    if (close === -1) {
+      return {
+        node: createNode("text", { value: "<", bracketLiteral: true }),
+        nextIndex: index + 1,
+      };
+    }
 
     const inner = src.slice(index + 1, close);
     if (inner.length === 0) {
