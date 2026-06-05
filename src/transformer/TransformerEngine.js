@@ -1,5 +1,6 @@
 import { BlockParseEngine } from "@/transformer/core/BlockParser.js";
 import { InlineParseEngine } from "@/transformer/core/InlineParser.js";
+import { RenderContext } from "@/transformer/core/ParserContext.js";
 import { ParserStore } from "@/transformer/core/ParserStore.js";
 import { Registry } from "@/transformer/core/Registry.js";
 
@@ -31,6 +32,7 @@ export class TransformerEngine {
             store: this.store,
             parseInline: (text) => this.inlineParser.parse(text),
         });
+        this.renderCtx = new RenderContext(this);
     }
 
     parse(markdown) {
@@ -88,14 +90,14 @@ export class TransformerEngine {
     }
 
     _renderInline(nodes) {
-        const renderInline = (children) => this._renderInline(children);
+        const ctx = this.renderCtx;
 
         return nodes
             .map((node) => {
                 let html = this._hookBefore(node);
                 if (html === null || html === undefined) {
                     const parser = this.registry.getInlineParser(node.type);
-                    html = parser?.render?.(node, renderInline) ?? "";
+                    html = parser?.render?.(node, ctx) ?? "";
                 }
                 return this._hookAfter(node, html);
             })
@@ -103,15 +105,14 @@ export class TransformerEngine {
     }
 
     _renderBlocks(blocks) {
-        const renderInline = (nodes) => this._renderInline(nodes);
-        const renderBlock = (nodes) => this._renderBlocks(nodes);
+        const ctx = this.renderCtx;
 
         const html = blocks
             .map((node) => {
                 let out = this._hookBefore(node);
                 if (out === null || out === undefined) {
                     const parser = this.registry.getBlockParser(node.type);
-                    out = parser?.render?.(node, renderInline, renderBlock) ?? "";
+                    out = parser?.render?.(node, ctx) ?? "";
                 }
                 return this._hookAfter(node, out);
             })
