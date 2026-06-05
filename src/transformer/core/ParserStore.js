@@ -5,7 +5,7 @@
  * 由 TransformerEngine 在构造时创建，并注入 BlockParseEngine / InlineParseEngine。
  * Parser 插件为单例，不在自身 constructor 中持有 store，而是通过上下文访问：
  *
- * - 块级 parse：`blockParser.store`
+ * - 块级 parse：`ctx.store`（BlockParseContext）
  * - 行内 parse：`ctx.store`（InlineParseContext）
  * - 渲染：`ctx.store`（RenderContext）
  */

@@ -12,7 +12,7 @@ class ImageInlineParser extends BaseInlineParser {
     super({ type: "image", priority: 201 });
   }
 
-  parse(src, index, parseInline) {
+  parse(src, index, ctx) {
     if (src[index] !== '!' || src[index + 1] !== '[') return null;
     
     const startIndex = index + 1;
@@ -99,7 +99,7 @@ class ImageInlineParser extends BaseInlineParser {
                 const node = createNode("image", {
                     href: this.normalizeHref(href),
                     title: title,
-                    children: parseInline(label)
+                    children: ctx.parseInline(label)
                 });
                 return { node, nextIndex: j + 1 };
             }
@@ -114,7 +114,7 @@ class ImageInlineParser extends BaseInlineParser {
     return href.replace(/ /g, '%20');
   }
 
-  render(node, renderInline) {
+  render(node, ctx) {
     const { href, title } = node.props;
     const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
     const alt = this.renderAlt(node.children);

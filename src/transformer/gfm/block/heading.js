@@ -69,17 +69,16 @@ class HeadingBlockParser extends BaseBlockParser {
   /**
    * @param {string[]} lines
    * @param {number} index
-   * @param {import('../core/BlockParser.js').BlockParseEngine} blockParser
-   * @param {import('../core/MarkdownNode.js').MarkdownNode[]} [prevNodes]
+   * @param {import('../core/ParserContext.js').BlockParseContext} ctx
    */
-  parse(lines, index, blockParser, prevNodes) {
+  parse(lines, index, ctx) {
     const line = lines[index] ?? "";
 
     // 1. ATX Heading
     const atx = parseAtxHeading(line);
     if (atx) {
       const node = createNode(this.type, {
-        children: blockParser.parseInline(atx.content),
+        children: ctx.parseInline(atx.content),
         level: atx.level
       });
       return { node, nextIndex: index + 1 };
@@ -96,12 +95,12 @@ class HeadingBlockParser extends BaseBlockParser {
 
         // 如果是 checkInterrupt 调用 (prevNodes 未定义)，返回 dummy 节点以打断段落
         // 从而让下一轮解析循环能看到该行并执行“回溯”逻辑
-        if (prevNodes === undefined) {
+        if (ctx.prevNodes === undefined) {
             return { node: createNode("setext_underline_interrupt"), nextIndex: index };
         }
 
-        if (prevNodes.length > 0) {
-            const lastNode = prevNodes[prevNodes.length - 1];
+        if (ctx.prevNodes.length > 0) {
+            const lastNode = ctx.prevNodes[ctx.prevNodes.length - 1];
             if (lastNode.type === "paragraph") {
                 const level = setextMatch[2][0] === "=" ? 1 : 2;
                 const node = createNode(this.type, {
@@ -120,8 +119,8 @@ class HeadingBlockParser extends BaseBlockParser {
     return null;
   }
 
-  render(node, renderInline) {
-    const inner = renderInline(node.children);
+  render(node, ctx) {
+    const inner = ctx.renderInline(node.children);
     return `<h${node.props.level}>${inner}</h${node.props.level}>`;
   }
 }

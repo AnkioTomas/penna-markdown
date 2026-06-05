@@ -16,6 +16,7 @@ import indentedCode from "@/transformer/gfm/block/indented-code.js";
 import hr from "@/transformer/gfm/block/hr.js";
 import list from "@/transformer/gfm/block/list.js";
 import paragraph from "@/transformer/gfm/block/paragraph.js";
+import link_ref from "@/transformer/gfm/block/link-reference-definition.js"
 import links from "@/transformer/gfm/inline/links.js";
 import __break from "@/transformer/gfm/inline/break.js";
 import images from "@/transformer/gfm/inline/images.js";
@@ -37,6 +38,7 @@ export const builtinInlineSyntax = [
 export const builtinBlockSyntax = [
   heading,
   blockquote,
+  link_ref,
   code,
   indentedCode,
   hr,

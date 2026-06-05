@@ -7,6 +7,7 @@
  */
 
 import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { InlineParseContext } from "@/transformer/core/ParserContext.js";
 
 /**
  * 行内 Markdown 解析引擎。
@@ -21,8 +22,7 @@ export class InlineParseEngine {
   constructor({ registry, store }) {
     this.registry = registry;
     this.store = store;
-    this.parseInline = (sub) => this.parse(sub);
-    this.parseInline.store = store;
+    this.ctx = new InlineParseContext(this);
   }
 
   /**
@@ -50,7 +50,7 @@ export class InlineParseEngine {
 
       let lastNode = null;
       for (const parser of parsers) {
-        const result = parser.parse(src, index, this.parseInline);
+        const result = parser.parse(src, index, this.ctx);
 
         if (!result) {
           continue;

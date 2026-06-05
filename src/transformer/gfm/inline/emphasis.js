@@ -11,7 +11,7 @@ class EmphasisInlineParser extends BaseInlineParser {
     super({ type: "emphasis", priority: 30 });
   }
 
-  parse(src, index, parseInline) {
+  parse(src, index, ctx) {
     if (isEscaped(src, index)) return null;
 
     let delimiter = "";
@@ -53,7 +53,7 @@ class EmphasisInlineParser extends BaseInlineParser {
             const inner = src.slice(innerStart, i);
             if (inner.length === 0) return null;
             return {
-              node: createNode(this.type, { children: parseInline(inner) }),
+              node: createNode(this.type, { children: ctx.parseInline(inner) }),
               nextIndex: i + 1,
             };
           }
@@ -87,8 +87,8 @@ class EmphasisInlineParser extends BaseInlineParser {
     return true;
   }
 
-  render(node, renderInline) {
-    return `<em>${renderInline(node.children)}</em>`;
+  render(node, ctx) {
+    return `<em>${ctx.renderInline(node.children)}</em>`;
   }
 }
 

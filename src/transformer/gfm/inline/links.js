@@ -11,7 +11,7 @@ class LinkInlineParser extends BaseInlineParser {
     super({ type: "link", priority: 200 });
   }
 
-  parse(src, index, parseInline) {
+  parse(src, index, ctx) {
     if (src[index] !== "[") return null;
 
     // 寻找匹配的 ]，处理嵌套和转义
@@ -105,7 +105,7 @@ class LinkInlineParser extends BaseInlineParser {
                 const node = createNode("link", {
                     href: this.normalizeHref(href),
                     title: title,
-                    children: parseInline(label)
+                    children: ctx.parseInline(label)
                 });
                 return { node, nextIndex: j + 1 };
             }
@@ -120,10 +120,10 @@ class LinkInlineParser extends BaseInlineParser {
     return href.replace(/ /g, '%20');
   }
 
-  render(node, renderInline) {
+  render(node, ctx) {
     const { href, title } = node.props;
     const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
-    return `<a href="${escapeHtml(href)}"${titleAttr}>${renderInline(node.children)}</a>`;
+    return `<a href="${escapeHtml(href)}"${titleAttr}>${ctx.renderInline(node.children)}</a>`;
   }
 }
 

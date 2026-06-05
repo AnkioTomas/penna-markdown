@@ -27,7 +27,7 @@ class BlockquoteBlockParser extends BaseBlockParser {
     super({ type: "blockquote", priority: 80 });
   }
 
-  parse(lines, index, blockParser) {
+  parse(lines, index, ctx) {
     const line = lines[index] ?? "";
     if (!/^ {0,3}>/.test(line)) return null;
 
@@ -59,14 +59,14 @@ class BlockquoteBlockParser extends BaseBlockParser {
       break;
     }
 
-    const innerAst = blockParser.parse(normalizeInnerLines(innerLines));
+    const innerAst = ctx.parse(normalizeInnerLines(innerLines));
     const node = createNode("blockquote", { children: innerAst.children });
 
     return { node, nextIndex: i };
   }
 
-  render(node, renderInline, renderInBlock) {
-    const inner = renderInBlock(node.children);
+  render(node, ctx) {
+    const inner = ctx.renderBlock(node.children);
     if (!inner) return "<blockquote>\n</blockquote>";
     return `<blockquote>\n${inner}\n</blockquote>`;
   }

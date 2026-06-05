@@ -11,7 +11,7 @@ class StrongInlineParser extends BaseInlineParser {
     super({ type: "strong", priority: 40 });
   }
 
-  parse(src, index, parseInline) {
+  parse(src, index, ctx) {
     if (isEscaped(src, index)) return null;
 
     let delimiter = "";
@@ -53,7 +53,7 @@ class StrongInlineParser extends BaseInlineParser {
             const inner = src.slice(innerStart, i);
             if (inner.length === 0) return null;
             return {
-              node: createNode(this.type, { children: parseInline(inner) }),
+              node: createNode(this.type, { children: ctx.parseInline(inner) }),
               nextIndex: i + delimLen,
             };
           }
@@ -87,8 +87,8 @@ class StrongInlineParser extends BaseInlineParser {
     return true;
   }
 
-  render(node, renderInline) {
-    return `<strong>${renderInline(node.children)}</strong>`;
+  render(node, ctx) {
+    return `<strong>${ctx.renderInline(node.children)}</strong>`;
   }
 }
 

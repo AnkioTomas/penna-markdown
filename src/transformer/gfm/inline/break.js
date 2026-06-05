@@ -11,7 +11,7 @@ class BreakParser extends BaseInlineParser {
     super({ type: "break", priority: 110 });
   }
 
-  parse(src, index, parseInline) {
+  parse(src, index, ctx) {
     // 1. 处理反斜杠 + 换行符 (Hardbreak)
     if (src[index] === "\\" && src[index + 1] === "\n") {
       let nextIndex = index + 2;
@@ -63,7 +63,7 @@ class BreakParser extends BaseInlineParser {
     return null;
   }
 
-  render(node, renderInline) {
+  render(node, ctx) {
     if (node.props?.isHard) return "<br />\n";
     // Softbreak 渲染为换行符
     return "\n";

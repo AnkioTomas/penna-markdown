@@ -7,6 +7,40 @@
  */
 
 /**
+ * 块级解析上下文（BlockParseEngine 持有）
+ */
+export class BlockParseContext {
+  /**
+   * @param {import('./BlockParser.js').BlockParseEngine} engine
+   */
+  constructor(engine) {
+    this._engine = engine;
+    /** @type {import('./MarkdownNode.js').MarkdownNode[] | undefined} */
+    this.prevNodes = undefined;
+  }
+
+  get store() {
+    return this._engine.store;
+  }
+
+  get registry() {
+    return this._engine.registry;
+  }
+
+  parseInline(text) {
+    return this._engine.parseInline(text);
+  }
+
+  parse(lines) {
+    return this._engine.parse(lines);
+  }
+
+  checkInterrupt(lines, index) {
+    return this._engine.checkInterrupt(lines, index);
+  }
+}
+
+/**
  * 行内解析上下文（InlineParseEngine 持有）
  */
 export class InlineParseContext {

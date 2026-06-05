@@ -13,17 +13,17 @@ class StrikethroughInlineParser extends BaseInlineParser {
     super({ type: "strikethrough", priority: 50 });
   }
 
-  parse(src, index, parseInline) {
+  parse(src, index, ctx) {
     const m = matchDelimited(src, index, RE);
     if (!m) return null;
     return {
-      node: createNode(this.type, { children: parseInline(m.inner) }),
+      node: createNode(this.type, { children: ctx.parseInline(m.inner) }),
       nextIndex: index + m.length,
     };
   }
 
-  render(node, renderInline) {
-    return `<del>${renderInline(node.children)}</del>`;
+  render(node, ctx) {
+    return `<del>${ctx.renderInline(node.children)}</del>`;
   }
 }
 

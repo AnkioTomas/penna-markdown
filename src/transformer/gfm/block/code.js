@@ -11,7 +11,7 @@ class CodeBlockParser extends BaseBlockParser {
     super({ type: "code", priority: 100 });
   }
 
-  parse(lines, index, blockParser) {
+  parse(lines, index, ctx) {
     const line = lines[index] ?? "";
     // 匹配 0-3 个空格，紧接着 3 个及以上 ` 或 ~
     // 根据 CommonMark: backtick fence 的 info string 不能包含 backtick

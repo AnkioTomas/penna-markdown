@@ -14,7 +14,7 @@ class IndentedCodeBlockParser extends BaseBlockParser {
     super({ type: "indented-code", priority: 110, canInterruptParagraph: false });
   }
 
-  parse(lines, index, blockParser) {
+  parse(lines, index, ctx) {
     let line = lines[index];
     // 使用 getIndent 兼容 tab
     if (!isIndentedCodeLine(line) || line.trim() === "") return null;

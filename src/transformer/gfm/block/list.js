@@ -11,7 +11,7 @@ class ListBlockParser extends BaseBlockParser {
     super({ type: "list", priority: 50 });
   }
 
-  parse(lines, index, blockParser) {
+  parse(lines, index, ctx) {
     let currentLineIndex = index;
     const initialMarker = parseListMarkerLine(lines[currentLineIndex]);
     if (!initialMarker) return null;
@@ -48,9 +48,9 @@ class ListBlockParser extends BaseBlockParser {
 
         let interrupted = false;
         if (!isBlank && !nextMarker) {
-            for (const parser of blockParser.registry.getBlockParsers()) {
+            for (const parser of ctx.registry.getBlockParsers()) {
                 if (parser.priority > this.priority && parser.type !== "list") {
-                    if (parser.parse(lines, currentLineIndex, blockParser)) {
+                    if (parser.parse(lines, currentLineIndex, ctx)) {
                         interrupted = true;
                         break;
                     }
@@ -78,7 +78,7 @@ class ListBlockParser extends BaseBlockParser {
         }
       }
 
-      const itemAst = blockParser.parse(itemLines);
+      const itemAst = ctx.parse(itemLines);
       listItems.push(createNode("list_item", { children: itemAst.children }));
     }
 
@@ -93,7 +93,7 @@ class ListBlockParser extends BaseBlockParser {
     return { node, nextIndex: currentLineIndex };
   }
 
-  render(node, renderInline, renderBlock) {
+  render(node, ctx) {
     const tag = node.props.ordered ? "ol" : "ul";
     const startAttr = (node.props.ordered && node.props.start !== 1) ? ` start="${node.props.start}"` : "";
     
@@ -104,9 +104,9 @@ class ListBlockParser extends BaseBlockParser {
       .map((item) => {
         let innerHtml = "";
         if (!isLoose && item.children.length === 1 && item.children[0].type === "paragraph") {
-            innerHtml = renderInline(item.children[0].children);
+            innerHtml = ctx.renderInline(item.children[0].children);
         } else {
-            innerHtml = renderBlock(item.children);
+            innerHtml = ctx.renderBlock(item.children);
         }
         return `<li>${innerHtml}</li>`;
       })

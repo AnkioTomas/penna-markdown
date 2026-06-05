@@ -9,6 +9,7 @@
  */
 
 import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { BlockParseContext } from "@/transformer/core/ParserContext.js";
 
 /**
  * 块级 Markdown 解析引擎。
@@ -26,7 +27,7 @@ export class BlockParseEngine {
     this.registry = registry;
     this.store = store;
     this.__parseInline = parseInline;
-    /** @type {import('./MarkdownNode.js').MarkdownNode | null} */
+    this.ctx = new BlockParseContext(this);
   }
 
   /**
@@ -46,12 +47,19 @@ export class BlockParseEngine {
    * @returns {boolean}
    */
   checkInterrupt(lines, index) {
+    const prevPrevNodes = this.ctx.prevNodes;
+    this.ctx.prevNodes = undefined;
+
+    let interrupted = false;
     for (const parser of this.registry.getBlockParsers()) {
-      if (parser.canInterruptParagraph && parser.parse(lines, index, this)) {
-        return true;
+      if (parser.canInterruptParagraph && parser.parse(lines, index, this.ctx)) {
+        interrupted = true;
+        break;
       }
     }
-    return false;
+
+    this.ctx.prevNodes = prevPrevNodes;
+    return interrupted;
   }
 
   /**
@@ -75,7 +83,8 @@ export class BlockParseEngine {
       let result = null;
 
       for (const parser of this.registry.getBlockParsers()) {
-        result = parser.parse(lines, index, this, root.children);
+        this.ctx.prevNodes = root.children;
+        result = parser.parse(lines, index, this.ctx);
         if (result) break;
       }
 

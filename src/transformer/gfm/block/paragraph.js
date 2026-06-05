@@ -6,7 +6,7 @@ class ParagraphBlockParser extends BaseBlockParser {
     super({ type: "paragraph", priority: -1000, canInterruptParagraph: false });
   }
 
-  parse(lines, index, blockParser) {
+  parse(lines, index, ctx) {
     const line = lines[index] ?? "";
     if (line.trim() === "") return null;
 
@@ -17,7 +17,7 @@ class ParagraphBlockParser extends BaseBlockParser {
       if (ln.trim() === "") break;
 
       // 如果当前行可以被其他语法中断，则停止当前段落
-      if (i > index && blockParser.checkInterrupt(lines, i)) {
+      if (i > index && ctx.checkInterrupt(lines, i)) {
         break;
       }
 
@@ -30,14 +30,14 @@ class ParagraphBlockParser extends BaseBlockParser {
     const content = chunks.join("\n").replace(/[ \t]+$/, '');
 
     const node = createNode(this.type, {
-      children: blockParser.parseInline(content),
+      children: ctx.parseInline(content),
     });
 
     return { node, nextIndex: i };
   }
 
-  render(node, renderInline) {
-    return `<p>${renderInline(node.children)}</p>`;
+  render(node, ctx) {
+    return `<p>${ctx.renderInline(node.children)}</p>`;
   }
 }
 

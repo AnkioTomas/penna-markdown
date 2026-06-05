@@ -11,7 +11,7 @@ class TextInlineParser extends BaseInlineParser {
     super({ type: "text", priority: -1000 });
   }
 
-  parse(src, index,parseInline) {
+  parse(src, index, ctx) {
     if (index >= src.length) return null;
 
     return {

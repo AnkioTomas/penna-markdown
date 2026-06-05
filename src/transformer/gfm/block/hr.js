@@ -10,7 +10,7 @@ class ThematicBreakParser extends BaseBlockParser {
     super({ type: "hr", priority: 95 });
   }
 
-  parse(lines, index,blockParser) {
+  parse(lines, index, ctx) {
     const line = lines[index] ?? "";
     // 匹配 0-3 个空格，紧接着是 - * 或 _，重复至少 3 次，中间可以有空格或 tab
     const m = line.match(/^( {0,3})([-*_])([ \t]*\2){2,}[ \t]*$/);
@@ -20,7 +20,7 @@ class ThematicBreakParser extends BaseBlockParser {
     return { node, nextIndex: index + 1 };
   }
 
-  render(node,renderInline,renderBlock) {
+  render(node, ctx) {
     return "<hr />";
   }
 }
