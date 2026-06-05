@@ -1,4 +1,5 @@
 import { CherryTransformer } from "../../src/transformer/index.js";
+import example from "../test.md?raw";
 
 const transformer = new CherryTransformer();
 
@@ -6,18 +7,6 @@ const markdownInput = document.querySelector("#markdown");
 const htmlOutput = document.querySelector("#html-output");
 const preview = document.querySelector("#preview");
 const resetBtn = document.querySelector("#reset-btn");
-
-const example = `# Markdown 转 HTML
-
-这是一个简单的转换器演示：
-
-- 输入 Markdown
-- 实时生成 HTML
-
-\`\`\`js
-alert("hello");
-\`\`\`
-`;
 
 markdownInput.value = example;
 

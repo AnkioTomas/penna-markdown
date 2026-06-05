@@ -1,7 +1,7 @@
 import { CherryTransformer } from "../../src/transformer/index.js";
 import { AstTreeView } from "./tree-view.js";
 import { highlightJson } from "./json-highlight.js";
-import example from "./test.md?raw";
+import example from "../test.md?raw";
 
 const transformer = new CherryTransformer();
 
