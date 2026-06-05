@@ -23,196 +23,97 @@ describe("inline/link-reference", () => {
 `;
 
             const result = engine.render(markdown);
-            console.log("Rendered HTML:", result.html);
             expect(result.html).toContain('<a href="https://example.com">链接</a>');
         });
 
         test("应该解析带标题的 link reference definition", () => {
-            const markdown = `
-[bar]: https://example.com "Test Title"
-`;
+            const markdown = `[bar]: https://example.com "Test Title"
 
-            // 使用 resolveLinkReference 回调来验证定义被正确解析
-            const store = {
-                resolveLinkReference: (refId) => {
-                    const defs = engine.getLinkReferenceStore();
-                    const result = defs.resolve(refId);
-                    if (result) {
-                        console.log(`Resolved ${refId}:`, result);
-                    }
-                    return result;
-                }
-            };
+[text][bar]`;
 
-            engine = createTransformer({ resolveLinkReference: store.resolveLinkReference });
-
-            const result = engine.render("[text][bar]");
-            expect(result.html).toContain('<a href="https://example.com">text</a>');
+            const result = engine.render(markdown);
+            expect(result.html).toContain('href="https://example.com"');
+            expect(result.html).toContain('title="Test Title"');
+            expect(result.html).toContain('>text</a>');
         });
 
         test("应该处理多行 title", () => {
-            const markdown = `
-[baz]: https://example.com
+            const markdown = `[baz]: https://example.com
     Optional title on next line
-`;
 
-            const store = {
-                resolveLinkReference: (refId) => {
-                    const defs = engine.getLinkReferenceStore();
-                    const result = defs.resolve(refId);
-                    console.log(`Resolved ${refId}:`, result);
-                    return result;
-                }
-            };
+[text][baz]`;
 
-            engine = createTransformer({ resolveLinkReference: store.resolveLinkReference });
-
-            const result = engine.render("[text][baz]");
+            const result = engine.render(markdown);
             expect(result.html).toContain('title="Optional title on next line"');
         });
 
         test("应该处理多个 definitions", () => {
             const markdown = `[link1]: https://example.com
 [link2]: https://example.org "Title"
-`;
 
-            const store = {
-                resolveLinkReference: (refId) => {
-                    const defs = engine.getLinkReferenceStore();
-                    const result = defs.resolve(refId);
-                    console.log(`Resolved ${refId}:`, result);
-                    return result;
-                }
-            };
+[a][link1]
 
-            engine = createTransformer({ resolveLinkReference: store.resolveLinkReference });
+[b][link2]`;
 
-            const html1 = engine.render("[a][link1]");
-            const html2 = engine.render("[b][link2]");
-
-            expect(html1).toContain('<a href="https://example.com">a</a>');
-            expect(html2).toContain('<a href="https://example.org">b</a>');
-            expect(html2).toContain('title="Title"');
+            const result = engine.render(markdown);
+            expect(result.html).toContain('href="https://example.com"');
+            expect(result.html).toContain('>a</a>');
+            expect(result.html).toContain('href="https://example.org"');
+            expect(result.html).toContain('>b</a>');
+            expect(result.html).toContain('title="Title"');
         });
 
         test("应该在未找到定义时将引用作为文本渲染", () => {
-            const markdown = `[unknown]: https://example.com
-[missing]`;
-
-            const store = {
-                resolveLinkReference: (refId) => {
-                    const defs = engine.getLinkReferenceStore();
-                    const result = defs.resolve(refId);
-                    console.log(`Resolved ${refId}:`, result);
-                    return result;
-                }
-            };
-
-            engine = createTransformer({ resolveLinkReference: store.resolveLinkReference });
-
-            // 由于定义在引用之后，resolve 应该返回 null
             const result = engine.render("[text][missing]");
-            console.log("Result:", result.html);
-            // 应该显示为文本而不是链接
+            expect(result.html).toContain("[text][missing]");
         });
     });
 
     describe("Reference Matching", () => {
         test("应该进行精确匹配", () => {
-            const store = {
-                resolveLinkReference: (refId) => {
-                    const defs = engine.getLinkReferenceStore();
-                    const result = defs.resolve(refId);
-                    return result;
-                }
-            };
+            const markdown = `[exact]: https://exact.com
 
-            engine = createTransformer({ resolveLinkReference: store.resolveLinkReference });
+[text][exact]`;
 
-            // 注册定义
-            engine.linkReferenceStore.register("exact", "https://exact.com");
-
-            const result = engine.render("[text][exact]");
+            const result = engine.render(markdown);
             expect(result.html).toContain('href="https://exact.com"');
         });
 
         test("应该进行模糊匹配（label 规范化后匹配）", () => {
-            const store = {
-                resolveLinkReference: (refId) => {
-                    const defs = engine.getLinkReferenceStore();
-                    const result = defs.resolve(refId);
-                    return result;
-                }
-            };
+            const markdown = `[multi  space  label]: https://multi.com
 
-            engine = createTransformer({ resolveLinkReference: store.resolveLinkReference });
+[text][multi space label]`;
 
-            // 注册定义（带多个空格）
-            engine.linkReferenceStore.register("multi  space  label", "https://multi.com");
-
-            // 使用规范化后的 ref-id
-            const result = engine.render("[text][multi space label]");
+            const result = engine.render(markdown);
             expect(result.html).toContain('href="https://multi.com"');
         });
 
         test("应该处理 label 和 ref-id 的自动归一化", () => {
-            const store = {
-                resolveLinkReference: (refId) => {
-                    const defs = engine.getLinkReferenceStore();
-                    const result = defs.resolve(refId);
-                    console.log(`Resolve: ${refId} ->`, result);
-                    return result;
-                }
-            };
+            const markdown = `[multi   spaces]: https://multi.com
 
-            engine = createTransformer({ resolveLinkReference: store.resolveLinkReference });
+[text][multi spaces]`;
 
-            // 定义中使用多个空格
-            const markdown = `[multi   spaces]: https://multi.com`;
-            engine.linkReferenceStore.register("multi   spaces", "https://multi.com");
-
-            // 引用时使用单个空格
-            const result = engine.render("[text][multi spaces]");
+            const result = engine.render(markdown);
             expect(result.html).toContain('href="https://multi.com"');
         });
     });
 
     describe("Complex Scenarios", () => {
         test("应该处理带转义字符的 definition", () => {
-            const markdown = `
-[foo\\bar]: https://example.com
-`;
+            const markdown = `[foo\\bar]: https://example.com
 
-            const store = {
-                resolveLinkReference: (refId) => {
-                    const defs = engine.getLinkReferenceStore();
-                    const result = defs.resolve(refId);
-                    console.log(`Resolved ${refId}:`, result);
-                    return result;
-                }
-            };
+[text][foo\\bar]`;
 
-            engine = createTransformer({ resolveLinkReference: store.resolveLinkReference });
-
-            const result = engine.render("[text][foo\\bar]");
+            const result = engine.render(markdown);
             expect(result.html).toContain('href="https://example.com"');
         });
 
         test("应该处理带空格的 label", () => {
-            const markdown = `[with space]: https://example.com`;
+            const markdown = `[with space]: https://example.com
 
-            const store = {
-                resolveLinkReference: (refId) => {
-                    const defs = engine.getLinkReferenceStore();
-                    const result = defs.resolve(refId);
-                    console.log(`Resolved ${refId}:`, result);
-                    return result;
-                }
-            };
+[text][with space]`;
 
-            engine = createTransformer({ resolveLinkReference: store.resolveLinkReference });
-
-            const result = engine.render("[text][with space]");
+            const result = engine.render(markdown);
             expect(result.html).toContain('href="https://example.com"');
         });
     });
