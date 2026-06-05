@@ -3,34 +3,141 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>自定义语法扩展 · Cherry Markdown Next</title>
+    <title>扩展语法 · Cherry Markdown Next</title>
     <link rel="stylesheet" href="../styles.css" />
+    <style>
+      .ext-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .ext-empty {
+        font-size: 12px;
+        color: #6b7280;
+        margin: 0;
+      }
+
+      .extends-main {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .extends-main textarea {
+        width: 100%;
+        min-height: 180px;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        resize: vertical;
+      }
+
+      .extends-panels {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .extends-panel {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .extends-panel h2 {
+        margin: 0;
+        padding: 10px 14px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #6b7280;
+        background: #fafafa;
+        border-bottom: 1px solid #f3f4f6;
+      }
+
+      .extends-panel .body {
+        padding: 12px 14px;
+      }
+
+      .extends-panel pre {
+        margin: 0;
+        padding: 10px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 12px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-word;
+        max-height: 240px;
+        overflow: auto;
+      }
+
+      .extends-panel .preview {
+        min-height: 80px;
+        line-height: 1.6;
+      }
+
+      .extends-panel .preview .highlight {
+        background: #fef3c7;
+        padding: 0 2px;
+        border-radius: 2px;
+      }
+
+      .extends-panel.ast pre {
+        max-height: 320px;
+        font-size: 11px;
+      }
+
+      @media (max-width: 900px) {
+        .extends-panels {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="layout">
       <aside class="sidebar">
-        <h1>扩展</h1>
+        <h1>扩展语法</h1>
         <p class="sub">
           <a href="../index.html">返回入口</a>
         </p>
         <p class="sub">
-          这是一个用于测试自定义语法扩展的页面。
+          勾选扩展后，通过 <code>createTransformerWithExtensions</code> 注入解析引擎。
         </p>
         <div class="toolbar">
           <button id="rerun-btn" type="button">重新渲染</button>
         </div>
         <div id="extensions-container">
-          <h2>可用扩展</h2>
+          <h2 style="font-size: 12px; margin: 0 0 8px; color: #9ca3af">可用扩展</h2>
           <div id="extensions-list"></div>
         </div>
+        <p id="status" class="gfm-status"></p>
       </aside>
-      <main class="main">
-        <div class="editor-container">
-          <textarea id="markdown-input" rows="10" placeholder="输入 Markdown..."></textarea>
-        </div>
-        <div class="preview-container">
-          <h2>预览</h2>
-          <div id="preview" class="cherry-markdown"></div>
+      <main class="main extends-main">
+        <textarea id="markdown-input" placeholder="输入 Markdown..."></textarea>
+        <div class="extends-panels">
+          <section class="extends-panel">
+            <h2>预览</h2>
+            <div class="body preview" id="preview"></div>
+          </section>
+          <section class="extends-panel">
+            <h2>HTML</h2>
+            <div class="body"><pre id="html-output"></pre></div>
+          </section>
+          <section class="extends-panel ast" style="grid-column: 1 / -1">
+            <h2>AST</h2>
+            <div class="body"><pre id="ast-output"></pre></div>
+          </section>
         </div>
       </main>
     </div>
