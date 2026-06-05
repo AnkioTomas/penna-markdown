@@ -13,17 +13,19 @@ const statusEl = document.getElementById("status");
 
 const DEFAULT_MARKDOWN = `# 扩展语法示例
 
+==高亮文本==
+
 **加粗**{class="highlight" data-id="1"}
 
 *斜体*{id="em-1"}
 
 [链接](https://example.com){target="_blank" rel="noopener"}
 
-未启用扩展时，花括号会按普通文本渲染。
+未启用扩展时，==高亮== 与花括号会按普通文本渲染。
 `;
 
 const availableExtensions = getAvailableExtensions();
-const selectedExtensions = new Set(["html_attrs"]);
+const selectedExtensions = new Set(["highlight", "html_attrs"]);
 
 function getSelectedNames() {
   return [...selectedExtensions];

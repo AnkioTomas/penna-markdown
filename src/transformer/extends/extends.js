@@ -1,9 +1,14 @@
 import { createTransformer } from "@/transformer/index.js";
 import htmlAttrsInline from "@/transformer/extends/inline/html_attrs.js";
+import highlightInline from "@/transformer/extends/inline/highlight.js";
 import { foldHtmlAttrsInTree } from "@/transformer/extends/postprocess/foldHtmlAttrs.js";
 import { injectAttrsIntoFirstOpenTag } from "@/transformer/extends/utils/injectAttrs.js";
 
 const EXTENSION_DEFS = {
+  highlight: {
+    inlineParsers: [highlightInline],
+    blockParsers: [],
+  },
   html_attrs: {
     inlineParsers: [htmlAttrsInline],
     blockParsers: [],
