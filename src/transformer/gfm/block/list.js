@@ -4,7 +4,8 @@
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
-import { parseListMarkerLine, listsMatch, getIndent, findIndexAtColumn, expandLinePrefixTabs } from "@/transformer/utils/tabs.js";
+import { parseListMarkerLine, listsMatch, getIndent, expandLinePrefixTabs } from "@/transformer/utils/tabs.js";
+import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
 
 class ListBlockParser extends BaseBlockParser {
   constructor() {
@@ -27,6 +28,8 @@ class ListBlockParser extends BaseBlockParser {
       const marker = parseListMarkerLine(line);
       
       if (!marker || !listsMatch(initialMarker, marker)) break;
+      // GFM：thematic break 与 list marker 冲突时，优先视为分割线并结束当前列表
+      if (isThematicBreakLine(line)) break;
 
       const itemLines = [];
       const contentStartCol = marker.contentStartCol;
@@ -102,11 +105,22 @@ class ListBlockParser extends BaseBlockParser {
 
     const itemsHtml = node.children
       .map((item) => {
-        let innerHtml = "";
-        if (!isLoose && item.children.length === 1 && item.children[0].type === "paragraph") {
-            innerHtml = ctx.renderInline(item.children[0].children);
-        } else {
-            innerHtml = ctx.renderBlock(item.children);
+        const isTightParagraphItem =
+          !isLoose &&
+          item.children.length === 1 &&
+          item.children[0].type === "paragraph";
+
+        if (isTightParagraphItem) {
+          const innerHtml = ctx.renderInline(item.children[0].children);
+          return `<li>${innerHtml}</li>`;
+        }
+
+        const innerHtml = ctx.renderBlock(item.children);
+        const needsBlockWrapper =
+          item.children.length === 1 && item.children[0].type !== "paragraph";
+
+        if (needsBlockWrapper) {
+          return `<li>\n${innerHtml}\n</li>`;
         }
         return `<li>${innerHtml}</li>`;
       })

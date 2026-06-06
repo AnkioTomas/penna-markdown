@@ -5,6 +5,11 @@
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 
+/** GFM thematic break：0–3 列缩进，同一字符 (-、*、_) 重复 ≥3 次，中间可有空格或 tab */
+export function isThematicBreakLine(line) {
+  return /^( {0,3})([-*_])([ \t]*\2){2,}[ \t]*$/.test(line ?? "");
+}
+
 class ThematicBreakParser extends BaseBlockParser {
   constructor() {
     super({ type: "hr", priority: 95 });
@@ -12,9 +17,7 @@ class ThematicBreakParser extends BaseBlockParser {
 
   parse(lines, index, ctx) {
     const line = lines[index] ?? "";
-    // 匹配 0-3 个空格，紧接着是 - * 或 _，重复至少 3 次，中间可以有空格或 tab
-    const m = line.match(/^( {0,3})([-*_])([ \t]*\2){2,}[ \t]*$/);
-    if (!m) return null;
+    if (!isThematicBreakLine(line)) return null;
 
     const node = createNode(this.type);
     return { node, nextIndex: index + 1 };

@@ -81,6 +81,20 @@ describe("block/code", () => {
     expect(html).toBe("<hr />\n");
   });
 
+  it("Example 30: Thematic break takes precedence over list item", () => {
+    const input = "* Foo\n* * *\n* Bar\n";
+    const { html } = createEngine().render(input);
+    expect(html).toBe(
+      "<ul>\n<li>Foo</li>\n</ul>\n<hr />\n<ul>\n<li>Bar</li>\n</ul>\n",
+    );
+  });
+
+  it("Example 31: Thematic break inside list item with different bullet", () => {
+    const input = "- Foo\n- * * *\n";
+    const { html } = createEngine().render(input);
+    expect(html).toBe("<ul>\n<li>Foo</li>\n<li>\n<hr />\n</li>\n</ul>\n");
+  });
+
   it("Example 2: Spaces and tab at start of line for indented code", () => {
     const input = "  \tfoo\tbaz\t\tbim";
     const { html } = createEngine().render(input);
