@@ -120,4 +120,10 @@ describe("block/code", () => {
       "<blockquote>\n<blockquote>\n<p>foo</p>\n</blockquote>\n</blockquote>\n",
     );
   });
+
+  it("Example 320: backslash escape in fenced code info string", () => {
+    const input = "``` foo\\+bar\nfoo\n```\n";
+    const { html } = createEngine().render(input);
+    expect(html).toBe('<pre><code class="language-foo+bar">foo\n</code></pre>\n');
+  });
 });

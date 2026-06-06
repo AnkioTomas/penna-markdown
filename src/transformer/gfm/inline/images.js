@@ -111,7 +111,7 @@ class ImageInlineParser extends BaseInlineParser {
     return {
       node: createNode("image", {
         href: this.normalizeHref(href),
-        title,
+        title: unescapeHref(title),
         children: ctx.parseInline(label),
       }),
       nextIndex: j + 1,

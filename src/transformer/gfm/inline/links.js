@@ -116,7 +116,7 @@ class LinkInlineParser extends BaseInlineParser {
     return {
       node: createNode("link", {
         href: this.normalizeHref(href),
-        title,
+        title: unescapeHref(title),
         children,
       }),
       nextIndex: j + 1,
