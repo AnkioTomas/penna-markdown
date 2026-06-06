@@ -4,7 +4,7 @@
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
-import { isEscaped } from "@/transformer/gfm/inline/shared.js";
+import { isEscaped, trySkipInlineLink } from "@/transformer/gfm/inline/shared.js";
 
 class EmphasisInlineParser extends BaseInlineParser {
   constructor() {
@@ -37,6 +37,14 @@ class EmphasisInlineParser extends BaseInlineParser {
       if (isEscaped(src, i)) {
         i++;
         continue;
+      }
+
+      if (src[i] === "[") {
+        const linkEnd = trySkipInlineLink(src, i);
+        if (linkEnd > i) {
+          i = linkEnd;
+          continue;
+        }
       }
 
       if (src[i] === delimiter) {

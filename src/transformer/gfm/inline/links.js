@@ -7,6 +7,8 @@ import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { lookupLinkReference } from "@/transformer/gfm/block/link-reference-definition.js";
 import {
+  containsNestedLinkOrImage,
+  findLinkTextEnd,
   parseAngleDestination,
   parsePlainDestination,
   unescapeHref,
@@ -20,32 +22,35 @@ class LinkInlineParser extends BaseInlineParser {
   parse(src, index, ctx) {
     if (src[index] !== "[") return null;
 
-    const labelEnd = this.findBracketEnd(src, index + 1);
+    const labelEnd = findLinkTextEnd(src, index + 1);
     if (labelEnd === -1) return null;
 
     const label = src.slice(index + 1, labelEnd);
     let nextIndex = labelEnd + 1;
 
+    const children = ctx.parseInline(label);
+
     // 1. Inline Link: [text](uri "title")
     if (src[nextIndex] === "(") {
-      const inline = this.parseInlineLink(src, nextIndex, label, ctx);
+      const inline = this.parseInlineLink(src, nextIndex, label, ctx, children);
       if (inline) return { node: inline.node, nextIndex: inline.nextIndex };
     }
 
     // 2. Full / Collapsed reference: [text][ref] / [text][]
     if (src[nextIndex] === "[") {
-      const refEnd = this.findBracketEnd(src, nextIndex + 1);
+      const refEnd = findLinkTextEnd(src, nextIndex + 1);
       if (refEnd !== -1) {
         const refLabel = src.slice(nextIndex + 1, refEnd);
         const refId = refLabel.length > 0 ? refLabel : label;
         const end = refEnd + 1;
+        if (containsNestedLinkOrImage(children)) return null;
         return {
           node: createNode("link", {
             reference: true,
             ref: refId,
             referenceKind: refLabel.length > 0 ? "full" : "collapsed",
             fallback: src.slice(index, end),
-            children: ctx.parseInline(label),
+            children,
           }),
           nextIndex: end,
         };
@@ -55,13 +60,14 @@ class LinkInlineParser extends BaseInlineParser {
     // 3. Shortcut reference: [text]
     if (src[nextIndex] !== "(" && src[nextIndex] !== "[") {
       const end = labelEnd + 1;
+      if (containsNestedLinkOrImage(children)) return null;
       return {
         node: createNode("link", {
           reference: true,
           ref: label,
           referenceKind: "shortcut",
           fallback: src.slice(index, end),
-          children: ctx.parseInline(label),
+          children,
         }),
         nextIndex: end,
       };
@@ -70,7 +76,9 @@ class LinkInlineParser extends BaseInlineParser {
     return null;
   }
 
-  parseInlineLink(src, start, label, ctx) {
+  parseInlineLink(src, start, label, ctx, children) {
+    if (containsNestedLinkOrImage(children)) return null;
+
     let j = start + 1;
     while (j < src.length && /[ \t\r\n\v\f]/.test(src[j])) j++;
 
@@ -109,28 +117,10 @@ class LinkInlineParser extends BaseInlineParser {
       node: createNode("link", {
         href: this.normalizeHref(href),
         title,
-        children: ctx.parseInline(label),
+        children,
       }),
       nextIndex: j + 1,
     };
-  }
-
-  findBracketEnd(src, start) {
-    let level = 1;
-    let i = start;
-    while (i < src.length) {
-      if (src[i] === "\\") {
-        i += 2;
-        continue;
-      }
-      if (src[i] === "[") level++;
-      else if (src[i] === "]") {
-        level--;
-        if (level === 0) return i;
-      }
-      i++;
-    }
-    return -1;
   }
 
   normalizeHref(href) {

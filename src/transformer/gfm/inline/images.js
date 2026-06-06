@@ -7,6 +7,7 @@ import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { lookupLinkReference } from "@/transformer/gfm/block/link-reference-definition.js";
 import {
+  findLinkTextEnd,
   parseAngleDestination,
   parsePlainDestination,
   unescapeHref,
@@ -22,7 +23,7 @@ class ImageInlineParser extends BaseInlineParser {
     if (src[index] !== "!" || src[index + 1] !== "[") return null;
 
     const startIndex = index + 1;
-    const labelEnd = this.findBracketEnd(src, startIndex + 1);
+    const labelEnd = findLinkTextEnd(src, startIndex + 1);
     if (labelEnd === -1) return null;
 
     const label = src.slice(startIndex + 1, labelEnd);
@@ -36,7 +37,7 @@ class ImageInlineParser extends BaseInlineParser {
 
     // 2. Full / collapsed reference: ![alt][ref] / ![alt][]
     if (src[nextIndex] === "[") {
-      const refEnd = this.findBracketEnd(src, nextIndex + 1);
+      const refEnd = findLinkTextEnd(src, nextIndex + 1);
       if (refEnd !== -1) {
         const refLabel = src.slice(nextIndex + 1, refEnd);
         const refId = refLabel.length > 0 ? refLabel : label;
@@ -115,24 +116,6 @@ class ImageInlineParser extends BaseInlineParser {
       }),
       nextIndex: j + 1,
     };
-  }
-
-  findBracketEnd(src, start) {
-    let level = 1;
-    let i = start;
-    while (i < src.length) {
-      if (src[i] === "\\") {
-        i += 2;
-        continue;
-      }
-      if (src[i] === "[") level++;
-      else if (src[i] === "]") {
-        level--;
-        if (level === 0) return i;
-      }
-      i++;
-    }
-    return -1;
   }
 
   normalizeHref(href) {
