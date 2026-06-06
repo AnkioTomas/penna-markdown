@@ -45,4 +45,28 @@ describe("inline/links", () => {
     const { html } = transformer.render(markdown);
     expect(html.trim()).toBe('<p><a href="/url" title="title">foo</a></p>');
   });
+
+  it("Example 502: escaped closing bracket invalidates angle destination", () => {
+    const markdown = "[link](<foo\\>)\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe("<p>[link](&lt;foo&gt;)</p>\n");
+  });
+
+  it("Example 504: escaped parentheses in destination", () => {
+    const markdown = "[link](\\(foo\\))\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe('<p><a href="(foo)">link</a></p>\n');
+  });
+
+  it("Example 506: unbalanced parentheses with escapes", () => {
+    const markdown = "[link](foo\\(and\\(bar\\))\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe('<p><a href="foo(and(bar)">link</a></p>\n');
+  });
+
+  it("Example 508: escaped closing paren and colon", () => {
+    const markdown = "[link](foo\\)\\:)\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe('<p><a href="foo):">link</a></p>\n');
+  });
 });

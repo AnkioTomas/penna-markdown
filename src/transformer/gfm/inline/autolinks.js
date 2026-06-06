@@ -217,6 +217,13 @@ class AutolinksInlineParser extends BaseInlineParser {
 
     const link = parseBracketEmailAutolink(inner) ?? parseUriAutolink(inner);
     if (!link) {
+      // `\>` 闭合时不是 autolink（Example 502），交给普通转义处理
+      if (close > index + 1 && src[close - 1] === "\\") {
+        return {
+          node: createNode("text", { value: "<", bracketLiteral: true }),
+          nextIndex: index + 1,
+        };
+      }
       return {
         node: createNode("text", {
           value: `<${literalBracketInner(inner)}>`,

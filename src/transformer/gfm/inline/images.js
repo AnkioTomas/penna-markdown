@@ -6,6 +6,11 @@ import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { lookupLinkReference } from "@/transformer/gfm/block/link-reference-definition.js";
+import {
+  parseAngleDestination,
+  parsePlainDestination,
+  unescapeHref,
+} from "@/transformer/gfm/inline/shared.js";
 
 class ImageInlineParser extends BaseInlineParser {
   constructor() {
@@ -72,45 +77,16 @@ class ImageInlineParser extends BaseInlineParser {
     while (j < src.length && /[ \t\r\n\v\f]/.test(src[j])) j++;
 
     let href = "";
-    let destEnd = -1;
     if (src[j] === "<") {
-      let k = j + 1;
-      while (k < src.length) {
-        if (src[k] === "\\") k += 2;
-        else if (src[k] === ">") {
-          destEnd = k;
-          break;
-        } else if (src[k] === "\n") break;
-        else k++;
-      }
-      if (destEnd !== -1) {
-        href = src.slice(j + 1, destEnd);
-        j = destEnd + 1;
-      }
+      const dest = parseAngleDestination(src, j);
+      if (!dest) return null;
+      href = dest.href;
+      j = dest.next;
     } else {
-      let k = j;
-      let pLevel = 0;
-      while (k < src.length) {
-        const char = src[k];
-        if (char === "\\") {
-          k += 2;
-          continue;
-        }
-        if (char === "(") pLevel++;
-        else if (char === ")") {
-          if (pLevel === 0) break;
-          pLevel--;
-        } else if (/[ \t\r\n\v\f]/.test(char)) {
-          break;
-        }
-        k++;
-      }
-      href = src.slice(j, k);
-      j = k;
-      destEnd = k;
+      const dest = parsePlainDestination(src, j);
+      href = dest.href;
+      j = dest.next;
     }
-
-    if (destEnd === -1) return null;
 
     while (j < src.length && /[ \t\r\n\v\f]/.test(src[j])) j++;
 
@@ -160,8 +136,7 @@ class ImageInlineParser extends BaseInlineParser {
   }
 
   normalizeHref(href) {
-    href = href.replace(/\\(.)/g, "$1");
-    return href.replace(/ /g, "%20");
+    return unescapeHref(href).replace(/ /g, "%20");
   }
 
   render(node, ctx) {
