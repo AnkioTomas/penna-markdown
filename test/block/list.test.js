@@ -100,6 +100,58 @@ describe("block/list", () => {
     expect(html).toBe("<ol>\n<li>A paragraph\nwith two lines.</li>\n</ol>\n");
   });
 
+  it("Example 290: Insufficient indent keeps items at same list level", () => {
+    const input = "- a\n - b\n  - c\n   - d\n  - e\n - f\n- g\n";
+    const { html } = createEngine().render(input);
+    expect(html).toBe(
+      "<ul>\n<li>a</li>\n<li>b</li>\n<li>c</li>\n<li>d</li>\n<li>e</li>\n<li>f</li>\n<li>g</li>\n</ul>\n",
+    );
+  });
+
+  it("Example 291: Indented ordered items with blank lines form one loose list", () => {
+    const input = "1. a\n\n  2. b\n\n   3. c\n";
+    const { html } = createEngine().render(input);
+    expect(html).toBe(
+      "<ol>\n<li>\n<p>a</p>\n</li>\n<li>\n<p>b</p>\n</li>\n<li>\n<p>c</p>\n</li>\n</ol>\n",
+    );
+  });
+
+  it("Example 292: Marker indented more than three spaces is paragraph continuation", () => {
+    const input = "- a\n - b\n  - c\n   - d\n    - e\n";
+    const { html } = createEngine().render(input);
+    expect(html).toBe("<ul>\n<li>a</li>\n<li>b</li>\n<li>c</li>\n<li>d\n- e</li>\n</ul>\n");
+  });
+
+  it("Example 293: Four-space ordered line after blank is indented code", () => {
+    const input = "1. a\n\n  2. b\n\n    3. c\n";
+    const { html } = createEngine().render(input);
+    expect(html).toBe(
+      "<ol>\n<li>\n<p>a</p>\n</li>\n<li>\n<p>b</p>\n</li>\n</ol>\n<pre><code>3. c\n</code></pre>\n",
+    );
+  });
+
+  it("Example 256: List items starting with blank line and indented code", () => {
+    const md = "-\n  foo\n-\n  ```\n  bar\n  ```\n-\n      baz\n";
+    const { html } = createEngine().render(md);
+    expect(html).toBe(
+      "<ul>\n<li>foo</li>\n<li>\n<pre><code>bar\n</code></pre>\n</li>\n<li>\n<pre><code>baz\n</code></pre>\n</li>\n</ul>\n",
+    );
+  });
+
+  it("Example 275: Three spaces is not enough to nest under wide ordered marker", () => {
+    const { html } = createEngine().render("10) foo\n   - bar\n");
+    expect(html).toBe(
+      "<ol start=\"10\">\n<li>foo</li>\n</ol>\n<ul>\n<li>bar</li>\n</ul>\n",
+    );
+  });
+
+  it("Example 278: List item with heading and setext continuation", () => {
+    const { html } = createEngine().render("- # Foo\n- Bar\n  ---\n  baz\n");
+    expect(html).toBe(
+      "<ul>\n<li>\n<h1>Foo</h1>\n</li>\n<li>\n<h2>Bar</h2>\nbaz</li>\n</ul>\n",
+    );
+  });
+
   it("Example 263: Empty list item cannot interrupt paragraph", () => {
     const { html } = createEngine().render("foo\n*\n\nfoo\n1.\n");
     expect(html).toBe("<p>foo\n*</p>\n<p>foo\n1.</p>\n");

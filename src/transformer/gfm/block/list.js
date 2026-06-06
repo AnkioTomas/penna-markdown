@@ -4,8 +4,23 @@
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
-import { parseListMarkerLine, listsMatch, getIndent, expandLinePrefixTabs } from "@/transformer/utils/tabs.js";
+import { parseListMarkerLine, listsMatch, getIndent, expandLinePrefixTabs, isIndentedCodeLine } from "@/transformer/utils/tabs.js";
 import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
+
+const CODE_INDENT = 4;
+
+/**
+ * 判断后续 list marker 相对当前 item 是同级、嵌套，还是非 list（如 Example 292 的 `- e`）
+ * @returns {'sibling'|'nested'|null}
+ */
+function classifyListMarkerLine(line, itemMarkerColumn, contentStartCol, initialMarker) {
+  const m = parseListMarkerLine(line, { allowIndented: true });
+  if (!m || !listsMatch(initialMarker, m)) return null;
+  if (m.markerColumn <= itemMarkerColumn) return "sibling";
+  if (m.markerColumn >= contentStartCol) return "nested";
+  if (m.markerColumn >= CODE_INDENT) return null;
+  return "sibling";
+}
 
 /** item 内空行是否构成 loose（排除 tight 的 paragraph + sublist） */
 function isLooseListItemContent(children, itemLines) {
@@ -59,6 +74,7 @@ class ListBlockParser extends BaseBlockParser {
     const bulletChar = initialMarker.bulletChar;
     const delimiter = initialMarker.delimiter;
     const start = initialMarker.start;
+    let lastContentStartCol = initialMarker.contentStartCol;
 
     while (currentLineIndex < lines.length) {
       if (listItems.length > 0) {
@@ -70,7 +86,7 @@ class ListBlockParser extends BaseBlockParser {
         const isSiblingItem =
           nextItemMarker &&
           listsMatch(initialMarker, nextItemMarker) &&
-          nextItemMarker.markerColumn <= initialMarker.markerColumn;
+          nextItemMarker.markerColumn < lastContentStartCol;
 
         if (!isSiblingItem) break;
 
@@ -89,6 +105,7 @@ class ListBlockParser extends BaseBlockParser {
       const itemMarkerColumn = marker.markerColumn;
       const itemLines = [];
       const contentStartCol = marker.contentStartCol;
+      lastContentStartCol = contentStartCol;
 
       const expandedFirst = expandLinePrefixTabs(line);
       const markerContent = expandedFirst.slice(contentStartCol);
@@ -106,14 +123,32 @@ class ListBlockParser extends BaseBlockParser {
           break;
         }
 
-        const nextMarker = parseListMarkerLine(nextLine, { allowIndented: true });
-        if (nextMarker && nextMarker.markerColumn <= itemMarkerColumn) {
+        const anyMarker = parseListMarkerLine(nextLine, { allowIndented: true });
+        if (anyMarker && anyMarker.markerColumn <= itemMarkerColumn) {
+          break;
+        }
+        if (
+          anyMarker &&
+          !listsMatch(initialMarker, anyMarker) &&
+          anyMarker.markerColumn < contentStartCol
+        ) {
           break;
         }
 
+        const markerRole = classifyListMarkerLine(
+          nextLine,
+          itemMarkerColumn,
+          contentStartCol,
+          initialMarker,
+        );
+        if (markerRole === "sibling") break;
+
         if (indent >= contentStartCol) {
           const expanded = expandLinePrefixTabs(nextLine);
-          itemLines.push(expanded.slice(contentStartCol));
+          const sliceCol = isIndentedCodeLine(nextLine)
+            ? Math.max(contentStartCol, indent - CODE_INDENT)
+            : contentStartCol;
+          itemLines.push(expanded.slice(sliceCol));
           currentLineIndex++;
         } else if (isBlank) {
           let nextNonBlank = currentLineIndex + 1;
@@ -127,7 +162,13 @@ class ListBlockParser extends BaseBlockParser {
             break;
           }
         } else {
-          itemLines.push(nextLine.trimStart());
+          const content = nextLine.replace(/^ {0,3}/, "");
+          const lastIdx = itemLines.length - 1;
+          if (lastIdx >= 0 && itemLines[lastIdx].trim() !== "") {
+            itemLines[lastIdx] += "\n" + content;
+          } else {
+            itemLines.push(content);
+          }
           currentLineIndex++;
         }
       }
@@ -179,7 +220,10 @@ class ListBlockParser extends BaseBlockParser {
       return ctx.renderBlock([child]).replace(/\n$/, "");
     });
 
-    return `<li>${parts.join("\n")}\n</li>`;
+    const lead = item.children[0].type !== "paragraph" ? "\n" : "";
+    const tail =
+      item.children[item.children.length - 1].type === "paragraph" ? "" : "\n";
+    return `<li>${lead}${parts.join("\n")}${tail}</li>`;
   }
 
   render(node, ctx) {
