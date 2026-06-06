@@ -10,6 +10,7 @@ function canLazyContinue(line) {
   if (line.trim() === "") return false;
   if (/^ {0,3}>/.test(line)) return false;
   if (/^ {4}/.test(line)) return false;
+  if (/^ {0,3}(`{3,}|~{3,})/.test(line)) return false;
   return true;
 }
 

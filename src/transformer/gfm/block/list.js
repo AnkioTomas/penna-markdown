@@ -51,10 +51,14 @@ function isEmptyMarkerLine(marker) {
   return marker.content.trim() === "";
 }
 
-/** 空 list item 不能打断段落：前一行非空即视为段落延续（Example 263） */
+/** 空 list item 或 start≠1 的有序列表不能打断段落（Example 263、284） */
 function wouldInterruptParagraph(lines, index, marker) {
-  if (!isEmptyMarkerLine(marker)) return false;
-  return index > 0 && lines[index - 1]?.trim() !== "";
+  if (index === 0 || lines[index - 1]?.trim() === "") return false;
+  if (parseListMarkerLine(lines[index - 1])) return false;
+
+  if (isEmptyMarkerLine(marker)) return true;
+  if (marker.ordered && marker.start !== 1) return true;
+  return false;
 }
 
 class ListBlockParser extends BaseBlockParser {
@@ -79,19 +83,44 @@ class ListBlockParser extends BaseBlockParser {
     while (currentLineIndex < lines.length) {
       if (listItems.length > 0) {
         let peek = currentLineIndex;
-        while (peek < lines.length && lines[peek].trim() === "") peek++;
-        if (peek >= lines.length) break;
+        let hadBlankBetween = false;
+        let foundSibling = false;
 
-        const nextItemMarker = parseListMarkerLine(lines[peek]);
-        const isSiblingItem =
-          nextItemMarker &&
-          listsMatch(initialMarker, nextItemMarker) &&
-          nextItemMarker.markerColumn < lastContentStartCol;
+        while (peek < lines.length) {
+          while (peek < lines.length && lines[peek].trim() === "") {
+            hadBlankBetween = true;
+            peek++;
+          }
+          if (peek >= lines.length) break;
 
-        if (!isSiblingItem) break;
+          const nextItemMarker = parseListMarkerLine(lines[peek]);
+          if (
+            nextItemMarker &&
+            listsMatch(initialMarker, nextItemMarker) &&
+            nextItemMarker.markerColumn < lastContentStartCol
+          ) {
+            foundSibling = true;
+            if (hadBlankBetween) loose = true;
+            currentLineIndex = peek;
+            break;
+          }
 
-        if (peek > currentLineIndex) loose = true;
-        currentLineIndex = peek;
+          let skipped = false;
+          for (const parser of ctx.registry.getBlockParsers()) {
+            if (parser.type !== "linkReferenceDef") continue;
+            const result = parser.parse(lines, peek, ctx);
+            if (result) {
+              peek = result.nextIndex;
+              skipped = true;
+              break;
+            }
+          }
+          if (skipped) continue;
+
+          break;
+        }
+
+        if (!foundSibling) break;
       }
 
       if (currentLineIndex >= lines.length) break;
@@ -155,11 +184,29 @@ class ListBlockParser extends BaseBlockParser {
           while (nextNonBlank < lines.length && lines[nextNonBlank].trim() === "") {
             nextNonBlank++;
           }
-          if (nextNonBlank >= lines.length || getIndent(lines[nextNonBlank]) >= contentStartCol) {
+          if (nextNonBlank >= lines.length) {
             itemLines.push("");
             currentLineIndex++;
           } else {
-            break;
+            const nbLine = lines[nextNonBlank];
+            let isBetweenItemsDef = false;
+            for (const parser of ctx.registry.getBlockParsers()) {
+              if (parser.type !== "linkReferenceDef") continue;
+              if (parser.parse(lines, nextNonBlank, ctx)) {
+                isBetweenItemsDef = true;
+                break;
+              }
+            }
+            if (isBetweenItemsDef) {
+              loose = true;
+              break;
+            }
+            if (getIndent(nbLine) >= contentStartCol) {
+              itemLines.push("");
+              currentLineIndex++;
+            } else {
+              break;
+            }
           }
         } else {
           const content = nextLine.replace(/^ {0,3}/, "");

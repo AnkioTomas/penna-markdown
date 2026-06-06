@@ -130,6 +130,30 @@ describe("block/list", () => {
     );
   });
 
+  it("Example 284: Ordered list with start != 1 cannot interrupt paragraph", () => {
+    const md = "The number of windows in my house is\n14.  The number of doors is 6.\n";
+    const { html } = createEngine().render(md);
+    expect(html).toBe(
+      "<p>The number of windows in my house is\n14.  The number of doors is 6.</p>\n",
+    );
+  });
+
+  it("Example 297: Loose list skips link reference between items", () => {
+    const md = "- a\n- b\n\n  [ref]: /url\n- d\n";
+    const { html } = createEngine().render(md);
+    expect(html).toBe(
+      "<ul>\n<li>\n<p>a</p>\n</li>\n<li>\n<p>b</p>\n</li>\n<li>\n<p>d</p>\n</li>\n</ul>\n",
+    );
+  });
+
+  it("Example 301: Blockquote and fenced code inside list item", () => {
+    const md = "- a\n  > b\n  ```\n  c\n  ```\n- d\n";
+    const { html } = createEngine().render(md);
+    expect(html).toBe(
+      "<ul>\n<li>a\n<blockquote>\n<p>b</p>\n</blockquote>\n<pre><code>c\n</code></pre>\n</li>\n<li>d</li>\n</ul>\n",
+    );
+  });
+
   it("Example 256: List items starting with blank line and indented code", () => {
     const md = "-\n  foo\n-\n  ```\n  bar\n  ```\n-\n      baz\n";
     const { html } = createEngine().render(md);

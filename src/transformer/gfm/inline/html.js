@@ -12,7 +12,7 @@ const attribute_value = '(?:[^"\'=<>` \\t\\r\\n]+|\'[^\']*\'|"[^"]*")';
 const attribute = `(?:\\s+${attribute_name}(?:\\s*=\\s*${attribute_value})?)`;
 const open_tag = `<${tagname}${attribute}*\\s*/?>`;
 const close_tag = `</${tagname}\\s*>`;
-const comment = '<!--(?!>|->)(?:[^-]|-(?!-))*?(?<!-)-->';
+const comment = '(?:<!-->|<!--->|<!--(?:(?!-->)[\\s\\S])*-->)';
 const processing_instruction = '<\\?.*?\\?>';
 const declaration = '<![A-Z].*?>';
 const cdata = '<!\\[CDATA\\[.*?\\]\\]>';
