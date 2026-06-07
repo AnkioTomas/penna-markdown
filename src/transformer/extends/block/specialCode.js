@@ -1,14 +1,29 @@
 /**
- * Cherry 扩展代码块：echarts / math / katex / latex
+ * Cherry 扩展代码块：echarts / math / mermaid / card 等
  * priority > GFM code，非特殊语言交还标准 code parser
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import codeParser from "@/transformer/gfm/block/code.js";
 import { unescapeHref, decodeHtmlEntities } from "@/transformer/gfm/inline/shared.js";
-import { renderMathBlock, renderEchartsBlock } from "@/transformer/extends/utils/cherryApi.js";
+import {
+  renderMathBlock,
+  renderEchartsBlock,
+  renderMermaidBlock,
+} from "@/transformer/extends/utils/cherryApi.js";
+import { renderCardBlock } from "@/transformer/extends/utils/cherryCard.js";
 
-const SPECIAL_LANGS = new Set(["echarts", "math", "katex", "latex"]);
+const SPECIAL_RENDERERS = {
+  echarts: renderEchartsBlock,
+  math: renderMathBlock,
+  katex: renderMathBlock,
+  latex: renderMathBlock,
+  mermaid: renderMermaidBlock,
+  graph: renderMermaidBlock,
+  card: renderCardBlock,
+};
+
+const SPECIAL_LANGS = new Set(Object.keys(SPECIAL_RENDERERS));
 
 function parseFenceLang(line) {
   const match = line.match(/^( {0,3})((`{3,})([^`]*)|(~{3,})(.*))$/);
@@ -33,11 +48,8 @@ class SpecialCodeBlockParser extends BaseBlockParser {
   render(node) {
     const lang = (node.props.lang ?? "").toLowerCase();
     const content = node.props.content ?? "";
-
-    if (lang === "echarts") return renderEchartsBlock(content);
-    if (lang === "math" || lang === "katex" || lang === "latex") {
-      return renderMathBlock(content);
-    }
+    const render = SPECIAL_RENDERERS[lang];
+    if (render) return render(content);
     return codeParser.render(node);
   }
 }

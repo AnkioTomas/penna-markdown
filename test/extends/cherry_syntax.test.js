@@ -43,4 +43,28 @@ describe("extends/cherry_syntax", () => {
     const { html } = engine().render("```js\nconst a = 1;\n```");
     expect(html).toBe('<pre><code class="language-js">const a = 1;\n</code></pre>\n');
   });
+
+  it("renders ```mermaid fenced block via mermaid.ink API", () => {
+    const md = "```mermaid\nflowchart TD\n    Start --> Stop\n```";
+    const { html } = engine().render(md);
+    expect(html).toContain('<figure data-type="mermaid"');
+    expect(html).toContain("https://mermaid.ink/img/");
+    expect(html).toContain('class="mermaid-container"');
+  });
+
+  it("treats ```graph as mermaid alias", () => {
+    const md = "```graph\nflowchart TD\n    A --> B\n```";
+    const { html } = engine().render(md);
+    expect(html).toContain('<figure data-type="mermaid"');
+  });
+
+  it("renders ```card fenced block", () => {
+    const md = "```card\n#list/1\n[Title](https://example.com) Description\n```";
+    const { html } = engine().render(md);
+    expect(html).toContain('data-type="card"');
+    expect(html).toContain('class="cherry-card cherry-card-list-container"');
+    expect(html).toContain('href="https://example.com"');
+    expect(html).toContain("Title");
+    expect(html).toContain("Description");
+  });
 });

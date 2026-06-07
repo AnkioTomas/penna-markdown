@@ -6,6 +6,7 @@
 
 export const MATH_API_HOST = "https://math.vercel.app";
 export const ECHARTS_API_HOST = "https://echarts-api.vercel.app";
+export const MERMAID_API_HOST = "https://mermaid.ink";
 
 export function prefersDarkScheme() {
   return (
@@ -36,6 +37,32 @@ export function renderMathBlock(content, { apiHost = MATH_API_HOST } = {}) {
   const color = prefersDarkScheme() ? "white" : "black";
   const src = `${apiHost}/?from=${encodeURIComponent(latex)}&color=${color}`;
   return `<div class="Cherry-Math" data-type="mathBlock"><img class="Cherry-Math-Latex" alt="latex" src="${src}" /></div>`;
+}
+
+/** @param {string} text */
+export function base64UrlEncode(text) {
+  if (typeof Buffer !== "undefined") {
+    return Buffer.from(text, "utf8")
+      .toString("base64")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+  }
+  const bytes = new TextEncoder().encode(text);
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+/** @param {string} content @param {{ apiHost?: string }} [options] */
+export function renderMermaidBlock(content, { apiHost = MERMAID_API_HOST } = {}) {
+  const code = content.trim();
+  const payload = base64UrlEncode(JSON.stringify({ code }));
+  const src = `${apiHost}/img/${payload}`;
+  return `<figure data-type="mermaid" class="cherry-mermaid-block"><img class="mermaid-container" style="max-width: 100%" src="${src}" alt="" /></figure>`;
 }
 
 /** @param {string} content @param {{ apiHost?: string }} [options] */
