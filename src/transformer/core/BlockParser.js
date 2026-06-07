@@ -63,6 +63,20 @@ export class BlockParseEngine {
   }
 
   /**
+   * 文档解析收尾：依次执行 document finalizer
+   *
+   * @param {import('./MarkdownNode.js').MarkdownNode} root
+   * @returns {import('./MarkdownNode.js').MarkdownNode}
+   */
+  finalizeDocument(root) {
+    let result = root;
+    for (const fn of this.registry.getDocumentFinalizers()) {
+      result = fn(result, this.ctx) ?? result;
+    }
+    return result;
+  }
+
+  /**
    * 将多行 Markdown 解析为块级 AST。
    *
    * 算法概要：
@@ -75,7 +89,7 @@ export class BlockParseEngine {
    * @returns {import('./MarkdownNode.js').MarkdownNode} root 节点
    */
   parse(lines) {
-    this.store.set("lines", lines);
+    this.store.document().lines = lines;
     let root = createNode("root", { children: [] });
 
     let index = 0;
@@ -103,6 +117,6 @@ export class BlockParseEngine {
       index = result.nextIndex ?? index + 1;
     }
 
-    return root;
+    return this.finalizeDocument(root);
   }
 }

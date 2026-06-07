@@ -6,8 +6,7 @@ import escape from "@/transformer/gfm/inline/escape.js";
 import autolink, { autolinkExt } from "@/transformer/gfm/inline/autolinks.js";
 import text from "@/transformer/gfm/inline/text.js";
 import codeSpan from "@/transformer/gfm/inline/code.js";
-import emphasis from "@/transformer/gfm/inline/emphasis.js";
-import strong from "@/transformer/gfm/inline/strong.js";
+import emphasis, { strongInlineParser } from "@/transformer/gfm/inline/emphasis.js";
 import strikethrough from "@/transformer/gfm/inline/strikethrough.js";
 import heading from "@/transformer/gfm/block/heading.js";
 import blockquote from "@/transformer/gfm/block/blockquote.js";
@@ -22,7 +21,7 @@ import __break from "@/transformer/gfm/inline/break.js";
 import images from "@/transformer/gfm/inline/images.js";
 import rawhtmlInline from "@/transformer/gfm/inline/html.js";
 import rawhtmlBlock from "@/transformer/gfm/block/html.js";
-import { registerEmphasisInlineFinalizer } from "@/transformer/gfm/inline/delimiters.js";
+import { emphasisInlineFinalizer } from "@/transformer/gfm/inline/delimiters.js";
 
 export const builtinInlineSyntax = [
   escape,
@@ -33,7 +32,7 @@ export const builtinInlineSyntax = [
   rawhtmlInline,
   codeSpan,
   strikethrough,
-  strong,
+  strongInlineParser,
   emphasis,
     __break,
   text,
@@ -53,5 +52,5 @@ export const builtinBlockSyntax = [
 
 /** @param {import('@/transformer/core/Registry.js').Registry} registry */
 export function applyGfmRegistryExtensions(registry) {
-  registerEmphasisInlineFinalizer(registry);
+  registry.registerInlineFinalizer(emphasisInlineFinalizer);
 }

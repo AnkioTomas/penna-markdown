@@ -16,6 +16,10 @@ export class ParserStore {
     this._data = new Map();
     /** @type {Record<string, unknown>[]} 行内解析栈帧（引擎管理生命周期） */
     this._inlineFrames = [];
+    /** @type {Record<string, unknown>[]} 块级解析栈帧（blockquote 等嵌套上下文） */
+    this._blockFrames = [];
+    /** @type {{ lines: string[] | null, linkReferences: Record<string, { href: string, title?: string }>, linkReferencesCollected: boolean } | null} */
+    this._document = null;
   }
 
   get(key) {
@@ -38,6 +42,20 @@ export class ParserStore {
   clear() {
     this._data.clear();
     this._inlineFrames = [];
+    this._blockFrames = [];
+    this._document = null;
+  }
+
+  /** 文档级解析状态（lines、link reference 等） */
+  document() {
+    if (!this._document) {
+      this._document = {
+        lines: null,
+        linkReferences: {},
+        linkReferencesCollected: false,
+      };
+    }
+    return this._document;
   }
 
   /** 开始一次行内解析（支持嵌套压栈） */
@@ -73,5 +91,20 @@ export class ParserStore {
       }
     }
     return result;
+  }
+
+  /** 开始一次块级解析帧（blockquote 等嵌套块） */
+  beginBlockFrame(data = {}) {
+    const frame = { ...data };
+    this._blockFrames.push(frame);
+    return frame;
+  }
+
+  endBlockFrame() {
+    this._blockFrames.pop();
+  }
+
+  isInBlockquote() {
+    return this._blockFrames.some((f) => f.inBlockquote);
   }
 }

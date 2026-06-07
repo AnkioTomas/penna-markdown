@@ -20,6 +20,13 @@ import { builtinBlockSyntax, builtinInlineSyntax, applyGfmRegistryExtensions } f
  * ) => import('./MarkdownNode.js').MarkdownNode[] | void} InlineFinalizer
  */
 
+/**
+ * @typedef {(
+ *   root: import('./MarkdownNode.js').MarkdownNode,
+ *   ctx: import('./ParserContext.js').BlockParseContext
+ * ) => import('./MarkdownNode.js').MarkdownNode | void} DocumentFinalizer
+ */
+
 export { BaseInlineParser, BaseBlockParser } from "@/transformer/core/ParserBase.js";
 
 /**
@@ -43,6 +50,8 @@ export class Registry {
     this.blockParsers = new Map();
     /** @type {import('./Registry.js').InlineFinalizer[]} */
     this._inlineFinalizers = [];
+    /** @type {import('./Registry.js').DocumentFinalizer[]} */
+    this._documentFinalizers = [];
     /** @type {{ inline: Array, block: Array } | null} 按 priority 排序后的缓存 */
     this._cache = null;
 
@@ -163,5 +172,21 @@ export class Registry {
   /** @returns {InlineFinalizer[]} */
   getInlineFinalizers() {
     return this._inlineFinalizers;
+  }
+
+  /**
+   * 注册文档解析结束后的后处理（扩展层使用，引擎不感知具体语义）
+   *
+   * @param {DocumentFinalizer} fn
+   * @returns {Registry}
+   */
+  registerDocumentFinalizer(fn) {
+    this._documentFinalizers.push(fn);
+    return this;
+  }
+
+  /** @returns {DocumentFinalizer[]} */
+  getDocumentFinalizers() {
+    return this._documentFinalizers;
   }
 }

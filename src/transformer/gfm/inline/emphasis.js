@@ -1,5 +1,6 @@
 /**
- * 行内语法：斜体 *text* 或 _text_（定界符入栈见 delimiters.js，匹配由 finalizer 收尾）
+ * 行内语法：斜体 *text* / _text_、加粗 **text** / __text__
+ * 定界符入栈见 delimiters.js，匹配由 inline finalizer 收尾；strong 仅负责 render
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
@@ -23,4 +24,19 @@ class EmphasisInlineParser extends BaseInlineParser {
   }
 }
 
+class StrongInlineParser extends BaseInlineParser {
+  constructor() {
+    super({ type: "strong", priority: 40 });
+  }
+
+  parse() {
+    return null;
+  }
+
+  render(node, ctx) {
+    return `<strong>${ctx.renderInline(node.children)}</strong>`;
+  }
+}
+
+export const strongInlineParser = new StrongInlineParser();
 export default new EmphasisInlineParser();

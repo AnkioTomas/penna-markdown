@@ -51,17 +51,16 @@ function finishDefinition(id, lines, labelEnd, bodyChunks) {
 }
 
 function ensureLinkReferenceDefinitions(store) {
-  if (store.get("linkReferenceDefinitionsCollected")) return;
-  const lines = store.get("lines");
-  if (!lines) return;
-  collectLinkReferenceDefinitions(lines, store);
-  store.set("linkReferenceDefinitionsCollected", true);
+  const doc = store.document();
+  if (doc.linkReferencesCollected) return;
+  if (!doc.lines) return;
+  collectLinkReferenceDefinitions(doc.lines, store);
+  doc.linkReferencesCollected = true;
 }
 
 export function lookupLinkReference(store, refId) {
   ensureLinkReferenceDefinitions(store);
-  const references = store.get("references") ?? {};
-  return references[normalizeRefLabel(refId)] ?? null;
+  return store.document().linkReferences[normalizeRefLabel(refId)] ?? null;
 }
 
 function isAsciiPunct(ch) {
@@ -271,10 +270,9 @@ export function parseDefinitionAt(lines, index) {
 }
 
 export function registerLinkReferenceDefinition(store, def) {
-  const references = store.get("references") ?? {};
-  if (!references[def.id]) {
-    references[def.id] = { href: def.href, title: def.title };
-    store.set("references", references);
+  const refs = store.document().linkReferences;
+  if (!refs[def.id]) {
+    refs[def.id] = { href: def.href, title: def.title };
   }
 }
 
@@ -430,10 +428,9 @@ class LinkReferenceDefinitionParser extends BaseBlockParser {
       return null;
     }
 
-    const references = ctx.store.get("references") ?? {};
-    if (!references[def.id]) {
-      references[def.id] = { href: def.href, title: def.title };
-      ctx.store.set("references", references);
+    const refs = ctx.store.document().linkReferences;
+    if (!refs[def.id]) {
+      refs[def.id] = { href: def.href, title: def.title };
     }
 
     return { node: null, nextIndex: def.nextIndex };

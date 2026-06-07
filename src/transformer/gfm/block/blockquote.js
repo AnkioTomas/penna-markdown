@@ -6,6 +6,7 @@ import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { stripBlockquoteMarker, parseListMarkerLine } from "@/transformer/utils/tabs.js";
 import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
+import { withBlockquoteFrame } from "@/transformer/gfm/block/frame.js";
 
 /** 去掉引用块首尾仅含空白的行，保留中间空行作段落分隔 */
 function normalizeInnerLines(lines) {
@@ -48,14 +49,7 @@ function isNonHrSetextUnderline(line) {
 }
 
 function parseBlockquoteInner(ctx, lines) {
-  const depth = (ctx.store.get("blockquoteDepth") ?? 0) + 1;
-  ctx.store.set("blockquoteDepth", depth);
-  try {
-    return ctx.parse(lines);
-  } finally {
-    if (depth === 1) ctx.store.delete("blockquoteDepth");
-    else ctx.store.set("blockquoteDepth", depth - 1);
-  }
+  return withBlockquoteFrame(ctx, () => ctx.parse(lines));
 }
 
 /** 无 > 前缀的行能否作为 open paragraph 的 lazy continuation */
