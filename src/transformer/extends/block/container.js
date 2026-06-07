@@ -18,8 +18,11 @@ const TYPE_ALIASES = {
   r: "right",
   c: "center",
   l: "left",
+  j: "justify",
   t: "tip",
 };
+
+const ALIGN_TYPES = new Set(["left", "center", "right", "justify"]);
 
 function normalizeInnerLines(lines) {
   let start = 0;
@@ -80,7 +83,7 @@ class ContainerBlockParser extends BaseBlockParser {
 
   render(node, ctx) {
     const { containerType, title, titleNodes, children } = node.props;
-    const isAlign = /^(left|center|right)$/.test(containerType);
+    const isAlign = ALIGN_TYPES.has(containerType);
     const className = isAlign
       ? `cherry-text-align cherry-text-align__${escapeHtml(containerType)}`
       : `cherry-panel cherry-panel__${escapeHtml(containerType)}`;

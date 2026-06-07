@@ -47,6 +47,22 @@ E=mc^2^，H^^2^^O，大头 ^儿子^ 和 ^^爸爸^^
 删除数据库前请务必备份！
 :::
 
+::: left
+左对齐的内容
+:::
+
+::: center
+居中的内容
+:::
+
+::: right
+右对齐的内容
+:::
+
+::: justify
+两端对齐的内容
+:::
+
 @@https://example.com
 
 !video[演示视频](https://example.com/demo.mp4)

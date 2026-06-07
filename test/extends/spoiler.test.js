@@ -1,0 +1,41 @@
+import { describe, expect, it } from "vitest";
+import { createTransformer } from "@/transformer/index.js";
+import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
+
+describe("extends/spoiler", () => {
+  const engine = () => createTransformerWithExtensions(["spoiler"]);
+
+  it("renders !! text !! as spoiler", () => {
+    const { html } = engine().render("这是 !! 剧透内容 !! 正常文字\n");
+    expect(html).toBe(
+      '<p>这是 <span class="cherry-spoiler">剧透内容</span> 正常文字</p>\n',
+    );
+  });
+
+  it("supports nested inline markup", () => {
+    const { html } = engine().render("!! **加粗剧透** !!\n");
+    expect(html).toBe(
+      '<p><span class="cherry-spoiler"><strong>加粗剧透</strong></span></p>\n',
+    );
+  });
+
+  it("requires space after opening !!", () => {
+    const { html } = engine().render("!!剧透内容 !!\n");
+    expect(html).toBe("<p>!!剧透内容 !!</p>\n");
+  });
+
+  it("requires space before closing !!", () => {
+    const { html } = engine().render("!! 剧透内容!!\n");
+    expect(html).toBe("<p>!! 剧透内容!!</p>\n");
+  });
+
+  it("rejects empty spoiler", () => {
+    const { html } = engine().render("!!  !!\n");
+    expect(html).toBe("<p>!!  !!</p>\n");
+  });
+
+  it("is disabled without extension", () => {
+    const { html } = createTransformer().render("!! 剧透 !!\n");
+    expect(html).toBe("<p>!! 剧透 !!</p>\n");
+  });
+});

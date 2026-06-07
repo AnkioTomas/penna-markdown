@@ -9,6 +9,10 @@ function panelHtml(type, title, body) {
   return `<div class="cherry-panel cherry-panel__${type}">\n${titleHtml}<div class="cherry-panel--body">${body}</div>\n</div>\n`;
 }
 
+function alignHtml(type, body) {
+  return `<div class="cherry-text-align cherry-text-align__${type}" style="text-align:${type};">\n<div class="cherry-panel--body">${body}</div>\n</div>\n`;
+}
+
 describe("extends/container", () => {
   const engine = () => createTransformerWithExtensions(["container"]);
   const base = () => createTransformer();
@@ -57,6 +61,58 @@ describe("extends/container", () => {
 :::`;
     expect(base().render(md).html).toBe(
       "<p>::: tip 标题\n内容\n:::</p>\n",
+    );
+  });
+
+  it("renders left alignment", () => {
+    const md = `::: left
+左对齐的内容
+:::`;
+    expect(engine().render(md).html).toBe(
+      alignHtml("left", "<p>左对齐的内容</p>"),
+    );
+  });
+
+  it("renders center alignment", () => {
+    const md = `::: center
+居中的内容
+:::`;
+    expect(engine().render(md).html).toBe(
+      alignHtml("center", "<p>居中的内容</p>"),
+    );
+  });
+
+  it("renders right alignment", () => {
+    const md = `::: right
+右对齐的内容
+:::`;
+    expect(engine().render(md).html).toBe(
+      alignHtml("right", "<p>右对齐的内容</p>"),
+    );
+  });
+
+  it("renders justify alignment", () => {
+    const md = `::: justify
+两端对齐的内容
+:::`;
+    expect(engine().render(md).html).toBe(
+      alignHtml("justify", "<p>两端对齐的内容</p>"),
+    );
+  });
+
+  it("supports alignment type aliases", () => {
+    const md = `::: l
+左
+:::`;
+    expect(engine().render(md).html).toBe(alignHtml("left", "<p>左</p>"));
+  });
+
+  it("supports alignment with optional title", () => {
+    const md = `::: center 标题
+正文
+:::`;
+    expect(engine().render(md).html).toBe(
+      `<div class="cherry-text-align cherry-text-align__center" style="text-align:center;">\n<div class="cherry-panel--title cherry-panel--title__not-empty">标题</div>\n<div class="cherry-panel--body"><p>正文</p></div>\n</div>\n`,
     );
   });
 });
