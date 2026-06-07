@@ -1,12 +1,20 @@
 /**
- * 块级语法：ATX 标题（# ~ ######）与 Setext 标题 (===, ---)
+ * @file 块级语法：标题
+ * @module transformer/gfm/block/heading
+ *
+ * ATX 标题（# ~ ######）与 Setext 标题 (===, ---)。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { isInBlockquote } from "@/transformer/gfm/block/frame.js";
 
-/** @returns {{ level: number, content: string } | null} */
+/**
+ * 解析 ATX 标题行。
+ *
+ * @param {string} line
+ * @returns {{ level: number, content: string } | null}
+ */
 function parseAtxHeading(line) {
   if (/^ {4}/.test(line)) return null;
 
@@ -32,6 +40,12 @@ function parseAtxHeading(line) {
   return { level, content: inner.trim() };
 }
 
+/**
+ * 去掉 ATX 标题末尾可选的 closing hashes。
+ *
+ * @param {string} inner
+ * @returns {string}
+ */
 function stripClosingHashes(inner) {
   let end = inner.length;
   while (end > 0 && (inner[end - 1] === " " || inner[end - 1] === "\t")) {
@@ -59,6 +73,11 @@ function stripClosingHashes(inner) {
   return inner.slice(0, wsEnd);
 }
 
+/**
+ * 标题块解析器。
+ *
+ * @extends {BaseBlockParser}
+ */
 class HeadingBlockParser extends BaseBlockParser {
   constructor() {
     // 优先级 98：在 Code (100) 之后，但高于 HR (95)
@@ -67,11 +86,7 @@ class HeadingBlockParser extends BaseBlockParser {
     this.canInterruptParagraph = true;
   }
 
-  /**
-   * @param {string[]} lines
-   * @param {number} index
-   * @param {import('../core/ParserContext.js').BlockParseContext} ctx
-   */
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     const line = lines[index] ?? "";
 
@@ -123,6 +138,7 @@ class HeadingBlockParser extends BaseBlockParser {
     return null;
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     const inner = ctx.renderInline(node.children);
     return `<h${node.props.level}>${inner}</h${node.props.level}>`;

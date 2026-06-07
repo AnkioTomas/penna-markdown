@@ -1,5 +1,9 @@
 /**
- * 文末脚注区块渲染
+ * @file 块级语法拓展：文末脚注区块
+ * @module transformer/extends/block/footnotes
+ *
+ * 脚注定义由 footnoteDef 解析器收集；finalizeFootnotes 在文档收尾时
+ * 按引用顺序生成 `footnotes` 节点并挂到 root.children。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
@@ -9,15 +13,22 @@ import {
   walkNodes,
 } from "@/transformer/extends/utils/footnote.js";
 
+/**
+ * 文末脚注区块渲染器（不参与 parse，仅 render）。
+ *
+ * @extends {BaseBlockParser}
+ */
 class FootnotesSectionParser extends BaseBlockParser {
   constructor() {
     super({ type: "footnotes", priority: -1000, canInterruptParagraph: false });
   }
 
+  /** @inheritdoc */
   parse() {
     return null;
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     const { items } = node.props;
     if (!items?.length) return "";
@@ -34,7 +45,13 @@ class FootnotesSectionParser extends BaseBlockParser {
   }
 }
 
-/** @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} root @param {import('@/transformer/core/ParserContext.js').BlockParseContext} ctx */
+/**
+ * 文档收尾：收集脚注定义、编号引用并追加 footnotes 节点。
+ *
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} root
+ * @param {import('@/transformer/core/ParserContext.js').BlockParseContext} ctx
+ * @returns {import('@/transformer/core/MarkdownNode.js').MarkdownNode}
+ */
 export function finalizeFootnotes(root, ctx) {
   collectFootnoteDefinitions(ctx.store.document().lines, ctx.store);
   const defs = ctx.store.document().footnoteDefinitions ?? {};

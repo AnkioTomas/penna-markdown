@@ -1,5 +1,8 @@
 /**
- * 行内语法：图片 (Images)
+ * @file 行内语法：图片
+ * @module transformer/gfm/inline/images
+ *
+ * 行内图片：inline、full/collapsed/shortcut reference 形式。
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
@@ -15,12 +18,18 @@ import {
   parsePlainDestination,
 } from "@/transformer/gfm/inline/shared.js";
 
+/**
+ * 图片行内解析器。
+ *
+ * @extends {BaseInlineParser}
+ */
 class ImageInlineParser extends BaseInlineParser {
   constructor() {
     // 优先级高于链接
     super({ type: "image", priority: 201 });
   }
 
+  /** @inheritdoc */
   parse(src, index, ctx) {
     if (src[index] !== "!" || src[index + 1] !== "[") return null;
 
@@ -77,6 +86,15 @@ class ImageInlineParser extends BaseInlineParser {
     return null;
   }
 
+  /**
+   * 解析 inline 图片 destination 与 title。
+   *
+   * @param {string} src
+   * @param {number} start
+   * @param {string} label
+   * @param {import('@/transformer/core/ParserContext.js').InlineParseContext} ctx
+   * @returns {{ node: import('@/transformer/core/MarkdownNode.js').MarkdownNode, nextIndex: number } | null}
+   */
   parseInlineDestination(src, start, label, ctx) {
     let j = start + 1;
     while (j < src.length && /[ \t\r\n\v\f]/.test(src[j])) j++;
@@ -122,6 +140,7 @@ class ImageInlineParser extends BaseInlineParser {
     };
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     const alt = this.renderAlt(node.children);
 
@@ -141,6 +160,12 @@ class ImageInlineParser extends BaseInlineParser {
     return `<img src="${escapeHtml(href)}" alt="${escapeHtml(alt)}"${titleAttr} />`;
   }
 
+  /**
+   * 递归提取 alt 文本（纯文本，不含 HTML）。
+   *
+   * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[]} nodes
+   * @returns {string}
+   */
   renderAlt(nodes) {
     return nodes
       .map((n) => {

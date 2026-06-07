@@ -1,15 +1,36 @@
 /**
- * Detail 手风琴：++ 标题 / ++- 标题 ... +++
- * 渲染为原生 <details>，不依赖 JavaScript
+ * @file 块级语法拓展：Detail 手风琴
+ * @module transformer/extends/block/detail
+ *
+ * 语法示例：
+ * ```
+ * ++ 标题
+ * 内容
+ * +++
+ * ```
+ *
+ * 使用 `++-` 表示默认折叠；内部可用 `++` / `++-` 子标题拆分多段。
+ * 渲染为原生 `<details>`，不依赖 JavaScript。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 
+/** 手风琴开标记行：`++` 或 `++-` + 标题 */
 const OPEN_RE = /^ {0,3}\+\+([+-]?)\s+(.+?)\s*$/;
+
+/** 手风琴闭标记行：`+++` */
 const CLOSE_RE = /^ {0,3}\+\+\+\s*$/;
+
+/** 内部子段标题行：`++` / `++-` + 标题（排除 `+++`） */
 const SUB_HEAD_RE = /^ {0,3}\+\+(?!\+)(-?)\s+(.+?)\s*$/;
 
+/**
+ * 去掉手风琴内容首尾仅含空白的行。
+ *
+ * @param {string[]} lines
+ * @returns {string[]}
+ */
 function normalizeInnerLines(lines) {
   let start = 0;
   let end = lines.length;
@@ -18,6 +39,14 @@ function normalizeInnerLines(lines) {
   return lines.slice(start, end);
 }
 
+/**
+ * 将内部行拆分为多个手风琴段。
+ *
+ * @param {string[]} innerLines
+ * @param {string} outerOpen - 外层开标记的 `+`/`-` 符号
+ * @param {string} outerTitle - 外层标题文本
+ * @returns {Array<{ open: boolean, title: string, contentLines: string[] }>}
+ */
 function parseDetailSections(innerLines, outerOpen, outerTitle) {
   const hasSubSections = innerLines.some((line) => SUB_HEAD_RE.test(line));
   if (!hasSubSections) {
@@ -55,11 +84,17 @@ function parseDetailSections(innerLines, outerOpen, outerTitle) {
   return sections;
 }
 
+/**
+ * Detail 手风琴块解析器。
+ *
+ * @extends {BaseBlockParser}
+ */
 class DetailBlockParser extends BaseBlockParser {
   constructor() {
     super({ type: "detail", priority: 88 });
   }
 
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     const line = lines[index] ?? "";
     const open = line.match(OPEN_RE);
@@ -103,6 +138,7 @@ class DetailBlockParser extends BaseBlockParser {
     };
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     const items = node.children ?? [];
     if (items.length === 0) return "";

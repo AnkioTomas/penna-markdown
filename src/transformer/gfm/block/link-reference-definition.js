@@ -1,10 +1,20 @@
 /**
- * 块级语法：链接引用定义 (Link Reference Definitions)
+ * @file 块级语法：链接引用定义
+ * @module transformer/gfm/block/link-reference-definition
+ *
+ * CommonMark Link Reference Definitions：`[label]: url "title"`。
+ * 解析结果存入 ParserStore，供 reference link/image 查找。
  */
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { findLinkLabelEnd } from "@/transformer/gfm/inline/shared.js";
 import { stripBlockquoteMarker } from "@/transformer/utils/tabs.js";
 
+/**
+ * 规范化 reference label（转义、小写、空白折叠）。
+ *
+ * @param {string} label
+ * @returns {string}
+ */
 export function normalizeRefLabel(label) {
   let out = "";
   for (let i = 0; i < label.length; i++) {
@@ -58,6 +68,13 @@ function ensureLinkReferenceDefinitions(store) {
   doc.linkReferencesCollected = true;
 }
 
+/**
+ * 从 store 查找 reference 定义（懒加载全文预扫描）。
+ *
+ * @param {import('@/transformer/core/ParserStore.js').ParserStore} store
+ * @param {string} refId
+ * @returns {{ href: string, title: string } | null}
+ */
 export function lookupLinkReference(store, refId) {
   ensureLinkReferenceDefinitions(store);
   return store.document().linkReferences[normalizeRefLabel(refId)] ?? null;
@@ -233,6 +250,13 @@ function buildInvalidDefinition(lines, index, labelEndLine) {
   return { invalid: true, nextIndex, consumeSilent };
 }
 
+/**
+ * 从 lines[index] 起解析单条 reference 定义。
+ *
+ * @param {string[]} lines
+ * @param {number} index
+ * @returns {{ id: string, href: string, title: string, nextIndex: number } | { invalid: true, nextIndex: number, consumeSilent?: boolean } | null}
+ */
 export function parseDefinitionAt(lines, index) {
   const line = lines[index] ?? "";
   if (!/^[ \t]{0,3}\[/.test(line)) return null;
@@ -269,6 +293,12 @@ export function parseDefinitionAt(lines, index) {
   return finishDefinition(id, lines, labelEndLine, [trimmed.slice(j)]);
 }
 
+/**
+ * 注册 reference 定义（首次写入生效，不覆盖已有项）。
+ *
+ * @param {import('@/transformer/core/ParserStore.js').ParserStore} store
+ * @param {{ id: string, href: string, title: string }} def
+ */
 export function registerLinkReferenceDefinition(store, def) {
   const refs = store.document().linkReferences;
   if (!refs[def.id]) {
@@ -410,16 +440,27 @@ function allowsReferenceDefinitionAfter(prevLine) {
   return false;
 }
 
-/** 解析前预扫描全文 reference 定义，使后续段落中的 reference link 可解析 */
+/**
+ * 解析前预扫描全文 reference 定义，使后续段落中的 reference link 可解析。
+ *
+ * @param {string[]} lines
+ * @param {import('@/transformer/core/ParserStore.js').ParserStore} store
+ */
 export function collectLinkReferenceDefinitions(lines, store) {
   collectDefinitionsInLines(lines, store);
 }
 
+/**
+ * 链接引用定义块解析器（不产生可见 AST 节点，仅写入 store）。
+ *
+ * @extends {BaseBlockParser}
+ */
 class LinkReferenceDefinitionParser extends BaseBlockParser {
   constructor() {
     super({ type: "linkReferenceDef", priority: 190, canInterruptParagraph: false });
   }
 
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     const def = parseDefinitionAt(lines, index);
     if (!def) return null;
@@ -436,6 +477,7 @@ class LinkReferenceDefinitionParser extends BaseBlockParser {
     return { node: null, nextIndex: def.nextIndex };
   }
 
+  /** @inheritdoc */
   render() {
     return "";
   }

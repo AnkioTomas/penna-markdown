@@ -1,8 +1,16 @@
 /**
- * 内容签名：为块级节点生成稳定哈希，供增量预览 data-sign 使用（非加密用途）。
+ * @file 内容签名工具
+ * @module transformer/utils/sign
+ *
+ * 为块级节点生成稳定哈希，供增量预览 data-sign 使用（非加密用途）。
  */
 
-/** 对字符串做 djb2 变体哈希，返回 36 进制短串 */
+/**
+ * 对字符串做 djb2 变体哈希，返回 36 进制短串。
+ *
+ * @param {string} text
+ * @returns {string}
+ */
 export function contentSign(text) {
   let h = 5381;
   for (let i = 0; i < text.length; i += 1) {

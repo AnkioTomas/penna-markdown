@@ -1,10 +1,24 @@
 /**
- * CommonMark Tab 规则：行首 tab 按 4 列制表位展开；行内 tab 保留原样。
+ * @file CommonMark Tab 展开工具
+ * @module transformer/utils/tabs
+ *
+ * 行首 tab 按 4 列制表位展开；行内 tab 保留原样。
+ * 用于列表、引用块、缩进代码块等块级语法的缩进计算。
  */
 
+/** Tab 制表位宽度（CommonMark 规范） */
 const TAB_WIDTH = 4;
+
+/** 缩进代码块最小缩进列数 */
 const CODE_INDENT = 4;
 
+/**
+ * 计算字符串在 index 处的视觉列位置。
+ *
+ * @param {string} str
+ * @param {number} [index=str.length]
+ * @returns {number}
+ */
 export function visualColumn(str, index = str.length) {
   let col = 0;
   for (let i = 0; i < index && i < str.length; i += 1) {
@@ -14,6 +28,13 @@ export function visualColumn(str, index = str.length) {
   return col;
 }
 
+/**
+ * 返回视觉列达到 targetCol 时的字符索引。
+ *
+ * @param {string} str
+ * @param {number} targetCol
+ * @returns {number}
+ */
 export function findIndexAtColumn(str, targetCol) {
   let col = 0;
   for (let i = 0; i < str.length; i += 1) {
@@ -24,7 +45,12 @@ export function findIndexAtColumn(str, targetCol) {
   return str.length;
 }
 
-/** 行首空白（空格/tab）的视觉列宽 */
+/**
+ * 行首空白（空格/tab）的视觉列宽。
+ *
+ * @param {string} line
+ * @returns {number}
+ */
 export function getIndent(line) {
   let col = 0;
   for (let i = 0; i < line.length; i += 1) {
@@ -36,7 +62,12 @@ export function getIndent(line) {
   return col;
 }
 
-/** 仅展开行首连续空白中的 tab，保留正文内 tab */
+/**
+ * 仅展开行首连续空白中的 tab，保留正文内 tab。
+ *
+ * @param {string} line
+ * @returns {string}
+ */
 export function expandLinePrefixTabs(line) {
   let i = 0;
   while (i < line.length && (line[i] === " " || line[i] === "\t")) i += 1;
@@ -57,21 +88,44 @@ export function expandLinePrefixTabs(line) {
   return expanded + rest;
 }
 
+/**
+ * 判断是否为缩进代码块行（缩进 ≥ 4 列）。
+ *
+ * @param {string} line
+ * @returns {boolean}
+ */
 export function isIndentedCodeLine(line) {
   return getIndent(line) >= CODE_INDENT;
 }
 
+/**
+ * 去掉行首指定列数的视觉缩进。
+ *
+ * @param {string} line
+ * @param {number} [spaces=CODE_INDENT]
+ * @returns {string}
+ */
 export function stripVisualIndent(line, spaces = CODE_INDENT) {
   return line.slice(findIndexAtColumn(line, spaces));
 }
 
-/** 缩进代码块内容：展开行首 tab 后去掉一层 4 列缩进（8 列时保留 2 列） */
+/**
+ * 缩进代码块内容：展开行首 tab 后去掉一层 4 列缩进（8 列时保留 2 列）。
+ *
+ * @param {string} text
+ * @returns {string}
+ */
 export function stripCodeContent(text) {
   const expanded = expandLinePrefixTabs(text);
   return stripVisualIndent(expanded, CODE_INDENT);
 }
 
-/** 对齐 commonmark.js block_quote 起始：去掉 `>` 及可选分隔空白，返回展开后的剩余部分 */
+/**
+ * 对齐 commonmark.js block_quote 起始：去掉 `>` 及可选分隔空白，返回展开后的剩余部分。
+ *
+ * @param {string} line
+ * @returns {string}
+ */
 export function stripBlockquoteMarker(line) {
   const m = line.match(/^( {0,3})>/);
   if (!m) return line;
@@ -101,6 +155,16 @@ export function stripBlockquoteMarker(line) {
   return expandLinePrefixTabs(line.slice(offset));
 }
 
+/**
+ * 在行内按视觉列前进指定步数。
+ *
+ * @param {string} line
+ * @param {number} offset
+ * @param {number} column
+ * @param {number} count
+ * @param {boolean} inColumns
+ * @returns {{ offset: number, column: number }}
+ */
 function advanceInLine(line, offset, column, count, inColumns) {
   let o = offset;
   let c = column;
@@ -128,7 +192,13 @@ function advanceInLine(line, offset, column, count, inColumns) {
   return { offset: o, column: c };
 }
 
-/** 列表项 marker 行内容区 tab 展开（对齐 blockquote 的 partial-tab 规则） */
+/**
+ * 列表项 marker 行内容区 tab 展开（对齐 blockquote 的 partial-tab 规则）。
+ *
+ * @param {string} line
+ * @param {number} contentOffset
+ * @returns {string}
+ */
 export function expandListItemContent(line, contentOffset) {
   let column = visualColumn(line, contentOffset);
   let offset = contentOffset;
@@ -148,12 +218,28 @@ export function expandListItemContent(line, contentOffset) {
   return expandLinePrefixTabs(line.slice(offset));
 }
 
+/** 无序列表 marker 字符 */
 const BULLET = /^[-+*]/;
+
+/** 有序列表 marker 正则 */
 const ORDERED = /^(\d{1,9})([.)])/;
 
 /**
- * 解析列表标记行（对齐 commonmark.js parseListMarker）
- * @returns {null | object}
+ * 解析列表标记行（对齐 commonmark.js parseListMarker）。
+ *
+ * @param {string} line
+ * @param {Object} [options={}]
+ * @param {boolean} [options.allowIndented=false]
+ * @returns {null | {
+ *   markerColumn: number,
+ *   contentStartCol: number,
+ *   contentOffset: number,
+ *   content: string,
+ *   ordered: boolean,
+ *   bulletChar: string|null,
+ *   start: number|null,
+ *   delimiter: string|null
+ * }}
  */
 export function parseListMarkerLine(line, { allowIndented = false } = {}) {
   let offset = 0;
@@ -239,6 +325,13 @@ export function parseListMarkerLine(line, { allowIndented = false } = {}) {
   };
 }
 
+/**
+ * 判断两个列表 marker 是否属于同一列表类型。
+ *
+ * @param {ReturnType<typeof parseListMarkerLine>} a
+ * @param {ReturnType<typeof parseListMarkerLine>} b
+ * @returns {boolean}
+ */
 export function listsMatch(a, b) {
   if (!a || !b) return false;
   if (a.ordered !== b.ordered) return false;

@@ -1,5 +1,11 @@
 /**
- * 行内 Badge：[[文本]] / [[文本:颜色,位置]]
+ * @file 行内 Badge 语法
+ * @module transformer/extends/inline/badge
+ *
+ * 语法：`[[文本]]` / `[[文本:颜色,位置]]`
+ *
+ * 颜色可为预定义名（important、info 等）、六位 hex，或作为位置 token；
+ * 位置为 top / bottom / center。
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
@@ -7,6 +13,7 @@ import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { isEscaped } from "@/transformer/gfm/inline/shared.js";
 
+/** 预定义 Badge 颜色 token */
 const PREDEFINED_COLORS = new Set([
   "important",
   "info",
@@ -16,10 +23,20 @@ const PREDEFINED_COLORS = new Set([
   "danger",
 ]);
 
+/** 允许的 Badge 垂直位置 token */
 const POSITIONS = new Set(["top", "bottom", "center"]);
 
+/** Badge 语法正则：`[[text]]` 或 `[[text:color,position]]` */
 const BADGE_RE = /^\[\[([^:\]]+):?([^,\]]*)?,?([^\]]*)\]\]/;
 
+/**
+ * 根据文本与颜色、位置 token 解析 Badge 样式。
+ *
+ * @param {string} text - Badge 显示文本
+ * @param {string} colorToken - 颜色或位置 token
+ * @param {string} positionToken - 位置 token
+ * @returns {{ text: string, clazz: string, style: string }}
+ */
 function resolveBadgeStyle(text, colorToken, positionToken) {
   let clazz = "cherry-badge ";
   let style = "";
@@ -51,11 +68,17 @@ function resolveBadgeStyle(text, colorToken, positionToken) {
   return { text, clazz: clazz.trim(), style };
 }
 
+/**
+ * 行内 Badge 解析器。
+ *
+ * @extends {BaseInlineParser}
+ */
 class BadgeInlineParser extends BaseInlineParser {
   constructor() {
     super({ type: "badge", priority: 209 });
   }
 
+  /** @inheritdoc */
   parse(src, index) {
     if (src[index] !== "[" || src[index + 1] !== "[") return null;
     if (isEscaped(src, index)) return null;
@@ -75,6 +98,7 @@ class BadgeInlineParser extends BaseInlineParser {
     };
   }
 
+  /** @inheritdoc */
   render(node) {
     const { text, clazz, style } = node.props;
     const styleAttr = style ? ` style="${style}"` : "";

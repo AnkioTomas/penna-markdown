@@ -1,5 +1,8 @@
 /**
- * 行内解析共享工具
+ * @file 行内解析共享工具
+ * @module transformer/gfm/inline/shared
+ *
+ * 链接 destination/title 解析、label 扫描、转义检测等行内语法共用逻辑。
  */
 
 import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
@@ -8,6 +11,10 @@ export { decodeHtmlEntities };
 
 /**
  * 定界符前奇数个 `\` 表示该字符被转义。
+ *
+ * @param {string} src
+ * @param {number} index
+ * @returns {boolean}
  */
 export function isEscaped(src, index) {
   let n = 0;
@@ -15,12 +22,22 @@ export function isEscaped(src, index) {
   return n % 2 === 1;
 }
 
-/** GFM destination / title 中可反斜杠转义的 ASCII 标点 */
+/**
+ * GFM destination / title 中可反斜杠转义的 ASCII 标点。
+ *
+ * @param {string} ch
+ * @returns {boolean}
+ */
 export function isAsciiPunct(ch) {
   return /[!-/:-@\[-`{-~]/.test(ch);
 }
 
-/** 解析 link destination 后去掉反斜杠转义 */
+/**
+ * 解析 link destination 后去掉反斜杠转义。
+ *
+ * @param {string} href
+ * @returns {string}
+ */
 export function unescapeHref(href) {
   let out = "";
   for (let i = 0; i < href.length; i++) {
@@ -34,7 +51,12 @@ export function unescapeHref(href) {
   return out;
 }
 
-/** 保留已有 %XX 序列，对其余字符做 URI 编码 */
+/**
+ * 保留已有 %XX 序列，对其余字符做 URI 编码。
+ *
+ * @param {string} href
+ * @returns {string}
+ */
 export function normalizeLinkDestination(href) {
   href = decodeHtmlEntities(unescapeHref(href));
   let out = "";
@@ -56,13 +78,22 @@ export function normalizeLinkDestination(href) {
   return out;
 }
 
+/**
+ * 规范化 link title（解码实体并去掉转义）。
+ *
+ * @param {string} title
+ * @returns {string}
+ */
 export function normalizeLinkTitle(title) {
   return decodeHtmlEntities(unescapeHref(title));
 }
 
 /**
  * 解析 `<...>` destination；闭合 `>` 必须未转义（Example 502）。
- * @returns {{ href: string, next: number } | null}
+ *
+ * @param {string} src
+ * @param {number} openIndex
+ * @returns {number}
  */
 export function findUnescapedAngleClose(src, openIndex) {
   let k = openIndex + 1;
@@ -83,6 +114,13 @@ export function findUnescapedAngleClose(src, openIndex) {
   return -1;
 }
 
+/**
+ * 解析尖括号包裹的 link destination。
+ *
+ * @param {string} src
+ * @param {number} start
+ * @returns {{ href: string, next: number } | null}
+ */
 export function parseAngleDestination(src, start) {
   const close = findUnescapedAngleClose(src, start);
   if (close === -1) return null;
@@ -91,6 +129,9 @@ export function parseAngleDestination(src, start) {
 
 /**
  * 解析非尖括号 destination；转义括号不参与平衡计数（Example 504–508）。
+ *
+ * @param {string} src
+ * @param {number} start
  * @returns {{ href: string, next: number }}
  */
 export function parsePlainDestination(src, start) {
@@ -144,6 +185,10 @@ function skipWhitespace(src, i) {
 /**
  * 查找 reference link label 的闭合 `]`。
  * label 内不允许未转义的 `[`（`]` 仅作闭合）。
+ *
+ * @param {string} src
+ * @param {number} start
+ * @returns {number}
  */
 export function findLinkLabelEnd(src, start) {
   let i = start;
@@ -225,6 +270,10 @@ function findInlineLinkLabelEnd(src, start) {
 
 /**
  * 尝试跳过 `[label](dest)` inline link，返回结束位置；失败返回 start。
+ *
+ * @param {string} src
+ * @param {number} i
+ * @returns {number}
  */
 export function trySkipInlineLink(src, i) {
   if (src[i] !== "[") return i;
@@ -282,6 +331,10 @@ function skipInlineLinkDestination(src, start) {
 
 /**
  * 尝试跳过 `![alt](dest)` inline image，返回结束位置；失败返回 start。
+ *
+ * @param {string} src
+ * @param {number} i
+ * @returns {number}
  */
 export function trySkipInlineImage(src, i) {
   if (src[i] !== "!" || src[i + 1] !== "[") return i;
@@ -316,6 +369,10 @@ export function trySkipInlineImage(src, i) {
 
 /**
  * 尝试跳过 reference link 语法（shortcut / full / collapsed），返回结束位置；失败返回 start。
+ *
+ * @param {string} src
+ * @param {number} i
+ * @returns {number}
  */
 export function trySkipReferenceLink(src, i) {
   if (src[i] !== "[") return i;
@@ -353,6 +410,10 @@ function countDestPatternsAfter(src, from) {
 /**
  * 查找 link label / image alt 的闭合 `]`。
  * 遵循 GFM：code/html/autolink 优先；label 内 inline link 整块跳过。
+ *
+ * @param {string} src
+ * @param {number} start
+ * @returns {number}
  */
 export function findLinkTextEnd(src, start) {
   let level = 1;
@@ -426,6 +487,12 @@ export function findLinkTextEnd(src, start) {
   return -1;
 }
 
+/**
+ * 节点树中是否含嵌套 link。
+ *
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[]} nodes
+ * @returns {boolean}
+ */
 export function containsNestedLink(nodes) {
   for (const n of nodes) {
     if (n.type === "link") return true;
@@ -434,6 +501,12 @@ export function containsNestedLink(nodes) {
   return false;
 }
 
+/**
+ * 节点树中是否含嵌套 link 或 image。
+ *
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[]} nodes
+ * @returns {boolean}
+ */
 export function containsNestedLinkOrImage(nodes) {
   for (const n of nodes) {
     if (n.type === "link" || n.type === "image") return true;
@@ -445,7 +518,10 @@ export function containsNestedLinkOrImage(nodes) {
 /**
  * 从 index 起用正则匹配定界行内语法；捕获组 1 为内部文本。
  *
+ * @param {string} src
+ * @param {number} index
  * @param {RegExp} re - 须以 ^ 锚定，且含 (.+?) 等内容捕获组
+ * @returns {{ inner: string, length: number } | null}
  */
 export function matchDelimited(src, index, re) {
   if (isEscaped(src, index)) return null;

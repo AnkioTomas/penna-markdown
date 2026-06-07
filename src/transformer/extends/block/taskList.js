@@ -1,5 +1,9 @@
 /**
- * 扩展任务列表：priority > list，首行含任务标记时接管，否则交还 GFM list
+ * @file 块级语法拓展：扩展任务列表
+ * @module transformer/extends/block/taskList
+ *
+ * 在 GFM 任务列表基础上支持扩展状态标记（如 `[!]`、`[>]` 等）。
+ * priority > list，首行含任务标记时接管，否则交还 GFM list parser。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
@@ -9,6 +13,8 @@ import {
   listsMatch,
   parseListMarkerLine,
 } from "@/transformer/utils/tabs.js";
+
+/** 任务标记字符 → 状态与 checked 映射 */
 const TASK_MARKER_CHARS = {
   " ": { state: "todo", checked: false },
   x: { state: "done", checked: true },
@@ -20,9 +26,15 @@ const TASK_MARKER_CHARS = {
   "!": { state: "urgent", checked: false },
 };
 
+/** 列表项内任务标记：`[ ]`、`[x]` 等 */
 const TASK_MARKER_RE = /^(\s*)\[([ xX/><!\-])\]([ \t]+)/;
 
-/** @param {string} text */
+/**
+ * 解析列表项内容中的任务标记。
+ *
+ * @param {string} text
+ * @returns {{ rest: string, state: string, checked: boolean } | null}
+ */
 function parseTaskListMarker(text) {
   const match = text.match(TASK_MARKER_RE);
   if (!match) return null;
@@ -37,7 +49,12 @@ function parseTaskListMarker(text) {
   };
 }
 
-/** @param {{ state: string, checked: boolean }} task */
+/**
+ * 渲染任务复选框 HTML。
+ *
+ * @param {{ state: string, checked: boolean }} task
+ * @returns {string}
+ */
 function renderTaskCheckbox(task) {
   const checked = task.checked ? ' checked=""' : "";
   const extended = task.state !== "todo" && task.state !== "done";
@@ -48,22 +65,48 @@ function renderTaskCheckbox(task) {
   return `<input${checked} disabled="" type="checkbox"${stateAttr}${cls}>`;
 }
 
-/** @param {{ state: string }} task */
+/**
+ * 生成任务列表项 `<li>` 的属性字符串。
+ *
+ * @param {{ state: string }} task
+ * @returns {string}
+ */
 function taskListItemAttrs(task) {
   return ` class="task-list-item task-list-item-${task.state}" data-task-state="${task.state}"`;
 }
 
+/**
+ * 判断当前行是否为任务列表起始行。
+ *
+ * @param {string} line
+ * @returns {boolean}
+ */
 function isTaskListStart(line) {
   const marker = parseListMarkerLine(line);
   if (!marker || marker.ordered) return false;
   return !!parseTaskListMarker(expandLinePrefixTabs(marker.content));
 }
 
+/**
+ * 用新内容替换列表 marker 行中的 item 文本部分。
+ *
+ * @param {string} line
+ * @param {ReturnType<typeof parseListMarkerLine>} marker
+ * @param {string} content
+ * @returns {string}
+ */
 function rebuildMarkerLine(line, marker, content) {
   return line.slice(0, marker.contentOffset) + content;
 }
 
-/** @param {string[]} lines @param {number} start @param {number} end */
+/**
+ * 剥离列表段内各 item 的任务标记，并收集任务状态。
+ *
+ * @param {string[]} lines
+ * @param {number} start
+ * @param {number} end
+ * @returns {{ section: string[], tasks: Array<{ state: string, checked: boolean } | undefined> }}
+ */
 function stripTaskMarkers(lines, start, end) {
   const initial = parseListMarkerLine(lines[start]);
   const tasks = [];
@@ -91,6 +134,12 @@ function stripTaskMarkers(lines, start, end) {
   return { section, tasks };
 }
 
+/**
+ * 将任务状态附加到 list 节点及其 list_item 子节点。
+ *
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} node
+ * @param {Array<{ state: string, checked: boolean } | undefined>} tasks
+ */
 function attachTasks(node, tasks) {
   node.props = { ...node.props, isTaskList: true };
   for (let i = 0; i < node.children.length; i += 1) {
@@ -101,6 +150,14 @@ function attachTasks(node, tasks) {
   }
 }
 
+/**
+ * 渲染单个任务列表项。
+ *
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} item
+ * @param {import('@/transformer/core/ParserContext.js').RenderContext} ctx
+ * @param {boolean} isLoose
+ * @returns {string}
+ */
 function renderTaskItem(item, ctx, isLoose) {
   const task = item.props?.task;
   const checkbox = task ? `${renderTaskCheckbox(task)} ` : "";
@@ -142,11 +199,17 @@ function renderTaskItem(item, ctx, isLoose) {
   return `<li${liAttrs}>${lead}${parts.join("\n")}${tail}</li>`;
 }
 
+/**
+ * 扩展任务列表块解析器（包装 GFM list parser）。
+ *
+ * @extends {BaseBlockParser}
+ */
 class TaskListBlockParser extends BaseBlockParser {
   constructor() {
     super({ type: "list", priority: 55 });
   }
 
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     if (!isTaskListStart(lines[index])) {
       return listParser.parse(lines, index, ctx);
@@ -164,6 +227,7 @@ class TaskListBlockParser extends BaseBlockParser {
     return result;
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     if (!node.props?.isTaskList) {
       return listParser.render(node, ctx);

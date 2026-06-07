@@ -1,8 +1,36 @@
 /**
- * 脚注定义解析与收集
+ * @file 脚注定义解析与收集
+ * @module transformer/extends/utils/footnote
+ *
+ * 解析 GFM 风格脚注定义 `[^id]: body`，在文档级 store 中收集定义，
+ * 并提供 AST 遍历辅助函数供脚注扩展使用。
  */
 
-/** @param {string[]} lines @param {number} index */
+/**
+ * @typedef {import('@/transformer/core/ParserStore.js').ParserStore} ParserStore
+ */
+
+/**
+ * @typedef {import('@/transformer/core/MarkdownNode.js').MarkdownNode} MarkdownNode
+ */
+
+/**
+ * @typedef {{
+ *   id: string,
+ *   lines: string[],
+ *   nextIndex: number
+ * }} FootnoteDefinition
+ */
+
+/**
+ * 从 lines[index] 起解析一条脚注定义。
+ *
+ * 支持多行正文（后续非空、非新定义行视为续行），并裁剪首尾空行。
+ *
+ * @param {string[]} lines
+ * @param {number} index
+ * @returns {FootnoteDefinition | null} 当前行不匹配脚注定义语法时返回 null
+ */
 export function parseFootnoteDefinition(lines, index) {
   const line = lines[index] ?? "";
   const match = line.match(/^ {0,3}\[\^([^\]]+)\]:(?:[ \t]|$)(.*)$/);
@@ -32,13 +60,27 @@ export function parseFootnoteDefinition(lines, index) {
   };
 }
 
+/**
+ * 确保文档 store 上存在 footnoteDefinitions 容器。
+ *
+ * @param {ParserStore} store
+ * @returns {Record<string, unknown>} store.document() 返回的文档对象
+ */
 function ensureFootnoteStore(store) {
   const doc = store.document();
   if (!doc.footnoteDefinitions) doc.footnoteDefinitions = {};
   return doc;
 }
 
-/** @param {string[]} lines @param {import('@/transformer/core/ParserStore.js').ParserStore} store */
+/**
+ * 扫描全文并收集脚注定义到 store.document().footnoteDefinitions。
+ *
+ * 同一 id 仅保留首次出现的定义；重复调用时若已收集则直接返回。
+ *
+ * @param {string[] | null | undefined} lines
+ * @param {ParserStore} store
+ * @returns {void}
+ */
 export function collectFootnoteDefinitions(lines, store) {
   const doc = ensureFootnoteStore(store);
   if (doc.footnoteDefinitionsCollected) return;
@@ -60,13 +102,25 @@ export function collectFootnoteDefinitions(lines, store) {
   doc.footnoteDefinitionsCollected = true;
 }
 
-/** @param {import('@/transformer/core/ParserStore.js').ParserStore} store @param {string} id */
+/**
+ * 按 id 查找脚注定义，必要时先触发全文收集。
+ *
+ * @param {ParserStore} store
+ * @param {string} id
+ * @returns {{ lines: string[] } | null}
+ */
 export function lookupFootnoteDefinition(store, id) {
   collectFootnoteDefinitions(store.document().lines, store);
   return store.document().footnoteDefinitions?.[id] ?? null;
 }
 
-/** @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[]} nodes @param {(node: import('@/transformer/core/MarkdownNode.js').MarkdownNode) => void} fn */
+/**
+ * 深度优先遍历 AST 节点树，对每个节点调用 fn。
+ *
+ * @param {MarkdownNode[]} nodes
+ * @param {(node: MarkdownNode) => void} fn
+ * @returns {void}
+ */
 export function walkNodes(nodes, fn) {
   for (const node of nodes) {
     fn(node);

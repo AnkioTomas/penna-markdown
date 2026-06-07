@@ -1,14 +1,28 @@
 /**
- * 容器语法：::: type 标题 ... :::
+ * @file 块级语法拓展：Cherry 容器面板
+ * @module transformer/extends/block/container
+ *
+ * 语法示例：
+ * ```
+ * ::: note 标题
+ * 内容
+ * :::
+ * ```
+ *
+ * 支持类型别名（如 `im` → `important`）及文本对齐类型（left/center/right/justify）。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 
+/** 容器开标记行：`::: type 标题` */
 const OPEN_RE = /^ {0,3}:::(?!:)(.+)$/;
+
+/** 容器闭标记行：`:::` */
 const CLOSE_RE = /^ {0,3}:::\s*$/;
 
+/** 容器类型缩写 → 完整类型名 */
 const TYPE_ALIASES = {
   im: "important",
   i: "info",
@@ -22,8 +36,15 @@ const TYPE_ALIASES = {
   t: "tip",
 };
 
+/** 文本对齐类容器类型集合 */
 const ALIGN_TYPES = new Set(["left", "center", "right", "justify"]);
 
+/**
+ * 去掉容器内容首尾仅含空白的行。
+ *
+ * @param {string[]} lines
+ * @returns {string[]}
+ */
 function normalizeInnerLines(lines) {
   let start = 0;
   let end = lines.length;
@@ -32,7 +53,12 @@ function normalizeInnerLines(lines) {
   return lines.slice(start, end);
 }
 
-/** @param {string} raw */
+/**
+ * 解析开标记行中的类型与标题。
+ *
+ * @param {string} raw - 开标记 `:::` 后的原始文本
+ * @returns {{ containerType: string, title: string } | null}
+ */
 function parseOpenInfo(raw) {
   const trimmed = raw.trim();
   if (!trimmed) return null;
@@ -47,11 +73,17 @@ function parseOpenInfo(raw) {
   return { containerType, title };
 }
 
+/**
+ * Cherry 容器面板块解析器。
+ *
+ * @extends {BaseBlockParser}
+ */
 class ContainerBlockParser extends BaseBlockParser {
   constructor() {
     super({ type: "container", priority: 86 });
   }
 
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     const line = lines[index] ?? "";
     const open = line.match(OPEN_RE);
@@ -81,6 +113,7 @@ class ContainerBlockParser extends BaseBlockParser {
     return null;
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     const { containerType, title, titleNodes, children } = node.props;
     const isAlign = ALIGN_TYPES.has(containerType);

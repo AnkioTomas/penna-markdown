@@ -1,5 +1,8 @@
 /**
- * 块级语法：GFM 表格
+ * @file 块级语法：GFM 表格
+ * @module transformer/gfm/block/table
+ *
+ * GitHub Flavored Markdown 管道表格。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
@@ -7,7 +10,12 @@ import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { parseListMarkerLine } from "@/transformer/utils/tabs.js";
 import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
 
-/** @param {string} line */
+/**
+ * 行内是否含未转义的管道符。
+ *
+ * @param {string} line
+ * @returns {boolean}
+ */
 function lineHasUnescapedPipe(line) {
   for (let i = 0; i < line.length; i++) {
     if (line[i] === "\\" && i + 1 < line.length) {
@@ -19,12 +27,22 @@ function lineHasUnescapedPipe(line) {
   return false;
 }
 
-/** @param {string} line */
+/**
+ * 去掉块级缩进（最多 3 列空格）。
+ *
+ * @param {string} line
+ * @returns {string}
+ */
 function stripBlockIndent(line) {
   return (line ?? "").replace(/^ {0,3}/, "");
 }
 
-/** @param {string} text */
+/**
+ * 将 `\|` 还原为 `|`。
+ *
+ * @param {string} text
+ * @returns {string}
+ */
 function unescapePipes(text) {
   let out = "";
   for (let i = 0; i < text.length; i++) {
@@ -72,7 +90,13 @@ export function parseTableRow(line) {
   return cells;
 }
 
-/** @param {string} line @param {number} offset */
+/**
+ * 扫描表格单元格内容长度。
+ *
+ * @param {string} line
+ * @param {number} offset
+ * @returns {number}
+ */
 function scanTableCell(line, offset) {
   let i = offset;
   while (i < line.length) {
@@ -86,7 +110,13 @@ function scanTableCell(line, offset) {
   return i - offset;
 }
 
-/** @param {string} line @param {number} offset */
+/**
+ * 扫描单元格结束管道符及后续空白。
+ *
+ * @param {string} line
+ * @param {number} offset
+ * @returns {number}
+ */
 function scanTableCellEnd(line, offset) {
   if (line[offset] !== "|") return 0;
   let i = offset + 1;
@@ -94,7 +124,13 @@ function scanTableCellEnd(line, offset) {
   return i - offset;
 }
 
-/** @param {string} line @param {number} offset */
+/**
+ * 扫描行尾空白。
+ *
+ * @param {string} line
+ * @param {number} offset
+ * @returns {number}
+ */
 function scanTableRowEnd(line, offset) {
   let i = offset;
   while (i < line.length && /[ \t]/.test(line[i])) i += 1;
@@ -102,6 +138,8 @@ function scanTableRowEnd(line, offset) {
 }
 
 /**
+ * 解析分隔符行的列对齐方式。
+ *
  * @param {string} line
  * @returns {("left"|"center"|"right")[] | null}
  */
@@ -123,12 +161,22 @@ function parseDelimiterAlignments(line) {
   return alignments;
 }
 
-/** @param {string} line */
+/**
+ * 判断是否为表格分隔符行。
+ *
+ * @param {string} line
+ * @returns {boolean}
+ */
 export function isTableDelimiterRow(line) {
   return parseDelimiterAlignments(stripBlockIndent(line)) !== null;
 }
 
-/** @param {string} line */
+/**
+ * 判断行是否会中断表格解析。
+ *
+ * @param {string} line
+ * @returns {boolean}
+ */
 function isTableInterruptLine(line) {
   if (/^ {0,3}>/.test(line)) return true;
   if (/^ {0,3}#{1,6}(?: |$)/.test(line)) return true;
@@ -139,8 +187,11 @@ function isTableInterruptLine(line) {
 }
 
 /**
+ * 将单元格数组补齐或截断到指定列数。
+ *
  * @param {string[]} cells
  * @param {number} numCols
+ * @returns {string[]}
  */
 function normalizeRowCells(cells, numCols) {
   const row = cells.slice(0, numCols);
@@ -149,10 +200,13 @@ function normalizeRowCells(cells, numCols) {
 }
 
 /**
+ * 创建表格行 AST 节点。
+ *
  * @param {string[]} cells
  * @param {("left"|"center"|"right")[]} align
  * @param {boolean} isHeader
  * @param {import('@/transformer/core/ParserContext.js').BlockParseContext} ctx
+ * @returns {import('@/transformer/core/MarkdownNode.js').MarkdownNode}
  */
 function makeTableRow(cells, align, isHeader, ctx) {
   return createNode("table_row", {
@@ -167,7 +221,13 @@ function makeTableRow(cells, align, isHeader, ctx) {
   });
 }
 
-/** @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} row @param {import('@/transformer/core/ParserContext.js').RenderContext} ctx */
+/**
+ * 渲染表格行 HTML。
+ *
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} row
+ * @param {import('@/transformer/core/ParserContext.js').RenderContext} ctx
+ * @returns {string}
+ */
 function renderTableRow(row, ctx) {
   const tag = row.props?.isHeader ? "th" : "td";
   const cells = row.children
@@ -185,11 +245,17 @@ function renderTableRow(row, ctx) {
   return `<tr>\n${cells}\n</tr>`;
 }
 
+/**
+ * GFM 表格块解析器。
+ *
+ * @extends {BaseBlockParser}
+ */
 class TableBlockParser extends BaseBlockParser {
   constructor() {
     super({ type: "table", priority: 70, canInterruptParagraph: true });
   }
 
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     if (index + 1 >= lines.length) return null;
 
@@ -240,6 +306,7 @@ class TableBlockParser extends BaseBlockParser {
     };
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     const parts = ["<table>"];
 

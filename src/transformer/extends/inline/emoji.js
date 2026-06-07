@@ -1,5 +1,8 @@
 /**
- * 行内语法拓展：表情符号 :shortcode:
+ * @file 行内 Emoji 短码语法
+ * @module transformer/extends/inline/emoji
+ *
+ * 语法：`:shortcode:`，短码名映射见 emojiCatalog.js
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
@@ -7,14 +10,20 @@ import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { isEscaped } from "@/transformer/gfm/inline/shared.js";
 import { resolveEmojiShortcode } from "@/transformer/extends/inline/emojiCatalog.js";
 
-/** 字母/数字/下划线/连字符/加号，支持中文等 Unicode 短码名 */
+/** 短码名正则：字母/数字/下划线/连字符/加号，支持中文等 Unicode */
 const SHORTCODE_RE = /^:([\p{L}\p{N}_+-]+):/u;
 
+/**
+ * 行内 Emoji 短码解析器。
+ *
+ * @extends {BaseInlineParser}
+ */
 class EmojiInlineParser extends BaseInlineParser {
   constructor() {
     super({ type: "emoji", priority: 46 });
   }
 
+  /** @inheritdoc */
   parse(src, index) {
     if (src[index] !== ":" || isEscaped(src, index)) return null;
 
@@ -33,6 +42,7 @@ class EmojiInlineParser extends BaseInlineParser {
     };
   }
 
+  /** @inheritdoc */
   render(node) {
     return node.props.emoji;
   }

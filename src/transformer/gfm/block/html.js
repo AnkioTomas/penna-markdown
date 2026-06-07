@@ -1,10 +1,14 @@
 /**
- * 块级语法：原生 HTML 块 (HTML Blocks)
+ * @file 块级语法：原生 HTML 块
+ * @module transformer/gfm/block/html
+ *
+ * CommonMark HTML Block Types 1–7。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 
+/** HTML 标签名正则片段 */
 const tagname = '[A-Za-z][A-Za-z0-9-]*';
 const attribute_name = '[a-zA-Z_:][a-zA-Z0-9_.:-]*';
 const attribute_value = '(?:[^"\'=<>` \\t\\r\\n]+|\'[^\']*\'|"[^"]*")';
@@ -12,6 +16,7 @@ const attribute = `(?:\\s+${attribute_name}(?:\\s*=\\s*${attribute_value})?)`;
 const open_tag = `<${tagname}${attribute}*\\s*/?>`;
 const close_tag = `</${tagname}\\s*>`;
 
+/** CommonMark HTML Block Types 1–6 的开闭匹配规则 */
 const HTML_BLOCK_OPEN = [
   // Type 1: script, pre, style, textarea
   [/^ {0,3}<(script|pre|style|textarea)(?:\s|>|$)/i, /<\/(script|pre|style|textarea)>/i],
@@ -27,8 +32,14 @@ const HTML_BLOCK_OPEN = [
   [/^ {0,3}<\/?(address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?:\s|\/?>|$)/i, null],
 ];
 
+/** HTML Block Type 7：单行开/闭标签 */
 const TYPE_7_RE = new RegExp(`^ {0,3}(?:${open_tag}|${close_tag})\\s*$`, 'i');
 
+/**
+ * 块级 HTML 解析器。
+ *
+ * @extends {BaseBlockParser}
+ */
 class HTMLBlockParser extends BaseBlockParser {
   constructor() {
     // 优先级 120：高于 Heading (98) 和 Code (100)
@@ -36,6 +47,7 @@ class HTMLBlockParser extends BaseBlockParser {
     this.canInterruptParagraph = true;
   }
 
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     const line = lines[index] ?? "";
 
@@ -103,6 +115,7 @@ class HTMLBlockParser extends BaseBlockParser {
     };
   }
 
+  /** @inheritdoc */
   render(node) {
     return node.value;
   }

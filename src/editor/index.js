@@ -1,5 +1,8 @@
 /**
- * 编辑器：编排 CodeMirror 6（编辑区）+ Transformer（解析渲染）+ Renderer（预览 DOM）。
+ * @file 编辑器入口
+ * @module editor/index
+ *
+ * 编排 CodeMirror 6（编辑区）+ Transformer（解析渲染）+ Renderer（预览 DOM）。
  */
 
 import { history, historyKeymap, defaultKeymap } from "@codemirror/commands";
@@ -9,7 +12,12 @@ import { EditorView, keymap } from "@codemirror/view";
 import { createTransformer } from "../transformer/index.js";
 import { createRenderer } from "../renderer/index.js";
 
-/** 将 extensions 规范为数组 */
+/**
+ * 将 extensions 规范为数组。
+ *
+ * @param {import('@codemirror/state').Extension|import('@codemirror/state').Extension[]} [extensions=[]]
+ * @returns {import('@codemirror/state').Extension[]}
+ */
 function normalizeExtensions(extensions = []) {
   return Array.isArray(extensions) ? extensions : [extensions];
 }
@@ -17,10 +25,16 @@ function normalizeExtensions(extensions = []) {
 /**
  * 创建 Cherry Markdown Next 编辑器实例。
  *
- * mount：编辑区容器（必填）
- * preview：预览区容器（必填）
- * initial：初始 Markdown 文本
- * transformerOptions / rendererOptions：传给子模块的配置
+ * @param {Object} [options={}]
+ * @param {HTMLElement} options.mount - 编辑区容器（必填）
+ * @param {HTMLElement} options.preview - 预览区容器（必填）
+ * @param {string} [options.initial=""] - 初始 Markdown 文本
+ * @param {import('@codemirror/state').Extension|import('@codemirror/state').Extension[]} [options.extensions=[]]
+ * @param {typeof createTransformer} [options.transformer=createTransformer]
+ * @param {typeof createRenderer} [options.renderer=createRenderer]
+ * @param {ConstructorParameters<typeof createTransformer>[0]} [options.transformerOptions={}]
+ * @param {ConstructorParameters<typeof createRenderer>[0]} [options.rendererOptions={}]
+ * @returns {EditorApi}
  */
 export function createEditor({
   mount,
@@ -75,6 +89,7 @@ export function createEditor({
 
   const view = new EditorView({ state, parent: mount });
 
+  /** @type {EditorApi} */
   const api = {
     getMarkdown() {
       return view.state.doc.toString();
@@ -149,3 +164,19 @@ export function createEditor({
 
   return api;
 }
+
+/**
+ * @typedef {Object} EditorApi
+ * @property {() => string} getMarkdown
+ * @property {(markdownText: string) => void} setMarkdown
+ * @property {() => ReturnType<import('../transformer/TransformerEngine.js').TransformerEngine['render']>} renderNow
+ * @property {() => import('../transformer/TransformerEngine.js').TransformerEngine} getTransformer
+ * @property {() => ReturnType<typeof createRenderer>} getRenderer
+ * @property {() => void} focus
+ * @property {(callback: (markdown: string) => void) => () => boolean} onChange
+ * @property {(command: string, payload: unknown) => void} execute
+ * @property {(plugin: Object) => void} useSyntaxPlugin
+ * @property {(plugin: Object) => void} useRendererPlugin
+ * @property {(plugin: Object) => void} use
+ * @property {() => void} destroy
+ */

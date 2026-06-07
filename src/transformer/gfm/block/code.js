@@ -1,5 +1,8 @@
 /**
- * 块级语法：代码块 (Fenced Code Block)
+ * @file 块级语法：围栏代码块
+ * @module transformer/gfm/block/code
+ *
+ * Fenced Code Block：以 ``` 或 ~~~ 包裹的代码块，可选 info string 指定语言。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
@@ -7,11 +10,17 @@ import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { unescapeHref, decodeHtmlEntities } from "@/transformer/gfm/inline/shared.js";
 
+/**
+ * 围栏代码块解析器。
+ *
+ * @extends {BaseBlockParser}
+ */
 class CodeBlockParser extends BaseBlockParser {
   constructor() {
     super({ type: "code", priority: 100 });
   }
 
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     const line = lines[index] ?? "";
     // 匹配 0-3 个空格，紧接着 3 个及以上 ` 或 ~
@@ -68,6 +77,7 @@ class CodeBlockParser extends BaseBlockParser {
     return { node, nextIndex: i };
   }
 
+  /** @inheritdoc */
   render(node) {
     const { content, lang } = node.props;
     const classAttr = lang ? ` class="language-${escapeHtml(lang)}"` : "";

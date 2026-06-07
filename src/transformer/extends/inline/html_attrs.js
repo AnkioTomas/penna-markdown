@@ -1,5 +1,8 @@
 /**
- * 行内语法拓展：使用 `{...}` 表达“HTML 属性片段”。
+ * @file 行内 HTML 属性片段语法
+ * @module transformer/extends/inline/html_attrs
+ *
+ * 语法：`{class="x"}` 等 HTML 属性片段。
  *
  * 语义：
  * - `{class="x"}` 解析为 `html_attrs` 节点
@@ -13,21 +16,47 @@ import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 
+/**
+ * 判断 index 处字符是否被反斜杠转义。
+ *
+ * @param {string} src
+ * @param {number} index
+ * @returns {boolean}
+ */
 function isEscaped(src, index) {
   let n = 0;
   for (let i = index - 1; i >= 0 && src[i] === "\\"; i -= 1) n += 1;
   return n % 2 === 1;
 }
 
+/**
+ * 跳过 index 起的连续空白字符。
+ *
+ * @param {string} str
+ * @param {number} i
+ * @returns {number} 跳过空白后的新索引
+ */
 function skipSpaces(str, i) {
   while (i < str.length && /\s/.test(str[i])) i += 1;
   return i;
 }
 
+/**
+ * 判断字符是否为 XML/HTML 属性名起始字符。
+ *
+ * @param {string} ch
+ * @returns {boolean}
+ */
 function isNameStart(ch) {
   return /[A-Za-z_:]/.test(ch);
 }
 
+/**
+ * 判断字符是否为 XML/HTML 属性名后续字符。
+ *
+ * @param {string} ch
+ * @returns {boolean}
+ */
 function isNameChar(ch) {
   return /[A-Za-z0-9_:-]/.test(ch);
 }
@@ -40,8 +69,8 @@ function isNameChar(ch) {
  * - `key="value"` / `key='value'`
  * - `key=value`（不含空白的 value）
  *
- * @param {string} inner
- * @returns {string} attrsString，如 `class="x" data-a="1"`；解析失败返回空字符串
+ * @param {string} inner - 花括号内的原始字符串
+ * @returns {string} 属性字符串，如 `class="x" data-a="1"`；解析失败返回空字符串
  */
 function parseAttrsString(inner) {
   const str = String(inner);
@@ -103,12 +132,18 @@ function parseAttrsString(inner) {
   return out.join(" ");
 }
 
+/**
+ * HTML 属性片段行内解析器。
+ *
+ * @extends {BaseInlineParser}
+ */
 class HtmlAttrsInlineParser extends BaseInlineParser {
   constructor() {
     // priority 不要太高：让代码 span / 其它关键语法先匹配
     super({ type: "html_attrs", priority: 30 });
   }
 
+  /** @inheritdoc */
   parse(src, index) {
     if (src[index] !== "{") return null;
     if (isEscaped(src, index)) return null;
@@ -154,6 +189,7 @@ class HtmlAttrsInlineParser extends BaseInlineParser {
     };
   }
 
+  /** @inheritdoc */
   render() {
     // 折叠后不应出现在最终 AST；若残留则输出空
     return "";
@@ -161,4 +197,3 @@ class HtmlAttrsInlineParser extends BaseInlineParser {
 }
 
 export default new HtmlAttrsInlineParser();
-

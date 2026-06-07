@@ -1,5 +1,8 @@
 /**
- * 内置语法（仅注册当前已实现的模块）
+ * @file GFM 内置语法注册
+ * @module transformer/gfm/builtin
+ *
+ * 导出默认行内/块级解析器列表，并向 Registry 注册 GFM 扩展（如强调定界符 finalizer）。
  */
 
 import escape from "@/transformer/gfm/inline/escape.js";
@@ -25,6 +28,7 @@ import rawhtmlInline from "@/transformer/gfm/inline/html.js";
 import rawhtmlBlock from "@/transformer/gfm/block/html.js";
 import { emphasisInlineFinalizer } from "@/transformer/gfm/inline/delimiters.js";
 
+/** 默认行内语法解析器（按注册顺序） */
 export const builtinInlineSyntax = [
   escape,
   images,
@@ -41,6 +45,7 @@ export const builtinInlineSyntax = [
   text,
 ];
 
+/** 默认块级语法解析器（按注册顺序） */
 export const builtinBlockSyntax = [
   rawhtmlBlock,
   heading,
@@ -54,7 +59,11 @@ export const builtinBlockSyntax = [
   paragraph,
 ];
 
-/** @param {import('@/transformer/core/Registry.js').Registry} registry */
+/**
+ * 向 Registry 注册 GFM 特有扩展（如强调定界符 inline finalizer）。
+ *
+ * @param {import('@/transformer/core/Registry.js').Registry} registry
+ */
 export function applyGfmRegistryExtensions(registry) {
   registry.registerInlineFinalizer(emphasisInlineFinalizer);
 }

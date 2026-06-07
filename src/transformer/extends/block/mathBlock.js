@@ -1,24 +1,47 @@
 /**
- * 块级数学公式：$$ ... $$（Cherry 语法）
+ * @file 块级语法拓展：块级数学公式
+ * @module transformer/extends/block/mathBlock
+ *
+ * 语法示例：
+ * ```
+ * $$
+ * E = mc^2
+ * $$
+ * ```
+ *
+ * Cherry 扩展语法，使用 `$$` 围栏。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { renderMathBlock } from "@/transformer/extends/utils/cherryApi.js";
 
+/** 块级数学开标记行：`$$`（非 `$$$`） */
 const MATH_OPEN_RE = /^( {0,3})\$\$(?!\$)\s*(.*)$/;
 
+/**
+ * 从行尾提取 `$$` 闭标记前的内容；无闭标记则返回 null。
+ *
+ * @param {string} line
+ * @returns {string | null}
+ */
 function stripClosingMath(line) {
   const match = line.match(/^(.*?)\s*\$\$\s*$/);
   if (!match || !line.includes("$$")) return null;
   return match[1];
 }
 
+/**
+ * 块级数学公式解析器。
+ *
+ * @extends {BaseBlockParser}
+ */
 class MathBlockParser extends BaseBlockParser {
   constructor() {
     super({ type: "math_block", priority: 105 });
   }
 
+  /** @inheritdoc */
   parse(lines, index) {
     const line = lines[index] ?? "";
     const open = line.match(MATH_OPEN_RE);
@@ -60,6 +83,7 @@ class MathBlockParser extends BaseBlockParser {
     return null;
   }
 
+  /** @inheritdoc */
   render(node) {
     return renderMathBlock(node.props.content ?? "");
   }

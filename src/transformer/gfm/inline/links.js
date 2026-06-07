@@ -1,5 +1,8 @@
 /**
- * 行内语法：链接 (Links)
+ * @file 行内语法：链接
+ * @module transformer/gfm/inline/links
+ *
+ * 行内链接：inline、full/collapsed/shortcut reference 形式。
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
@@ -16,11 +19,17 @@ import {
   parsePlainDestination,
 } from "@/transformer/gfm/inline/shared.js";
 
+/**
+ * 链接行内解析器。
+ *
+ * @extends {BaseInlineParser}
+ */
 class LinkInlineParser extends BaseInlineParser {
   constructor() {
     super({ type: "link", priority: 200 });
   }
 
+  /** @inheritdoc */
   parse(src, index, ctx) {
     if (src[index] !== "[") return null;
 
@@ -90,6 +99,15 @@ class LinkInlineParser extends BaseInlineParser {
     return null;
   }
 
+  /**
+   * 创建 reference 链接 AST 节点。
+   *
+   * @param {string} ref
+   * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[]} children
+   * @param {string} fallback
+   * @param {'shortcut'|'full'|'collapsed'} [referenceKind='shortcut']
+   * @returns {import('@/transformer/core/MarkdownNode.js').MarkdownNode}
+   */
   createReferenceNode(ref, children, fallback, referenceKind = "shortcut") {
     return createNode("link", {
       reference: true,
@@ -100,6 +118,14 @@ class LinkInlineParser extends BaseInlineParser {
     });
   }
 
+  /**
+   * 解析 inline link 的 destination 与 title。
+   *
+   * @param {string} src
+   * @param {number} start
+   * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[]} children
+   * @returns {{ node: import('@/transformer/core/MarkdownNode.js').MarkdownNode, nextIndex: number } | null}
+   */
   parseInlineLink(src, start, children) {
     let j = start + 1;
     while (j < src.length && /[ \t\r\n\v\f]/.test(src[j])) j++;
@@ -145,6 +171,7 @@ class LinkInlineParser extends BaseInlineParser {
     };
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     const inner = ctx.renderInline(node.children);
 

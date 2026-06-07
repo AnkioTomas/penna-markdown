@@ -1,5 +1,8 @@
 /**
- * 块级语法：列表 (List & List Item)
+ * @file 块级语法：列表
+ * @module transformer/gfm/block/list
+ *
+ * CommonMark / GFM 有序与无序列表及 list item。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
@@ -7,9 +10,16 @@ import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { parseListMarkerLine, listsMatch, getIndent, expandLinePrefixTabs, expandListItemContent, findIndexAtColumn } from "@/transformer/utils/tabs.js";
 import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
 
+/** 列表项内容相对 marker 的最小缩进列数（与缩进代码块一致） */
 const CODE_INDENT = 4;
 
-/** marker 行内容：区分 tab 缩进代码块与空格缩进代码块 */
+/**
+ * marker 行内容：区分 tab 缩进代码块与空格缩进代码块。
+ *
+ * @param {string} line
+ * @param {ReturnType<import('@/transformer/utils/tabs.js').parseListMarkerLine>} marker
+ * @returns {string}
+ */
 function normalizeListMarkerContent(line, marker) {
   if (getIndent(marker.content) < CODE_INDENT) {
     return expandLinePrefixTabs(marker.content);
@@ -23,7 +33,12 @@ function normalizeListMarkerContent(line, marker) {
 }
 
 /**
- * 判断后续 list marker 相对当前 item 是同级、嵌套，还是非 list（如 Example 292 的 `- e`）
+ * 判断后续 list marker 相对当前 item 是同级、嵌套，还是非 list（如 Example 292 的 `- e`）。
+ *
+ * @param {string} line
+ * @param {number} itemMarkerColumn
+ * @param {number} contentStartCol
+ * @param {ReturnType<import('@/transformer/utils/tabs.js').parseListMarkerLine>} initialMarker
  * @returns {'sibling'|'nested'|null}
  */
 function classifyListMarkerLine(line, itemMarkerColumn, contentStartCol, initialMarker) {
@@ -35,7 +50,13 @@ function classifyListMarkerLine(line, itemMarkerColumn, contentStartCol, initial
   return "sibling";
 }
 
-/** item 内空行是否构成 loose（排除 tight 的 paragraph + sublist） */
+/**
+ * item 内空行是否构成 loose（排除 tight 的 paragraph + sublist）。
+ *
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[]} children
+ * @param {string[]} itemLines
+ * @returns {boolean}
+ */
 function isLooseListItemContent(children, itemLines) {
   if (!itemLines.some((l) => l.trim() === "")) return false;
   if (children.length <= 1) return false;
@@ -59,12 +80,24 @@ function isLooseListItemContent(children, itemLines) {
   return true;
 }
 
-/** marker 行本身无内容（如 `-`、`*`、`2.`） */
+/**
+ * marker 行本身无内容（如 `-`、`*`、`2.`）。
+ *
+ * @param {ReturnType<import('@/transformer/utils/tabs.js').parseListMarkerLine>} marker
+ * @returns {boolean}
+ */
 function isEmptyMarkerLine(marker) {
   return marker.content.trim() === "";
 }
 
-/** 空 list item 或 start≠1 的有序列表不能打断段落（Example 263、284） */
+/**
+ * 空 list item 或 start≠1 的有序列表不能打断段落（Example 263、284）。
+ *
+ * @param {string[]} lines
+ * @param {number} index
+ * @param {ReturnType<import('@/transformer/utils/tabs.js').parseListMarkerLine>} marker
+ * @returns {boolean}
+ */
 function wouldInterruptParagraph(lines, index, marker) {
   if (index === 0 || lines[index - 1]?.trim() === "") return false;
   if (parseListMarkerLine(lines[index - 1])) return false;
@@ -74,11 +107,17 @@ function wouldInterruptParagraph(lines, index, marker) {
   return false;
 }
 
+/**
+ * 列表块解析器。
+ *
+ * @extends {BaseBlockParser}
+ */
 class ListBlockParser extends BaseBlockParser {
   constructor() {
     super({ type: "list", priority: 50 });
   }
 
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     let currentLineIndex = index;
     const initialMarker = parseListMarkerLine(lines[currentLineIndex]);
@@ -260,6 +299,14 @@ class ListBlockParser extends BaseBlockParser {
     return { node, nextIndex: currentLineIndex };
   }
 
+  /**
+   * 渲染单个 list item。
+   *
+   * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} item
+   * @param {import('@/transformer/core/ParserContext.js').RenderContext} ctx
+   * @param {boolean} isLoose
+   * @returns {string}
+   */
   renderListItem(item, ctx, isLoose) {
     if (item.children.length === 0) {
       return "<li></li>";
@@ -292,6 +339,7 @@ class ListBlockParser extends BaseBlockParser {
     return `<li>${lead}${parts.join("\n")}${tail}</li>`;
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     const tag = node.props.ordered ? "ol" : "ul";
     const startAttr =

@@ -1,17 +1,34 @@
 /**
- * 剧透：!! 文字 !!（开闭定界符后均须有空格）
+ * @file 行内剧透语法
+ * @module transformer/extends/inline/spoiler
+ *
+ * 语法：`!! 文字 !!`（开闭定界符后均须有空格）
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { isEscaped } from "@/transformer/gfm/inline/shared.js";
 
-const OPEN_LEN = 3; // "!!" + required whitespace
+/** 开定界符长度：`!!` + 必需空白 */
+const OPEN_LEN = 3;
 
+/**
+ * 判断字符是否为空白（空格或制表符）。
+ *
+ * @param {string} ch
+ * @returns {boolean}
+ */
 function isWhitespace(ch) {
   return ch === " " || ch === "\t";
 }
 
+/**
+ * 从 contentStart 起查找剧透闭合定界符 ` !!` 的起始索引。
+ *
+ * @param {string} src
+ * @param {number} contentStart - 内容起始索引
+ * @returns {number} 闭合空白字符的索引，未找到返回 -1
+ */
 function findSpoilerClose(src, contentStart) {
   for (let i = contentStart; i < src.length - 2; i++) {
     if (!isWhitespace(src[i])) continue;
@@ -22,11 +39,17 @@ function findSpoilerClose(src, contentStart) {
   return -1;
 }
 
+/**
+ * 行内剧透解析器。
+ *
+ * @extends {BaseInlineParser}
+ */
 class SpoilerInlineParser extends BaseInlineParser {
   constructor() {
     super({ type: "spoiler", priority: 49 });
   }
 
+  /** @inheritdoc */
   parse(src, index, ctx) {
     if (src[index] !== "!" || src[index + 1] !== "!") return null;
     if (isEscaped(src, index)) return null;
@@ -45,6 +68,7 @@ class SpoilerInlineParser extends BaseInlineParser {
     };
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     return `<span class="cherry-spoiler">${ctx.renderInline(node.children)}</span>`;
   }

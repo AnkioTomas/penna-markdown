@@ -1,5 +1,8 @@
 /**
- * 块级语法：缩进代码块 (Indented Code Block)
+ * @file 块级语法：缩进代码块
+ * @module transformer/gfm/block/indented-code
+ *
+ * Indented Code Block：以 ≥4 列缩进标识的代码块。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
@@ -7,6 +10,11 @@ import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { isIndentedCodeLine, stripCodeContent, getIndent } from "@/transformer/utils/tabs.js";
 
+/**
+ * 缩进代码块解析器。
+ *
+ * @extends {BaseBlockParser}
+ */
 class IndentedCodeBlockParser extends BaseBlockParser {
   constructor() {
     // 缩进代码块优先级较高，确保在标题等可能误匹配的语法之前运行
@@ -14,6 +22,7 @@ class IndentedCodeBlockParser extends BaseBlockParser {
     super({ type: "indented-code", priority: 110, canInterruptParagraph: false });
   }
 
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     let line = lines[index];
     // 使用 getIndent 兼容 tab
@@ -66,6 +75,7 @@ class IndentedCodeBlockParser extends BaseBlockParser {
     return { node, nextIndex: i };
   }
 
+  /** @inheritdoc */
   render(node) {
     const { content } = node.props;
     return `<pre><code>${escapeHtml(content)}\n</code></pre>`;

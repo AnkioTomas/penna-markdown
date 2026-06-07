@@ -1,5 +1,8 @@
 /**
- * Frontmatter 变量引用：[[name]] / [[nested.key]]
+ * @file Frontmatter 变量引用语法
+ * @module transformer/extends/inline/frontmatterVar
+ *
+ * 语法：`[[name]]` / `[[nested.key]]`，从文档 front matter 解析并内联替换变量值。
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
@@ -12,11 +15,17 @@ import {
   resolveFrontmatterVar,
 } from "@/transformer/extends/utils/frontmatter.js";
 
+/**
+ * Frontmatter 变量引用行内解析器。
+ *
+ * @extends {BaseInlineParser}
+ */
 class FrontmatterVarInlineParser extends BaseInlineParser {
   constructor() {
     super({ type: "frontmatter_var", priority: 210 });
   }
 
+  /** @inheritdoc */
   parse(src, index, ctx) {
     if (src[index] !== "[" || src[index + 1] !== "[") return null;
     if (isEscaped(src, index)) return null;
@@ -40,6 +49,7 @@ class FrontmatterVarInlineParser extends BaseInlineParser {
     };
   }
 
+  /** @inheritdoc */
   render(node) {
     const { varName, resolved, value } = node.props;
     const text = escapeHtml(value);

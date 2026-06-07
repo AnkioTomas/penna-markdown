@@ -1,16 +1,25 @@
 /**
- * 行内语法：换行 (Softbreak / Hardbreak)
+ * @file 行内语法：换行 (Softbreak / Hardbreak)
+ * @module transformer/gfm/inline/break
+ *
+ * 软换行（单 `\n`）、硬换行（行末两空格或 `\` + 换行）。
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 
+/**
+ * 换行行内解析器。
+ *
+ * @extends {BaseInlineParser}
+ */
 class BreakParser extends BaseInlineParser {
   constructor() {
     // 优先级应高于 escape (100) 和 text，确保处理反斜杠换行
     super({ type: "break", priority: 110 });
   }
 
+  /** @inheritdoc */
   parse(src, index, ctx) {
     // 1. 处理反斜杠 + 换行符 (Hardbreak)
     if (src[index] === "\\" && src[index + 1] === "\n") {
@@ -63,6 +72,7 @@ class BreakParser extends BaseInlineParser {
     return null;
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     if (node.props?.isHard) return "<br />\n";
     // Softbreak 渲染为换行符

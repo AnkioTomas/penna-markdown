@@ -1,34 +1,69 @@
 /**
- * GFM Autolink：尖括号 <uri>/<email> 与扩展（www. / URL / 邮箱）
+ * @file GFM Autolink 行内语法
+ * @module transformer/gfm/inline/autolinks
+ *
+ * 尖括号 `<uri>` / `<email>` autolink 与 GFM 扩展 autolink（www. / URL / 邮箱）。
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { escapeAngleBrackets, escapeHtml } from "@/transformer/utils/escape.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 
+/** URI scheme 名称正则 */
 const SCHEME_RE = /^[A-Za-z][A-Za-z0-9+.-]{1,31}$/;
+
+/** 尖括号 email autolink 内容校验 */
 const EMAIL_RE =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
+/** 扩展 autolink 允许的安全 URL scheme 前缀 */
 const URL_SCHEMES = ["http://", "https://", "ftp://"];
+
+/** 扩展 autolink 尾部可剥离的标点 */
 const TRAILING_PUNCT = new Set("?!.,:*_~'\"");
+
+/** 邮箱 local part 允许的额外字符 */
 const LOCAL_EXTRA = ".+-_";
 
+/**
+ * 判断字符是否为字母或数字。
+ *
+ * @param {string} ch
+ * @returns {boolean}
+ */
 function isAlnum(ch) {
   return /[A-Za-z0-9]/.test(ch);
 }
 
+/**
+ * 判断字符是否可出现在 URI 中。
+ *
+ * @param {string} ch
+ * @returns {boolean}
+ */
 function isUriChar(ch) {
   const c = ch.charCodeAt(0);
   if (c < 0x20 || c === 0x7f) return false;
   return ch !== "<" && ch !== ">" && ch !== " " && ch !== "\t" && ch !== "\n" && ch !== "\r";
 }
 
+/**
+ * 判断字符是否可出现在 host 中。
+ *
+ * @param {string} ch
+ * @returns {boolean}
+ */
 function isValidHostChar(ch) {
   if (/\s/.test(ch)) return false;
   return isAlnum(ch);
 }
 
+/**
+ * 对 URI 做百分号编码（保留安全字符）。
+ *
+ * @param {string} uri
+ * @returns {string}
+ */
 function encodeHref(uri) {
   let out = "";
   for (let i = 0; i < uri.length; i += 1) {
@@ -45,17 +80,37 @@ function encodeHref(uri) {
   return out;
 }
 
+/**
+ * 渲染 autolink 节点为 `<a>` 标签。
+ *
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} node
+ * @returns {string}
+ */
 function renderAutolink(node) {
   const { url, label } = node.props ?? {};
   return `<a href="${escapeHtml(url)}">${escapeHtml(label)}</a>`;
 }
 
+/**
+ * 扩展 autolink 是否可在 index 处开始。
+ *
+ * @param {string} src
+ * @param {number} index
+ * @returns {boolean}
+ */
 function canStartUriAutolink(src, index) {
   if (index === 0) return true;
   const prev = src[index - 1];
   return /\s/.test(prev) || "*_~(".includes(prev);
 }
 
+/**
+ * 校验域名部分长度与下划线规则。
+ *
+ * @param {string} data
+ * @param {boolean} allowShort
+ * @returns {number}
+ */
 function checkDomain(data, allowShort) {
   let np = 0;
   let uscore1 = 0;
@@ -86,6 +141,12 @@ function checkDomain(data, allowShort) {
   return np > 0 ? i : 0;
 }
 
+/**
+ * 确定扩展 autolink 的有效结束位置（处理括号平衡与尾部标点）。
+ *
+ * @param {string} data
+ * @returns {number}
+ */
 function autolinkDelim(data) {
   let linkEnd = data.length;
 
@@ -129,6 +190,12 @@ function autolinkDelim(data) {
   return linkEnd;
 }
 
+/**
+ * 判断 URL scheme 前缀是否安全。
+ *
+ * @param {string} prefix
+ * @returns {boolean}
+ */
 function isSafeUrlScheme(prefix) {
   return URL_SCHEMES.some(
     (scheme) => prefix.startsWith(scheme) && isValidHostChar(prefix[scheme.length] ?? ""),
@@ -137,6 +204,12 @@ function isSafeUrlScheme(prefix) {
 
 // --- 尖括号 autolink ---
 
+/**
+ * 解析尖括号 email autolink 内容。
+ *
+ * @param {string} inner
+ * @returns {{ url: string, label: string } | null}
+ */
 function parseBracketEmailAutolink(inner) {
   if (!inner.includes("@") || inner.includes("\\")) return null;
   if (!EMAIL_RE.test(inner)) return null;
@@ -146,7 +219,12 @@ function parseBracketEmailAutolink(inner) {
   };
 }
 
-/** 非 autolink 的尖括号内容：反斜杠转义不生效，但显示时去掉 `\` */
+/**
+ * 非 autolink 的尖括号内容：反斜杠转义不生效，但显示时去掉 `\`。
+ *
+ * @param {string} inner
+ * @returns {string}
+ */
 function literalBracketInner(inner) {
   let out = "";
   for (let i = 0; i < inner.length; i += 1) {
@@ -160,6 +238,12 @@ function literalBracketInner(inner) {
   return out;
 }
 
+/**
+ * 解析尖括号 URI autolink 内容。
+ *
+ * @param {string} inner
+ * @returns {{ url: string, label: string } | null}
+ */
 function parseUriAutolink(inner) {
   const colon = inner.indexOf(":");
   if (colon < 2) return null;
@@ -179,11 +263,17 @@ function parseUriAutolink(inner) {
   };
 }
 
+/**
+ * 尖括号 autolink 行内解析器。
+ *
+ * @extends {BaseInlineParser}
+ */
 class AutolinksInlineParser extends BaseInlineParser {
   constructor() {
     super({ type: "autolink", priority: 90 });
   }
 
+  /** @inheritdoc */
   parse(src, index) {
     if (src[index] !== "<") return null;
 
@@ -242,13 +332,19 @@ class AutolinksInlineParser extends BaseInlineParser {
     };
   }
 
+  /** @inheritdoc */
   render(node) {
     return renderAutolink(node);
   }
 }
 
-// --- 扩展 autolink（无尖括号）---
-
+/**
+ * 解析 `www.` 开头的扩展 autolink。
+ *
+ * @param {string} src
+ * @param {number} index
+ * @returns {{ url: string, label: string, nextIndex: number } | null}
+ */
 function parseWwwAutolink(src, index) {
   if (!canStartUriAutolink(src, index)) return null;
   if (!src.startsWith("www.", index)) return null;
@@ -272,6 +368,13 @@ function parseWwwAutolink(src, index) {
   };
 }
 
+/**
+ * 解析 `http://` 等 scheme 开头的扩展 autolink。
+ *
+ * @param {string} src
+ * @param {number} index
+ * @returns {{ url: string, label: string, nextIndex: number } | null}
+ */
 function parseUrlAutolink(src, index) {
   let schemeStart = index;
   let matchedScheme = "";
@@ -320,6 +423,15 @@ function parseUrlAutolink(src, index) {
   };
 }
 
+/**
+ * 校验 `@` 前是否为 `mailto:` 协议前缀。
+ *
+ * @param {string} src
+ * @param {number} atIndex
+ * @param {number} rewind
+ * @param {number} maxRewind
+ * @returns {boolean}
+ */
 function validateMailtoProtocol(src, atIndex, rewind, maxRewind) {
   const protocol = "mailto:";
   if (protocol.length > maxRewind - rewind) return false;
@@ -329,6 +441,13 @@ function validateMailtoProtocol(src, atIndex, rewind, maxRewind) {
   return !isAlnum(src[start - 1]);
 }
 
+/**
+ * 解析无尖括号的扩展 email autolink。
+ *
+ * @param {string} src
+ * @param {number} index
+ * @returns {{ url: string, label: string, nextIndex: number } | null}
+ */
 function parseExtendedEmailAutolink(src, index) {
   const atPos = src.indexOf("@", index);
   if (atPos < 0) return null;
@@ -385,11 +504,17 @@ function parseExtendedEmailAutolink(src, index) {
   };
 }
 
+/**
+ * GFM 扩展 autolink 行内解析器（www / URL / email，无尖括号）。
+ *
+ * @extends {BaseInlineParser}
+ */
 class AutolinkExtInlineParser extends BaseInlineParser {
   constructor() {
     super({ type: "autolink_ext", priority: 85 });
   }
 
+  /** @inheritdoc */
   parse(src, index) {
     const email = parseExtendedEmailAutolink(src, index);
     if (email) {
@@ -418,10 +543,12 @@ class AutolinkExtInlineParser extends BaseInlineParser {
     return null;
   }
 
+  /** @inheritdoc */
   render(node) {
     return renderAutolink(node);
   }
 }
 
 export default new AutolinksInlineParser();
+/** GFM 扩展 autolink 解析器单例 */
 export const autolinkExt = new AutolinkExtInlineParser();

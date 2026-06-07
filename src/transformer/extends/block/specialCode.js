@@ -1,6 +1,9 @@
 /**
- * Cherry 扩展代码块：echarts / math / mermaid / card 等
- * priority > GFM code，非特殊语言交还标准 code parser
+ * @file 块级语法拓展：Cherry 特殊代码块
+ * @module transformer/extends/block/specialCode
+ *
+ * 在 GFM 代码块基础上，对 echarts / math / mermaid / card 等语言
+ * 使用专用渲染器；priority > GFM code，非特殊语言交还标准 code parser。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
@@ -13,6 +16,7 @@ import {
 } from "@/transformer/extends/utils/cherryApi.js";
 import { renderCardBlock } from "@/transformer/extends/utils/cherryCard.js";
 
+/** 语言标识 → 专用渲染函数 */
 const SPECIAL_RENDERERS = {
   echarts: renderEchartsBlock,
   math: renderMathBlock,
@@ -23,8 +27,15 @@ const SPECIAL_RENDERERS = {
   card: renderCardBlock,
 };
 
+/** 受 Cherry 接管的围栏语言集合 */
 const SPECIAL_LANGS = new Set(Object.keys(SPECIAL_RENDERERS));
 
+/**
+ * 从围栏开标记行提取语言标识。
+ *
+ * @param {string} line
+ * @returns {string | null}
+ */
 function parseFenceLang(line) {
   const match = line.match(/^( {0,3})((`{3,})([^`]*)|(~{3,})(.*))$/);
   if (!match) return null;
@@ -32,11 +43,17 @@ function parseFenceLang(line) {
   return decodeHtmlEntities(unescapeHref(info.split(/\s+/)[0])).toLowerCase();
 }
 
+/**
+ * Cherry 特殊代码块解析器（包装 GFM code parser）。
+ *
+ * @extends {BaseBlockParser}
+ */
 class SpecialCodeBlockParser extends BaseBlockParser {
   constructor() {
     super({ type: "code", priority: 105 });
   }
 
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     const lang = parseFenceLang(lines[index] ?? "");
     if (!lang || !SPECIAL_LANGS.has(lang)) {
@@ -45,6 +62,7 @@ class SpecialCodeBlockParser extends BaseBlockParser {
     return codeParser.parse(lines, index, ctx);
   }
 
+  /** @inheritdoc */
   render(node) {
     const lang = (node.props.lang ?? "").toLowerCase();
     const content = node.props.content ?? "";

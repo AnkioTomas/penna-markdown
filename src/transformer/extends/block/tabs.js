@@ -1,17 +1,41 @@
 /**
- * 选项卡：::: tabs ... @tab / @tab:active ... :::
- * 切换使用 radio + CSS，不依赖 JavaScript
+ * @file 块级语法拓展：选项卡
+ * @module transformer/extends/block/tabs
+ *
+ * 语法示例：
+ * ```
+ * ::: tabs
+ * @tab 标签一
+ * 内容一
+ * @tab:active 标签二
+ * 内容二
+ * :::
+ * ```
+ *
+ * 切换使用 radio + CSS，不依赖 JavaScript。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 
+/** 选项卡开标记行：`::: tabs` */
 const OPEN_RE = /^ {0,3}:::(?!:)\s+tabs\s*$/;
+
+/** 选项卡闭标记行：`:::` */
 const CLOSE_RE = /^ {0,3}:::\s*$/;
+
+/** 选项卡标题行：`@tab` 或 `@tab:active` + 可选标题 */
 const TAB_HEAD_RE = /^@tab(:active)?(?:\s+(.*))?$/;
 
+/** 全局选项卡组序号，用于生成唯一 DOM id */
 let tabGroupSeq = 0;
 
+/**
+ * 去掉选项卡内容首尾仅含空白的行。
+ *
+ * @param {string[]} lines
+ * @returns {string[]}
+ */
 function normalizeInnerLines(lines) {
   let start = 0;
   let end = lines.length;
@@ -20,6 +44,12 @@ function normalizeInnerLines(lines) {
   return lines.slice(start, end);
 }
 
+/**
+ * 将内部行拆分为多个选项卡段。
+ *
+ * @param {string[]} lines
+ * @returns {Array<{ active: boolean, title: string, contentLines: string[] }>}
+ */
 function parseTabSections(lines) {
   const sections = [];
   let current = null;
@@ -43,21 +73,38 @@ function parseTabSections(lines) {
   return sections;
 }
 
+/**
+ * 确定默认激活的选项卡索引。
+ *
+ * @param {Array<{ active: boolean }>} tabs
+ * @returns {number}
+ */
 function resolveActiveIndex(tabs) {
   const marked = tabs.findIndex((tab) => tab.active);
   return marked === -1 ? 0 : marked;
 }
 
+/**
+ * 生成下一个选项卡组 DOM id。
+ *
+ * @returns {string}
+ */
 function nextGroupId() {
   tabGroupSeq += 1;
   return `cherry-tabs-${tabGroupSeq}`;
 }
 
+/**
+ * 选项卡块解析器。
+ *
+ * @extends {BaseBlockParser}
+ */
 class TabsBlockParser extends BaseBlockParser {
   constructor() {
     super({ type: "tabs", priority: 87 });
   }
 
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     const line = lines[index] ?? "";
     if (!OPEN_RE.test(line)) return null;
@@ -95,6 +142,7 @@ class TabsBlockParser extends BaseBlockParser {
     };
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     const tabs = node.children ?? [];
     if (tabs.length === 0) return "";

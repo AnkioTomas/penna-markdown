@@ -1,11 +1,24 @@
+/**
+ * @file 块级语法：段落
+ * @module transformer/gfm/block/paragraph
+ *
+ * CommonMark 段落：连续非空行合并，可被高优先级块级语法中断。
+ */
+
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 
+/**
+ * 段落块解析器（兜底块级语法，priority 最低）。
+ *
+ * @extends {BaseBlockParser}
+ */
 class ParagraphBlockParser extends BaseBlockParser {
   constructor() {
     super({ type: "paragraph", priority: -1000, canInterruptParagraph: false });
   }
 
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     const line = lines[index] ?? "";
     if (line.trim() === "") return null;
@@ -36,6 +49,7 @@ class ParagraphBlockParser extends BaseBlockParser {
     return { node, nextIndex: i };
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     return `<p>${ctx.renderInline(node.children)}</p>`;
   }

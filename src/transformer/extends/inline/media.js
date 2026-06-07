@@ -1,6 +1,10 @@
 /**
- * 视频 / 音频：!video[alt](url) / !audio[alt](url)
- * 视频可选封面：!video[alt](url){poster=...}
+ * @file 行内视频 / 音频语法
+ * @module transformer/extends/inline/media
+ *
+ * 语法：`!video[alt](url)` / `!audio[alt](url)`
+ *
+ * 视频可选封面：`!video[alt](url){poster=...}`
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
@@ -15,10 +19,21 @@ import {
   parsePlainDestination,
 } from "@/transformer/gfm/inline/shared.js";
 
+/** 媒体标签前缀正则：`!video[` 或 `!audio[` */
 const MEDIA_RE = /^!(video|audio)\[/;
 
+/** 视频 poster 属性后缀正则：`{poster=url}` */
 const POSTER_RE = /^\{poster=([^}]+)\}/;
 
+/**
+ * 解析媒体链接的目标 URL、标题及可选 poster。
+ *
+ * @param {string} src - 完整源字符串
+ * @param {number} start - `(` 起始索引
+ * @param {string} altText - 方括号内的 alt 文本
+ * @param {import('@/transformer/core/ParserContext.js').InlineParseContext} ctx
+ * @returns {{ node: import('@/transformer/core/MarkdownNode.js').MarkdownNode, nextIndex: number } | null}
+ */
 function parseMediaDestination(src, start, altText, ctx) {
   let j = start + 1;
   while (j < src.length && /[ \t\r\n\v\f]/.test(src[j])) j++;
@@ -75,6 +90,12 @@ function parseMediaDestination(src, start, altText, ctx) {
   };
 }
 
+/**
+ * 从 AST 子节点提取纯文本 alt 内容（用于 video/audio 标签内回退文本）。
+ *
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[]} nodes
+ * @returns {string}
+ */
 function renderAlt(nodes) {
   return nodes
     .map((n) => {
@@ -85,11 +106,17 @@ function renderAlt(nodes) {
     .join("");
 }
 
+/**
+ * 视频 / 音频行内解析器。
+ *
+ * @extends {BaseInlineParser}
+ */
 class MediaInlineParser extends BaseInlineParser {
   constructor() {
     super({ type: "media", priority: 202 });
   }
 
+  /** @inheritdoc */
   parse(src, index, ctx) {
     if (src[index] !== "!" || isEscaped(src, index)) return null;
 
@@ -112,6 +139,7 @@ class MediaInlineParser extends BaseInlineParser {
     return parsed;
   }
 
+  /** @inheritdoc */
   render(node, ctx) {
     const { mediaType, href, title, poster } = node.props;
     const alt = escapeHtml(renderAlt(node.children));
