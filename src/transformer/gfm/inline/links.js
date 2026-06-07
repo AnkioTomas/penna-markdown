@@ -154,7 +154,7 @@ class LinkInlineParser extends BaseInlineParser {
         return escapeHtml(node.props.fallback ?? "");
       }
       const href = normalizeLinkDestination(def.href);
-      const title = def.title ?? "";
+      const title = normalizeLinkTitle(def.title ?? "");
       const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
       return `<a href="${escapeHtml(href)}"${titleAttr}>${inner}</a>`;
     }

@@ -131,7 +131,7 @@ class ImageInlineParser extends BaseInlineParser {
         return escapeHtml(node.props.fallback ?? "");
       }
       const href = normalizeLinkDestination(def.href);
-      const title = def.title ?? "";
+      const title = normalizeLinkTitle(def.title ?? "");
       const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
       return `<img src="${escapeHtml(href)}" alt="${escapeHtml(alt)}"${titleAttr} />`;
     }

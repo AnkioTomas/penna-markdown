@@ -2,6 +2,10 @@
  * 行内解析共享工具
  */
 
+import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
+
+export { decodeHtmlEntities };
+
 /**
  * 定界符前奇数个 `\` 表示该字符被转义。
  */
@@ -28,34 +32,6 @@ export function unescapeHref(href) {
     }
   }
   return out;
-}
-
-const HTML_NAMED_ENTITIES = {
-  amp: "&",
-  lt: "<",
-  gt: ">",
-  quot: '"',
-  apos: "'",
-  auml: "ä",
-  Auml: "Ä",
-  ouml: "ö",
-  Ouml: "Ö",
-  uuml: "ü",
-  Uuml: "Ü",
-};
-
-/** destination / title 中的 HTML 实体解码 */
-export function decodeHtmlEntities(text) {
-  return text
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => {
-      const cp = parseInt(hex, 16);
-      return Number.isFinite(cp) ? String.fromCodePoint(cp) : _;
-    })
-    .replace(/&#(\d+);/g, (_, dec) => {
-      const cp = parseInt(dec, 10);
-      return Number.isFinite(cp) ? String.fromCodePoint(cp) : _;
-    })
-    .replace(/&([a-zA-Z][a-zA-Z0-9]+);/g, (entity, name) => HTML_NAMED_ENTITIES[name] ?? entity);
 }
 
 /** 保留已有 %XX 序列，对其余字符做 URI 编码 */

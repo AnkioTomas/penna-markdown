@@ -5,7 +5,7 @@
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
-import { unescapeHref } from "@/transformer/gfm/inline/shared.js";
+import { unescapeHref, decodeHtmlEntities } from "@/transformer/gfm/inline/shared.js";
 
 class CodeBlockParser extends BaseBlockParser {
   constructor() {
@@ -28,7 +28,7 @@ class CodeBlockParser extends BaseBlockParser {
     const fenceLength = fence.length;
     
     // GFM: info string 取第一个单词作为语言
-    const lang = unescapeHref(info.split(/\s+/)[0]);
+    const lang = decodeHtmlEntities(unescapeHref(info.split(/\s+/)[0]));
 
     const contentLines = [];
     let i = index + 1;

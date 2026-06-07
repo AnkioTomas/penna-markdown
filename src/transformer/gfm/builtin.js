@@ -4,6 +4,7 @@
 
 import escape from "@/transformer/gfm/inline/escape.js";
 import autolink, { autolinkExt } from "@/transformer/gfm/inline/autolinks.js";
+import entity from "@/transformer/gfm/inline/entity.js";
 import text from "@/transformer/gfm/inline/text.js";
 import codeSpan from "@/transformer/gfm/inline/code.js";
 import emphasis, { strongInlineParser } from "@/transformer/gfm/inline/emphasis.js";
@@ -31,6 +32,7 @@ export const builtinInlineSyntax = [
   autolink,
   autolinkExt,
   rawhtmlInline,
+  entity,
   codeSpan,
   strikethrough,
   strongInlineParser,
