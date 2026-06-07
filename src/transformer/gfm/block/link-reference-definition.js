@@ -194,6 +194,17 @@ function hasMoreDefinitionLines(lines, end) {
   return true;
 }
 
+function isInvalidMultilineLabel(lines, index, labelEndLine) {
+  if (labelEndLine <= index) return false;
+  const first = lines[index].replace(/^[ \t]{0,3}/, "");
+  return !/^\[(?:\\.|[^\[\]\n\]])+/.test(first);
+}
+
+function shouldConsumeInvalidDefinitionSilently(lines, nextIndex) {
+  const next = lines[nextIndex];
+  return next !== undefined && next.trim() !== "";
+}
+
 function findDefinitionLabelEndLine(lines, index) {
   for (let i = index; i < lines.length; i++) {
     if (i > index && lines[i].trim() === "") return null;
@@ -203,13 +214,24 @@ function findDefinitionLabelEndLine(lines, index) {
     if (trimmed[0] !== "[") continue;
 
     const labelClose = findLinkLabelEnd(trimmed, 1);
-    if (labelClose === -1) return { invalid: true, line: i };
+    if (labelClose === -1) {
+      if (i + 1 < lines.length && lines[i + 1].trim() !== "") continue;
+      return { invalid: true, line: i };
+    }
 
     let j = labelClose + 1;
     while (j < trimmed.length && /[ \t]/.test(trimmed[j])) j++;
     if (trimmed[j] === ":") return i;
   }
   return null;
+}
+
+function buildInvalidDefinition(lines, index, labelEndLine) {
+  const nextIndex = labelEndLine + 1;
+  const consumeSilent =
+    isInvalidMultilineLabel(lines, index, labelEndLine) &&
+    shouldConsumeInvalidDefinitionSilently(lines, nextIndex);
+  return { invalid: true, nextIndex, consumeSilent };
 }
 
 export function parseDefinitionAt(lines, index) {
@@ -219,7 +241,7 @@ export function parseDefinitionAt(lines, index) {
   const labelEndResult = findDefinitionLabelEndLine(lines, index);
   if (labelEndResult === null) return null;
   if (typeof labelEndResult === "object") {
-    return { invalid: true, nextIndex: labelEndResult.line + 1 };
+    return buildInvalidDefinition(lines, index, labelEndResult.line);
   }
 
   const labelEndLine = labelEndResult;
@@ -227,7 +249,7 @@ export function parseDefinitionAt(lines, index) {
   const trimmed = merged.replace(/^[ \t]{0,3}/, "");
   const labelClose = findLinkLabelEnd(trimmed, 1);
   if (labelClose === -1) {
-    return { invalid: true, nextIndex: labelEndLine + 1 };
+    return buildInvalidDefinition(lines, index, labelEndLine);
   }
 
   let j = labelClose + 1;
@@ -238,7 +260,10 @@ export function parseDefinitionAt(lines, index) {
 
   const rawLabel = trimmed.slice(1, labelClose);
   if (!hasNonWhitespace(rawLabel)) {
-    return { invalid: true, nextIndex: labelEndLine + 1 };
+    return buildInvalidDefinition(lines, index, labelEndLine);
+  }
+  if (isInvalidMultilineLabel(lines, index, labelEndLine)) {
+    return buildInvalidDefinition(lines, index, labelEndLine);
   }
 
   const id = normalizeRefLabel(rawLabel);
@@ -387,7 +412,11 @@ class LinkReferenceDefinitionParser extends BaseBlockParser {
 
   parse(lines, index, ctx) {
     const def = parseDefinitionAt(lines, index);
-    if (!def || def.invalid) return null;
+    if (!def) return null;
+    if (def.invalid) {
+      if (def.consumeSilent) return { node: null, nextIndex: def.nextIndex };
+      return null;
+    }
 
     const references = ctx.store.get("references") ?? {};
     if (!references[def.id]) {
