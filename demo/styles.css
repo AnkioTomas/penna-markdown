@@ -60,6 +60,21 @@ body {
   color: #991b1b;
 }
 
+.summary .fail.summary-action {
+  cursor: pointer;
+  border: none;
+  font: inherit;
+}
+
+.summary .fail.summary-action:hover {
+  background: #fecaca;
+}
+
+.summary .fail.summary-action.is-active {
+  outline: 2px solid #ef4444;
+  outline-offset: 1px;
+}
+
 .filter-label {
   display: block;
   margin-bottom: 10px;

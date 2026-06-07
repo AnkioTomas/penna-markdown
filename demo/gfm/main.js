@@ -8,6 +8,7 @@ const summarySkip = document.querySelector("#summary-skip");
 const summaryTotal = document.querySelector("#summary-total");
 const filterInput = document.querySelector("#filter");
 const sectionSelect = document.querySelector("#section-filter");
+const statusSelect = document.querySelector("#status-filter");
 const navRoot = document.querySelector("#nav");
 const casesRoot = document.querySelector("#cases");
 const rerunBtn = document.querySelector("#rerun-btn");
@@ -15,6 +16,8 @@ const statusEl = document.querySelector("#status");
 
 let allCases = [];
 let sections = [];
+/** @type {{ item: object, result: object }[]} */
+let allResults = [];
 
 function normalizeHtml(html) {
   return String(html).replace(/\r\n/g, "\n").replace(/\r/g, "\n").trim();
@@ -111,12 +114,17 @@ function buildNav(visibleResults) {
 }
 
 function getFilter() {
-  const q = filterInput.value.trim().toLowerCase();
-  const section = sectionSelect.value;
-  return { q, section };
+  return {
+    q: filterInput.value.trim().toLowerCase(),
+    section: sectionSelect.value,
+    status: statusSelect.value,
+  };
 }
 
-function matchesFilter(item, { q, section }) {
+function matchesFilter(item, result, { q, section, status }) {
+  if (status === "pass" && !result.ok) return false;
+  if (status === "fail" && (result.ok || result.skipped)) return false;
+  if (status === "skip" && !result.skipped) return false;
   if (section && item.section !== section) return false;
   if (!q) return true;
   return (
@@ -139,44 +147,51 @@ function runCase(item) {
   };
 }
 
-function runAll({ renderDom = true } = {}) {
-  const filter = getFilter();
-  let pass = 0;
-  let fail = 0;
-  let skip = 0;
-  const results = [];
+function updateSummary(visibleResults) {
+  const totalPass = allResults.filter(({ result }) => result.ok).length;
+  const totalFail = allResults.filter(({ result }) => !result.ok && !result.skipped).length;
+  const visiblePass = visibleResults.filter(({ result }) => result.ok).length;
+  const visibleFail = visibleResults.filter(({ result }) => !result.ok && !result.skipped).length;
 
-  if (renderDom) casesRoot.innerHTML = "";
-
-  for (const item of allCases) {
-    if (!matchesFilter(item, filter)) continue;
-    const result = runCase(item);
-    results.push({ item, result });
-    if (result.ok) pass += 1;
-    else fail += 1;
-  }
-
-  const visible = allCases.filter((item) => matchesFilter(item, filter)).length;
-  skip = visible - pass - fail;
-
-  summaryPass.textContent = `通过 ${pass}`;
-  summaryFail.textContent = `失败 ${fail}`;
-  summarySkip.textContent = `显示 ${visible}/${allCases.length}`;
+  summaryPass.textContent = `通过 ${totalPass}`;
+  summaryFail.textContent = `失败 ${totalFail}`;
+  summarySkip.textContent = `显示 ${visibleResults.length}/${allCases.length}`;
   summaryTotal.textContent = `GFM 共 ${allCases.length} 例`;
-  summaryFail.className = fail > 0 ? "fail" : "";
+  summaryFail.className = `fail${totalFail > 0 ? " summary-action" : ""}`;
 
-  statusEl.textContent = `渲染完成 · ${new Date().toLocaleTimeString()}`;
+  const filteringFails = statusSelect.value === "fail";
+  summaryFail.classList.toggle("is-active", filteringFails && totalFail > 0);
 
-  if (renderDom) {
-    const frag = document.createDocumentFragment();
-    for (const entry of results) {
-      frag.appendChild(renderCase(entry.item, entry.result));
-    }
-    casesRoot.appendChild(frag);
-    buildNav(results);
+  if (statusSelect.value || sectionSelect.value || filterInput.value.trim()) {
+    statusEl.textContent = `筛选中 · 可见 ${visiblePass} 通过 / ${visibleFail} 失败 · ${new Date().toLocaleTimeString()}`;
+  } else {
+    statusEl.textContent = `渲染完成 · ${new Date().toLocaleTimeString()}`;
   }
+}
 
-  return { pass, fail, visible };
+function applyFilter() {
+  const filter = getFilter();
+  const visibleResults = allResults.filter(({ item, result }) =>
+    matchesFilter(item, result, filter),
+  );
+
+  updateSummary(visibleResults);
+
+  casesRoot.innerHTML = "";
+  const frag = document.createDocumentFragment();
+  for (const entry of visibleResults) {
+    frag.appendChild(renderCase(entry.item, entry.result));
+  }
+  casesRoot.appendChild(frag);
+  buildNav(visibleResults);
+
+  return visibleResults;
+}
+
+function runTests() {
+  statusEl.textContent = "运行测试中…";
+  allResults = allCases.map((item) => ({ item, result: runCase(item) }));
+  return applyFilter();
 }
 
 async function init() {
@@ -189,14 +204,21 @@ async function init() {
   allCases = await res.json();
   sections = [...new Set(allCases.map((c) => c.section))];
   buildSectionFilter();
-  runAll();
+  runTests();
 }
 
-rerunBtn.addEventListener("click", () => runAll());
-filterInput.addEventListener("input", () => runAll());
-sectionSelect.addEventListener("change", () => runAll());
+rerunBtn.addEventListener("click", () => runTests());
+filterInput.addEventListener("input", () => applyFilter());
+sectionSelect.addEventListener("change", () => applyFilter());
+statusSelect.addEventListener("change", () => applyFilter());
+
+summaryFail.addEventListener("click", () => {
+  const totalFail = allResults.filter(({ result }) => !result.ok && !result.skipped).length;
+  if (totalFail === 0) return;
+  statusSelect.value = statusSelect.value === "fail" ? "" : "fail";
+  applyFilter();
+});
 
 init();
 
-window.cherryGfmDemo = { transformer, runAll };
-
+window.cherryGfmDemo = { transformer, runTests, applyFilter };
