@@ -21,11 +21,28 @@ const DEFAULT_MARKDOWN = `# 扩展语法示例
 
 [链接](https://example.com){target="_blank" rel="noopener"}
 
+:smile: :thumbsup: :+1: :赞:
+
+> [!NOTE]
+> Useful information that users should know, even when skimming content.
+
+> [!TIP]
+> Helpful advice for doing things better or more easily.
+
+> [!IMPORTANT]
+> Key information users need to know to achieve their goal.
+
+> [!WARNING]
+> Urgent info that needs immediate user attention to avoid problems.
+
+> [!CAUTION]
+> Advises about risks or negative outcomes of certain actions.
+
 未启用扩展时，==高亮== 与花括号会按普通文本渲染。
 `;
 
 const availableExtensions = getAvailableExtensions();
-const selectedExtensions = new Set(["highlight", "html_attrs"]);
+const selectedExtensions = new Set(["highlight", "html_attrs", "emoji", "alert"]);
 
 function getSelectedNames() {
   return [...selectedExtensions];

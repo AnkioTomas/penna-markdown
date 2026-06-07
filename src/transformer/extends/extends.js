@@ -1,6 +1,8 @@
 import { createTransformer } from "@/transformer/index.js";
 import htmlAttrsInline from "@/transformer/extends/inline/html_attrs.js";
 import highlightInline from "@/transformer/extends/inline/highlight.js";
+import emojiInline from "@/transformer/extends/inline/emoji.js";
+import alertBlock from "@/transformer/extends/block/alert.js";
 import { applyTagFilter } from "@/transformer/gfm/utils/tagfilter.js";
 import { foldHtmlAttrsInTree } from "@/transformer/extends/postprocess/foldHtmlAttrs.js";
 import { injectAttrsIntoFirstOpenTag } from "@/transformer/extends/utils/injectAttrs.js";
@@ -9,6 +11,14 @@ const EXTENSION_DEFS = {
   highlight: {
     inlineParsers: [highlightInline],
     blockParsers: [],
+  },
+  emoji: {
+    inlineParsers: [emojiInline],
+    blockParsers: [],
+  },
+  alert: {
+    inlineParsers: [],
+    blockParsers: [alertBlock],
   },
   html_attrs: {
     inlineParsers: [htmlAttrsInline],
