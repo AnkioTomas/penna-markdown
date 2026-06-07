@@ -29,6 +29,12 @@ describe("block/code", () => {
     expect(html).toBe("<pre><code>line 1\nline 2\n</code></pre>\n");
   });
 
+  it("Example 82: interior blank lines preserve spaces beyond four", () => {
+    const input = "    chunk1\n      \n      chunk2\n";
+    const { html } = createEngine().render(input);
+    expect(html).toBe("<pre><code>chunk1\n  \n  chunk2\n</code></pre>\n");
+  });
+
   it("Example 96: empty fenced code block", () => {
     const { html } = createEngine().render("```\n```");
     expect(html).toBe("<pre><code></code></pre>\n");
