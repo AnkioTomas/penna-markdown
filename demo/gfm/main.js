@@ -1,6 +1,16 @@
 import { CherryTransformer } from "../../src/transformer/index.js";
+import { createExtensionOptions } from "../../src/transformer/extends/extends.js";
 
-const transformer = new CherryTransformer();
+/** @type {Map<string, CherryTransformer>} */
+const engineCache = new Map();
+
+function getTransformer(extensions = []) {
+  const key = extensions.slice().sort().join(",");
+  if (!engineCache.has(key)) {
+    engineCache.set(key, new CherryTransformer(createExtensionOptions(extensions)));
+  }
+  return engineCache.get(key);
+}
 
 const summaryPass = document.querySelector("#summary-pass");
 const summaryFail = document.querySelector("#summary-fail");
@@ -135,9 +145,8 @@ function matchesFilter(item, result, { q, section, status }) {
 }
 
 function runCase(item) {
-  const { html } = transformer.render(item.markdown, {
-    extensions: item.extensions ?? [],
-  });
+  const extensions = item.extensions ?? [];
+  const { html } = getTransformer(extensions).render(item.markdown);
   const check = compareHtml(html, item.html);
   return {
     ok: check.ok,
