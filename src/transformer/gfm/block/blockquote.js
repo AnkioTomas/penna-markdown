@@ -25,9 +25,37 @@ function endsWithOpenParagraph(ast) {
       node = node.children[node.children.length - 1];
       continue;
     }
+    if (node.type === "list" && node.children.length) {
+      node = node.children[node.children.length - 1];
+      continue;
+    }
+    if (node.type === "list_item" && node.children.length) {
+      node = node.children[node.children.length - 1];
+      continue;
+    }
     return false;
   }
   return false;
+}
+
+function isSetextUnderlineLine(line) {
+  return /^( {0,3})(=+|-+)[ \t]*$/.test(line ?? "");
+}
+
+/** setext 下划线但不是 HR（如 ===）；在 blockquote lazy continuation 中应作为段落文本 */
+function isNonHrSetextUnderline(line) {
+  return isSetextUnderlineLine(line) && !isThematicBreakLine(line);
+}
+
+function parseBlockquoteInner(ctx, lines) {
+  const depth = (ctx.store.get("blockquoteDepth") ?? 0) + 1;
+  ctx.store.set("blockquoteDepth", depth);
+  try {
+    return ctx.parse(lines);
+  } finally {
+    if (depth === 1) ctx.store.delete("blockquoteDepth");
+    else ctx.store.set("blockquoteDepth", depth - 1);
+  }
 }
 
 /** 无 > 前缀的行能否作为 open paragraph 的 lazy continuation */
@@ -40,10 +68,12 @@ function canLazyContinueBlockquote(innerLines, line, ctx) {
   if (parseListMarkerLine(line)) return false;
   if (innerLines.length === 0) return false;
 
-  const before = ctx.parse(innerLines);
+  const before = parseBlockquoteInner(ctx, innerLines);
   if (!endsWithOpenParagraph(before)) return false;
 
-  const after = ctx.parse([...innerLines, line]);
+  if (isNonHrSetextUnderline(line)) return true;
+
+  const after = parseBlockquoteInner(ctx, [...innerLines, line]);
   return (
     after.children.length === before.children.length &&
     endsWithOpenParagraph(after)
@@ -91,7 +121,7 @@ class BlockquoteBlockParser extends BaseBlockParser {
       break;
     }
 
-    const innerAst = ctx.parse(normalizeInnerLines(innerLines));
+    const innerAst = parseBlockquoteInner(ctx, normalizeInnerLines(innerLines));
     const node = createNode("blockquote", { children: innerAst.children });
 
     return { node, nextIndex: i };

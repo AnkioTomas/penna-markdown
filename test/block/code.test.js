@@ -35,6 +35,12 @@ describe("block/code", () => {
     expect(html).toBe("<pre><code>chunk1\n  \n  chunk2\n</code></pre>\n");
   });
 
+  it("Example 87: blank lines with only four spaces are not included", () => {
+    const input = "\n    \n    foo\n    \n\n";
+    const { html } = createEngine().render(input);
+    expect(html).toBe("<pre><code>foo\n</code></pre>\n");
+  });
+
   it("Example 96: empty fenced code block", () => {
     const { html } = createEngine().render("```\n```");
     expect(html).toBe("<pre><code></code></pre>\n");

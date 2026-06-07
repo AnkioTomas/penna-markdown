@@ -28,14 +28,17 @@ class IndentedCodeBlockParser extends BaseBlockParser {
 
       if (indent < 4 && !isBlank) break;
 
-      // 仅空白且缩进 >= 4 的行仍是代码内容（保留超出 4 列的空格）
+      // 仅空白且缩进 > 4 列的空格属于代码内容（Example 82）
       if (isBlank && indent >= 4) {
-        contentLines.push(stripCodeContent(line));
-        i++;
-        continue;
+        const stripped = stripCodeContent(line);
+        if (stripped !== "") {
+          contentLines.push(stripped);
+          i++;
+          continue;
+        }
       }
 
-      // 如果是空行，需要看后面是否还有缩进行，如果有则保留该空行
+      // 空行（含仅 4 列缩进的空白行）：看后面是否还有缩进行
       if (isBlank) {
         let nextNonBlank = i + 1;
         while (nextNonBlank < lines.length && lines[nextNonBlank].trim() === "") {

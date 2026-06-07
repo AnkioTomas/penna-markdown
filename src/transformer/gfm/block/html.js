@@ -53,12 +53,16 @@ class HTMLBlockParser extends BaseBlockParser {
 
     if (type === -1) {
       if (TYPE_7_RE.test(line)) {
-        // Type 7 cannot interrupt a paragraph
+        // checkInterrupt：Type 7 不能打断进行中的段落
         if (ctx.prevNodes === undefined) {
-          // Interrupt check
           return null;
         }
-        if (ctx.prevNodes.length > 0 && ctx.prevNodes[ctx.prevNodes.length - 1].type === "paragraph") {
+        const afterBlank = index === 0 || lines[index - 1]?.trim() === "";
+        if (
+          !afterBlank &&
+          ctx.prevNodes.length > 0 &&
+          ctx.prevNodes[ctx.prevNodes.length - 1].type === "paragraph"
+        ) {
           return null;
         }
         type = 7;

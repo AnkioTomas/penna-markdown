@@ -88,6 +88,9 @@ class HeadingBlockParser extends BaseBlockParser {
     // 当当前行是下划线时，尝试寻找前一个段落块
     const setextMatch = line.match(/^( {0,3})(=+|-+)[ \t]*$/);
     if (setextMatch) {
+        // blockquote 内不允许 setext（下划线为 lazy continuation 文本）
+        if (ctx.store.get("blockquoteDepth")) return null;
+
         // Setext 下划线不能跟在空行后面
         if (index > 0 && (lines[index - 1] ?? "").trim() === "") {
             return null;

@@ -100,6 +100,13 @@ describe("block/list", () => {
     expect(html).toBe("<ol>\n<li>A paragraph\nwith two lines.</li>\n</ol>\n");
   });
 
+  it("Example 270: Lazy continuation in nested blockquote inside list in blockquote", () => {
+    const { html } = createEngine().render("> 1. > Blockquote\ncontinued here.\n");
+    expect(html).toBe(
+      "<blockquote>\n<ol>\n<li>\n<blockquote>\n<p>Blockquote\ncontinued here.</p>\n</blockquote>\n</li>\n</ol>\n</blockquote>\n",
+    );
+  });
+
   it("Example 290: Insufficient indent keeps items at same list level", () => {
     const input = "- a\n - b\n  - c\n   - d\n  - e\n - f\n- g\n";
     const { html } = createEngine().render(input);
