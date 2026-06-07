@@ -8,9 +8,10 @@ import { escapeHtml } from "@/transformer/utils/escape.js";
 import { lookupLinkReference } from "@/transformer/gfm/block/link-reference-definition.js";
 import {
   findLinkTextEnd,
+  normalizeLinkDestination,
+  normalizeLinkTitle,
   parseAngleDestination,
   parsePlainDestination,
-  unescapeHref,
 } from "@/transformer/gfm/inline/shared.js";
 
 class ImageInlineParser extends BaseInlineParser {
@@ -110,16 +111,12 @@ class ImageInlineParser extends BaseInlineParser {
 
     return {
       node: createNode("image", {
-        href: this.normalizeHref(href),
-        title: unescapeHref(title),
+        href: normalizeLinkDestination(href),
+        title: normalizeLinkTitle(title),
         children: ctx.parseInline(label),
       }),
       nextIndex: j + 1,
     };
-  }
-
-  normalizeHref(href) {
-    return unescapeHref(href).replace(/ /g, "%20");
   }
 
   render(node, ctx) {
@@ -130,7 +127,7 @@ class ImageInlineParser extends BaseInlineParser {
       if (!def) {
         return escapeHtml(node.props.fallback ?? "");
       }
-      const href = this.normalizeHref(def.href);
+      const href = normalizeLinkDestination(def.href);
       const title = def.title ?? "";
       const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
       return `<img src="${escapeHtml(href)}" alt="${escapeHtml(alt)}"${titleAttr} />`;

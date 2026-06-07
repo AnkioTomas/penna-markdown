@@ -5,7 +5,16 @@ import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { stripBlockquoteMarker } from "@/transformer/utils/tabs.js";
 
 export function normalizeRefLabel(label) {
-  return label.replace(/\\(.)/g, "$1").toLowerCase().replace(/\s+/g, " ").trim();
+  let out = "";
+  for (let i = 0; i < label.length; i++) {
+    if (label[i] === "\\" && i + 1 < label.length && /[\[\]\\]/.test(label[i + 1])) {
+      out += label[i + 1];
+      i += 1;
+    } else {
+      out += label[i];
+    }
+  }
+  return out.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
 function ensureLinkReferenceDefinitions(store) {

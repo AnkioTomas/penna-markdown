@@ -105,4 +105,40 @@ describe("inline/links", () => {
     const { html } = transformer.render(markdown);
     expect(html).toBe('<p>[foo]<a href="/url1">bar</a></p>\n');
   });
+
+  it("Example 511: destination percent-encoding and HTML entities", () => {
+    const markdown = "[link](foo%20b&auml;)\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe('<p><a href="foo%20b%C3%A4">link</a></p>\n');
+  });
+
+  it("Example 514: title backslash and HTML entity unescaping", () => {
+    const markdown = '[link](/url "title \\\"&quot;")\n';
+    const { html } = transformer.render(markdown);
+    expect(html).toBe('<p><a href="/url" title="title &quot;&quot;">link</a></p>\n');
+  });
+
+  it("Example 525: image inside link label", () => {
+    const markdown = "[![moon](moon.jpg)](/uri)\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe('<p><a href="/uri"><img src="moon.jpg" alt="moon" /></a></p>\n');
+  });
+
+  it("Example 531: emphasis closes before unclosed bracket label", () => {
+    const markdown = "*foo [bar* baz]\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe("<p><em>foo [bar</em> baz]</p>\n");
+  });
+
+  it("Example 539: image inside reference link label", () => {
+    const markdown = "[![moon](moon.jpg)][ref]\n\n[ref]: /uri\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe('<p><a href="/uri"><img src="moon.jpg" alt="moon" /></a></p>\n');
+  });
+
+  it("Example 553: escaped punctuation in reference label does not match", () => {
+    const markdown = "[bar][foo\\!]\n\n[foo!]: /url\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe("<p>[bar][foo!]</p>\n");
+  });
 });

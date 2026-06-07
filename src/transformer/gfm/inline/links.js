@@ -7,11 +7,12 @@ import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { lookupLinkReference } from "@/transformer/gfm/block/link-reference-definition.js";
 import {
-  containsNestedLinkOrImage,
+  containsNestedLink,
   findLinkTextEnd,
+  normalizeLinkDestination,
+  normalizeLinkTitle,
   parseAngleDestination,
   parsePlainDestination,
-  unescapeHref,
 } from "@/transformer/gfm/inline/shared.js";
 
 class LinkInlineParser extends BaseInlineParser {
@@ -30,7 +31,7 @@ class LinkInlineParser extends BaseInlineParser {
 
     const children = ctx.parseInline(label);
 
-    if (containsNestedLinkOrImage(children)) return null;
+    if (containsNestedLink(children)) return null;
 
     // 1. Inline Link: [text](uri "title")
     if (src[nextIndex] === "(") {
@@ -128,16 +129,12 @@ class LinkInlineParser extends BaseInlineParser {
 
     return {
       node: createNode("link", {
-        href: this.normalizeHref(href),
-        title: unescapeHref(title),
+        href: normalizeLinkDestination(href),
+        title: normalizeLinkTitle(title),
         children,
       }),
       nextIndex: j + 1,
     };
-  }
-
-  normalizeHref(href) {
-    return encodeURI(unescapeHref(href));
   }
 
   render(node, ctx) {
@@ -148,7 +145,7 @@ class LinkInlineParser extends BaseInlineParser {
       if (!def) {
         return escapeHtml(node.props.fallback ?? "");
       }
-      const href = this.normalizeHref(def.href);
+      const href = normalizeLinkDestination(def.href);
       const title = def.title ?? "";
       const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
       return `<a href="${escapeHtml(href)}"${titleAttr}>${inner}</a>`;

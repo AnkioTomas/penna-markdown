@@ -30,6 +30,60 @@ export function unescapeHref(href) {
   return out;
 }
 
+const HTML_NAMED_ENTITIES = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  auml: "ä",
+  Auml: "Ä",
+  ouml: "ö",
+  Ouml: "Ö",
+  uuml: "ü",
+  Uuml: "Ü",
+};
+
+/** destination / title 中的 HTML 实体解码 */
+export function decodeHtmlEntities(text) {
+  return text
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => {
+      const cp = parseInt(hex, 16);
+      return Number.isFinite(cp) ? String.fromCodePoint(cp) : _;
+    })
+    .replace(/&#(\d+);/g, (_, dec) => {
+      const cp = parseInt(dec, 10);
+      return Number.isFinite(cp) ? String.fromCodePoint(cp) : _;
+    })
+    .replace(/&([a-zA-Z][a-zA-Z0-9]+);/g, (entity, name) => HTML_NAMED_ENTITIES[name] ?? entity);
+}
+
+/** 保留已有 %XX 序列，对其余字符做 URI 编码 */
+export function normalizeLinkDestination(href) {
+  href = decodeHtmlEntities(unescapeHref(href));
+  let out = "";
+  for (let i = 0; i < href.length; i++) {
+    if (href[i] === "%" && i + 2 < href.length && /^[0-9A-Fa-f]{2}$/.test(href.slice(i + 1, i + 3))) {
+      out += href.slice(i, i + 3);
+      i += 2;
+      continue;
+    }
+    const cp = href.codePointAt(i);
+    const ch = String.fromCodePoint(cp);
+    if (/^[A-Za-z0-9\-._~:/?#@!$&'()*+,;=]$/.test(ch)) {
+      out += ch;
+    } else {
+      out += encodeURIComponent(ch);
+    }
+    if (cp > 0xffff) i++;
+  }
+  return out;
+}
+
+export function normalizeLinkTitle(title) {
+  return decodeHtmlEntities(unescapeHref(title));
+}
+
 /**
  * 解析 `<...>` destination；闭合 `>` 必须未转义（Example 502）。
  * @returns {{ href: string, next: number } | null}
@@ -191,17 +245,60 @@ export function trySkipInlineLink(src, i) {
   let j = skipWhitespace(src, labelEnd + 1);
   if (src[j] !== "(") return i;
 
-  j++;
+  j = skipInlineLinkDestination(src, j);
+  if (j === i) return i;
+
+  j = skipWhitespace(src, j);
+
+  if (src[j] === '"' || src[j] === "'" || src[j] === "(") {
+    const closer = src[j] === "(" ? ")" : src[j];
+    let k = j + 1;
+    while (k < src.length) {
+      if (src[k] === "\\") k += 2;
+      else if (src[k] === closer) {
+        j = k + 1;
+        break;
+      } else k++;
+    }
+  }
+
+  j = skipWhitespace(src, j);
+  if (src[j] !== ")") return i;
+  return j + 1;
+}
+
+function skipInlineLinkDestination(src, start) {
+  if (src[start] !== "(") return start;
+
+  let j = start + 1;
   j = skipWhitespace(src, j);
 
   if (src[j] === "<") {
     const dest = parseAngleDestination(src, j);
-    if (!dest) return i;
+    if (!dest) return start;
     j = dest.next;
   } else {
     const dest = parsePlainDestination(src, j);
     j = dest.next;
   }
+
+  return j;
+}
+
+/**
+ * 尝试跳过 `![alt](dest)` inline image，返回结束位置；失败返回 start。
+ */
+export function trySkipInlineImage(src, i) {
+  if (src[i] !== "!" || src[i + 1] !== "[") return i;
+
+  const labelEnd = findLinkTextEnd(src, i + 2);
+  if (labelEnd === -1) return i;
+
+  let j = skipWhitespace(src, labelEnd + 1);
+  if (src[j] !== "(") return i;
+
+  j = skipInlineLinkDestination(src, j);
+  if (j === i) return i;
 
   j = skipWhitespace(src, j);
 
@@ -239,6 +336,8 @@ export function trySkipReferenceLink(src, i) {
   }
 
   if (src[next] !== "(" && src[next] !== "[") {
+    const label = src.slice(i + 1, labelEnd);
+    if (/\s/.test(label)) return i;
     return labelEnd + 1;
   }
 
@@ -291,6 +390,14 @@ export function findLinkTextEnd(src, start) {
     }
 
     if (src[i] === "[") {
+      if (i > 0 && src[i - 1] === "!") {
+        const imageEnd = trySkipInlineImage(src, i - 1);
+        if (imageEnd > i - 1) {
+          i = imageEnd;
+          justSkippedLink = true;
+          continue;
+        }
+      }
       const linkEnd = trySkipInlineLink(src, i);
       if (linkEnd > i) {
         i = linkEnd;
@@ -303,6 +410,9 @@ export function findLinkTextEnd(src, start) {
       if (level === 1 && justSkippedLink) {
         const j = skipWhitespace(src, i + 1);
         if (src[j] === "(" && countDestPatternsAfter(src, i) === 1) {
+          level--;
+          if (level === 0) return i;
+        } else if (src[j] !== "(") {
           level--;
           if (level === 0) return i;
         }
@@ -319,6 +429,14 @@ export function findLinkTextEnd(src, start) {
     i++;
   }
   return -1;
+}
+
+export function containsNestedLink(nodes) {
+  for (const n of nodes) {
+    if (n.type === "link") return true;
+    if (n.children?.length && containsNestedLink(n.children)) return true;
+  }
+  return false;
 }
 
 export function containsNestedLinkOrImage(nodes) {
