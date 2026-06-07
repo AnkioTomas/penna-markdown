@@ -38,11 +38,25 @@ const DEFAULT_MARKDOWN = `# 扩展语法示例
 > [!CAUTION]
 > Advises about risks or negative outcomes of certain actions.
 
+- [ ] 待办事项
+- [x] 已完成
+- [/] 进行中
+- [>] 延期
+- [<] 排期
+- [-] 已取消
+- [!] 紧急
+
 未启用扩展时，==高亮== 与花括号会按普通文本渲染。
 `;
 
 const availableExtensions = getAvailableExtensions();
-const selectedExtensions = new Set(["highlight", "html_attrs", "emoji", "alert"]);
+const selectedExtensions = new Set([
+  "highlight",
+  "html_attrs",
+  "emoji",
+  "alert",
+  "extended_tasklist",
+]);
 
 function getSelectedNames() {
   return [...selectedExtensions];

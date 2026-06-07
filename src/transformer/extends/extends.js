@@ -5,6 +5,7 @@ import emojiInline from "@/transformer/extends/inline/emoji.js";
 import alertBlock from "@/transformer/extends/block/alert.js";
 import { applyTagFilter } from "@/transformer/gfm/utils/tagfilter.js";
 import { foldHtmlAttrsInTree } from "@/transformer/extends/postprocess/foldHtmlAttrs.js";
+import taskListParser from "@/transformer/extends/block/taskList.js";
 import { injectAttrsIntoFirstOpenTag } from "@/transformer/extends/utils/injectAttrs.js";
 
 const EXTENSION_DEFS = {
@@ -37,6 +38,10 @@ const EXTENSION_DEFS = {
     afterRender({ html }) {
       return applyTagFilter(html);
     },
+  },
+  extended_tasklist: {
+    inlineParsers: [],
+    blockParsers: [taskListParser],
   },
 };
 
