@@ -14,6 +14,7 @@ import code from "@/transformer/gfm/block/code.js";
 import indentedCode from "@/transformer/gfm/block/indented-code.js";
 import hr from "@/transformer/gfm/block/hr.js";
 import list from "@/transformer/gfm/block/list.js";
+import table from "@/transformer/gfm/block/table.js";
 import paragraph from "@/transformer/gfm/block/paragraph.js";
 import link_ref from "@/transformer/gfm/block/link-reference-definition.js"
 import links from "@/transformer/gfm/inline/links.js";
@@ -47,6 +48,7 @@ export const builtinBlockSyntax = [
   indentedCode,
   hr,
   list,
+  table,
   paragraph,
 ];
 
