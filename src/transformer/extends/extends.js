@@ -6,6 +6,8 @@ import alertBlock from "@/transformer/extends/block/alert.js";
 import { applyTagFilter } from "@/transformer/gfm/utils/tagfilter.js";
 import { foldHtmlAttrsInTree } from "@/transformer/extends/postprocess/foldHtmlAttrs.js";
 import taskListParser from "@/transformer/extends/block/taskList.js";
+import mathBlockParser from "@/transformer/extends/block/mathBlock.js";
+import specialCodeParser from "@/transformer/extends/block/specialCode.js";
 import { injectAttrsIntoFirstOpenTag } from "@/transformer/extends/utils/injectAttrs.js";
 
 const EXTENSION_DEFS = {
@@ -42,6 +44,10 @@ const EXTENSION_DEFS = {
   extended_tasklist: {
     inlineParsers: [],
     blockParsers: [taskListParser],
+  },
+  cherry_syntax: {
+    inlineParsers: [],
+    blockParsers: [mathBlockParser, specialCodeParser],
   },
 };
 

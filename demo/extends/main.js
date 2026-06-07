@@ -46,6 +46,14 @@ const DEFAULT_MARKDOWN = `# 扩展语法示例
 - [-] 已取消
 - [!] 紧急
 
+$$
+E=mc^2
+$$
+
+\`\`\`echarts
+{"title":{"text":"Demo"},"series":[{"type":"pie","data":[{"value":1,"name":"A"}]}]}
+\`\`\`
+
 未启用扩展时，==高亮== 与花括号会按普通文本渲染。
 `;
 
@@ -56,6 +64,7 @@ const selectedExtensions = new Set([
   "emoji",
   "alert",
   "extended_tasklist",
+  "cherry_syntax",
 ]);
 
 function getSelectedNames() {
