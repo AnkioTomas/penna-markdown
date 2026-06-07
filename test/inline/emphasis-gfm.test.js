@@ -14,6 +14,10 @@ describe("inline/emphasis GFM", () => {
     [398, "__foo, __bar__, baz__", "<p><strong>foo, <strong>bar</strong>, baz</strong></p>\n"],
     [420, "*foo**bar**baz*", "<p><em>foo<strong>bar</strong>baz</em></p>\n"],
     [476, "***foo***", "<p><em><strong>foo</strong></em></p>\n"],
+    [473, "****foo****", "<p><strong>foo</strong></p>\n"],
+    [474, "____foo____", "<p><strong>foo</strong></p>\n"],
+    [475, "******foo******", "<p><strong>foo</strong></p>\n"],
+    [477, "_____foo_____", "<p><em><strong>foo</strong></em></p>\n"],
     [487, "*a `*`*", "<p><em>a <code>*</code></em></p>\n"],
   ];
 

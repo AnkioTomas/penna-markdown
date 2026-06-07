@@ -24,4 +24,19 @@ describe("inline/code", () => {
     const { html } = createEngine().render(input);
     expect(html).toBe("<p><code>foo   bar  baz</code></p>\n");
   });
+
+  it("Example 357: unclosed backtick string stays literal", () => {
+    const { html } = createEngine().render("```foo``\n");
+    expect(html).toBe("<p>```foo``</p>\n");
+  });
+
+  it("Example 358: unclosed single backtick stays literal", () => {
+    const { html } = createEngine().render("`foo\n");
+    expect(html).toBe("<p>`foo</p>\n");
+  });
+
+  it("Example 359: shorter close allows inner code span", () => {
+    const { html } = createEngine().render("`foo``bar``\n");
+    expect(html).toBe("<p>`foo<code>bar</code></p>\n");
+  });
 });

@@ -162,7 +162,17 @@ export function processEmphasis(nodes, stackBottom) {
       continue;
     }
 
-    const useDelims = closer.numDelims >= 2 && opener.numDelims >= 2 ? 2 : 1;
+    const matched = Math.min(opener.numDelims, closer.numDelims);
+    let useDelims;
+    if (matched >= 2) {
+      if (opener.numDelims === closer.numDelims && matched >= 3) {
+        useDelims = matched % 2 === 0 ? matched : matched - 1;
+      } else {
+        useDelims = 2;
+      }
+    } else {
+      useDelims = 1;
+    }
     const type = useDelims === 1 ? "emphasis" : "strong";
 
     opener.numDelims -= useDelims;
