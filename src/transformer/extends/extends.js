@@ -13,6 +13,7 @@ import frontmatterBlock, {
 } from "@/transformer/extends/block/frontmatter.js";
 import frontmatterVarInline from "@/transformer/extends/inline/frontmatterVar.js";
 import inlineComment from "@/transformer/extends/inline/comment.js";
+import containerBlock from "@/transformer/extends/block/container.js";
 import { injectAttrsIntoFirstOpenTag } from "@/transformer/extends/utils/injectAttrs.js";
 
 const EXTENSION_DEFS = {
@@ -62,6 +63,10 @@ const EXTENSION_DEFS = {
   inline_comment: {
     inlineParsers: [inlineComment],
     blockParsers: [],
+  },
+  container: {
+    inlineParsers: [],
+    blockParsers: [containerBlock],
   },
 };
 

@@ -33,6 +33,14 @@ author:
 
 :smile: :thumbsup: :+1: :赞:
 
+::: tip 💡 这是一个小提示
+这里是提示的内容。
+:::
+
+::: danger 🚨 危险操作
+删除数据库前请务必备份！
+:::
+
 > [!NOTE]
 > Useful information that users should know, even when skimming content.
 
@@ -77,6 +85,7 @@ const selectedExtensions = new Set([
   "cherry_syntax",
   "frontmatter",
   "inline_comment",
+  "container",
 ]);
 
 function getSelectedNames() {
