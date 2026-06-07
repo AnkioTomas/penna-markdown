@@ -14,9 +14,9 @@ describe("Strong Emphasis (Stack Approach)", () => {
     expect(html).toBe("<p><strong>bold</strong></p>\n");
   });
 
-  it("nested asterisk strong", () => {
+  it("same-delimiter strong flattens (GFM example 436)", () => {
     const { html } = transformer.render("**outer **inner** outer**");
-    expect(html).toBe("<p><strong>outer <strong>inner</strong> outer</strong></p>\n");
+    expect(html).toBe("<p><strong>outer inner outer</strong></p>\n");
   });
 
   it("mixed asterisk and underscore", () => {

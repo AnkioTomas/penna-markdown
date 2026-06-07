@@ -184,7 +184,7 @@ export function processEmphasis(nodes, stackBottom) {
     const closerIdx = findNodeIndex(nodes, closer.node);
     const children = nodes.slice(openerIdx + 1, closerIdx);
 
-    const emphNode = createNode(type, { children });
+    const emphNode = createNode(type, { children, delimChar: opener.char });
 
     const replacement = [];
     if (opener.node.value) replacement.push(opener.node);
@@ -226,6 +226,41 @@ function literalizeRemainingDelims(nodes) {
   }
 }
 
+/** 同分隔符的 strong 嵌套合并为单层（Rule 10 / Example 398、434–436） */
+function collapseSameStrongChildren(children, delimChar) {
+  const out = [];
+  for (const child of children) {
+    if (child.type === "strong" && child.props?.delimChar === delimChar) {
+      out.push(...collapseSameStrongChildren(child.children ?? [], delimChar));
+      continue;
+    }
+    if (child.children?.length) {
+      flattenSameDelimiterStrong(child.children);
+      if (child.type === "strong" && child.props?.delimChar) {
+        child.children = collapseSameStrongChildren(
+          child.children,
+          child.props.delimChar,
+        );
+      }
+    }
+    out.push(child);
+  }
+  return out;
+}
+
+function flattenSameDelimiterStrong(nodes) {
+  for (const node of nodes) {
+    if (!node.children?.length) continue;
+    flattenSameDelimiterStrong(node.children);
+    if (node.type === "strong" && node.props?.delimChar) {
+      node.children = collapseSameStrongChildren(
+        node.children,
+        node.props.delimChar,
+      );
+    }
+  }
+}
+
 /**
  * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[]} nodes
  * @param {Record<string, unknown>} frame
@@ -235,6 +270,7 @@ export function emphasisInlineFinalizer(nodes, frame) {
   if (!state) return nodes;
 
   processEmphasis(nodes, state.stackBottom);
+  flattenSameDelimiterStrong(nodes);
   literalizeRemainingDelims(nodes);
   delete frame.delimiters;
   return nodes;
