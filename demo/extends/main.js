@@ -29,6 +29,8 @@ E=mc^2^，H^^2^^O，大头 ^儿子^ 和 ^^爸爸^^
 
 ==高亮文本== %% 编辑备注，读者看不到 ==
 
+下面有 !! 这是剧透 !! 请悬停查看
+
 **加粗**{class="highlight" data-id="1"}
 
 *斜体*{id="em-1"}
@@ -46,6 +48,12 @@ E=mc^2^，H^^2^^O，大头 ^儿子^ 和 ^^爸爸^^
 :::
 
 @@https://example.com
+
+!video[演示视频](https://example.com/demo.mp4)
+
+!audio[背景音乐](https://example.com/a.mp3)
+
+!video[带封面](https://example.com/demo.mp4){poster=https://example.com/poster.png}
 
 这是一个需要解释的专业词汇[^1]。
 
@@ -99,6 +107,7 @@ flowchart TD
 const availableExtensions = getAvailableExtensions();
 const selectedExtensions = new Set([
   "highlight",
+  "spoiler",
   "html_attrs",
   "emoji",
   "alert",
@@ -109,6 +118,7 @@ const selectedExtensions = new Set([
   "badge",
   "supsub",
   "iframe",
+  "media",
   "container",
   "footnote",
 ]);

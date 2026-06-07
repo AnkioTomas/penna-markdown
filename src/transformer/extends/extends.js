@@ -22,6 +22,8 @@ import footnotesSection, {
   finalizeFootnotes,
 } from "@/transformer/extends/block/footnotes.js";
 import footnoteRefInline from "@/transformer/extends/inline/footnoteRef.js";
+import mediaInline from "@/transformer/extends/inline/media.js";
+import spoilerInline from "@/transformer/extends/inline/spoiler.js";
 import { injectAttrsIntoFirstOpenTag } from "@/transformer/extends/utils/injectAttrs.js";
 
 const EXTENSION_DEFS = {
@@ -87,6 +89,14 @@ const EXTENSION_DEFS = {
   iframe: {
     inlineParsers: [],
     blockParsers: [iframeBlock],
+  },
+  media: {
+    inlineParsers: [mediaInline],
+    blockParsers: [],
+  },
+  spoiler: {
+    inlineParsers: [spoilerInline],
+    blockParsers: [],
   },
   footnote: {
     inlineParsers: [footnoteRefInline],
