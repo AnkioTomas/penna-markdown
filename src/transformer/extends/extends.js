@@ -14,6 +14,11 @@ import frontmatterBlock, {
 import frontmatterVarInline from "@/transformer/extends/inline/frontmatterVar.js";
 import inlineComment from "@/transformer/extends/inline/comment.js";
 import containerBlock from "@/transformer/extends/block/container.js";
+import footnoteDefBlock from "@/transformer/extends/block/footnoteDef.js";
+import footnotesSection, {
+  finalizeFootnotes,
+} from "@/transformer/extends/block/footnotes.js";
+import footnoteRefInline from "@/transformer/extends/inline/footnoteRef.js";
 import { injectAttrsIntoFirstOpenTag } from "@/transformer/extends/utils/injectAttrs.js";
 
 const EXTENSION_DEFS = {
@@ -67,6 +72,11 @@ const EXTENSION_DEFS = {
   container: {
     inlineParsers: [],
     blockParsers: [containerBlock],
+  },
+  footnote: {
+    inlineParsers: [footnoteRefInline],
+    blockParsers: [footnoteDefBlock, footnotesSection],
+    afterParse: finalizeFootnotes,
   },
 };
 

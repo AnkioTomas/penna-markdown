@@ -41,6 +41,10 @@ author:
 删除数据库前请务必备份！
 :::
 
+这是一个需要解释的专业词汇[^1]。
+
+[^1]: 这里是放在文章末尾的详细解释，点击数字可以自动跳转。
+
 > [!NOTE]
 > Useful information that users should know, even when skimming content.
 
@@ -72,6 +76,17 @@ $$
 {"title":{"text":"Demo"},"series":[{"type":"pie","data":[{"value":1,"name":"A"}]}]}
 \`\`\`
 
+\`\`\`mermaid
+flowchart TD
+    Start --> Stop
+\`\`\`
+
+\`\`\`card
+#list/2
+[文档](https://example.com) Cherry 扩展语法说明
+[演示](https://example.com) 在线体验编辑器
+\`\`\`
+
 未启用扩展时，==高亮== 与花括号会按普通文本渲染。
 `;
 
@@ -86,6 +101,7 @@ const selectedExtensions = new Set([
   "frontmatter",
   "inline_comment",
   "container",
+  "footnote",
 ]);
 
 function getSelectedNames() {
