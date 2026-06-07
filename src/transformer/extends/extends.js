@@ -13,7 +13,10 @@ import frontmatterBlock, {
 } from "@/transformer/extends/block/frontmatter.js";
 import frontmatterVarInline from "@/transformer/extends/inline/frontmatterVar.js";
 import inlineComment from "@/transformer/extends/inline/comment.js";
+import badgeInline from "@/transformer/extends/inline/badge.js";
+import { subInlineParser, supInlineParser } from "@/transformer/extends/inline/supsub.js";
 import containerBlock from "@/transformer/extends/block/container.js";
+import iframeBlock from "@/transformer/extends/block/iframe.js";
 import footnoteDefBlock from "@/transformer/extends/block/footnoteDef.js";
 import footnotesSection, {
   finalizeFootnotes,
@@ -69,9 +72,21 @@ const EXTENSION_DEFS = {
     inlineParsers: [inlineComment],
     blockParsers: [],
   },
+  badge: {
+    inlineParsers: [badgeInline],
+    blockParsers: [],
+  },
+  supsub: {
+    inlineParsers: [subInlineParser, supInlineParser],
+    blockParsers: [],
+  },
   container: {
     inlineParsers: [],
     blockParsers: [containerBlock],
+  },
+  iframe: {
+    inlineParsers: [],
+    blockParsers: [iframeBlock],
   },
   footnote: {
     inlineParsers: [footnoteRefInline],

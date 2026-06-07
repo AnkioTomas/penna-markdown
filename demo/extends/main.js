@@ -23,6 +23,10 @@ author:
 
 # 扩展语法示例
 
+核心库 [[必须:important,top]]，可选组件 [[可选:tip,top]]
+
+E=mc^2^，H^^2^^O，大头 ^儿子^ 和 ^^爸爸^^
+
 ==高亮文本== %% 编辑备注，读者看不到 ==
 
 **加粗**{class="highlight" data-id="1"}
@@ -40,6 +44,8 @@ author:
 ::: danger 🚨 危险操作
 删除数据库前请务必备份！
 :::
+
+@@https://example.com
 
 这是一个需要解释的专业词汇[^1]。
 
@@ -100,6 +106,9 @@ const selectedExtensions = new Set([
   "cherry_syntax",
   "frontmatter",
   "inline_comment",
+  "badge",
+  "supsub",
+  "iframe",
   "container",
   "footnote",
 ]);
