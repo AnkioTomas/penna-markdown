@@ -15,9 +15,9 @@ describe("block/list", () => {
     const input = " - foo\n   - bar\n\t - baz";
     const { html } = createEngine().render(input);
     expect(html).toContain("<ul>");
-    expect(html).toContain("<li><p>foo</p>\n<ul>");
-    expect(html).toContain("<li><p>bar</p>\n<ul>");
-    expect(html).toContain("<li><p>baz</p></li>");
+    expect(html).toContain("<li>foo\n<ul>");
+    expect(html).toContain("<li>bar\n<ul>");
+    expect(html).toContain("<li>baz</li>");
   });
 
   it("Example 5: List with tab code block", () => {
@@ -127,6 +127,22 @@ describe("block/list", () => {
     const input = "- a\n - b\n  - c\n   - d\n    - e\n";
     const { html } = createEngine().render(input);
     expect(html).toBe("<ul>\n<li>a</li>\n<li>b</li>\n<li>c</li>\n<li>d\n- e</li>\n</ul>\n");
+  });
+
+  it("Example 251: Marker line with space-indented code block", () => {
+    const input = "1.     indented code\n\n   paragraph\n\n       more code\n";
+    const { html } = createEngine().render(input);
+    expect(html).toBe(
+      "<ol>\n<li>\n<pre><code>indented code\n</code></pre>\n<p>paragraph</p>\n<pre><code>more code\n</code></pre>\n</li>\n</ol>\n",
+    );
+  });
+
+  it("Example 252: Marker line with extra space in code block", () => {
+    const input = "1.      indented code\n\n   paragraph\n\n       more code\n";
+    const { html } = createEngine().render(input);
+    expect(html).toBe(
+      "<ol>\n<li>\n<pre><code> indented code\n</code></pre>\n<p>paragraph</p>\n<pre><code>more code\n</code></pre>\n</li>\n</ol>\n",
+    );
   });
 
   it("Example 293: Four-space ordered line after blank is indented code", () => {

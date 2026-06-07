@@ -128,6 +128,26 @@ function advanceInLine(line, offset, column, count, inColumns) {
   return { offset: o, column: c };
 }
 
+/** 列表项 marker 行内容区 tab 展开（对齐 blockquote 的 partial-tab 规则） */
+export function expandListItemContent(line, contentOffset) {
+  let column = visualColumn(line, contentOffset);
+  let offset = contentOffset;
+
+  if (offset < line.length && (line[offset] === " " || line[offset] === "\t")) {
+    const ch = line[offset];
+    if (ch === " ") {
+      offset += 1;
+      return expandLinePrefixTabs(line.slice(offset));
+    }
+    const toTab = TAB_WIDTH - (column % TAB_WIDTH);
+    if (toTab > 1) {
+      return " ".repeat(toTab - 1) + expandLinePrefixTabs(line.slice(offset + 1));
+    }
+    offset += 1;
+  }
+  return expandLinePrefixTabs(line.slice(offset));
+}
+
 const BULLET = /^[-+*]/;
 const ORDERED = /^(\d{1,9})([.)])/;
 
@@ -198,6 +218,8 @@ export function parseListMarkerLine(line, { allowIndented = false } = {}) {
     if (offset < line.length && (line[offset] === " " || line[offset] === "\t")) {
       ({ offset, column } = advanceInLine(line, offset, column, 1, true));
       contentStartCol = column;
+    } else if (blank) {
+      contentStartCol = spacesStartCol + 1;
     }
     contentOffset = offset;
   } else {

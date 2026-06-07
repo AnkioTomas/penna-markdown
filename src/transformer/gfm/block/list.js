@@ -4,10 +4,23 @@
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
-import { parseListMarkerLine, listsMatch, getIndent, expandLinePrefixTabs, isIndentedCodeLine } from "@/transformer/utils/tabs.js";
+import { parseListMarkerLine, listsMatch, getIndent, expandLinePrefixTabs, expandListItemContent, findIndexAtColumn } from "@/transformer/utils/tabs.js";
 import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
 
 const CODE_INDENT = 4;
+
+/** marker 行内容：区分 tab 缩进代码块与空格缩进代码块 */
+function normalizeListMarkerContent(line, marker) {
+  if (getIndent(marker.content) < CODE_INDENT) {
+    return expandLinePrefixTabs(marker.content);
+  }
+  if (marker.content.includes("\t")) {
+    return expandListItemContent(line, marker.contentOffset);
+  }
+  const expanded = expandLinePrefixTabs(marker.content);
+  const content = expanded.slice(findIndexAtColumn(expanded, CODE_INDENT));
+  return " ".repeat(CODE_INDENT) + content;
+}
 
 /**
  * 判断后续 list marker 相对当前 item 是同级、嵌套，还是非 list（如 Example 292 的 `- e`）
@@ -136,8 +149,7 @@ class ListBlockParser extends BaseBlockParser {
       const contentStartCol = marker.contentStartCol;
       lastContentStartCol = contentStartCol;
 
-      const expandedFirst = expandLinePrefixTabs(line);
-      const markerContent = expandedFirst.slice(contentStartCol);
+      const markerContent = normalizeListMarkerContent(line, marker);
       const markerLineEmpty = markerContent.trim() === "";
       itemLines.push(markerContent);
       currentLineIndex++;
@@ -174,10 +186,16 @@ class ListBlockParser extends BaseBlockParser {
 
         if (indent >= contentStartCol) {
           const expanded = expandLinePrefixTabs(nextLine);
-          const sliceCol = isIndentedCodeLine(nextLine)
-            ? Math.max(contentStartCol, indent - CODE_INDENT)
-            : contentStartCol;
-          itemLines.push(expanded.slice(sliceCol));
+          if (indent >= contentStartCol + CODE_INDENT) {
+            const content = expanded.slice(
+              findIndexAtColumn(expanded, contentStartCol + CODE_INDENT),
+            );
+            itemLines.push(" ".repeat(CODE_INDENT) + content);
+          } else {
+            itemLines.push(
+              expanded.slice(findIndexAtColumn(expanded, contentStartCol)),
+            );
+          }
           currentLineIndex++;
         } else if (isBlank) {
           let nextNonBlank = currentLineIndex + 1;
