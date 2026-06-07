@@ -10,7 +10,15 @@
  * 同一 type 默认不可重复注册；传入 `{ force: true }` 可覆盖（用于扩展内置语法）。
  */
 
-import { builtinBlockSyntax, builtinInlineSyntax } from "@/transformer/gfm/builtin.js";
+import { builtinBlockSyntax, builtinInlineSyntax, applyGfmRegistryExtensions } from "@/transformer/gfm/builtin.js";
+
+/**
+ * @typedef {(
+ *   nodes: import('./MarkdownNode.js').MarkdownNode[],
+ *   frame: Record<string, unknown>,
+ *   ctx: import('./ParserContext.js').InlineParseContext
+ * ) => import('./MarkdownNode.js').MarkdownNode[] | void} InlineFinalizer
+ */
 
 export { BaseInlineParser, BaseBlockParser } from "@/transformer/core/ParserBase.js";
 
@@ -33,11 +41,14 @@ export class Registry {
     this.inlineParsers = new Map();
     /** @type {Map<string, import('./ParserBase.js').BaseBlockParser>} */
     this.blockParsers = new Map();
+    /** @type {import('./Registry.js').InlineFinalizer[]} */
+    this._inlineFinalizers = [];
     /** @type {{ inline: Array, block: Array } | null} 按 priority 排序后的缓存 */
     this._cache = null;
 
     for (const p of builtinInlineSyntax) this.registerInlineParser(p);
     for (const p of builtinBlockSyntax) this.registerBlockParser(p);
+    applyGfmRegistryExtensions(this);
   }
 
   /** 注册表变更时失效排序缓存 */
@@ -136,5 +147,21 @@ export class Registry {
    */
   getBlockParser(type) {
     return this.blockParsers.get(type);
+  }
+
+  /**
+   * 注册行内解析结束后的后处理（扩展层使用，引擎不感知具体语义）
+   *
+   * @param {InlineFinalizer} fn
+   * @returns {Registry}
+   */
+  registerInlineFinalizer(fn) {
+    this._inlineFinalizers.push(fn);
+    return this;
+  }
+
+  /** @returns {InlineFinalizer[]} */
+  getInlineFinalizers() {
+    return this._inlineFinalizers;
   }
 }

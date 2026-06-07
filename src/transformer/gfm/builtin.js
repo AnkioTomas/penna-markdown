@@ -22,6 +22,7 @@ import __break from "@/transformer/gfm/inline/break.js";
 import images from "@/transformer/gfm/inline/images.js";
 import rawhtmlInline from "@/transformer/gfm/inline/html.js";
 import rawhtmlBlock from "@/transformer/gfm/block/html.js";
+import { registerEmphasisInlineFinalizer } from "@/transformer/gfm/inline/delimiters.js";
 
 export const builtinInlineSyntax = [
   escape,
@@ -49,3 +50,8 @@ export const builtinBlockSyntax = [
   list,
   paragraph,
 ];
+
+/** @param {import('@/transformer/core/Registry.js').Registry} registry */
+export function applyGfmRegistryExtensions(registry) {
+  registerEmphasisInlineFinalizer(registry);
+}

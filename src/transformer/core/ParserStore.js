@@ -14,6 +14,8 @@ export class ParserStore {
   constructor() {
     /** @type {Map<string, unknown>} */
     this._data = new Map();
+    /** @type {Record<string, unknown>[]} 行内解析栈帧（引擎管理生命周期） */
+    this._inlineFrames = [];
   }
 
   get(key) {
@@ -35,5 +37,41 @@ export class ParserStore {
 
   clear() {
     this._data.clear();
+    this._inlineFrames = [];
+  }
+
+  /** 开始一次行内解析（支持嵌套压栈） */
+  beginInlineFrame() {
+    const frame = {};
+    this._inlineFrames.push(frame);
+    return frame;
+  }
+
+  /** @returns {Record<string, unknown> | null} */
+  currentInlineFrame() {
+    const n = this._inlineFrames.length;
+    return n > 0 ? this._inlineFrames[n - 1] : null;
+  }
+
+  hasInlineFrame() {
+    return this._inlineFrames.length > 0;
+  }
+
+  /**
+   * 结束当前行内解析帧，依次执行 finalizer
+   *
+   * @param {import('./MarkdownNode.js').MarkdownNode[]} nodes
+   * @param {import('./Registry.js').InlineFinalizer[]} finalizers
+   * @param {import('./ParserContext.js').InlineParseContext} ctx
+   */
+  endInlineFrame(nodes, finalizers, ctx) {
+    const frame = this._inlineFrames.pop();
+    let result = nodes;
+    if (frame) {
+      for (const fn of finalizers) {
+        result = fn(result, frame, ctx) ?? result;
+      }
+    }
+    return result;
   }
 }

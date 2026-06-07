@@ -25,9 +25,9 @@ describe("Strong Emphasis (Stack Approach)", () => {
   });
   
   it("empty strong should not match", () => {
-    const { html } = transformer.render("****");
-    expect(html).toBe("<p>****</p>\n");
-    const { html: html2 } = transformer.render("____");
-    expect(html2).toBe("<p>____</p>\n");
+    const { html } = transformer.render("**** is not an empty strong emphasis");
+    expect(html).toBe("<p>**** is not an empty strong emphasis</p>\n");
+    const { html: html2 } = transformer.render("____ is not an empty strong emphasis");
+    expect(html2).toBe("<p>____ is not an empty strong emphasis</p>\n");
   });
 });

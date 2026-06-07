@@ -1,10 +1,5 @@
-import { TransformerEngine } from "@/transformer/TransformerEngine.js";
-import { builtinBlockSyntax, builtinInlineSyntax } from "@/transformer/gfm/builtin.js";
+import { createTransformer } from "@/transformer/index.js";
 
 export function createEngine(options = {}) {
-  return new TransformerEngine({
-    blockParsers: builtinBlockSyntax,
-    inlineParsers: builtinInlineSyntax,
-    ...options,
-  });
+  return createTransformer(options);
 }
