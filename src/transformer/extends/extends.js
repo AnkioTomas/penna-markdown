@@ -59,16 +59,13 @@ function chainAfterRender(userHook, extHook) {
   };
 }
 
-function composeAfterParse(names) {
+function composeDocumentFinalizers(names) {
   const fns = [];
   for (const name of new Set(normalizeExtensionNames(names))) {
     const fn = EXTENSION_DEFS[name]?.afterParse;
     if (fn) fns.push(fn);
   }
-  if (fns.length === 0) return null;
-  return (ast) => {
-    for (const fn of fns) fn(ast);
-  };
+  return fns;
 }
 
 function composeAfterRender(names) {
@@ -104,7 +101,7 @@ export function createExtensionOptions(names = [], baseOptions = {}) {
       baseOptions.afterRender,
       composeAfterRender(names),
     ),
-    _extensionAfterParse: composeAfterParse(names),
+    documentFinalizers: composeDocumentFinalizers(names),
   };
 }
 
@@ -116,23 +113,20 @@ export function createExtensionOptions(names = [], baseOptions = {}) {
  */
 export function createTransformerWithExtensions(names = [], options = {}) {
   const extOptions = createExtensionOptions(names, options);
-  const afterParse = extOptions._extensionAfterParse;
-  delete extOptions._extensionAfterParse;
+  const documentFinalizers = extOptions.documentFinalizers ?? [];
+  delete extOptions.documentFinalizers;
 
   const engine = createTransformer(extOptions);
 
-  if (afterParse) {
-    const origParse = engine.parse.bind(engine);
-    engine.parse = (markdown) => {
-      const result = origParse(markdown);
-      afterParse(result.ast);
-      return result;
-    };
+  for (const fn of documentFinalizers) {
+    engine.registry.registerDocumentFinalizer(fn);
+  }
 
+  if (documentFinalizers.length > 0) {
     const origRender = engine.render.bind(engine);
     engine.render = (input) => {
       if (typeof input === "object" && input?.type === "root") {
-        afterParse(input);
+        engine.blockParser.finalizeDocument(input);
       }
       return origRender(input);
     };

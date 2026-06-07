@@ -4,6 +4,7 @@
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { isInBlockquote } from "@/transformer/gfm/block/frame.js";
 
 /** @returns {{ level: number, content: string } | null} */
 function parseAtxHeading(line) {
@@ -89,7 +90,7 @@ class HeadingBlockParser extends BaseBlockParser {
     const setextMatch = line.match(/^( {0,3})(=+|-+)[ \t]*$/);
     if (setextMatch) {
         // blockquote 内不允许 setext（下划线为 lazy continuation 文本）
-        if (ctx.store.get("blockquoteDepth")) return null;
+        if (isInBlockquote(ctx)) return null;
 
         // Setext 下划线不能跟在空行后面
         if (index > 0 && (lines[index - 1] ?? "").trim() === "") {

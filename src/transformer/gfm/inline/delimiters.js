@@ -87,7 +87,7 @@ function findNodeIndex(nodes, node) {
 }
 
 function removeEmptyDelimNode(nodes, node) {
-  if (node?.type === "emph_delim" && node.value === "") {
+  if (node?.type === "text" && node.props?.noMerge && node.value === "") {
     const idx = nodes.indexOf(node);
     if (idx !== -1) nodes.splice(idx, 1);
   }
@@ -207,8 +207,8 @@ export function processEmphasis(nodes, stackBottom) {
 
 function literalizeRemainingDelims(nodes) {
   for (const node of nodes) {
-    if (node.type === "emph_delim") {
-      node.type = "text";
+    if (node.type === "text" && node.props?.noMerge) {
+      delete node.props.noMerge;
     }
     if (node.children?.length) {
       literalizeRemainingDelims(node.children);
@@ -244,7 +244,10 @@ export function parseEmphasisDelim(src, index, ctx) {
 
   const { numDelims, canOpen, canClose, char } = info;
   const delimState = getDelimiterState(frame);
-  const node = createNode("emph_delim", { value: src.slice(index, index + numDelims) });
+  const node = createNode("text", {
+    value: src.slice(index, index + numDelims),
+    noMerge: true,
+  });
 
   if (canOpen || canClose) {
     const entry = {
@@ -263,9 +266,4 @@ export function parseEmphasisDelim(src, index, ctx) {
   }
 
   return { node, nextIndex: index + numDelims };
-}
-
-/** @param {import('@/transformer/core/Registry.js').Registry} registry */
-export function registerEmphasisInlineFinalizer(registry) {
-  registry.registerInlineFinalizer(emphasisInlineFinalizer);
 }

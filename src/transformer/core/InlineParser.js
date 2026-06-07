@@ -72,7 +72,12 @@ export class InlineParseEngine {
 
     const last = nodes[nodes.length - 1];
 
-    if (last?.type === "text" && node.type === "text") {
+    if (
+      last?.type === "text" &&
+      node.type === "text" &&
+      !last.props?.noMerge &&
+      !node.props?.noMerge
+    ) {
       last.value += node.value;
       return;
     }
