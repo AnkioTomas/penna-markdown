@@ -81,8 +81,6 @@ class HTMLBlockParser extends BaseBlockParser {
           }
           i++;
         }
-      } else {
-        i++;
       }
     } else {
       // Types 6 and 7 end with a blank line

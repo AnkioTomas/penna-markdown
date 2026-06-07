@@ -38,6 +38,7 @@ const GFM_LINK_REF_CASES = [
     { id: 183, name: "heading 后定义不吸收 blockquote" },
     { id: 184, name: "完整定义不吸收 setext heading 文本" },
     { id: 185, name: "完整定义不将 === 当作 title 续行" },
+    { id: 187, name: "blockquote 内的定义可被文档其他位置引用" },
 ];
 
 describe("inline/link-reference", () => {

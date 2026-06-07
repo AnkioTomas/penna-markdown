@@ -2,12 +2,22 @@
  * 块级语法：链接引用定义 (Link Reference Definitions)
  */
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
+import { stripBlockquoteMarker } from "@/transformer/utils/tabs.js";
 
 export function normalizeRefLabel(label) {
   return label.replace(/\\(.)/g, "$1").toLowerCase().replace(/\s+/g, " ").trim();
 }
 
+function ensureLinkReferenceDefinitions(store) {
+  if (store.get("linkReferenceDefinitionsCollected")) return;
+  const lines = store.get("lines");
+  if (!lines) return;
+  collectLinkReferenceDefinitions(lines, store);
+  store.set("linkReferenceDefinitionsCollected", true);
+}
+
 export function lookupLinkReference(store, refId) {
+  ensureLinkReferenceDefinitions(store);
   const references = store.get("references") ?? {};
   return references[normalizeRefLabel(refId)] ?? null;
 }
@@ -197,6 +207,137 @@ export function parseDefinitionAt(lines, index) {
   if (!state.complete || !state.parsed) return null;
 
   return { id, href: state.parsed.href, title: state.parsed.title, nextIndex: end };
+}
+
+export function registerLinkReferenceDefinition(store, def) {
+  const references = store.get("references") ?? {};
+  if (!references[def.id]) {
+    references[def.id] = { href: def.href, title: def.title };
+    store.set("references", references);
+  }
+}
+
+function skipBlockquote(lines, index) {
+  let i = index + 1;
+  while (i < lines.length) {
+    const t = lines[i].replace(/^ {0,3}/, "");
+    if (t.trim() === "" || !t.startsWith(">")) break;
+    i += 1;
+  }
+  return i;
+}
+
+function canLazyContinueBlockquote(line) {
+  if (line.trim() === "") return false;
+  if (/^ {0,3}>/.test(line)) return false;
+  if (/^ {4}/.test(line)) return false;
+  if (/^ {0,3}(`{3,}|~{3,})/.test(line)) return false;
+  return true;
+}
+
+function normalizeInnerLines(lines) {
+  let start = 0;
+  let end = lines.length;
+  while (start < end && lines[start].trim() === "") start += 1;
+  while (end > start && lines[end - 1].trim() === "") end -= 1;
+  return lines.slice(start, end);
+}
+
+function collectBlockquoteDefinitions(lines, index, store) {
+  const innerLines = [];
+  let i = index;
+
+  while (i < lines.length) {
+    const ln = lines[i];
+    if (/^ {0,3}>/.test(ln)) {
+      innerLines.push(stripBlockquoteMarker(ln));
+      i += 1;
+      continue;
+    }
+
+    const isHR = /^( {0,3})([-*_])([ \t]*\2){2,}[ \t]*$/.test(ln);
+    if (isHR) break;
+
+    if (innerLines.length > 0 && canLazyContinueBlockquote(ln)) {
+      innerLines[innerLines.length - 1] += "\n" + ln.replace(/^ {0,3}/, "");
+      i += 1;
+      continue;
+    }
+    break;
+  }
+
+  collectDefinitionsInLines(normalizeInnerLines(innerLines), store);
+  return i;
+}
+
+function collectDefinitionsInLines(lines, store) {
+  let i = 0;
+  while (i < lines.length) {
+    if (lines[i].trim() === "") {
+      i += 1;
+      continue;
+    }
+
+    const def = parseDefinitionAt(lines, i);
+    const canDefine =
+      def &&
+      !def.invalid &&
+      (i === 0 || lines[i - 1].trim() === "" || allowsReferenceDefinitionAfter(lines[i - 1]));
+
+    if (canDefine) {
+      registerLinkReferenceDefinition(store, def);
+      i = def.nextIndex;
+      continue;
+    }
+
+    const t = lines[i].replace(/^ {0,3}/, "");
+    if (/^>{1,}/.test(t)) {
+      i = collectBlockquoteDefinitions(lines, i, store);
+      continue;
+    }
+
+    i = skipOneBlock(lines, i);
+  }
+}
+
+function skipOneBlock(lines, index) {
+  const line = lines[index] ?? "";
+  if (line.trim() === "") return index + 1;
+
+  const t = line.replace(/^ {0,3}/, "");
+  if (/^#{1,6}(?: |$)/.test(t)) return index + 1;
+  if (/^>{1,}/.test(t)) return skipBlockquote(lines, index);
+  if (/^(?:-\s*-\s*-|\*{3,}|_{3,}|~{3,}|-\s{3,})\s*$/.test(t.trim())) return index + 1;
+  if (/^(`{3,}|~{3,})/.test(t)) {
+    const fence = t.match(/^(`{3,}|~{3,})/)[1];
+    let i = index + 1;
+    while (i < lines.length) {
+      const end = lines[i].replace(/^ {0,3}/, "");
+      if (end.startsWith(fence) && end.trim() === fence) return i + 1;
+      i += 1;
+    }
+    return lines.length;
+  }
+
+  let i = index + 1;
+  while (i < lines.length && lines[i].trim() !== "") {
+    i += 1;
+  }
+  return i;
+}
+
+function allowsReferenceDefinitionAfter(prevLine) {
+  if (!prevLine || prevLine.trim() === "") return true;
+  const t = prevLine.replace(/^ {0,3}/, "");
+  if (/^#{1,6}(?: |$)/.test(t)) return true;
+  if (/^(?:-\s*-\s*-|\*{3,}|_{3,}|~{3,}|-\s{3,})\s*$/.test(t.trim())) return true;
+  if (/^\[(?:\\.|[^\[\]\n])+\]:/.test(t)) return true;
+  return false;
+}
+
+/** 解析前预扫描全文 reference 定义，使后续段落中的 reference link 可解析 */
+export function collectLinkReferenceDefinitions(lines, store) {
+  collectDefinitionsInLines(lines, store);
 }
 
 class LinkReferenceDefinitionParser extends BaseBlockParser {

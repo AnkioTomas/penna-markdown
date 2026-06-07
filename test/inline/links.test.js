@@ -75,4 +75,34 @@ describe("inline/links", () => {
     const { html } = transformer.render(markdown);
     expect(html).toBe('<p><a href="/bar*" title="ti*tle">foo</a></p>\n');
   });
+
+  it("Example 572: emphasis must not break shortcut reference label", () => {
+    const markdown = "[foo*]: /url\n\n*[foo*]\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe('<p>*<a href="/url">foo*</a></p>\n');
+  });
+
+  it("Example 576: failed inline link falls back to shortcut reference", () => {
+    const markdown = "[foo](not a link)\n\n[foo]: /url1\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe('<p><a href="/url1">foo</a>(not a link)</p>\n');
+  });
+
+  it("Example 577: unmatched full reference yields later full reference", () => {
+    const markdown = "[foo][bar][baz]\n\n[baz]: /url\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe('<p>[foo]<a href="/url">bar</a></p>\n');
+  });
+
+  it("Example 578: multiple adjacent reference links", () => {
+    const markdown = "[foo][bar][baz]\n\n[baz]: /url1\n[bar]: /url2\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe('<p><a href="/url2">foo</a><a href="/url1">baz</a></p>\n');
+  });
+
+  it("Example 579: prefer bar definition over foo when bar exists", () => {
+    const markdown = "[foo][bar][baz]\n\n[baz]: /url1\n[foo]: /url2\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe('<p>[foo]<a href="/url1">bar</a></p>\n');
+  });
 });

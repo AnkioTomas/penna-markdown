@@ -26,14 +26,25 @@ class LinkInlineParser extends BaseInlineParser {
     if (labelEnd === -1) return null;
 
     const label = src.slice(index + 1, labelEnd);
-    let nextIndex = labelEnd + 1;
+    const nextIndex = labelEnd + 1;
 
     const children = ctx.parseInline(label);
 
+    if (containsNestedLinkOrImage(children)) return null;
+
     // 1. Inline Link: [text](uri "title")
     if (src[nextIndex] === "(") {
-      const inline = this.parseInlineLink(src, nextIndex, label, ctx, children);
+      const inline = this.parseInlineLink(src, nextIndex, children);
       if (inline) return { node: inline.node, nextIndex: inline.nextIndex };
+
+      const def = lookupLinkReference(ctx.store, label);
+      if (def) {
+        return {
+          node: this.createReferenceNode(label, children, src.slice(index, labelEnd + 1)),
+          nextIndex: labelEnd + 1,
+        };
+      }
+      return null;
     }
 
     // 2. Full / Collapsed reference: [text][ref] / [text][]
@@ -43,15 +54,15 @@ class LinkInlineParser extends BaseInlineParser {
         const refLabel = src.slice(nextIndex + 1, refEnd);
         const refId = refLabel.length > 0 ? refLabel : label;
         const end = refEnd + 1;
-        if (containsNestedLinkOrImage(children)) return null;
+        const def = lookupLinkReference(ctx.store, refId);
+        if (!def) return null;
         return {
-          node: createNode("link", {
-            reference: true,
-            ref: refId,
-            referenceKind: refLabel.length > 0 ? "full" : "collapsed",
-            fallback: src.slice(index, end),
+          node: this.createReferenceNode(
+            refId,
             children,
-          }),
+            src.slice(index, end),
+            refLabel.length > 0 ? "full" : "collapsed",
+          ),
           nextIndex: end,
         };
       }
@@ -59,26 +70,28 @@ class LinkInlineParser extends BaseInlineParser {
 
     // 3. Shortcut reference: [text]
     if (src[nextIndex] !== "(" && src[nextIndex] !== "[") {
-      const end = labelEnd + 1;
-      if (containsNestedLinkOrImage(children)) return null;
+      const def = lookupLinkReference(ctx.store, label);
+      if (!def) return null;
       return {
-        node: createNode("link", {
-          reference: true,
-          ref: label,
-          referenceKind: "shortcut",
-          fallback: src.slice(index, end),
-          children,
-        }),
-        nextIndex: end,
+        node: this.createReferenceNode(label, children, src.slice(index, labelEnd + 1)),
+        nextIndex: labelEnd + 1,
       };
     }
 
     return null;
   }
 
-  parseInlineLink(src, start, label, ctx, children) {
-    if (containsNestedLinkOrImage(children)) return null;
+  createReferenceNode(ref, children, fallback, referenceKind = "shortcut") {
+    return createNode("link", {
+      reference: true,
+      ref,
+      referenceKind,
+      fallback,
+      children,
+    });
+  }
 
+  parseInlineLink(src, start, children) {
     let j = start + 1;
     while (j < src.length && /[ \t\r\n\v\f]/.test(src[j])) j++;
 

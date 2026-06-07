@@ -222,6 +222,29 @@ export function trySkipInlineLink(src, i) {
   return j + 1;
 }
 
+/**
+ * 尝试跳过 reference link 语法（shortcut / full / collapsed），返回结束位置；失败返回 start。
+ */
+export function trySkipReferenceLink(src, i) {
+  if (src[i] !== "[") return i;
+
+  const labelEnd = findLinkTextEnd(src, i + 1);
+  if (labelEnd === -1) return i;
+
+  const next = skipWhitespace(src, labelEnd + 1);
+  if (src[next] === "[") {
+    const refEnd = findLinkTextEnd(src, next + 1);
+    if (refEnd !== -1) return refEnd + 1;
+    return i;
+  }
+
+  if (src[next] !== "(" && src[next] !== "[") {
+    return labelEnd + 1;
+  }
+
+  return i;
+}
+
 function countDestPatternsAfter(src, from) {
   let count = 0;
   for (let i = from; i < src.length; i++) {

@@ -75,6 +75,7 @@ export class BlockParseEngine {
    * @returns {import('./MarkdownNode.js').MarkdownNode} root 节点
    */
   parse(lines) {
+    this.store.set("lines", lines);
     let root = createNode("root", { children: [] });
 
     let index = 0;
