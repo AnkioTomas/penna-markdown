@@ -46,4 +46,32 @@ describe("block/blockquote", () => {
       "<blockquote>\n<p>foo</p>\n<p>bar</p>\n</blockquote>\n",
     );
   });
+
+  it("Example 213: omitting > on second list item ends blockquote", () => {
+    const { html } = createEngine().render("> - foo\n- bar\n");
+    expect(html).toBe(
+      "<blockquote>\n<ul>\n<li>foo</li>\n</ul>\n</blockquote>\n<ul>\n<li>bar</li>\n</ul>\n",
+    );
+  });
+
+  it("Example 215: omitting > on fenced code continuation ends blockquote", () => {
+    const { html } = createEngine().render("> ```\nfoo\n```\n");
+    expect(html).toBe(
+      "<blockquote>\n<pre><code></code></pre>\n</blockquote>\n<p>foo</p>\n<pre><code></code></pre>\n",
+    );
+  });
+
+  it("Example 216: four-space line can lazy continue blockquote paragraph", () => {
+    const { html } = createEngine().render("> foo\n    - bar\n");
+    expect(html).toBe(
+      "<blockquote>\n<p>foo\n- bar</p>\n</blockquote>\n",
+    );
+  });
+
+  it("Example 227: empty > line ends blockquote when next line has no marker", () => {
+    const { html } = createEngine().render("> bar\n>\nbaz\n");
+    expect(html).toBe(
+      "<blockquote>\n<p>bar</p>\n</blockquote>\n<p>baz</p>\n",
+    );
+  });
 });

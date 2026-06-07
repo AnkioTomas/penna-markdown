@@ -21,4 +21,10 @@ describe("block/html-block", () => {
     const { html } = transformer.render(c.markdown);
     expect(html).toBe(c.html);
   });
+
+  it("Example 137: blank lines inside del allow markdown between tags", () => {
+    const c = gfmCase(137);
+    const { html } = transformer.render(c.markdown);
+    expect(html).toBe(c.html);
+  });
 });

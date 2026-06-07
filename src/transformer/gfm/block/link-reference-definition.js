@@ -291,8 +291,9 @@ function skipBlockquote(lines, index) {
 function canLazyContinueBlockquote(line) {
   if (line.trim() === "") return false;
   if (/^ {0,3}>/.test(line)) return false;
-  if (/^ {4}/.test(line)) return false;
+  if (/^ {0,3}#{1,6}(?: |$)/.test(line)) return false;
   if (/^ {0,3}(`{3,}|~{3,})/.test(line)) return false;
+  if (/^ {0,3}[-+*]\s/.test(line) || /^ {0,3}\d{1,9}[.)]\s/.test(line)) return false;
   return true;
 }
 
@@ -311,7 +312,18 @@ function collectBlockquoteDefinitions(lines, index, store) {
   while (i < lines.length) {
     const ln = lines[i];
     if (/^ {0,3}>/.test(ln)) {
-      innerLines.push(stripBlockquoteMarker(ln));
+      const stripped = stripBlockquoteMarker(ln);
+      if (stripped.trim() === "") {
+        const next = lines[i + 1] ?? "";
+        if (/^ {0,3}>/.test(next)) {
+          innerLines.push("");
+          i += 1;
+          continue;
+        }
+        i += 1;
+        break;
+      }
+      innerLines.push(stripped);
       i += 1;
       continue;
     }
@@ -320,7 +332,7 @@ function collectBlockquoteDefinitions(lines, index, store) {
     if (isHR) break;
 
     if (innerLines.length > 0 && canLazyContinueBlockquote(ln)) {
-      innerLines[innerLines.length - 1] += "\n" + ln.replace(/^ {0,3}/, "");
+      innerLines.push(ln);
       i += 1;
       continue;
     }
