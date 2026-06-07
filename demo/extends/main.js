@@ -79,6 +79,13 @@ E=mc^2^，H^^2^^O，大头 ^儿子^ 和 ^^爸爸^^
 
 :::
 
++++ 点击展开更多
+++- 默认展开
+展开的内容
+++ 默认收起
+收起的内容
++++
+
 @@https://example.com
 
 !video[演示视频](https://example.com/demo.mp4)
@@ -153,6 +160,7 @@ const selectedExtensions = new Set([
   "media",
   "container",
   "tabs",
+  "detail",
   "footnote",
 ]);
 
