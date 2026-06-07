@@ -63,6 +63,22 @@ E=mc^2^，H^^2^^O，大头 ^儿子^ 和 ^^爸爸^^
 两端对齐的内容
 :::
 
+::: tabs
+
+@tab 标题 1
+
+第一个选项卡内容
+
+@tab 标题 2
+
+第二个选项卡内容
+
+@tab:active 标题 3
+
+默认激活的第三个选项卡
+
+:::
+
 @@https://example.com
 
 !video[演示视频](https://example.com/demo.mp4)
@@ -136,6 +152,7 @@ const selectedExtensions = new Set([
   "iframe",
   "media",
   "container",
+  "tabs",
   "footnote",
 ]);
 

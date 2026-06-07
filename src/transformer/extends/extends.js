@@ -16,6 +16,7 @@ import inlineComment from "@/transformer/extends/inline/comment.js";
 import badgeInline from "@/transformer/extends/inline/badge.js";
 import { subInlineParser, supInlineParser } from "@/transformer/extends/inline/supsub.js";
 import containerBlock from "@/transformer/extends/block/container.js";
+import tabsBlock from "@/transformer/extends/block/tabs.js";
 import iframeBlock from "@/transformer/extends/block/iframe.js";
 import footnoteDefBlock from "@/transformer/extends/block/footnoteDef.js";
 import footnotesSection, {
@@ -85,6 +86,10 @@ const EXTENSION_DEFS = {
   container: {
     inlineParsers: [],
     blockParsers: [containerBlock],
+  },
+  tabs: {
+    inlineParsers: [],
+    blockParsers: [tabsBlock],
   },
   iframe: {
     inlineParsers: [],

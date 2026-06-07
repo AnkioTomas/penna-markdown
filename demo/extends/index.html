@@ -98,6 +98,47 @@
         border-radius: 2px;
       }
 
+      .cherry-tabs {
+        margin: 12px 0;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .cherry-tabs__radio {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .cherry-tabs__nav {
+        display: flex;
+        gap: 4px;
+        padding: 8px 8px 0;
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .cherry-tabs__label {
+        display: inline-block;
+        padding: 8px 14px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        border-bottom: 2px solid transparent;
+        border-radius: 6px 6px 0 0;
+        font-size: 13px;
+        color: #4b5563;
+      }
+
+      .cherry-tabs__panels {
+        background: #fff;
+      }
+
+      .cherry-tabs__panel {
+        display: none;
+        padding: 14px 16px;
+      }
+
       .extends-panel.ast pre {
         max-height: 320px;
         font-size: 11px;
