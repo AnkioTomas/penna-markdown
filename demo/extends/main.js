@@ -11,9 +11,19 @@ const extensionsList = document.getElementById("extensions-list");
 const rerunBtn = document.getElementById("rerun-btn");
 const statusEl = document.getElementById("status");
 
-const DEFAULT_MARKDOWN = `# 扩展语法示例
+const DEFAULT_MARKDOWN = `---
+title: 扩展演示
+author:
+  name: Cherry
+---
 
-==高亮文本==
+# [[title]]
+
+作者：[[author.name]]
+
+# 扩展语法示例
+
+==高亮文本== %% 编辑备注，读者看不到 ==
 
 **加粗**{class="highlight" data-id="1"}
 
@@ -65,6 +75,8 @@ const selectedExtensions = new Set([
   "alert",
   "extended_tasklist",
   "cherry_syntax",
+  "frontmatter",
+  "inline_comment",
 ]);
 
 function getSelectedNames() {

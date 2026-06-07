@@ -8,6 +8,11 @@ import { foldHtmlAttrsInTree } from "@/transformer/extends/postprocess/foldHtmlA
 import taskListParser from "@/transformer/extends/block/taskList.js";
 import mathBlockParser from "@/transformer/extends/block/mathBlock.js";
 import specialCodeParser from "@/transformer/extends/block/specialCode.js";
+import frontmatterBlock, {
+  attachFrontmatterToRoot,
+} from "@/transformer/extends/block/frontmatter.js";
+import frontmatterVarInline from "@/transformer/extends/inline/frontmatterVar.js";
+import inlineComment from "@/transformer/extends/inline/comment.js";
 import { injectAttrsIntoFirstOpenTag } from "@/transformer/extends/utils/injectAttrs.js";
 
 const EXTENSION_DEFS = {
@@ -48,6 +53,15 @@ const EXTENSION_DEFS = {
   cherry_syntax: {
     inlineParsers: [],
     blockParsers: [mathBlockParser, specialCodeParser],
+  },
+  frontmatter: {
+    inlineParsers: [frontmatterVarInline],
+    blockParsers: [frontmatterBlock],
+    afterParse: attachFrontmatterToRoot,
+  },
+  inline_comment: {
+    inlineParsers: [inlineComment],
+    blockParsers: [],
   },
 };
 
