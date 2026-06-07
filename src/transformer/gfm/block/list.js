@@ -209,6 +209,7 @@ class ListBlockParser extends BaseBlockParser {
             }
           }
         } else {
+          if (isThematicBreakLine(nextLine)) break;
           const content = nextLine.replace(/^ {0,3}/, "");
           const lastIdx = itemLines.length - 1;
           if (lastIdx >= 0 && itemLines[lastIdx].trim() !== "") {

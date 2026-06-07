@@ -176,6 +176,16 @@ describe("block/list", () => {
     );
   });
 
+  it("Example 64: Thematic break ends list item", () => {
+    const { html } = createEngine().render("- Foo\n---\n");
+    expect(html).toBe("<ul>\n<li>Foo</li>\n</ul>\n<hr />\n");
+  });
+
+  it("Example 69: Thematic break with five dashes ends list item", () => {
+    const { html } = createEngine().render("- foo\n-----\n");
+    expect(html).toBe("<ul>\n<li>foo</li>\n</ul>\n<hr />\n");
+  });
+
   it("Example 263: Empty list item cannot interrupt paragraph", () => {
     const { html } = createEngine().render("foo\n*\n\nfoo\n1.\n");
     expect(html).toBe("<p>foo\n*</p>\n<p>foo\n1.</p>\n");
