@@ -8,6 +8,7 @@ import { escapeHtml } from "@/transformer/utils/escape.js";
 import { lookupLinkReference } from "@/transformer/gfm/block/link-reference-definition.js";
 import {
   containsNestedLink,
+  findLinkLabelEnd,
   findLinkTextEnd,
   normalizeLinkDestination,
   normalizeLinkTitle,
@@ -50,7 +51,7 @@ class LinkInlineParser extends BaseInlineParser {
 
     // 2. Full / Collapsed reference: [text][ref] / [text][]
     if (src[nextIndex] === "[") {
-      const refEnd = findLinkTextEnd(src, nextIndex + 1);
+      const refEnd = findLinkLabelEnd(src, nextIndex + 1);
       if (refEnd !== -1) {
         const refLabel = src.slice(nextIndex + 1, refEnd);
         const refId = refLabel.length > 0 ? refLabel : label;
@@ -71,11 +72,18 @@ class LinkInlineParser extends BaseInlineParser {
 
     // 3. Shortcut reference: [text]
     if (src[nextIndex] !== "(" && src[nextIndex] !== "[") {
-      const def = lookupLinkReference(ctx.store, label);
+      const shortcutEnd = findLinkLabelEnd(src, index + 1);
+      if (shortcutEnd === -1) return null;
+      const shortcutLabel = src.slice(index + 1, shortcutEnd);
+      const def = lookupLinkReference(ctx.store, shortcutLabel);
       if (!def) return null;
       return {
-        node: this.createReferenceNode(label, children, src.slice(index, labelEnd + 1)),
-        nextIndex: labelEnd + 1,
+        node: this.createReferenceNode(
+          shortcutLabel,
+          ctx.parseInline(shortcutLabel),
+          src.slice(index, shortcutEnd + 1),
+        ),
+        nextIndex: shortcutEnd + 1,
       };
     }
 

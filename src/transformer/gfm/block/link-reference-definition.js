@@ -2,6 +2,7 @@
  * 块级语法：链接引用定义 (Link Reference Definitions)
  */
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
+import { findLinkLabelEnd } from "@/transformer/gfm/inline/shared.js";
 import { stripBlockquoteMarker } from "@/transformer/utils/tabs.js";
 
 export function normalizeRefLabel(label) {
@@ -17,6 +18,38 @@ export function normalizeRefLabel(label) {
   return out.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
+function hasNonWhitespace(text) {
+  return /[^\s]/.test(text);
+}
+
+function finishDefinition(id, lines, labelEnd, bodyChunks) {
+  let end = labelEnd + 1;
+  let chunks = [...bodyChunks];
+  let state = analyzeDefinitionBody(chunks.join("\n"));
+
+  while (true) {
+    if (state.complete && state.parsed) {
+      if (state.parsed.title) break;
+      if (!hasMoreDefinitionLines(lines, end)) break;
+      const cont = lines[end].match(/^[ \t]{0,3}(.*)$/);
+      if (!cont) break;
+      const peek = analyzeDefinitionBody([...chunks, cont[1]].join("\n"));
+      if (!peek.complete || !peek.parsed?.title) break;
+    }
+
+    if (!hasMoreDefinitionLines(lines, end)) break;
+    const cont = lines[end].match(/^[ \t]{0,3}(.*)$/);
+    if (!cont) break;
+    chunks.push(cont[1]);
+    end++;
+    state = analyzeDefinitionBody(chunks.join("\n"));
+  }
+
+  if (!state.complete || !state.parsed) return null;
+
+  return { id, href: state.parsed.href, title: state.parsed.title, nextIndex: end };
+}
+
 function ensureLinkReferenceDefinitions(store) {
   if (store.get("linkReferenceDefinitionsCollected")) return;
   const lines = store.get("lines");
@@ -30,8 +63,6 @@ export function lookupLinkReference(store, refId) {
   const references = store.get("references") ?? {};
   return references[normalizeRefLabel(refId)] ?? null;
 }
-
-const LABEL_LINE_RE = /^[ \t]{0,3}\[((?:\\.|[^\[\]\n])+)\]:[ \t]*(.*)$/;
 
 function isAsciiPunct(ch) {
   return /[!-/:-@\[-`{-~]/.test(ch);
@@ -163,59 +194,55 @@ function hasMoreDefinitionLines(lines, end) {
   return true;
 }
 
-function findLabelCloseLine(lines, index) {
-  if (!/^[ \t]{0,3}\[/.test(lines[index] ?? "")) return null;
+function findDefinitionLabelEndLine(lines, index) {
   for (let i = index; i < lines.length; i++) {
-    if (/\]:[ \t]/.test(lines[i])) return i;
     if (i > index && lines[i].trim() === "") return null;
+
+    const merged = lines.slice(index, i + 1).join("\n");
+    const trimmed = merged.replace(/^[ \t]{0,3}/, "");
+    if (trimmed[0] !== "[") continue;
+
+    const labelClose = findLinkLabelEnd(trimmed, 1);
+    if (labelClose === -1) return { invalid: true, line: i };
+
+    let j = labelClose + 1;
+    while (j < trimmed.length && /[ \t]/.test(trimmed[j])) j++;
+    if (trimmed[j] === ":") return i;
   }
   return null;
 }
 
 export function parseDefinitionAt(lines, index) {
   const line = lines[index] ?? "";
+  if (!/^[ \t]{0,3}\[/.test(line)) return null;
 
-  if (/^[ \t]{0,3}\[/.test(line) && !LABEL_LINE_RE.test(line)) {
-    const labelEnd = findLabelCloseLine(lines, index);
-    if (labelEnd !== null) {
-      const merged = lines.slice(index, labelEnd + 1).join("\n");
-      const multi = merged.match(/^[ \t]{0,3}\[([\s\S]*?)\]:[ \t]*(.*)$/);
-      if (multi && /\n/.test(multi[1])) {
-        return { invalid: true, nextIndex: labelEnd + 1 };
-      }
-    }
+  const labelEndResult = findDefinitionLabelEndLine(lines, index);
+  if (labelEndResult === null) return null;
+  if (typeof labelEndResult === "object") {
+    return { invalid: true, nextIndex: labelEndResult.line + 1 };
   }
 
-  const match = line.match(LABEL_LINE_RE);
-  if (!match) return null;
-
-  const id = normalizeRefLabel(match[1]);
-  const chunks = [match[2]];
-  let end = index + 1;
-
-  let state = analyzeDefinitionBody(chunks.join("\n"));
-
-  while (true) {
-    if (state.complete && state.parsed) {
-      if (state.parsed.title) break;
-      if (!hasMoreDefinitionLines(lines, end)) break;
-      const cont = lines[end].match(/^[ \t]{0,3}(.*)$/);
-      if (!cont) break;
-      const peek = analyzeDefinitionBody([...chunks, cont[1]].join("\n"));
-      if (!peek.complete || !peek.parsed?.title) break;
-    }
-
-    if (!hasMoreDefinitionLines(lines, end)) break;
-    const cont = lines[end].match(/^[ \t]{0,3}(.*)$/);
-    if (!cont) break;
-    chunks.push(cont[1]);
-    end++;
-    state = analyzeDefinitionBody(chunks.join("\n"));
+  const labelEndLine = labelEndResult;
+  const merged = lines.slice(index, labelEndLine + 1).join("\n");
+  const trimmed = merged.replace(/^[ \t]{0,3}/, "");
+  const labelClose = findLinkLabelEnd(trimmed, 1);
+  if (labelClose === -1) {
+    return { invalid: true, nextIndex: labelEndLine + 1 };
   }
 
-  if (!state.complete || !state.parsed) return null;
+  let j = labelClose + 1;
+  while (j < trimmed.length && /[ \t]/.test(trimmed[j])) j++;
+  if (trimmed[j] !== ":") return null;
+  j += 1;
+  while (j < trimmed.length && /[ \t]/.test(trimmed[j])) j++;
 
-  return { id, href: state.parsed.href, title: state.parsed.title, nextIndex: end };
+  const rawLabel = trimmed.slice(1, labelClose);
+  if (!hasNonWhitespace(rawLabel)) {
+    return { invalid: true, nextIndex: labelEndLine + 1 };
+  }
+
+  const id = normalizeRefLabel(rawLabel);
+  return finishDefinition(id, lines, labelEndLine, [trimmed.slice(j)]);
 }
 
 export function registerLinkReferenceDefinition(store, def) {
@@ -288,9 +315,13 @@ function collectDefinitionsInLines(lines, store) {
     }
 
     const def = parseDefinitionAt(lines, i);
+    if (def?.invalid) {
+      i = def.nextIndex;
+      continue;
+    }
+
     const canDefine =
       def &&
-      !def.invalid &&
       (i === 0 || lines[i - 1].trim() === "" || allowsReferenceDefinitionAfter(lines[i - 1]));
 
     if (canDefine) {
@@ -356,8 +387,7 @@ class LinkReferenceDefinitionParser extends BaseBlockParser {
 
   parse(lines, index, ctx) {
     const def = parseDefinitionAt(lines, index);
-    if (!def) return null;
-    if (def.invalid) return { node: null, nextIndex: def.nextIndex };
+    if (!def || def.invalid) return null;
 
     const references = ctx.store.get("references") ?? {};
     if (!references[def.id]) {

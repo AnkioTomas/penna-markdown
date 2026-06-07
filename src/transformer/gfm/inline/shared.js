@@ -165,6 +165,25 @@ function skipWhitespace(src, i) {
   return i;
 }
 
+/**
+ * 查找 reference link label 的闭合 `]`。
+ * label 内不允许未转义的 `[`（`]` 仅作闭合）。
+ */
+export function findLinkLabelEnd(src, start) {
+  let i = start;
+  while (i < src.length) {
+    if (src[i] === "\\") {
+      if (i + 1 < src.length) i += 2;
+      else i += 1;
+      continue;
+    }
+    if (src[i] === "[") return -1;
+    if (src[i] === "]") return i;
+    i++;
+  }
+  return -1;
+}
+
 function skipCodeSpan(src, i) {
   const match = src.slice(i).match(/^(`+)/);
   if (!match) return i;
@@ -325,12 +344,12 @@ export function trySkipInlineImage(src, i) {
 export function trySkipReferenceLink(src, i) {
   if (src[i] !== "[") return i;
 
-  const labelEnd = findLinkTextEnd(src, i + 1);
+  const labelEnd = findLinkLabelEnd(src, i + 1);
   if (labelEnd === -1) return i;
 
   const next = skipWhitespace(src, labelEnd + 1);
   if (src[next] === "[") {
-    const refEnd = findLinkTextEnd(src, next + 1);
+    const refEnd = findLinkLabelEnd(src, next + 1);
     if (refEnd !== -1) return refEnd + 1;
     return i;
   }

@@ -7,6 +7,7 @@ import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { lookupLinkReference } from "@/transformer/gfm/block/link-reference-definition.js";
 import {
+  findLinkLabelEnd,
   findLinkTextEnd,
   normalizeLinkDestination,
   normalizeLinkTitle,
@@ -38,7 +39,7 @@ class ImageInlineParser extends BaseInlineParser {
 
     // 2. Full / collapsed reference: ![alt][ref] / ![alt][]
     if (src[nextIndex] === "[") {
-      const refEnd = findLinkTextEnd(src, nextIndex + 1);
+      const refEnd = findLinkLabelEnd(src, nextIndex + 1);
       if (refEnd !== -1) {
         const refLabel = src.slice(nextIndex + 1, refEnd);
         const refId = refLabel.length > 0 ? refLabel : label;
@@ -58,7 +59,9 @@ class ImageInlineParser extends BaseInlineParser {
 
     // 3. Shortcut reference: ![alt]
     if (src[nextIndex] !== "(" && src[nextIndex] !== "[") {
-      const end = labelEnd + 1;
+      const shortcutEnd = findLinkLabelEnd(src, startIndex + 1);
+      if (shortcutEnd === -1) return null;
+      const end = shortcutEnd + 1;
       return {
         node: createNode("image", {
           reference: true,

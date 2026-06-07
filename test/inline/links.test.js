@@ -141,4 +141,34 @@ describe("inline/links", () => {
     const { html } = transformer.render(markdown);
     expect(html).toBe("<p>[bar][foo!]</p>\n");
   });
+
+  it("Example 549: multiline reference definition label", () => {
+    const markdown = "[Foo\n  bar]: /url\n\n[Baz][Foo bar]\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe('<p><a href="/url">Baz</a></p>\n');
+  });
+
+  it("Example 560: whitespace-only link labels are invalid", () => {
+    const markdown = "[\n ]\n\n[\n ]: /uri\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe("<p>[\n]</p>\n<p>[\n]: /uri</p>\n");
+  });
+
+  it("Example 554: unescaped bracket in reference label is invalid", () => {
+    const markdown = "[foo][ref[]\n\n[ref[]: /uri\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe("<p>[foo][ref[]</p>\n<p>[ref[]: /uri</p>\n");
+  });
+
+  it("Example 555: nested brackets in reference label are invalid", () => {
+    const markdown = "[foo][ref[bar]]\n\n[ref[bar]]: /uri\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe("<p>[foo][ref[bar]]</p>\n<p>[ref[bar]]: /uri</p>\n");
+  });
+
+  it("Example 556: shortcut label with nested brackets is invalid", () => {
+    const markdown = "[[[foo]]]\n\n[[[foo]]]: /url\n";
+    const { html } = transformer.render(markdown);
+    expect(html).toBe("<p>[[[foo]]]</p>\n<p>[[[foo]]]: /url</p>\n");
+  });
 });
