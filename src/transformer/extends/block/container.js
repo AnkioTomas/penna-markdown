@@ -115,7 +115,7 @@ class ContainerBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node, ctx) {
-    const { containerType, title, titleNodes, children } = node.props;
+    const { containerType, title, titleNodes, children } = node;
     const isAlign = ALIGN_TYPES.has(containerType);
     const className = isAlign
       ? `cherry-text-align cherry-text-align__${escapeHtml(containerType)}`

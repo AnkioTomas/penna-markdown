@@ -135,13 +135,13 @@ class MediaInlineParser extends BaseInlineParser {
     const parsed = parseMediaDestination(src, nextIndex, alt, ctx);
     if (!parsed) return null;
 
-    parsed.node.props.mediaType = mediaType;
+    parsed.node.mediaType = mediaType;
     return parsed;
   }
 
   /** @inheritdoc */
   render(node, ctx) {
-    const { mediaType, href, title, poster } = node.props;
+    const { mediaType, href, title, poster } = node;
     const alt = escapeHtml(renderAlt(node.children));
     const src = escapeHtml(href ?? "");
     const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";

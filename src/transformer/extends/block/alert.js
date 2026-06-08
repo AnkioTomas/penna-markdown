@@ -197,7 +197,7 @@ class AlertBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node, ctx) {
-    const { alertType } = node.props;
+    const { alertType } = node;
     const title = ALERT_TYPES[alertType] ?? alertType;
     const inner = ctx.renderBlock(node.children);
     const parts = [

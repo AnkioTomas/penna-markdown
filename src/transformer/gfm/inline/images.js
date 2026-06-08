@@ -144,10 +144,10 @@ class ImageInlineParser extends BaseInlineParser {
   render(node, ctx) {
     const alt = this.renderAlt(node.children);
 
-    if (node.props.reference) {
-      const def = lookupLinkReference(ctx.store, node.props.ref);
+    if (node.reference) {
+      const def = lookupLinkReference(ctx.store, node.ref);
       if (!def) {
-        return escapeHtml(node.props.fallback ?? "");
+        return escapeHtml(node.fallback ?? "");
       }
       const href = normalizeLinkDestination(def.href);
       const title = normalizeLinkTitle(def.title ?? "");
@@ -155,7 +155,7 @@ class ImageInlineParser extends BaseInlineParser {
       return `<img src="${escapeHtml(href)}" alt="${escapeHtml(alt)}"${titleAttr} />`;
     }
 
-    const { href, title } = node.props;
+    const { href, title } = node;
     const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
     return `<img src="${escapeHtml(href)}" alt="${escapeHtml(alt)}"${titleAttr} />`;
   }

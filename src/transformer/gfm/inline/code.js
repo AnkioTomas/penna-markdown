@@ -90,7 +90,7 @@ class InlineCodeParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node) {
-    return `<code>${escapeHtml(node.props.content)}</code>`;
+    return `<code>${escapeHtml(node.content)}</code>`;
   }
 }
 

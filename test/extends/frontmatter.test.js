@@ -46,7 +46,7 @@ describe("extends/frontmatter", () => {
 
   it("attaches frontMatter to root AST", () => {
     const { ast } = engine().parse("---\ntitle: Hi\n---\n\n# [[title]]");
-    expect(ast.props.frontMatter).toEqual({ title: "Hi" });
+    expect(ast.frontMatter).toEqual({ title: "Hi" });
   });
 
   it("leaves syntax unchanged when extension disabled", () => {

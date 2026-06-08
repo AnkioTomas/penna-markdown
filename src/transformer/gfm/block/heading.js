@@ -147,7 +147,7 @@ class HeadingBlockParser extends BaseBlockParser {
   /** @inheritdoc */
   render(node, ctx) {
     const inner = ctx.renderInline(node.children);
-    return `<h${node.props.level}>${inner}</h${node.props.level}>`;
+    return `<h${node.level}>${inner}</h${node.level}>`;
   }
 }
 

@@ -79,7 +79,7 @@ class CodeBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node) {
-    const { content, lang } = node.props;
+    const { content, lang } = node;
     const classAttr = lang ? ` class="language-${escapeHtml(lang)}"` : "";
     const suffix = content === "" ? "" : "\n";
     return `<pre><code${classAttr}>${escapeHtml(content)}${suffix}</code></pre>`;

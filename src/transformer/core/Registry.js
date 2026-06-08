@@ -2,12 +2,9 @@
  * @file 语法注册表
  * @module transformer/core/Registry
  *
- * 集中管理所有块级 / 行内 Parser 实例：
+ * 集中管理块级 / 行内 Parser 与 Renderer：
  * - 构造时自动注册 GFM 内置语法（builtin.js）
- * - 支持运行时 register* / get* 查询
- * - 按 priority 降序缓存排序结果，避免每次 parse 都 sort
- *
- * 同一 type 默认不可重复注册；传入 `{ force: true }` 可覆盖（用于扩展内置语法）。
+ * - 解析与渲染分发解耦（renderer 独立注册）
  */
 
 import { builtinBlockSyntax, builtinInlineSyntax, applyGfmRegistryExtensions } from "@/transformer/gfm/builtin.js";
@@ -28,6 +25,13 @@ import { builtinBlockSyntax, builtinInlineSyntax, applyGfmRegistryExtensions } f
  */
 
 /**
+ * @typedef {(
+ *   node: import('./MarkdownNode.js').MarkdownNode,
+ *   ctx: import('./ParserContext.js').RenderContext
+ * ) => string} NodeRenderer
+ */
+
+/**
  * Markdown 语法插件注册中心。
  */
 export class Registry {
@@ -36,11 +40,15 @@ export class Registry {
     this.inlineParsers = new Map();
     /** @type {Map<string, import('./ParserBase.js').BaseBlockParser>} */
     this.blockParsers = new Map();
-    /** @type {import('./Registry.js').InlineFinalizer[]} */
+    /** @type {Map<string, NodeRenderer>} */
+    this.inlineRenderers = new Map();
+    /** @type {Map<string, NodeRenderer>} */
+    this.blockRenderers = new Map();
+    /** @type {InlineFinalizer[]} */
     this._inlineFinalizers = [];
-    /** @type {import('./Registry.js').DocumentFinalizer[]} */
+    /** @type {DocumentFinalizer[]} */
     this._documentFinalizers = [];
-    /** @type {{ inline: Array, block: Array } | null} 按 priority 排序后的缓存 */
+    /** @type {{ inline: Array, block: Array } | null} */
     this._cache = null;
 
     for (const p of builtinInlineSyntax) this.registerInlineParser(p);
@@ -48,32 +56,28 @@ export class Registry {
     applyGfmRegistryExtensions(this);
   }
 
-  /** 注册表变更时失效排序缓存 */
   _touch() {
     this._cache = null;
   }
 
   /**
-   * 通用注册逻辑：校验 type、处理冲突、写入 Map。
-   *
-   * @param {Map} map - inlineParsers 或 blockParsers
-   * @param {Object} parser - 须含 type 字段的 parser 实例
-   * @param {boolean} force - 为 true 时允许覆盖已存在的同 type 语法
+   * @param {Map} map
+   * @param {Map<string, NodeRenderer>} renderers
+   * @param {Object} parser
+   * @param {boolean} force
    */
-  _register(map, parser, force) {
+  _register(map, renderers, parser, force) {
     if (!parser?.type) throw new TypeError("parser 缺少 type");
     if (map.has(parser.type) && !force) {
       throw new Error(`语法 "${parser.type}" 已注册`);
     }
     map.set(parser.type, parser);
+    if (typeof parser.render === "function") {
+      renderers.set(parser.type, (node, ctx) => parser.render(node, ctx));
+    }
     this._touch();
   }
 
-  /**
-   * 懒构建并返回排序后的 parser 列表缓存。
-   *
-   * @returns {{ inline: Array, block: Array }}
-   */
   _cacheOrBuild() {
     if (!this._cache) {
       const byPriority = (map) =>
@@ -86,88 +90,76 @@ export class Registry {
     return this._cache;
   }
 
-  /**
-   * 注册行内语法插件。
-   *
-   * @param {import('./ParserBase.js').BaseInlineParser} parser
-   * @param {{ force?: boolean }} [options]
-   */
   registerInlineParser(parser, { force } = {}) {
-    this._register(this.inlineParsers, parser, force);
+    this._register(this.inlineParsers, this.inlineRenderers, parser, force);
   }
 
-  /**
-   * 注册块级语法插件。
-   *
-   * @param {import('./ParserBase.js').BaseBlockParser} parser
-   * @param {{ force?: boolean }} [options]
-   */
   registerBlockParser(parser, { force } = {}) {
-    this._register(this.blockParsers, parser, force);
+    this._register(this.blockParsers, this.blockRenderers, parser, force);
   }
 
   /**
-   * 获取按 priority 降序排列的行内 parser 列表（解析调度顺序）。
-   *
-   * @returns {import('./ParserBase.js').BaseInlineParser[]}
+   * @param {string} type
+   * @param {NodeRenderer} fn
    */
+  registerInlineRenderer(type, fn) {
+    this.inlineRenderers.set(type, fn);
+  }
+
+  /**
+   * @param {string} type
+   * @param {NodeRenderer} fn
+   */
+  registerBlockRenderer(type, fn) {
+    this.blockRenderers.set(type, fn);
+  }
+
   getInlineParsers() {
     return this._cacheOrBuild().inline;
   }
 
-  /**
-   * 获取按 priority 降序排列的块级 parser 列表。
-   *
-   * @returns {import('./ParserBase.js').BaseBlockParser[]}
-   */
   getBlockParsers() {
     return this._cacheOrBuild().block;
   }
 
-  /**
-   * 按 type 查找单个行内 parser（渲染阶段用于分发 render）。
-   *
-   * @param {string} type
-   * @returns {import('./ParserBase.js').BaseInlineParser | undefined}
-   */
   getInlineParser(type) {
     return this.inlineParsers.get(type);
   }
 
-  /**
-   * 按 type 查找单个块级 parser。
-   *
-   * @param {string} type
-   * @returns {import('./ParserBase.js').BaseBlockParser | undefined}
-   */
   getBlockParser(type) {
     return this.blockParsers.get(type);
   }
 
-  /**
-   * 注册行内解析结束后的后处理（扩展层使用，引擎不感知具体语义）
-   *
-   * @param {InlineFinalizer} fn
-   */
+  /** @param {string} type */
+  getInlineRenderer(type) {
+    return this.inlineRenderers.get(type);
+  }
+
+  /** @param {string} type */
+  getBlockRenderer(type) {
+    return this.blockRenderers.get(type);
+  }
+
+  isInlineType(type) {
+    return this.inlineParsers.has(type) || this.inlineRenderers.has(type);
+  }
+
+  isBlockType(type) {
+    return this.blockParsers.has(type) || this.blockRenderers.has(type);
+  }
+
   registerInlineFinalizer(fn) {
     this._inlineFinalizers.push(fn);
   }
 
-  /** @returns {InlineFinalizer[]} */
   getInlineFinalizers() {
     return this._inlineFinalizers;
   }
 
-  /**
-   * 注册文档解析结束后的后处理（扩展层使用，引擎不感知具体语义）
-   *
-   * @param {DocumentFinalizer} fn
-   */
   registerDocumentFinalizer(fn) {
     this._documentFinalizers.push(fn);
   }
 
-  /** @returns {DocumentFinalizer[]} */
   getDocumentFinalizers() {
     return this._documentFinalizers;
   }

@@ -1,85 +1,87 @@
 /**
- * @file 解析 / 渲染上下文
+ * @file 解析 / 渲染上下文类型与工厂
  * @module transformer/core/ParserContext
  *
- * Store 在 TransformerEngine 构造时创建并注入各引擎；
- * Context 在引擎构造时创建一次，Parser 通过 ctx 访问 store 与协作方法。
+ * Context 为 plain object，由引擎在构造时创建一次。
  */
 
 /**
- * 块级解析上下文（BlockParseEngine 持有）
+ * @typedef {Object} BlockParseContext
+ * @property {import('./ParserStore.js').ParserStore} store
+ * @property {import('./Registry.js').Registry} registry
+ * @property {import('./MarkdownNode.js').MarkdownNode[] | undefined} prevNodes
+ * @property {function(string): import('./MarkdownNode.js').MarkdownNode[]} parseInline
+ * @property {function(string[]): import('./MarkdownNode.js').MarkdownNode[]} parseBlocks
+ * @property {function(string[], number): boolean} checkInterrupt
  */
-export class BlockParseContext {
-  /**
-   * @param {import('./BlockParser.js').BlockParseEngine} engine
-   */
-  constructor(engine) {
-    this._engine = engine;
-    /** @type {import('./MarkdownNode.js').MarkdownNode[] | undefined} */
-    this.prevNodes = undefined;
-  }
 
-  get store() {
-    return this._engine.store;
-  }
+/**
+ * @typedef {Object} InlineParseContext
+ * @property {import('./ParserStore.js').ParserStore} store
+ * @property {function(string): import('./MarkdownNode.js').MarkdownNode[]} parseInline
+ */
 
-  get registry() {
-    return this._engine.registry;
-  }
+/**
+ * @typedef {Object} RenderContext
+ * @property {import('./ParserStore.js').ParserStore} store
+ * @property {function(import('./MarkdownNode.js').MarkdownNode[]): string} renderInline
+ * @property {function(import('./MarkdownNode.js').MarkdownNode[]): string} renderBlock
+ */
 
-  parseInline(text) {
-    return this._engine.parseInline(text);
-  }
-
-  parseBlocks(lines) {
-    return this._engine.parseBlocks(lines);
-  }
-
-  checkInterrupt(lines, index) {
-    return this._engine.checkInterrupt(lines, index);
-  }
+/**
+ * @param {import('./BlockParser.js').BlockParseEngine} engine
+ * @returns {BlockParseContext}
+ */
+export function createBlockParseContext(engine) {
+  return {
+    get store() {
+      return engine.store;
+    },
+    get registry() {
+      return engine.registry;
+    },
+    prevNodes: undefined,
+    parseInline(text) {
+      return engine.parseInline(text);
+    },
+    parseBlocks(lines) {
+      return engine.parseBlocks(lines);
+    },
+    checkInterrupt(lines, index) {
+      return engine.checkInterrupt(lines, index);
+    },
+  };
 }
 
 /**
- * 行内解析上下文（InlineParseEngine 持有）
+ * @param {import('./InlineParser.js').InlineParseEngine} engine
+ * @returns {InlineParseContext}
  */
-export class InlineParseContext {
-  /**
-   * @param {import('./InlineParser.js').InlineParseEngine} engine
-   */
-  constructor(engine) {
-    this._engine = engine;
-  }
-
-  get store() {
-    return this._engine.store;
-  }
-
-  parseInline(text) {
-    return this._engine.parse(text);
-  }
+export function createInlineParseContext(engine) {
+  return {
+    get store() {
+      return engine.store;
+    },
+    parseInline(text) {
+      return engine.parse(text);
+    },
+  };
 }
 
 /**
- * 渲染上下文（TransformerEngine 持有）
+ * @param {import('../TransformerEngine.js').TransformerEngine} engine
+ * @returns {RenderContext}
  */
-export class RenderContext {
-  /**
-   * @param {import('../TransformerEngine.js').TransformerEngine} engine
-   */
-  constructor(engine) {
-    this._engine = engine;
-  }
-
-  get store() {
-    return this._engine.store;
-  }
-
-  renderInline(nodes) {
-    return this._engine._renderInline(nodes);
-  }
-
-  renderBlock(nodes) {
-    return this._engine._renderBlocks(nodes);
-  }
+export function createRenderContext(engine) {
+  return {
+    get store() {
+      return engine.store;
+    },
+    renderInline(nodes) {
+      return engine._renderInline(nodes);
+    },
+    renderBlock(nodes) {
+      return engine._renderBlocks(nodes);
+    },
+  };
 }

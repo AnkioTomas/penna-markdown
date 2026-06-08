@@ -66,7 +66,7 @@ class FrontmatterBlockParser extends BaseBlockParser {
 }
 
 /**
- * 文档收尾：将 frontMatter 附加到 root.props。
+ * 文档收尾：将 frontMatter 附加到 root。
  *
  * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} root
  * @param {import('@/transformer/core/ParserContext.js').BlockParseContext} ctx
@@ -75,7 +75,7 @@ class FrontmatterBlockParser extends BaseBlockParser {
 export function attachFrontmatterToRoot(root, ctx) {
   const frontMatter = ctx.store.document().frontMatter;
   if (frontMatter) {
-    root.props = { ...root.props, frontMatter };
+    root.frontMatter = frontMatter;
   }
   return root;
 }

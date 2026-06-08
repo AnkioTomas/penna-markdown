@@ -64,8 +64,8 @@ class SpecialCodeBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node) {
-    const lang = (node.props.lang ?? "").toLowerCase();
-    const content = node.props.content ?? "";
+    const lang = (node.lang ?? "").toLowerCase();
+    const content = node.content ?? "";
     const render = SPECIAL_RENDERERS[lang];
     if (render) return render(content);
     return codeParser.render(node);

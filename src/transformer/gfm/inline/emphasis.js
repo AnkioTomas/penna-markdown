@@ -3,12 +3,22 @@
  * @module transformer/gfm/inline/emphasis
  *
  * 斜体 *text* / _text_、加粗 **text** / __text__。
- * 定界符入栈见 delimiters.js，匹配由 inline finalizer 收尾；strong 仅负责 render。
+ * 定界符入栈见 delimiters.js，匹配由 inline finalizer 收尾。
+ * strong 节点由 finalizer 生成，渲染见 renderStrong。
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { isEscaped } from "@/transformer/gfm/inline/shared.js";
 import { parseEmphasisDelim } from "@/transformer/gfm/inline/delimiters.js";
+
+/**
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} node
+ * @param {import('@/transformer/core/ParserContext.js').RenderContext} ctx
+ * @returns {string}
+ */
+export function renderStrong(node, ctx) {
+  return `<strong>${ctx.renderInline(node.children)}</strong>`;
+}
 
 /**
  * 斜体（emphasis）行内解析器：识别定界符并入栈。
@@ -34,27 +44,4 @@ class EmphasisInlineParser extends BaseInlineParser {
   }
 }
 
-/**
- * 加粗（strong）行内解析器：仅负责 render，parse 由 finalizer 生成节点。
- *
- * @extends {BaseInlineParser}
- */
-class StrongInlineParser extends BaseInlineParser {
-  constructor() {
-    super({ type: "strong", priority: 40 });
-  }
-
-  /** @inheritdoc */
-  parse() {
-    return null;
-  }
-
-  /** @inheritdoc */
-  render(node, ctx) {
-    return `<strong>${ctx.renderInline(node.children)}</strong>`;
-  }
-}
-
-/** 加粗行内解析器单例（由 finalizer 产出 AST 节点） */
-export const strongInlineParser = new StrongInlineParser();
 export default new EmphasisInlineParser();

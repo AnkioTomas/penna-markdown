@@ -28,7 +28,7 @@ const treeView = new AstTreeView(astTree, {
   },
 });
 
-/** 调试展示用：去掉 props 冗余，保留可序列化字段 */
+/** 调试展示用：序列化 AST 节点字段 */
 function serializeNode(node) {
   const out = { type: node.type };
   if (node.value !== undefined) out.value = node.value;
@@ -36,10 +36,11 @@ function serializeNode(node) {
   if (Array.isArray(node.children)) {
     out.children = node.children.map(serializeNode);
   }
-  const raw = node.props ?? {};
-  for (const [key, value] of Object.entries(raw)) {
-    if (key === "children" || key === "value" || key === "type") continue;
-    if (out[key] === undefined) out[key] = value;
+  for (const [key, value] of Object.entries(node)) {
+    if (key === "type" || key === "children" || key === "value" || key === "length") {
+      continue;
+    }
+    if (value !== undefined) out[key] = value;
   }
   return out;
 }

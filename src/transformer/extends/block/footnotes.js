@@ -30,7 +30,7 @@ class FootnotesSectionParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node, ctx) {
-    const { items } = node.props;
+    const { items } = node;
     if (!items?.length) return "";
 
     const body = items
@@ -64,12 +64,12 @@ export function finalizeFootnotes(root, ctx) {
   const idToNum = new Map();
   let num = 0;
   for (const node of refs) {
-    if (!defs[node.props.id]) continue;
-    if (!idToNum.has(node.props.id)) {
+    if (!defs[node.id]) continue;
+    if (!idToNum.has(node.id)) {
       num += 1;
-      idToNum.set(node.props.id, num);
+      idToNum.set(node.id, num);
     }
-    node.props.num = idToNum.get(node.props.id);
+    node.num = idToNum.get(node.id);
   }
 
   if (num === 0) return root;

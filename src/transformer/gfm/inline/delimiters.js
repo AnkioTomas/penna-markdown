@@ -130,7 +130,7 @@ function findNodeIndex(nodes, node) {
  * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} node
  */
 function removeEmptyDelimNode(nodes, node) {
-  if (node?.type === "text" && node.props?.noMerge && node.value === "") {
+  if (node?.type === "text" && node.noMerge && node.value === "") {
     const idx = nodes.indexOf(node);
     if (idx !== -1) nodes.splice(idx, 1);
   }
@@ -276,8 +276,8 @@ export function processEmphasis(nodes, stackBottom) {
  */
 function literalizeRemainingDelims(nodes) {
   for (const node of nodes) {
-    if (node.type === "text" && node.props?.noMerge) {
-      delete node.props.noMerge;
+    if (node.type === "text" && node.noMerge) {
+      delete node.noMerge;
     }
     if (node.children?.length) {
       literalizeRemainingDelims(node.children);
@@ -295,16 +295,16 @@ function literalizeRemainingDelims(nodes) {
 function collapseSameStrongChildren(children, delimChar) {
   const out = [];
   for (const child of children) {
-    if (child.type === "strong" && child.props?.delimChar === delimChar) {
+    if (child.type === "strong" && child.delimChar === delimChar) {
       out.push(...collapseSameStrongChildren(child.children ?? [], delimChar));
       continue;
     }
     if (child.children?.length) {
       flattenSameDelimiterStrong(child.children);
-      if (child.type === "strong" && child.props?.delimChar) {
+      if (child.type === "strong" && child.delimChar) {
         child.children = collapseSameStrongChildren(
           child.children,
-          child.props.delimChar,
+          child.delimChar,
         );
       }
     }
@@ -322,10 +322,10 @@ function flattenSameDelimiterStrong(nodes) {
   for (const node of nodes) {
     if (!node.children?.length) continue;
     flattenSameDelimiterStrong(node.children);
-    if (node.type === "strong" && node.props?.delimChar) {
+    if (node.type === "strong" && node.delimChar) {
       node.children = collapseSameStrongChildren(
         node.children,
-        node.props.delimChar,
+        node.delimChar,
       );
     }
   }

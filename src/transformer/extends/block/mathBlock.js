@@ -85,7 +85,7 @@ class MathBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node) {
-    return renderMathBlock(node.props.content ?? "");
+    return renderMathBlock(node.content ?? "");
   }
 }
 

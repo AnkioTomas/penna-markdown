@@ -10,7 +10,7 @@ import autolink, { autolinkExt } from "@/transformer/gfm/inline/autolinks.js";
 import entity from "@/transformer/gfm/inline/entity.js";
 import text from "@/transformer/gfm/inline/text.js";
 import codeSpan from "@/transformer/gfm/inline/code.js";
-import emphasis, { strongInlineParser } from "@/transformer/gfm/inline/emphasis.js";
+import emphasis, { renderStrong } from "@/transformer/gfm/inline/emphasis.js";
 import strikethrough from "@/transformer/gfm/inline/strikethrough.js";
 import heading from "@/transformer/gfm/block/heading.js";
 import blockquote from "@/transformer/gfm/block/blockquote.js";
@@ -39,7 +39,6 @@ export const builtinInlineSyntax = [
   entity,
   codeSpan,
   strikethrough,
-  strongInlineParser,
   emphasis,
     __break,
   text,
@@ -66,4 +65,5 @@ export const builtinBlockSyntax = [
  */
 export function applyGfmRegistryExtensions(registry) {
   registry.registerInlineFinalizer(emphasisInlineFinalizer);
+  registry.registerInlineRenderer("strong", renderStrong);
 }

@@ -155,7 +155,7 @@ class TabsBlockParser extends BaseBlockParser {
 
     tabs.forEach((tab, index) => {
       const inputId = `${groupId}-${index}`;
-      const checked = tab.props.active ? " checked" : "";
+      const checked = tab.active ? " checked" : "";
       styleRules.push(
         `#${groupId} #${inputId}:checked ~ .cherry-tabs__panels > .cherry-tabs__panel:nth-child(${index + 1}) { display: block; }`,
         `#${groupId} #${inputId}:checked ~ .cherry-tabs__nav > label[for="${inputId}"] { background: var(--cherry-tabs-active-bg, #fff); border-bottom-color: var(--cherry-tabs-active-color, #3b82f6); font-weight: 600; }`,
@@ -164,7 +164,7 @@ class TabsBlockParser extends BaseBlockParser {
         `<input type="radio" class="cherry-tabs__radio" name="${groupId}" id="${inputId}"${checked}>`,
       );
       labels.push(
-        `<label class="cherry-tabs__label" for="${inputId}">${ctx.renderInline(tab.props.titleNodes)}</label>`,
+        `<label class="cherry-tabs__label" for="${inputId}">${ctx.renderInline(tab.titleNodes)}</label>`,
       );
       panels.push(
         `<div class="cherry-tabs__panel">${ctx.renderBlock(tab.children)}</div>`,

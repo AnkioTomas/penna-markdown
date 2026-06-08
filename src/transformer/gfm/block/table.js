@@ -229,10 +229,10 @@ function makeTableRow(cells, align, isHeader, ctx) {
  * @returns {string}
  */
 function renderTableRow(row, ctx) {
-  const tag = row.props?.isHeader ? "th" : "td";
+  const tag = row.isHeader ? "th" : "td";
   const cells = row.children
     .map((cell) => {
-      const align = cell.props?.align;
+      const align = cell.align;
       const alignAttr =
         align === "center"
           ? ' align="center"'

@@ -87,7 +87,7 @@ function encodeHref(uri) {
  * @returns {string}
  */
 function renderAutolink(node) {
-  const { url, label } = node.props ?? {};
+  const { url, label } = node;
   return `<a href="${escapeHtml(url)}">${escapeHtml(label)}</a>`;
 }
 

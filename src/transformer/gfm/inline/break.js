@@ -74,7 +74,7 @@ class BreakParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node, ctx) {
-    if (node.props?.isHard) return "<br />\n";
+    if (node.isHard) return "<br />\n";
     // Softbreak 渲染为换行符
     return "\n";
   }

@@ -9,7 +9,7 @@
  */
 
 import { createNode } from "@/transformer/core/MarkdownNode.js";
-import { BlockParseContext } from "@/transformer/core/ParserContext.js";
+import { createBlockParseContext } from "@/transformer/core/ParserContext.js";
 
 /**
  * 块级 Markdown 解析引擎。
@@ -27,7 +27,7 @@ export class BlockParseEngine {
     this.registry = registry;
     this.store = store;
     this.__parseInline = parseInline;
-    this.ctx = new BlockParseContext(this);
+    this.ctx = createBlockParseContext(this);
   }
 
   /**

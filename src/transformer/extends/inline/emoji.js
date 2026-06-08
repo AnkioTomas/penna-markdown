@@ -44,7 +44,7 @@ class EmojiInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node) {
-    return node.props.emoji;
+    return node.emoji;
   }
 }
 

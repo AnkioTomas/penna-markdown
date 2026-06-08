@@ -141,11 +141,11 @@ function stripTaskMarkers(lines, start, end) {
  * @param {Array<{ state: string, checked: boolean } | undefined>} tasks
  */
 function attachTasks(node, tasks) {
-  node.props = { ...node.props, isTaskList: true };
+  node.isTaskList = true;
   for (let i = 0; i < node.children.length; i += 1) {
     const task = tasks[i];
     if (task) {
-      node.children[i].props = { ...node.children[i].props, task };
+      node.children[i].task = task;
     }
   }
 }
@@ -159,7 +159,7 @@ function attachTasks(node, tasks) {
  * @returns {string}
  */
 function renderTaskItem(item, ctx, isLoose) {
-  const task = item.props?.task;
+  const task = item.task;
   const checkbox = task ? `${renderTaskCheckbox(task)} ` : "";
   const liAttrs = task ? taskListItemAttrs(task) : "";
 
@@ -229,16 +229,16 @@ class TaskListBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node, ctx) {
-    if (!node.props?.isTaskList) {
+    if (!node.isTaskList) {
       return listParser.render(node, ctx);
     }
 
-    const tag = node.props.ordered ? "ol" : "ul";
+    const tag = node.ordered ? "ol" : "ul";
     const startAttr =
-      node.props.ordered && node.props.start !== 1
-        ? ` start="${node.props.start}"`
+      node.ordered && node.start !== 1
+        ? ` start="${node.start}"`
         : "";
-    const isLoose = node.props.loose;
+    const isLoose = node.loose;
     const itemsHtml = node.children
       .map((item) => renderTaskItem(item, ctx, isLoose))
       .join("\n");

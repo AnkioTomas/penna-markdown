@@ -43,7 +43,7 @@ class FootnoteRefInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node) {
-    const { id, num } = node.props;
+    const { id, num } = node;
     if (!num) return `[^${id}]`;
     return `<sup><a href="#fn:${num}" id="fnref:${num}" class="footnote" title="${id}">[${num}]</a></sup>`;
   }

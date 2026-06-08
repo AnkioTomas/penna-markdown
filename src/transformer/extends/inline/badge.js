@@ -100,7 +100,7 @@ class BadgeInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node) {
-    const { text, clazz, style } = node.props;
+    const { text, clazz, style } = node;
     const styleAttr = style ? ` style="${style}"` : "";
     return `<span class="${clazz}"${styleAttr}>${escapeHtml(text)}</span>`;
   }

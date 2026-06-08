@@ -2,7 +2,7 @@
  * 扁平化 AST 树视图：缩进导轨 + 类型胶囊 + 属性标签。
  */
 
-const SKIP_KEYS = new Set(["children", "value", "type"]);
+const SKIP_KEYS = new Set(["children", "value", "type", "length"]);
 
 const CHEVRON_SVG = `<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M6 4l4 4-4 4V4z"/></svg>`;
 
@@ -32,15 +32,10 @@ function formatChipValue(value) {
 
 function extraProps(node) {
   const rows = [];
-  const raw = node.props ?? {};
 
-  for (const [key, value] of Object.entries(raw)) {
+  for (const [key, value] of Object.entries(node)) {
     if (SKIP_KEYS.has(key) || value === undefined) continue;
     rows.push({ key, value });
-  }
-
-  if (node.length !== undefined && raw.length === undefined) {
-    rows.push({ key: "length", value: node.length });
   }
 
   return rows;

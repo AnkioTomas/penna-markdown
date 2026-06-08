@@ -31,7 +31,7 @@ class TextInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node) {
-    if (node.props?.bracketLiteral) {
+    if (node.bracketLiteral) {
       return escapeAngleBrackets(node.value);
     }
     return escapeText(node.value);

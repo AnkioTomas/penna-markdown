@@ -77,7 +77,7 @@ class IndentedCodeBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node) {
-    const { content } = node.props;
+    const { content } = node;
     return `<pre><code>${escapeHtml(content)}\n</code></pre>`;
   }
 }

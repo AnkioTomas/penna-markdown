@@ -143,13 +143,13 @@ class DetailBlockParser extends BaseBlockParser {
     const items = node.children ?? [];
     if (items.length === 0) return "";
 
-    const wrapperClass = node.props.multiple
+    const wrapperClass = node.multiple
       ? "cherry-detail cherry-detail__multiple"
       : "cherry-detail cherry-detail__single";
 
     const parts = items.map((item) => {
-      const openAttr = item.props.open ? " open" : "";
-      const summary = ctx.renderInline(item.props.titleNodes);
+      const openAttr = item.open ? " open" : "";
+      const summary = ctx.renderInline(item.titleNodes);
       const body = ctx.renderBlock(item.children);
       return [
         `<details${openAttr}>`,

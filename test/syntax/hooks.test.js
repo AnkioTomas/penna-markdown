@@ -6,7 +6,7 @@ describe("syntax/hooks", () => {
     const engine = createEngine({
       beforeRender: ({ name, node }) => {
         if (name === "code") {
-          return `<custom-code>${node.props.content}</custom-code>`;
+          return `<custom-code>${node.content}</custom-code>`;
         }
       },
     });

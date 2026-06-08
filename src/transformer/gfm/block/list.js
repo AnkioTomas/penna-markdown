@@ -341,10 +341,10 @@ class ListBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node, ctx) {
-    const tag = node.props.ordered ? "ol" : "ul";
+    const tag = node.ordered ? "ol" : "ul";
     const startAttr =
-      node.props.ordered && node.props.start !== 1 ? ` start="${node.props.start}"` : "";
-    const isLoose = node.props.loose;
+      node.ordered && node.start !== 1 ? ` start="${node.start}"` : "";
+    const isLoose = node.loose;
 
     const itemsHtml = node.children
       .map((item) => this.renderListItem(item, ctx, isLoose))

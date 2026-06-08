@@ -120,7 +120,7 @@ const EXTENSION_DEFS = {
     blockParsers: [],
     afterParse: foldHtmlAttrsInTree,
     afterRender({ node, html }) {
-      const attrs = node.props?.htmlAttrs;
+      const attrs = node.htmlAttrs;
       return attrs ? injectAttrsIntoFirstOpenTag(html, attrs) : html;
     },
   },
@@ -144,7 +144,7 @@ const EXTENSION_DEFS = {
   },
   /**
    * YAML Frontmatter 与 `[[var.path]]` 行内变量。
-   * 解析完成后将 frontMatter 挂到 root.props。
+   * 解析完成后将 frontMatter 挂到 root。
    */
   frontmatter: {
     inlineParsers: [frontmatterVarInline],
@@ -332,35 +332,14 @@ export function createExtensionOptions(names = [], baseOptions = {}) {
 /**
  * 创建已注入扩展的 Transformer，扩展逻辑不污染 TransformerEngine 核心。
  *
- * 若启用了带 afterParse 的扩展，会注册 DocumentFinalizer 并在 render(root)
- * 时自动调用 finalizeDocument。
+ * DocumentFinalizer 仅在 parse() 出口执行；直接 render(root) 的 AST 须来自 parse()。
  *
  * @param {string[] | { names: string[] }} [names=[]]
  * @param {Object} [options={}] - 传给 createExtensionOptions 的 baseOptions
  * @returns {import('@/transformer/TransformerEngine.js').TransformerEngine}
  */
 export function createTransformerWithExtensions(names = [], options = {}) {
-  const extOptions = createExtensionOptions(names, options);
-  const documentFinalizers = extOptions.documentFinalizers ?? [];
-  delete extOptions.documentFinalizers;
-
-  const engine = createTransformer(extOptions);
-
-  for (const fn of documentFinalizers) {
-    engine.registry.registerDocumentFinalizer(fn);
-  }
-
-  if (documentFinalizers.length > 0) {
-    const origRender = engine.render.bind(engine);
-    engine.render = (input) => {
-      if (typeof input === "object" && input?.type === "root") {
-        engine.blockParser.finalizeDocument(input);
-      }
-      return origRender(input);
-    };
-  }
-
-  return engine;
+  return createTransformer(createExtensionOptions(names, options));
 }
 
 export default {
