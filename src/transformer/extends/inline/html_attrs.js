@@ -15,19 +15,7 @@
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
-
-/**
- * 判断 index 处字符是否被反斜杠转义。
- *
- * @param {string} src
- * @param {number} index
- * @returns {boolean}
- */
-function isEscaped(src, index) {
-  let n = 0;
-  for (let i = index - 1; i >= 0 && src[i] === "\\"; i -= 1) n += 1;
-  return n % 2 === 1;
-}
+import { isEscaped } from "@/transformer/gfm/inline/shared.js";
 
 /**
  * 跳过 index 起的连续空白字符。

@@ -34,7 +34,8 @@ export function prefersDarkScheme() {
 /**
  * 解析 ECharts 代码块内容为配置对象。
  *
- * 优先按标准 JSON 解析；失败时尝试以 JavaScript 对象字面量求值（兼容 cherry 非严格 JSON）。
+ * 优先按标准 JSON 解析；失败时尝试使用 revoked eval 模式（兼容 cherry 非严格 JSON）。
+ * 注意：此函数存在安全风险，仅在可信环境下使用。
  *
  * @param {string} src - 代码块原始文本
  * @returns {Record<string, unknown>} 解析成功返回对象，否则返回空对象
@@ -45,9 +46,10 @@ export function parseEchartsJson(src) {
   try {
     return JSON.parse(trimmed);
   } catch {
+    // 尝试解析 JavaScript 对象字面量（非严格 JSON）
+    // 使用 Function 构造器而非直接 eval 以保持严格模式
     try {
-      // 兼容 cherry 的非严格 JSON（对象字面量）
-      return new Function(`return ${trimmed}`)();
+      return Function(`"use strict"; return ${trimmed}`)();
     } catch {
       return {};
     }
