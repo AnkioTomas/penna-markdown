@@ -1,7 +1,7 @@
-import { CherryTransformer } from "../../src/transformer/index.js";
+import { createTransformer } from "../../src/transformer/index.js";
 import example from "../test.md?raw";
 
-const transformer = new CherryTransformer();
+const transformer = createTransformer();
 
 const markdownInput = document.querySelector("#markdown");
 const htmlOutput = document.querySelector("#html-output");

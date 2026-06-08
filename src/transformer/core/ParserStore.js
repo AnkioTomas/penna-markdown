@@ -12,8 +12,6 @@
 
 export class ParserStore {
   constructor() {
-    /** @type {Map<string, unknown>} */
-    this._data = new Map();
     /** @type {Record<string, unknown>[]} 行内解析栈帧（引擎管理生命周期） */
     this._inlineFrames = [];
     /** @type {Record<string, unknown>[]} 块级解析栈帧（blockquote 等嵌套上下文） */
@@ -22,25 +20,7 @@ export class ParserStore {
     this._document = null;
   }
 
-  get(key) {
-    return this._data.get(key);
-  }
-
-  set(key, value) {
-    this._data.set(key, value);
-    return this;
-  }
-
-  has(key) {
-    return this._data.has(key);
-  }
-
-  delete(key) {
-    return this._data.delete(key);
-  }
-
   clear() {
-    this._data.clear();
     this._inlineFrames = [];
     this._blockFrames = [];
     this._document = null;

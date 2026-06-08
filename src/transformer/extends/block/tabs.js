@@ -125,14 +125,14 @@ class TabsBlockParser extends BaseBlockParser {
 
     const activeIndex = resolveActiveIndex(sections);
     const tabs = sections.map((section, tabIndex) => {
-      const innerAst = ctx.parse(normalizeInnerLines(section.contentLines));
+      const innerChildren = ctx.parseBlocks(normalizeInnerLines(section.contentLines));
       return createNode("tab_item", {
         active: tabIndex === activeIndex,
         title: section.title,
         titleNodes: section.title
           ? ctx.parseInline(section.title)
           : [],
-        children: innerAst.children,
+        children: innerChildren,
       });
     });
 

@@ -63,7 +63,7 @@ export class TransformerEngine {
      * 将 Markdown 解析为 AST。
      *
      * @param {string} markdown
-     * @returns {{ ast: import('@/transformer/core/MarkdownNode.js').MarkdownNode, source: string, errors: [] }}
+     * @returns {{ ast: import('@/transformer/core/MarkdownNode.js').MarkdownNode, source: string }}
      */
     parse(markdown) {
         const source = normalizeMarkdown(markdown);
@@ -73,14 +73,14 @@ export class TransformerEngine {
         }
         this.store.clear();
         const ast = this.blockParser.parse(lines);
-        return {ast, source, errors: []};
+        return {ast, source};
     }
 
     /**
      * 将 Markdown 或 AST 渲染为 HTML。
      *
      * @param {string|import('@/transformer/core/MarkdownNode.js').MarkdownNode} input
-     * @returns {{ html: string, meta: Object, errors: [] }}
+     * @returns {{ html: string, meta: Object }}
      */
     render(input) {
         const markdown =
@@ -91,17 +91,17 @@ export class TransformerEngine {
             typeof input === "object" && input?.type === "root"
                 ? input
                 : this.parse(markdown).ast;
-        return {html: this._withTrailingNewline(this._renderBlocks(ast.children ?? [])), meta: {}, errors: []};
+        return {html: this._withTrailingNewline(this._renderBlocks(ast.children ?? [])), meta: {}};
     }
 
     /**
      * 将 AST 序列化回 Markdown（当前仅返回 source 字段）。
      *
      * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} ast
-     * @returns {{ markdown: string, errors: [] }}
+     * @returns {{ markdown: string }}
      */
     stringify(ast) {
-        return {markdown: ast?.source ?? "", errors: []};
+        return {markdown: ast?.source ?? ""};
     }
 
     /**

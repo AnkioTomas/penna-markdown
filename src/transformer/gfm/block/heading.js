@@ -7,7 +7,7 @@
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
-import { isInBlockquote } from "@/transformer/gfm/block/frame.js";
+import { isInBlockquote } from "@/transformer/gfm/block/blockquote.js";
 
 /**
  * 解析 ATX 标题行。
@@ -87,6 +87,18 @@ class HeadingBlockParser extends BaseBlockParser {
   }
 
   /** @inheritdoc */
+  canOpenAt(lines, index, ctx) {
+    const line = lines[index] ?? "";
+    if (parseAtxHeading(line)) return true;
+
+    const setextMatch = line.match(/^( {0,3})(=+|-+)[ \t]*$/);
+    if (!setextMatch) return false;
+    if (isInBlockquote(ctx)) return false;
+    if (index > 0 && (lines[index - 1] ?? "").trim() === "") return false;
+    return true;
+  }
+
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     const line = lines[index] ?? "";
 
@@ -112,13 +124,7 @@ class HeadingBlockParser extends BaseBlockParser {
             return null;
         }
 
-        // 如果是 checkInterrupt 调用 (prevNodes 未定义)，返回 dummy 节点以打断段落
-        // 从而让下一轮解析循环能看到该行并执行“回溯”逻辑
-        if (ctx.prevNodes === undefined) {
-            return { node: createNode("setext_underline_interrupt"), nextIndex: index };
-        }
-
-        if (ctx.prevNodes.length > 0) {
+        if (ctx.prevNodes?.length > 0) {
             const lastNode = ctx.prevNodes[ctx.prevNodes.length - 1];
             if (lastNode.type === "paragraph") {
                 const level = setextMatch[2][0] === "=" ? 1 : 2;

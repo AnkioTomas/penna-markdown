@@ -1,13 +1,13 @@
-import { CherryTransformer } from "../../src/transformer/index.js";
+import { createTransformer } from "../../src/transformer/index.js";
 import { createExtensionOptions } from "../../src/transformer/extends/extends.js";
 
-/** @type {Map<string, CherryTransformer>} */
+/** @type {Map<string, import("../../src/transformer/TransformerEngine.js").TransformerEngine>} */
 const engineCache = new Map();
 
 function getTransformer(extensions = []) {
   const key = extensions.slice().sort().join(",");
   if (!engineCache.has(key)) {
-    engineCache.set(key, new CherryTransformer(createExtensionOptions(extensions)));
+    engineCache.set(key, createTransformer(createExtensionOptions(extensions)));
   }
   return engineCache.get(key);
 }

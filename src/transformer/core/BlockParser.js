@@ -47,19 +47,21 @@ export class BlockParseEngine {
    * @returns {boolean}
    */
   checkInterrupt(lines, index) {
-    const prevPrevNodes = this.ctx.prevNodes;
-    this.ctx.prevNodes = undefined;
-
-    let interrupted = false;
     for (const parser of this.registry.getBlockParsers()) {
-      if (parser.canInterruptParagraph && parser.parse(lines, index, this.ctx)) {
-        interrupted = true;
-        break;
-      }
-    }
+      if (!parser.canInterruptParagraph) continue;
 
-    this.ctx.prevNodes = prevPrevNodes;
-    return interrupted;
+      if (typeof parser.canOpenAt === "function") {
+        if (parser.canOpenAt(lines, index, this.ctx)) return true;
+        continue;
+      }
+
+      const prevPrevNodes = this.ctx.prevNodes;
+      this.ctx.prevNodes = undefined;
+      const interrupted = !!parser.parse(lines, index, this.ctx);
+      this.ctx.prevNodes = prevPrevNodes;
+      if (interrupted) return true;
+    }
+    return false;
   }
 
   /**
@@ -77,28 +79,20 @@ export class BlockParseEngine {
   }
 
   /**
-   * 将多行 Markdown 解析为块级 AST。
+   * 解析多行文本为块级 children（无 root、不触发 document finalizer）。
    *
-   * 算法概要：
-   * 1. 创建 type 为 `root` 的根节点
-   * 2. 对每一行 index，按 priority 从高到低调用 blockParser.parse()
-   * 3. 若某 parser 返回结果，将 node 并入 root.children，index 跳到 nextIndex
-   * 4. 若无一匹配，index++（跳过无法识别的行，避免死循环）
-   *
-   * @param {string[]} lines - 已规范化换行后的行列表
-   * @returns {import('./MarkdownNode.js').MarkdownNode} root 节点
+   * @param {string[]} lines
+   * @returns {import('./MarkdownNode.js').MarkdownNode[]}
    */
-  parse(lines) {
-    this.store.document().lines = lines;
-    let root = createNode("root", { children: [] });
-
+  parseBlocks(lines) {
+    const children = [];
     let index = 0;
 
     while (index < lines.length) {
       let result = null;
 
       for (const parser of this.registry.getBlockParsers()) {
-        this.ctx.prevNodes = root.children;
+        this.ctx.prevNodes = children;
         result = parser.parse(lines, index, this.ctx);
         if (result) break;
       }
@@ -108,15 +102,27 @@ export class BlockParseEngine {
         continue;
       }
 
-      if (result.replaceLast &&root.children.length > 0) {
-       root.children.pop();
+      if (result.replaceLast && children.length > 0) {
+        children.pop();
       }
       if (result.node) {
-        root.children.push(result.node);
+        children.push(result.node);
       }
       index = result.nextIndex ?? index + 1;
     }
 
+    return children;
+  }
+
+  /**
+   * 将多行 Markdown 解析为块级 AST。
+   *
+   * @param {string[]} lines - 已规范化换行后的行列表
+   * @returns {import('./MarkdownNode.js').MarkdownNode} root 节点
+   */
+  parse(lines) {
+    this.store.document().lines = lines;
+    const root = createNode("root", { children: this.parseBlocks(lines) });
     return this.finalizeDocument(root);
   }
 }

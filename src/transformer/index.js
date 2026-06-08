@@ -7,9 +7,6 @@
 
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 
-/** @type {typeof TransformerEngine} Cherry Markdown 转换引擎别名 */
-export const CherryTransformer = TransformerEngine;
-
 /**
  * 创建 Transformer 引擎实例。
  *

@@ -118,14 +118,14 @@ class DetailBlockParser extends BaseBlockParser {
     );
 
     const items = sections.map((section) => {
-      const innerAst = ctx.parse(normalizeInnerLines(section.contentLines));
+      const innerChildren = ctx.parseBlocks(normalizeInnerLines(section.contentLines));
       return createNode("detail_item", {
         open: section.open,
         title: section.title,
         titleNodes: section.title
           ? ctx.parseInline(section.title)
           : [],
-        children: innerAst.children,
+        children: innerChildren,
       });
     });
 

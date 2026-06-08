@@ -51,7 +51,6 @@ export class InlineParseEngine {
       }
 
       if (!matched) {
-        this.appendNode(nodes, createNode("text", { value: src[index] }));
         index += 1;
       }
     }

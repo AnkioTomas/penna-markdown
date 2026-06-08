@@ -31,8 +31,8 @@ export class BlockParseContext {
     return this._engine.parseInline(text);
   }
 
-  parse(lines) {
-    return this._engine.parse(lines);
+  parseBlocks(lines) {
+    return this._engine.parseBlocks(lines);
   }
 
   checkInterrupt(lines, index) {

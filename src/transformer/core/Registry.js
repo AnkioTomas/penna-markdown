@@ -27,18 +27,6 @@ import { builtinBlockSyntax, builtinInlineSyntax, applyGfmRegistryExtensions } f
  * ) => import('./MarkdownNode.js').MarkdownNode | void} DocumentFinalizer
  */
 
-export { BaseInlineParser, BaseBlockParser } from "@/transformer/core/ParserBase.js";
-
-/**
- * 将 Map 中的 parser 按 priority 从高到低排序为数组。
- *
- * @param {Map<string, import('./ParserBase.js').BaseInlineParser | import('./ParserBase.js').BaseBlockParser>} map
- * @returns {Array}
- */
-function sortByPriority(map) {
-  return [...map.values()].sort((a, b) => b.priority - a.priority);
-}
-
 /**
  * Markdown 语法插件注册中心。
  */
@@ -71,7 +59,6 @@ export class Registry {
    * @param {Map} map - inlineParsers 或 blockParsers
    * @param {Object} parser - 须含 type 字段的 parser 实例
    * @param {boolean} force - 为 true 时允许覆盖已存在的同 type 语法
-   * @returns {Registry} 支持链式调用
    */
   _register(map, parser, force) {
     if (!parser?.type) throw new TypeError("parser 缺少 type");
@@ -80,7 +67,6 @@ export class Registry {
     }
     map.set(parser.type, parser);
     this._touch();
-    return this;
   }
 
   /**
@@ -90,9 +76,11 @@ export class Registry {
    */
   _cacheOrBuild() {
     if (!this._cache) {
+      const byPriority = (map) =>
+        [...map.values()].sort((a, b) => b.priority - a.priority);
       this._cache = {
-        inline: sortByPriority(this.inlineParsers),
-        block: sortByPriority(this.blockParsers),
+        inline: byPriority(this.inlineParsers),
+        block: byPriority(this.blockParsers),
       };
     }
     return this._cache;
@@ -103,10 +91,9 @@ export class Registry {
    *
    * @param {import('./ParserBase.js').BaseInlineParser} parser
    * @param {{ force?: boolean }} [options]
-   * @returns {Registry}
    */
   registerInlineParser(parser, { force } = {}) {
-    return this._register(this.inlineParsers, parser, force);
+    this._register(this.inlineParsers, parser, force);
   }
 
   /**
@@ -114,10 +101,9 @@ export class Registry {
    *
    * @param {import('./ParserBase.js').BaseBlockParser} parser
    * @param {{ force?: boolean }} [options]
-   * @returns {Registry}
    */
   registerBlockParser(parser, { force } = {}) {
-    return this._register(this.blockParsers, parser, force);
+    this._register(this.blockParsers, parser, force);
   }
 
   /**
@@ -162,11 +148,9 @@ export class Registry {
    * 注册行内解析结束后的后处理（扩展层使用，引擎不感知具体语义）
    *
    * @param {InlineFinalizer} fn
-   * @returns {Registry}
    */
   registerInlineFinalizer(fn) {
     this._inlineFinalizers.push(fn);
-    return this;
   }
 
   /** @returns {InlineFinalizer[]} */
@@ -178,11 +162,9 @@ export class Registry {
    * 注册文档解析结束后的后处理（扩展层使用，引擎不感知具体语义）
    *
    * @param {DocumentFinalizer} fn
-   * @returns {Registry}
    */
   registerDocumentFinalizer(fn) {
     this._documentFinalizers.push(fn);
-    return this;
   }
 
   /** @returns {DocumentFinalizer[]} */

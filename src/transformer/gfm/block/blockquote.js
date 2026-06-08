@@ -9,7 +9,33 @@ import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { stripBlockquoteMarker, parseListMarkerLine } from "@/transformer/utils/tabs.js";
 import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
-import { withBlockquoteFrame } from "@/transformer/gfm/block/frame.js";
+
+/**
+ * 在 blockquote 栈帧内执行块级解析。
+ *
+ * @param {import('@/transformer/core/ParserContext.js').BlockParseContext} ctx
+ * @param {() => T} fn
+ * @returns {T}
+ * @template T
+ */
+export function withBlockquoteFrame(ctx, fn) {
+  ctx.store.beginBlockFrame({ inBlockquote: true });
+  try {
+    return fn();
+  } finally {
+    ctx.store.endBlockFrame();
+  }
+}
+
+/**
+ * 当前块级解析是否处于 blockquote 栈帧内。
+ *
+ * @param {import('@/transformer/core/ParserContext.js').BlockParseContext} ctx
+ * @returns {boolean}
+ */
+export function isInBlockquote(ctx) {
+  return ctx.store.isInBlockquote();
+}
 
 /**
  * 去掉引用块首尾仅含空白的行，保留中间空行作段落分隔。
@@ -78,10 +104,10 @@ function isNonHrSetextUnderline(line) {
  *
  * @param {import('@/transformer/core/ParserContext.js').BlockParseContext} ctx
  * @param {string[]} lines
- * @returns {import('@/transformer/core/MarkdownNode.js').MarkdownNode}
+ * @returns {import('@/transformer/core/MarkdownNode.js').MarkdownNode[]}
  */
 function parseBlockquoteInner(ctx, lines) {
-  return withBlockquoteFrame(ctx, () => ctx.parse(lines));
+  return withBlockquoteFrame(ctx, () => ctx.parseBlocks(lines));
 }
 
 /**
@@ -90,9 +116,10 @@ function parseBlockquoteInner(ctx, lines) {
  * @param {string[]} innerLines
  * @param {string} line
  * @param {import('@/transformer/core/ParserContext.js').BlockParseContext} ctx
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[]} innerChildren
  * @returns {boolean}
  */
-function canLazyContinueBlockquote(innerLines, line, ctx) {
+function canLazyContinueBlockquote(innerLines, line, ctx, innerChildren) {
   if (line.trim() === "") return false;
   if (/^ {0,3}>/.test(line)) return false;
   if (isThematicBreakLine(line)) return false;
@@ -101,15 +128,16 @@ function canLazyContinueBlockquote(innerLines, line, ctx) {
   if (parseListMarkerLine(line)) return false;
   if (innerLines.length === 0) return false;
 
-  const before = parseBlockquoteInner(ctx, innerLines);
-  if (!endsWithOpenParagraph(before)) return false;
-
+  if (!endsWithOpenParagraph({ children: innerChildren })) return false;
   if (isNonHrSetextUnderline(line)) return true;
 
-  const after = parseBlockquoteInner(ctx, [...innerLines, line]);
+  const after = parseBlockquoteInner(
+    ctx,
+    normalizeInnerLines([...innerLines, line]),
+  );
   return (
-    after.children.length === before.children.length &&
-    endsWithOpenParagraph(after)
+    after.length === innerChildren.length &&
+    endsWithOpenParagraph({ children: after })
   );
 }
 
@@ -129,6 +157,7 @@ class BlockquoteBlockParser extends BaseBlockParser {
     if (!/^ {0,3}>/.test(line)) return null;
 
     const innerLines = [];
+    let innerChildren = [];
     let i = index;
 
     while (i < lines.length) {
@@ -152,16 +181,30 @@ class BlockquoteBlockParser extends BaseBlockParser {
 
       if (isThematicBreakLine(ln)) break;
 
-      if (innerLines.length > 0 && canLazyContinueBlockquote(innerLines, ln, ctx)) {
-        innerLines.push(ln);
-        i += 1;
-        continue;
+      if (innerLines.length > 0) {
+        if (innerChildren.length === 0) {
+          innerChildren = parseBlockquoteInner(
+            ctx,
+            normalizeInnerLines(innerLines),
+          );
+        }
+        if (canLazyContinueBlockquote(innerLines, ln, ctx, innerChildren)) {
+          innerLines.push(ln);
+          innerChildren = [];
+          i += 1;
+          continue;
+        }
       }
       break;
     }
 
-    const innerAst = parseBlockquoteInner(ctx, normalizeInnerLines(innerLines));
-    const node = createNode("blockquote", { children: innerAst.children });
+    if (innerChildren.length === 0) {
+      innerChildren = parseBlockquoteInner(
+        ctx,
+        normalizeInnerLines(innerLines),
+      );
+    }
+    const node = createNode("blockquote", { children: innerChildren });
 
     return { node, nextIndex: i };
   }

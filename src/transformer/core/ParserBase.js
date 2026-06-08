@@ -76,7 +76,7 @@ export class BaseBlockParser {
    * @param {string[]} lines
    * @param {number} index
    * @param {import('./ParserContext.js').BlockParseContext} ctx -
-   *   块级解析上下文（含 store、parseInline、parse、checkInterrupt、prevNodes）
+   *   块级解析上下文（含 store、parseInline、parseBlocks、checkInterrupt、prevNodes）
    * @returns {{
    *   node: import('./MarkdownNode.js').MarkdownNode,
    *   nextIndex: number,

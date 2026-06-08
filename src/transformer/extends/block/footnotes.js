@@ -78,8 +78,8 @@ export function finalizeFootnotes(root, ctx) {
     .sort((a, b) => a[1] - b[1])
     .map(([id, n]) => {
       const lines = defs[id].lines;
-      const inner = lines.length ? ctx.parse(lines) : { children: [] };
-      return { id, num: n, children: inner.children };
+      const children = lines.length ? ctx.parseBlocks(lines) : [];
+      return { id, num: n, children };
     });
 
   root.children.push(createNode("footnotes", { items }));

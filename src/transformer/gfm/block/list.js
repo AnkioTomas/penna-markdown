@@ -278,13 +278,13 @@ class ListBlockParser extends BaseBlockParser {
         }
       }
 
-      const itemAst = ctx.parse(itemLines);
+      const itemChildren = ctx.parseBlocks(itemLines);
 
-      if (isLooseListItemContent(itemAst.children, itemLines)) {
+      if (isLooseListItemContent(itemChildren, itemLines)) {
         loose = true;
       }
 
-      listItems.push(createNode("list_item", { children: itemAst.children }));
+      listItems.push(createNode("list_item", { children: itemChildren }));
     }
 
     const node = createNode(this.type, {

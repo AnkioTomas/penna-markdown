@@ -36,6 +36,40 @@ const HTML_BLOCK_OPEN = [
 const TYPE_7_RE = new RegExp(`^ {0,3}(?:${open_tag}|${close_tag})\\s*$`, 'i');
 
 /**
+ * 检测当前行是否为 HTML 块，以及 Type 7 是否允许在当前上下文开启。
+ *
+ * @param {string[]} lines
+ * @param {number} index
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[] | undefined} prevNodes
+ * @returns {{ type: number, closer: RegExp | null } | null}
+ */
+function detectHtmlBlock(lines, index, prevNodes) {
+  const line = lines[index] ?? "";
+  let type = -1;
+  let closer = null;
+
+  for (let i = 0; i < HTML_BLOCK_OPEN.length; i++) {
+    const [opener, cls] = HTML_BLOCK_OPEN[i];
+    if (opener.test(line)) {
+      type = i + 1;
+      closer = cls;
+      break;
+    }
+  }
+
+  if (type === -1 && TYPE_7_RE.test(line)) {
+    // Type 7 仅能在空行后（或文档开头）作为 HTML 块开启；
+    // 否则属于段落内联 HTML，不得打断进行中的段落（GFM #156）。
+    const afterBlank = index === 0 || lines[index - 1]?.trim() === "";
+    if (!afterBlank) return null;
+    type = 7;
+  }
+
+  if (type === -1) return null;
+  return { type, closer };
+}
+
+/**
  * 块级 HTML 解析器。
  *
  * @extends {BaseBlockParser}
@@ -48,40 +82,17 @@ class HTMLBlockParser extends BaseBlockParser {
   }
 
   /** @inheritdoc */
+  canOpenAt(lines, index, ctx) {
+    return detectHtmlBlock(lines, index, ctx.prevNodes) !== null;
+  }
+
+  /** @inheritdoc */
   parse(lines, index, ctx) {
     const line = lines[index] ?? "";
+    const detected = detectHtmlBlock(lines, index, ctx.prevNodes);
+    if (!detected) return null;
 
-    let type = -1;
-    let closer = null;
-
-    for (let i = 0; i < HTML_BLOCK_OPEN.length; i++) {
-      const [opener, cls] = HTML_BLOCK_OPEN[i];
-      if (opener.test(line)) {
-        type = i + 1;
-        closer = cls;
-        break;
-      }
-    }
-
-    if (type === -1) {
-      if (TYPE_7_RE.test(line)) {
-        // checkInterrupt：Type 7 不能打断进行中的段落
-        if (ctx.prevNodes === undefined) {
-          return null;
-        }
-        const afterBlank = index === 0 || lines[index - 1]?.trim() === "";
-        if (
-          !afterBlank &&
-          ctx.prevNodes.length > 0 &&
-          ctx.prevNodes[ctx.prevNodes.length - 1].type === "paragraph"
-        ) {
-          return null;
-        }
-        type = 7;
-      }
-    }
-
-    if (type === -1) return null;
+    const { closer } = detected;
 
     const contentLines = [line];
     let i = index + 1;

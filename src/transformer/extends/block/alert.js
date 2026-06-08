@@ -16,7 +16,7 @@ import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { stripBlockquoteMarker, parseListMarkerLine } from "@/transformer/utils/tabs.js";
 import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
-import { withBlockquoteFrame } from "@/transformer/gfm/block/frame.js";
+import { withBlockquoteFrame } from "@/transformer/gfm/block/blockquote.js";
 
 /** 警报类型标识 → 显示标题的映射 */
 export const ALERT_TYPES = {
@@ -100,7 +100,7 @@ function isNonHrSetextUnderline(line) {
  * @returns {{ children: import('@/transformer/core/MarkdownNode.js').MarkdownNode[] }}
  */
 function parseAlertInner(ctx, lines) {
-  return withBlockquoteFrame(ctx, () => ctx.parse(lines));
+  return withBlockquoteFrame(ctx, () => ctx.parseBlocks(lines));
 }
 
 /**
@@ -121,14 +121,14 @@ function canLazyContinueAlert(innerLines, line, ctx) {
   if (innerLines.length === 0) return false;
 
   const before = parseAlertInner(ctx, innerLines);
-  if (!endsWithOpenParagraph(before)) return false;
+  if (!endsWithOpenParagraph({ children: before })) return false;
 
   if (isNonHrSetextUnderline(line)) return true;
 
   const after = parseAlertInner(ctx, [...innerLines, line]);
   return (
-    after.children.length === before.children.length &&
-    endsWithOpenParagraph(after)
+    after.length === before.length &&
+    endsWithOpenParagraph({ children: after })
   );
 }
 
@@ -186,10 +186,10 @@ class AlertBlockParser extends BaseBlockParser {
       break;
     }
 
-    const innerAst = parseAlertInner(ctx, normalizeInnerLines(innerLines));
+    const innerChildren = parseAlertInner(ctx, normalizeInnerLines(innerLines));
     const node = createNode(this.type, {
       alertType,
-      children: innerAst.children,
+      children: innerChildren,
     });
 
     return { node, nextIndex: i };
