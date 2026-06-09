@@ -50,6 +50,8 @@
         border: 1px solid #e5e7eb;
         border-radius: 10px;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
       }
 
       .extends-panel h2 {
@@ -65,6 +67,8 @@
 
       .extends-panel .body {
         padding: 12px 14px;
+        flex: 1;
+        overflow: auto;
       }
 
       .extends-panel pre {
@@ -77,7 +81,7 @@
         line-height: 1.5;
         white-space: pre-wrap;
         word-break: break-word;
-        max-height: 240px;
+        max-height: 320px;
         overflow: auto;
       }
 
@@ -96,6 +100,41 @@
         background: #dbeafe;
         padding: 0 2px;
         border-radius: 2px;
+      }
+
+      .syntax-list {
+        max-height: 600px;
+        overflow-y: auto;
+        padding-right: 4px;
+      }
+
+      .syntax-item {
+        padding: 8px 10px;
+        margin-bottom: 4px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: background 0.2s;
+      }
+
+      .syntax-item:hover {
+        background: #f3f4f6;
+      }
+
+      .syntax-item.active {
+        background: #dbeafe;
+        border-left: 3px solid #3b82f6;
+      }
+
+      .syntax-name {
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .syntax-desc {
+        font-size: 11px;
+        color: #6b7280;
+        line-height: 1.4;
       }
 
       .cherry-tabs {
@@ -175,7 +214,7 @@
         font-size: 11px;
       }
 
-      @media (max-width: 900px) {
+      @media (max-width: 1200px) {
         .extends-panels {
           grid-template-columns: 1fr;
         }
@@ -190,31 +229,30 @@
           <a href="../index.html">返回入口</a>
         </p>
         <p class="sub">
-          勾选扩展后，通过 <code>createTransformerWithExtensions</code> 注入解析引擎。
+          默认启用所有扩展。左侧选择语法演示。
         </p>
         <div class="toolbar">
           <button id="rerun-btn" type="button">重新渲染</button>
         </div>
-        <div id="extensions-container">
-          <h2 style="font-size: 12px; margin: 0 0 8px; color: #9ca3af">可用扩展</h2>
-          <div id="extensions-list"></div>
-        </div>
+        
         <p id="status" class="gfm-status"></p>
+        <div id="extensions-list"></div>
       </aside>
       <main class="main extends-main">
         <textarea id="markdown-input" placeholder="输入 Markdown..."></textarea>
         <div class="extends-panels">
+          
           <section class="extends-panel">
             <h2>预览</h2>
             <div class="body preview" id="preview"></div>
           </section>
           <section class="extends-panel">
-            <h2>HTML</h2>
-            <div class="body"><pre id="html-output"></pre></div>
-          </section>
-          <section class="extends-panel ast" style="grid-column: 1 / -1">
-            <h2>AST</h2>
-            <div class="body"><pre id="ast-output"></pre></div>
+            <h2>Markdown / 期望 HTML</h2>
+            <div class="body">
+              <pre id="markdown-display"></pre>
+              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 12px 0;">
+              <pre id="html-display"></pre>
+            </div>
           </section>
         </div>
       </main>
