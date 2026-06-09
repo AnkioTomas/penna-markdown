@@ -82,20 +82,25 @@ export function renderMathBlock(content, { apiHost = MATH_API_HOST } = {}) {
  * @returns {string}
  */
 export function base64UrlEncode(text) {
-  if (typeof Buffer !== "undefined") {
-    return Buffer.from(text, "utf8")
-      .toString("base64")
+  try {
+    if (typeof Buffer !== "undefined") {
+      return Buffer.from(text, "utf8")
+        .toString("base64")
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/, "");
+    }
+    const bytes = new TextEncoder().encode(text);
+    let binary = "";
+    for (const byte of bytes) binary += String.fromCharCode(byte);
+    return btoa(binary)
       .replace(/\+/g, "-")
       .replace(/\//g, "_")
       .replace(/=+$/, "");
+  } catch {
+    // 出错时返回空字符串，避免中断后续处理
+    return "";
   }
-  const bytes = new TextEncoder().encode(text);
-  let binary = "";
-  for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
 }
 
 /**
