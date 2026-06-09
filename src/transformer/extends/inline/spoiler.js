@@ -8,19 +8,11 @@
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { isEscaped } from "@/transformer/gfm/inline/shared.js";
+import { isWhitespace } from "@/transformer/utils/normalize.js";
 
 /** 开定界符长度：`!!` + 必需空白 */
 const OPEN_LEN = 3;
 
-/**
- * 判断字符是否为空白（空格或制表符）。
- *
- * @param {string} ch
- * @returns {boolean}
- */
-function isWhitespace(ch) {
-  return ch === " " || ch === "\t";
-}
 
 /**
  * 从 contentStart 起查找剧透闭合定界符 ` !!` 的起始索引。

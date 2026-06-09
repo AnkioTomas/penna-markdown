@@ -18,3 +18,13 @@ export function normalizeInnerLines(lines) {
   while (end > start && lines[end - 1].trim() === "") end -= 1;
   return lines.slice(start, end);
 }
+
+/**
+ * 判断字符是否为空白（空格或制表符）。
+ *
+ * @param {string} ch
+ * @returns {boolean}
+ */
+export function isWhitespace(ch) {
+  return ch === " " || ch === "\t";
+}
