@@ -48,16 +48,10 @@ export class Registry {
     this._inlineFinalizers = [];
     /** @type {DocumentFinalizer[]} */
     this._documentFinalizers = [];
-    /** @type {{ inline: Array, block: Array } | null} */
-    this._cache = null;
 
     for (const p of builtinInlineSyntax) this.registerInlineParser(p);
     for (const p of builtinBlockSyntax) this.registerBlockParser(p);
     applyGfmRegistryExtensions(this);
-  }
-
-  _touch() {
-    this._cache = null;
   }
 
   /**
@@ -75,19 +69,15 @@ export class Registry {
     if (typeof parser.render === "function") {
       renderers.set(parser.type, (node, ctx) => parser.render(node, ctx));
     }
-    this._touch();
   }
 
   _cacheOrBuild() {
-    if (!this._cache) {
-      const byPriority = (map) =>
-        [...map.values()].sort((a, b) => b.priority - a.priority);
-      this._cache = {
-        inline: byPriority(this.inlineParsers),
-        block: byPriority(this.blockParsers),
-      };
-    }
-    return this._cache;
+    const byPriority = (map) =>
+      [...map.values()].sort((a, b) => b.priority - a.priority);
+    return {
+      inline: byPriority(this.inlineParsers),
+      block: byPriority(this.blockParsers),
+    };
   }
 
   registerInlineParser(parser, { force } = {}) {

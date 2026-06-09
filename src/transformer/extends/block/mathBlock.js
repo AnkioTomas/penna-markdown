@@ -49,9 +49,11 @@ class MathBlockParser extends BaseBlockParser {
 
     const tail = open[2];
     const sameLine = stripClosingMath(tail);
-    if (sameLine !== null && (sameLine.length > 0 || tail.trim() !== "$$")) {
-      const node = createNode(this.type, { content: sameLine });
-      return { node, nextIndex: index + 1 };
+    if (sameLine !== null) {
+      return {
+        node: createNode(this.type, { content: sameLine }),
+        nextIndex: index + 1,
+      };
     }
 
     const contentLines = [];

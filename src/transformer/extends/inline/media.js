@@ -54,14 +54,20 @@ function parseMediaDestination(src, start, altText, ctx) {
 
   let title = "";
   if (src[j] === '"' || src[j] === "'" || src[j] === "(") {
-    const closer = src[j] === "(" ? ")" : src[j];
+    const closer = src[j];
     let k = j + 1;
+    let parenLevel = src[j] === "(" ? 1 : 0;
     while (k < src.length) {
       if (src[k] === "\\") k += 2;
-      else if (src[k] === closer) {
+      else if (src[k] === closer && parenLevel === 0) {
         title = src.slice(j + 1, k);
         j = k + 1;
         break;
+      } else if (src[k] === "(" && closer === "(") {
+        parenLevel++;
+      } else if (src[k] === ")" && closer === ")") {
+        parenLevel--;
+        if (parenLevel < 0) parenLevel = 0;
       } else k++;
     }
   }

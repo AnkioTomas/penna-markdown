@@ -55,11 +55,14 @@ class SpecialCodeBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   parse(lines, index, ctx) {
-    const lang = parseFenceLang(lines[index] ?? "");
-    if (!lang || !SPECIAL_LANGS.has(lang)) {
-      return codeParser.parse(lines, index, ctx);
+    const result = codeParser.parse(lines, index, ctx);
+    if (result) {
+      const lang = parseFenceLang(lines[index] ?? "");
+      if (lang && SPECIAL_LANGS.has(lang)) {
+        result.node.lang = lang;
+      }
     }
-    return codeParser.parse(lines, index, ctx);
+    return result;
   }
 
   /** @inheritdoc */

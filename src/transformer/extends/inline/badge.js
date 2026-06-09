@@ -27,7 +27,7 @@ const PREDEFINED_COLORS = new Set([
 const POSITIONS = new Set(["top", "bottom", "center"]);
 
 /** Badge 语法正则：`[[text]]` 或 `[[text:color,position]]` */
-const BADGE_RE = /^\[\[([^:\]]+):?([^,\]]*)?,?([^\]]*)\]\]/;
+const BADGE_RE = /^\[\[([^:\]]+)(?::([^,\]]*))?(?:,([^\]]*))?\]\]/;
 
 /**
  * 根据文本与颜色、位置 token 解析 Badge 样式。

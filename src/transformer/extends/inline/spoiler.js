@@ -22,11 +22,15 @@ const OPEN_LEN = 3;
  * @returns {number} 闭合空白字符的索引，未找到返回 -1
  */
 function findSpoilerClose(src, contentStart) {
-  for (let i = contentStart; i < src.length - 2; i++) {
-    if (!isWhitespace(src[i])) continue;
-    if (src[i + 1] !== "!" || src[i + 2] !== "!") continue;
-    if (isEscaped(src, i + 1)) continue;
-    return i;
+  const closeMarker = " !!";
+  let i = contentStart;
+  while (i <= src.length - 3) {
+    const idx = src.indexOf(closeMarker, i);
+    if (idx === -1) return -1;
+    if (!isEscaped(src, idx + 1)) {
+      return idx;
+    }
+    i = idx + 1;
   }
   return -1;
 }

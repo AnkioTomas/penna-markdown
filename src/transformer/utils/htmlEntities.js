@@ -41,17 +41,11 @@ export function tryParseEntity(src, index) {
  * @returns {string}
  */
 export function decodeHtmlEntities(text) {
-  let out = "";
-  let i = 0;
-  while (i < text.length) {
-    const parsed = tryParseEntity(text, i);
-    if (parsed) {
-      out += parsed.value;
-      i += parsed.length;
-      continue;
+  return text.replace(ENTITY_PREFIX_RE, (match) => {
+    try {
+      return decodeHTMLStrict(match);
+    } catch {
+      return match;
     }
-    out += text[i];
-    i += 1;
-  }
-  return out;
+  });
 }
