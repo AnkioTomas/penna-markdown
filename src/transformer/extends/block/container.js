@@ -15,6 +15,7 @@
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
+import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 
 /** 容器开标记行：`::: type 标题` */
 const OPEN_RE = /^ {0,3}:::(?!:)(.+)$/;
@@ -39,19 +40,6 @@ const TYPE_ALIASES = {
 /** 文本对齐类容器类型集合 */
 const ALIGN_TYPES = new Set(["left", "center", "right", "justify"]);
 
-/**
- * 去掉容器内容首尾仅含空白的行。
- *
- * @param {string[]} lines
- * @returns {string[]}
- */
-function normalizeInnerLines(lines) {
-  let start = 0;
-  let end = lines.length;
-  while (start < end && lines[start].trim() === "") start += 1;
-  while (end > start && lines[end - 1].trim() === "") end -= 1;
-  return lines.slice(start, end);
-}
 
 /**
  * 解析开标记行中的类型与标题。

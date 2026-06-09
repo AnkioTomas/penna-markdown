@@ -17,6 +17,7 @@
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 
 /** 选项卡开标记行：`::: tabs` */
 const OPEN_RE = /^ {0,3}:::(?!:)\s+tabs\s*$/;
@@ -30,19 +31,6 @@ const TAB_HEAD_RE = /^@tab(:active)?(?:\s+(.*))?$/;
 /** 全局选项卡组序号，用于生成唯一 DOM id */
 let tabGroupSeq = 0;
 
-/**
- * 去掉选项卡内容首尾仅含空白的行。
- *
- * @param {string[]} lines
- * @returns {string[]}
- */
-function normalizeInnerLines(lines) {
-  let start = 0;
-  let end = lines.length;
-  while (start < end && lines[start].trim() === "") start += 1;
-  while (end > start && lines[end - 1].trim() === "") end -= 1;
-  return lines.slice(start, end);
-}
 
 /**
  * 将内部行拆分为多个选项卡段。

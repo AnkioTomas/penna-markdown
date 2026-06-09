@@ -15,6 +15,7 @@
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 
 /** 手风琴开标记行：`++` 或 `++-` + 标题 */
 const OPEN_RE = /^ {0,3}\+\+([+-]?)\s+(.+?)\s*$/;
@@ -25,19 +26,6 @@ const CLOSE_RE = /^ {0,3}\+\+\+\s*$/;
 /** 内部子段标题行：`++` / `++-` + 标题（排除 `+++`） */
 const SUB_HEAD_RE = /^ {0,3}\+\+(?!\+)(-?)\s+(.+?)\s*$/;
 
-/**
- * 去掉手风琴内容首尾仅含空白的行。
- *
- * @param {string[]} lines
- * @returns {string[]}
- */
-function normalizeInnerLines(lines) {
-  let start = 0;
-  let end = lines.length;
-  while (start < end && lines[start].trim() === "") start += 1;
-  while (end > start && lines[end - 1].trim() === "") end -= 1;
-  return lines.slice(start, end);
-}
 
 /**
  * 将内部行拆分为多个手风琴段。

@@ -9,6 +9,7 @@ import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { stripBlockquoteMarker, parseListMarkerLine } from "@/transformer/utils/tabs.js";
 import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
+import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 
 /**
  * 在 blockquote 栈帧内执行块级解析。
@@ -37,19 +38,6 @@ export function isInBlockquote(ctx) {
   return ctx.store.isInBlockquote();
 }
 
-/**
- * 去掉引用块首尾仅含空白的行，保留中间空行作段落分隔。
- *
- * @param {string[]} lines
- * @returns {string[]}
- */
-function normalizeInnerLines(lines) {
-  let start = 0;
-  let end = lines.length;
-  while (start < end && lines[start].trim() === "") start += 1;
-  while (end > start && lines[end - 1].trim() === "") end -= 1;
-  return lines.slice(start, end);
-}
 
 /**
  * 判断 AST 是否以未闭合段落结尾（用于 lazy continuation）。

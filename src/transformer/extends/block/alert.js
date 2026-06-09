@@ -17,6 +17,7 @@ import { escapeHtml } from "@/transformer/utils/escape.js";
 import { stripBlockquoteMarker, parseListMarkerLine } from "@/transformer/utils/tabs.js";
 import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
 import { withBlockquoteFrame } from "@/transformer/gfm/block/blockquote.js";
+import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 
 /** 警报类型标识 → 显示标题的映射 */
 export const ALERT_TYPES = {
@@ -30,19 +31,6 @@ export const ALERT_TYPES = {
 /** 引用块内警报标记行：`[!NOTE]` 等 */
 const ALERT_MARKER_RE = /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*$/i;
 
-/**
- * 去掉警报内容首尾仅含空白的行。
- *
- * @param {string[]} lines
- * @returns {string[]}
- */
-function normalizeInnerLines(lines) {
-  let start = 0;
-  let end = lines.length;
-  while (start < end && lines[start].trim() === "") start += 1;
-  while (end > start && lines[end - 1].trim() === "") end -= 1;
-  return lines.slice(start, end);
-}
 
 /**
  * 判断 AST 是否以未闭合段落结尾（用于 lazy continuation）。
