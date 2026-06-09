@@ -9,7 +9,7 @@ import { decodeHTMLStrict } from "entities";
 
 /** GFM 实体前缀正则 @see https://github.github.io/gfm/#entity-and-numeric-character-references */
 const ENTITY_PREFIX_RE =
-  /^&(?:#[xX][0-9a-fA-F]{1,6}|#[0-9]{1,7}|[A-Za-z][A-Za-z0-9]{0,31});/;
+  /&(?:#[xX][0-9a-fA-F]{1,6}|#[0-9]{1,7}|[A-Za-z][A-Za-z0-9]{0,31});/g;
 
 /**
  * 从 src[index] 起尝试匹配并解码 HTML 实体。
