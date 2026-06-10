@@ -13,9 +13,9 @@ function taskMarker(label) {
   return `<span class="marker" role="img" aria-label="${label}"></span>`;
 }
 
-describe("extended_tasklist extension", () => {
+describe("tasklist extension", () => {
   it("renders basic todo and done items", () => {
-    const t = createTransformerWithExtensions(["extended_tasklist"]);
+    const t = createTransformerWithExtensions(["tasklist"]);
     const md = "- [ ] foo\n- [x] bar\n";
     expect(t.render(md).html).toBe(
       `<ul class="task-list">
@@ -27,7 +27,7 @@ describe("extended_tasklist extension", () => {
   });
 
   it("renders nested task lists", () => {
-    const t = createTransformerWithExtensions(["extended_tasklist"]);
+    const t = createTransformerWithExtensions(["tasklist"]);
     const md = "- [x] foo\n  - [ ] bar\n  - [x] baz\n- [ ] bim\n";
     expect(t.render(md).html).toBe(
       `<ul class="task-list">
@@ -53,7 +53,7 @@ describe("extended_tasklist extension", () => {
 `;
 
   it("renders all extended task states", () => {
-    const t = createTransformerWithExtensions(["extended_tasklist"]);
+    const t = createTransformerWithExtensions(["tasklist"]);
     expect(t.render(md).html).toBe(
       `<ul class="task-list">
 <li class="${taskClass("todo")}" data-state="todo">${taskMarker("To-do")} 待办事项</li>

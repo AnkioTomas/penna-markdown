@@ -132,8 +132,8 @@ const EXTENSION_DEFS = {
       return applyTagFilter(html);
     },
   },
-  /** 扩展任务列表（含 checkbox 等 Cherry 特性）。 */
-  extended_tasklist: {
+  /** 扩展任务列表（含扩展状态标记与图标）。 */
+  tasklist: {
     inlineParsers: [],
     blockParsers: [taskListParser],
   },
