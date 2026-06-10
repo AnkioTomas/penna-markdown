@@ -97,7 +97,54 @@ flowchart TD
     markdown: "H~2~O，E=mc^2^，x^*a*^，~~删除线~~",
     expected: "<p>H<sub>2</sub>O，E=mc<sup>2</sup>，x<sup><em>a</em></sup>，<del>删除线</del></p>",
   },
-  { name: "container", desc: "自定义容器", markdown: "::: tip\n内容\n:::", expected: "<div class=\"cherry-container cherry-container-tip\">\n<div class=\"cherry-container__header\">TIP</div>\n<div class=\"cherry-container__body\">\n<p>内容</p>\n</div>\n</div>" },
+  {
+    name: "container",
+    desc: "自定义容器 ::: type 标题",
+    markdown: `::: note 📘 说明
+与 alert 共用主题色与图标样式。
+:::
+
+::: tip 💡 提示
+支持 **Markdown** 与列表。
+:::
+
+::: important ⭐ 重要
+关键信息请放在这里。
+:::
+
+::: warning ⚠️ 警告
+操作前请确认。
+:::
+
+::: caution 🛑 谨慎
+可能有负面后果。
+:::
+
+::: danger 🚨 危险
+删除前请备份。
+:::
+
+::: info ℹ️ 信息
+补充说明，使用品牌色。
+:::
+
+::: left
+左对齐文本
+:::
+
+::: center
+居中文本
+:::
+
+::: right
+右对齐文本
+:::
+
+::: justify
+两端对齐文本
+:::`,
+    expected: "",
+  },
   { name: "tabs", desc: "选项卡", markdown: "::: tabs\n@tab 标题 1\n内容\n:::", expected: "<div class=\"cherry-tabs\">\n<input type=\"radio\" name=\"tabs\" id=\"tab-0\" checked>\n<label for=\"tab-0\" class=\"cherry-tabs__label\">标题 1</label>\n<div class=\"cherry-tabs__panel\">\n<p>内容</p>\n</div>\n<div class=\"cherry-tabs__content\"></div>\n</div>" },
   { name: "detail", desc: "展开收起", markdown: "+++ 点击展开\n内容\n+++", expected: "<details class=\"cherry-detail\"><summary>点击展开</summary>\n<p>内容</p>\n</details>" },
   { name: "iframe", desc: "内嵌 iframe", markdown: "!iframe[演示](https://example.com)", expected: "<div class=\"cherry-iframe\" style=\"aspect-ratio: 16 / 9;\"><iframe src=\"https://example.com\" allowfullscreen=\"allowfullscreen\"></iframe></div>" },

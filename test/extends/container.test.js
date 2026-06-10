@@ -3,14 +3,13 @@ import { createTransformer } from "@/transformer/index.js";
 import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
 
 function panelHtml(type, title, body) {
-  const titleHtml = title
-    ? `<div class="cherry-panel--title cherry-panel--title__not-empty">${title}</div>\n`
-    : "";
-  return `<div class="cherry-panel cherry-panel__${type}">\n${titleHtml}<div class="cherry-panel--body">${body}</div>\n</div>\n`;
+  const titleHtml = title ? `<p class="alert__title">${title}</p>\n` : "";
+  return `<div class="alert ${type}">\n${titleHtml}${body}\n</div>\n`;
 }
 
-function alignHtml(type, body) {
-  return `<div class="cherry-text-align cherry-text-align__${type}" style="text-align:${type};">\n<div class="cherry-panel--body">${body}</div>\n</div>\n`;
+function alignHtml(type, body, title = "") {
+  const titleHtml = title ? `<p class="title">${title}</p>\n` : "";
+  return `<div class="align ${type}">\n${titleHtml}${body}\n</div>\n`;
 }
 
 describe("extends/container", () => {
@@ -112,7 +111,7 @@ describe("extends/container", () => {
 正文
 :::`;
     expect(engine().render(md).html).toBe(
-      `<div class="cherry-text-align cherry-text-align__center" style="text-align:center;">\n<div class="cherry-panel--title cherry-panel--title__not-empty">标题</div>\n<div class="cherry-panel--body"><p>正文</p></div>\n</div>\n`,
+      alignHtml("center", "<p>正文</p>", "标题"),
     );
   });
 });

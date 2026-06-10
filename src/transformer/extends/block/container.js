@@ -40,6 +40,16 @@ const TYPE_ALIASES = {
 /** 文本对齐类容器类型集合 */
 const ALIGN_TYPES = new Set(["left", "center", "right", "justify"]);
 
+/** 使用 alert 主题色的语义容器类型 */
+const THEME_TYPES = new Set([
+  "note",
+  "tip",
+  "important",
+  "warning",
+  "caution",
+  "danger",
+  "info",
+]);
 
 /**
  * 解析开标记行中的类型与标题。
@@ -104,23 +114,30 @@ class ContainerBlockParser extends BaseBlockParser {
   /** @inheritdoc */
   render(node, ctx) {
     const { containerType, title, titleNodes, children } = node;
-    const isAlign = ALIGN_TYPES.has(containerType);
-    const className = isAlign
-      ? `cherry-text-align cherry-text-align__${escapeHtml(containerType)}`
-      : `cherry-panel cherry-panel__${escapeHtml(containerType)}`;
-    const style = isAlign ? ` style="text-align:${containerType};"` : "";
-
-    const titleClass = title
-      ? "cherry-panel--title cherry-panel--title__not-empty"
-      : "cherry-panel--title";
-    const titleHtml = title
-      ? `<div class="${titleClass}">${ctx.renderInline(titleNodes)}</div>`
-      : "";
-
     const body = ctx.renderBlock(children);
-    const parts = [`<div class="${className}"${style}>`];
-    if (titleHtml) parts.push(titleHtml);
-    parts.push(`<div class="cherry-panel--body">${body}</div>`);
+
+    if (ALIGN_TYPES.has(containerType)) {
+      const parts = [
+        `<div class="align ${escapeHtml(containerType)}">`,
+      ];
+      if (title) {
+        parts.push(
+          `<p class="title">${ctx.renderInline(titleNodes)}</p>`,
+        );
+      }
+      if (body) parts.push(body);
+      parts.push("</div>");
+      return parts.join("\n");
+    }
+
+    const themeType = THEME_TYPES.has(containerType) ? containerType : "note";
+    const parts = [`<div class="alert ${escapeHtml(themeType)}">`];
+    if (title) {
+      parts.push(
+        `<p class="alert__title">${ctx.renderInline(titleNodes)}</p>`,
+      );
+    }
+    if (body) parts.push(body);
     parts.push("</div>");
     return parts.join("\n");
   }
