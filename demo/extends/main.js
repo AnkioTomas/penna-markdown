@@ -14,12 +14,11 @@ const statusEl = document.getElementById("status");
 
 // 语法演示数据
 const syntaxExamples = [
-  { name: "highlight", desc: "行内高亮语法", markdown: "==高亮文本==", expected: "<p><mark>高亮文本</mark></p>" },
   {
-    name: "highlight_styles",
-    desc: "高亮风格",
-    markdown: "==默认== ==重要=={.important} ==注意=={.note} ==提示=={.tip} ==警告=={.warning} ==谨慎=={.caution} ==危险=={.danger}",
-    expected: '<p><mark>默认</mark> <mark class="important">重要</mark> <mark class="note">注意</mark> <mark class="tip">提示</mark> <mark class="warning">警告</mark> <mark class="caution">谨慎</mark> <mark class="danger">危险</mark></p>'
+    name: "highlight",
+    desc: "行内高亮",
+    markdown: "==高亮文本==\n\n==默认== ==重要=={.important} ==注意=={.note} ==提示=={.tip} ==警告=={.warning} ==谨慎=={.caution} ==危险=={.danger}",
+    expected: '<p><mark>高亮文本</mark></p>\n<p><mark>默认</mark> <mark class="important">重要</mark> <mark class="note">注意</mark> <mark class="tip">提示</mark> <mark class="warning">警告</mark> <mark class="caution">谨慎</mark> <mark class="danger">危险</mark></p>'
   },
   { name: "emoji", desc: "Emoji 短码", markdown: ":smile: :thumbsup:", expected: "<p>😀 👍</p>" },
   { 
