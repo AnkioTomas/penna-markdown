@@ -1,7 +1,9 @@
 @use "sass:list";
 @use "sass:map";
 
-// Layer 1: 原始色板（仅 SCSS 内部，单一数据源）
+// ==========================================
+// Layer 1: 基础静态色板 (保持不变)
+// ==========================================
 $cherry-brand-1: #5086a1;
 $cherry-brand-2: #6aa1b7;
 $cherry-brand-3: #8cccd5;
@@ -15,21 +17,7 @@ $cherry-text-3: rgba(60, 60, 67, 0.56);
 $cherry-bg: #fff;
 $cherry-bg-elevated: #fafafa;
 
-$cherry-note: #ff0;
-$cherry-tip: #39ff14;
-$cherry-warning: #fc0;
-$cherry-caution: #f99;
-$cherry-danger: #f66;
-$cherry-important: #ccf;
-
-$cherry-note-on-bg: #3d3d00;
-$cherry-tip-on-bg: #004d00;
-$cherry-warning-on-bg: #664400;
-$cherry-caution-on-bg: #660000;
-$cherry-danger-on-bg: #330000;
-$cherry-important-on-bg: #000066;
-
-// 夜间模式原始色板
+// 夜间模式静态色板
 $cherry-dark-bg: #141414;
 $cherry-dark-bg-elevated: #1f1f1f;
 
@@ -43,97 +31,69 @@ $cherry-dark-brand-3: #a8dce3;
 $cherry-dark-brand-soft: rgba(131, 208, 218, 0.2);
 $cherry-dark-brand-on-bg: #e0f4f8;
 
-$cherry-dark-note: #660;
-$cherry-dark-tip: #063;
-$cherry-dark-warning: #c60;
-$cherry-dark-caution: #c66;
-$cherry-dark-danger: #e44;
-$cherry-dark-important: #66c;
 
-$cherry-dark-note-on-bg: #ffff99;
-$cherry-dark-tip-on-bg: #b3ffb3;
-$cherry-dark-warning-on-bg: #ffeb99;
-$cherry-dark-caution-on-bg: #ffcccc;
-$cherry-dark-danger-on-bg: #ffb3b3;
-$cherry-dark-important-on-bg: #ccccff;
-
-// 高亮下划线专用色
-$cherry-mark-accent-colors: (
-  note: #ff0,
-  tip: #39ff14,
-  warning: #fc0,
-  caution: #f99,
-  danger: #f66,
-  important: #ccf,
+// ==========================================
+// Layer 2: 核心语义“双核”字典
+// 格式: name: (基础主色, 荧光高亮色)
+// ==========================================
+$cherry-core-semantics: (
+        note:      (#206aca, #ff0),       // 蓝底，荧光黄高亮
+        tip:       (#30a46c, #39ff14),    // 绿底，荧光绿高亮
+        warning:   (#b45309, #fc0),       // 橙底，亮黄高亮
+        caution:   (#c53030, #f99),       // 红底，浅红高亮
+        danger:    (#dc2626, #f66),       // 深红底，亮红高亮 (注：补了原版缺的 danger 主色)
+        important: (#844bbc, #ccf),       // 紫底，浅紫高亮
 );
 
-$cherry-dark-mark-accent-colors: (
-  note: #db0,
-  tip: #4ade80,
-  warning: #fbbf24,
-  caution: #fca5a5,
-  danger: #f87171,
-  important: #a5b4fc,
+$cherry-dark-core-semantics: (
+        note:      (#93c5fd, #db0),
+        tip:       (#4ade80, #4ade80),
+        warning:   (#fbbf24, #fbbf24),
+        caution:   (#fca5a5, #fca5a5),
+        danger:    (#f87171, #f87171),
+        important: (#c4b5fd, #a5b4fc),
 );
 
-// 语义色表：name → (accent, on-bg)
-$cherry-semantic-colors: (
-  note: ($cherry-note, $cherry-note-on-bg),
-  tip: ($cherry-tip, $cherry-tip-on-bg),
-  warning: ($cherry-warning, $cherry-warning-on-bg),
-  caution: ($cherry-caution, $cherry-caution-on-bg),
-  danger: ($cherry-danger, $cherry-danger-on-bg),
-  important: ($cherry-important, $cherry-important-on-bg),
-);
 
-$cherry-dark-semantic-colors: (
-  note: ($cherry-dark-note, $cherry-dark-note-on-bg),
-  tip: ($cherry-dark-tip, $cherry-dark-tip-on-bg),
-  warning: ($cherry-dark-warning, $cherry-dark-warning-on-bg),
-  caution: ($cherry-dark-caution, $cherry-dark-caution-on-bg),
-  danger: ($cherry-dark-danger, $cherry-dark-danger-on-bg),
-  important: ($cherry-dark-important, $cherry-dark-important-on-bg),
-);
-
-// Alert 容器色（VitePress hint-container 风格）
-$cherry-alert-container-colors: (
-  note: (text: #206aca, bg: #e6f0ff, border: #8bb8f9),
-  tip: (text: #30a46c, bg: #e6f6ed, border: #8fd4a8),
-  important: (text: #844bbc, bg: #f3ebfc, border: #c4a8e0),
-  warning: (text: #b45309, bg: #fef3e2, border: #fbbf24),
-  caution: (text: #c53030, bg: #fde8e8, border: #fc8181),
-);
-
-$cherry-dark-alert-container-colors: (
-  note: (text: #93c5fd, bg: #172554, border: #3b82f6),
-  tip: (text: #4ade80, bg: #14261a, border: #22c55e),
-  important: (text: #c4b5fd, bg: #2e1065, border: #8b5cf6),
-  warning: (text: #fbbf24, bg: #3d2800, border: #f59e0b),
-  caution: (text: #fca5a5, bg: #3d1515, border: #ef4444),
-);
-
-@mixin _emit-semantic-colors($palette) {
+// ==========================================
+// Layer 3: 终极颜色衍生工厂 Mixin
+// ==========================================
+@mixin generate-semantic-suite($palette, $is-dark: false) {
   @each $name, $pair in $palette {
-    --cherry-c-#{$name}: #{list.nth($pair, 1)};
-    --cherry-c-#{$name}-on-bg: #{list.nth($pair, 2)};
+    // 1. 解构提取双色：SASS 中 list 索引从 1 开始
+    $base-color: list.nth($pair, 1);
+    $mark-color: list.nth($pair, 2);
+
+    /* --- 基础语义色 --- */
+    --cherry-c-#{$name}: #{$base-color};
+
+    /* --- 衍生 Mark 高亮色 ---
+       直接使用字典中配置的明亮颜色，保留极致高光 */
+    --cherry-c-#{$name}-mark: #{$mark-color};
+
+    /* --- 衍生 on-bg 反色 ---
+       逻辑：利用 color-mix 混合 80% 的黑或白，确保在主色背景上有极高对比度 */
+    $contrast-color: if($is-dark, #000, #fff);
+    --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 20%, #{$contrast-color});
+
+    /* --- 衍生 Alert 容器色 ---
+       逻辑：带透明度的玻璃质感背景和边框。
+       深色模式下稍微调高透明度占比，避免被深色底吞没。 */
+    $bg-opacity: if($is-dark, 15%, 10%);
+    $border-opacity: if($is-dark, 40%, 30%);
+
+    --cherry-c-alert-#{$name}-text: #{$base-color};
+    --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
+    --cherry-c-alert-#{$name}-border: color-mix(in srgb, #{$base-color} #{$border-opacity}, transparent);
   }
 }
 
-@mixin _emit-mark-accent-colors($palette) {
-  @each $name, $color in $palette {
-    --cherry-c-#{$name}-mark: #{$color};
-  }
-}
 
-@mixin _emit-alert-container-colors($palette) {
-  @each $name, $colors in $palette {
-    --cherry-c-alert-#{$name}-text: #{map.get($colors, text)};
-    --cherry-c-alert-#{$name}-bg: #{map.get($colors, bg)};
-    --cherry-c-alert-#{$name}-border: #{map.get($colors, border)};
-  }
-}
-
+// ==========================================
+// Layer 4: 注入全局 CSS 变量
+// ==========================================
 @mixin colors {
+  /* --- 浅色模式（默认） --- */
   --cherry-c-brand-1: #{$cherry-brand-1};
   --cherry-c-brand-2: #{$cherry-brand-2};
   --cherry-c-brand-3: #{$cherry-brand-3};
@@ -147,10 +107,10 @@ $cherry-dark-alert-container-colors: (
   --cherry-c-bg: #{$cherry-bg};
   --cherry-c-bg-elevated: #{$cherry-bg-elevated};
 
-  @include _emit-semantic-colors($cherry-semantic-colors);
-  @include _emit-mark-accent-colors($cherry-mark-accent-colors);
-  @include _emit-alert-container-colors($cherry-alert-container-colors);
+  // 一键展开所有浅色语义衍生变量
+  @include generate-semantic-suite($cherry-core-semantics, false);
 
+  /* --- 深色模式适配 --- */
   [data-theme="dark"] & {
     --cherry-c-brand-1: #{$cherry-dark-brand-1};
     --cherry-c-brand-2: #{$cherry-dark-brand-2};
@@ -165,8 +125,7 @@ $cherry-dark-alert-container-colors: (
     --cherry-c-bg: #{$cherry-dark-bg};
     --cherry-c-bg-elevated: #{$cherry-dark-bg-elevated};
 
-    @include _emit-semantic-colors($cherry-dark-semantic-colors);
-    @include _emit-mark-accent-colors($cherry-dark-mark-accent-colors);
-    @include _emit-alert-container-colors($cherry-dark-alert-container-colors);
+    // 一键展开所有深色语义衍生变量，传入 true
+    @include generate-semantic-suite($cherry-dark-core-semantics, true);
   }
 }
