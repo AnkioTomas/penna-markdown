@@ -156,7 +156,10 @@ const EXTENSION_DEFS = {
     inlineParsers: [inlineComment],
     blockParsers: [],
   },
-  /** 行内徽章语法。 */
+  /**
+   * 行内徽章 `[文本]{.variant .top}`。
+   * 花括号属性需同时启用 `html_attrs`。
+   */
   badge: {
     inlineParsers: [badgeInline],
     blockParsers: [],

@@ -77,7 +77,20 @@ flowchart TD
     expected: "",
   },
   { name: "inline_comment", desc: "行内注释", markdown: "%% 注释 %%", expected: "<p></p>" },
-  { name: "badge", desc: "徽章", markdown: "![test](https://img.shields.io/badge/test-green)", expected: "<span class=\"cherry-badge cherry-badge-green\">test</span>" },
+  {
+    name: "badge",
+    desc: "徽章 [文本]{.variant .top}",
+    markdown: `# 一级标题 [必须]{.important .top}
+
+## 二级标题 [推荐]{.tip} [注意]{.warning .bottom}
+
+### 三级标题 [默认] [置顶]{.top} [置底]{.bottom}
+
+语法：\`[文本]\` 默认 middle；\`[文本]{.warning}\` 变体；\`[文本]{.top}\` / \`{.bottom}\` 位置。
+
+变体：[note]{.note} [tip]{.tip} [warning]{.warning} [caution]{.caution} [danger]{.danger} [important]{.important}`,
+    expected: "",
+  },
   { name: "supsub", desc: "上标下标", markdown: "H~2~O，E=mc^2^", expected: "<p>H<sub>2</sub>O，E=mc<sup>2</sup></p>" },
   { name: "container", desc: "自定义容器", markdown: "::: tip\n内容\n:::", expected: "<div class=\"cherry-container cherry-container-tip\">\n<div class=\"cherry-container__header\">TIP</div>\n<div class=\"cherry-container__body\">\n<p>内容</p>\n</div>\n</div>" },
   { name: "tabs", desc: "选项卡", markdown: "::: tabs\n@tab 标题 1\n内容\n:::", expected: "<div class=\"cherry-tabs\">\n<input type=\"radio\" name=\"tabs\" id=\"tab-0\" checked>\n<label for=\"tab-0\" class=\"cherry-tabs__label\">标题 1</label>\n<div class=\"cherry-tabs__panel\">\n<p>内容</p>\n</div>\n<div class=\"cherry-tabs__content\"></div>\n</div>" },

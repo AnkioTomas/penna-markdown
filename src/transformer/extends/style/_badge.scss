@@ -1,0 +1,38 @@
+$badge-variants: note, tip, warning, caution, danger, important;
+
+@mixin styles {
+  .badge {
+    transition:
+      color 0.25s,
+      background-color 0.25s,
+      border-color 0.25s;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    margin-left: 2px;
+    padding: 0 10px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 22px;
+    display: inline-block;
+    vertical-align: middle;
+    color: var(--cherry-c-text-2);
+    background-color: var(--cherry-c-bg-elevated);
+    border-color: color-mix(in srgb, var(--cherry-c-text-3) 30%, transparent);
+
+    &.top {
+      vertical-align: top;
+    }
+
+    &.bottom {
+      vertical-align: bottom;
+    }
+
+    @each $name in $badge-variants {
+      &.#{$name} {
+        color: var(--cherry-c-alert-#{$name}-text);
+        background-color: var(--cherry-c-alert-#{$name}-bg);
+        border-color: var(--cherry-c-alert-#{$name}-border);
+      }
+    }
+  }
+}
