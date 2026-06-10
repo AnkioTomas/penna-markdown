@@ -38,4 +38,22 @@ describe("extends/spoiler", () => {
     const { html } = createTransformer().render("!! 剧透 !!\n");
     expect(html).toBe("<p>!! 剧透 !!</p>\n");
   });
+
+  it("renders {click} as checkbox spoiler", () => {
+    const { html } = createTransformerWithExtensions(["spoiler", "html_attrs"]).render(
+      "!! 点击显示 !! {click}\n",
+    );
+    expect(html).toBe(
+      '<p><label class="cherry-spoiler click"><input type="checkbox" class="cherry-spoiler__toggle" hidden><span class="cherry-spoiler__text">点击显示</span></label></p>\n',
+    );
+  });
+
+  it("renders {.click} as checkbox spoiler", () => {
+    const { html } = createTransformerWithExtensions(["spoiler", "html_attrs"]).render(
+      "!! 点击显示 !! {.click}\n",
+    );
+    expect(html).toBe(
+      '<p><label class="cherry-spoiler click"><input type="checkbox" class="cherry-spoiler__toggle" hidden><span class="cherry-spoiler__text">点击显示</span></label></p>\n',
+    );
+  });
 });

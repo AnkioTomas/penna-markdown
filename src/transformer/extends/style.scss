@@ -2,8 +2,10 @@
 // 所有扩展的最外层容器必须包含 cherry 这个 class
 @use "style/tokens";
 @use "style/highlight";
+@use "style/spoiler";
 
 .cherry {
   @include tokens.colors;
   @include highlight.styles;
+  @include spoiler.styles;
 }

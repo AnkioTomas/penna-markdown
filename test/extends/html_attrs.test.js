@@ -36,11 +36,11 @@ describe("html_attrs extension", () => {
 
   it("supports combined simplified and traditional syntax", () => {
     const { html } = transformer.render("**bold**{#id .class data-x=\"1\"}");
-    expect(html).toBe('<p><strong id="id" class="class" data-x="1">bold</strong></p>\n');
+    expect(html).toBe('<p><strong id="id" data-x="1" class="class">bold</strong></p>\n');
   });
 
   it("parses traditional syntax still works", () => {
     const { html } = transformer.render('**bold**{class="highlight" data-a="1"}');
-    expect(html).toBe('<p><strong class="highlight" data-a="1">bold</strong></p>\n');
+    expect(html).toBe('<p><strong data-a="1" class="highlight">bold</strong></p>\n');
   });
 });

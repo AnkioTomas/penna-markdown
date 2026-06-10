@@ -25,9 +25,14 @@ const syntaxExamples = [
     name: "html_attrs",
     desc: "HTML 属性",
     markdown: "**加粗**{.highlight}\n\n**加粗**{#special}\n\n**加粗**{#id .class}\n\n**加粗**{.a .b .c}\n\n**加粗**{class=\"highlight\" data-a=\"1\"}",
-    expected: '<p><strong class="highlight">加粗</strong></p>\n<p><strong id="special">加粗</strong></p>\n<p><strong id="id" class="class">加粗</strong></p>\n<p><strong class="a" class="b" class="c">加粗</strong></p>\n<p><strong class="highlight" data-a="1">加粗</strong></p>'
+    expected: '<p><strong class="highlight">加粗</strong></p>\n<p><strong id="special">加粗</strong></p>\n<p><strong id="id" class="class">加粗</strong></p>\n<p><strong class="a b c">加粗</strong></p>\n<p><strong data-a="1" class="highlight">加粗</strong></p>'
   },
-  { name: "spoiler", desc: "剧透遮罩", markdown: "!!这是剧透!!", expected: "<p><span class=\"cherry-spoiler\">这是剧透</span></p>" },
+  {
+    name: "spoiler",
+    desc: "剧透遮罩",
+    markdown: "悬浮显示：!! 这是剧透 !!\n\n点击显示：!! 点击揭晓 !! {click}",
+    expected: '<p>悬浮显示：<span class="cherry-spoiler">这是剧透</span></p>\n<p>点击显示：<label class="cherry-spoiler click"><input type="checkbox" class="cherry-spoiler__toggle" hidden><span class="cherry-spoiler__text">点击揭晓</span></label></p>'
+  },
   { name: "alert", desc: "提示框", markdown: "> [!NOTE]\n> 提示内容", expected: "<div class=\"cherry-alert cherry-alert-note\">\n<strong>NOTE</strong>\n<p>提示内容</p>\n</div>" },
   { name: "extended_tasklist", desc: "任务列表", markdown: "- [ ] 待办\n- [x] 完成", expected: "<ul class=\"contains-task-list\">\n<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled> 待办</li>\n<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled checked> 完成</li>\n</ul>" },
   { name: "cherry_syntax", desc: "Cherry 语法", markdown: "# [[title]]", expected: "<h1>演示</h1>" },

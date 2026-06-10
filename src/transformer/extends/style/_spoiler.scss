@@ -1,0 +1,35 @@
+// 剧透语法 !! text !! / !! text !! {click}
+@mixin styles {
+  .spoiler {
+    cursor: default;
+    transition: filter 0.2s ease;
+
+    // 默认：悬浮显示
+    filter: blur(4px);
+
+    &:hover {
+      filter: none;
+    }
+
+    // {click}：点击切换显示
+    &.click {
+      cursor: pointer;
+      filter: none;
+
+      .spoiler__text {
+        filter: blur(4px);
+        transition: filter 0.2s ease;
+      }
+
+      &:has(.spoiler__toggle:checked) .spoiler__text {
+        filter: none;
+      }
+    }
+  }
+
+  .spoiler__toggle {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+}

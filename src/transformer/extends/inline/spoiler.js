@@ -3,16 +3,47 @@
  * @module transformer/extends/inline/spoiler
  *
  * 语法：`!! 文字 !!`（开闭定界符后均须有空格）
+ * 点击显示：`!! 文字 !! {click}` 或 `!! 文字 !! {.click}`
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { isEscaped } from "@/transformer/gfm/inline/shared.js";
 import { isWhitespace } from "@/transformer/utils/normalize.js";
+import { injectAttrsIntoFirstOpenTag } from "@/transformer/extends/utils/injectAttrs.js";
 
 /** 开定界符长度：`!!` + 必需空白 */
 const OPEN_LEN = 3;
 
+/**
+ * 判断 htmlAttrs 是否启用点击显示模式（class=click 或布尔属性 click）。
+ *
+ * @param {string | undefined} htmlAttrs
+ * @returns {boolean}
+ */
+function isClickMode(htmlAttrs) {
+  if (!htmlAttrs) return false;
+  if (htmlAttrs === "click") return true;
+  return /\bclass="[^"]*\bclick\b/.test(htmlAttrs);
+}
+
+/**
+ * 去掉 click 模式标记，返回剩余待注入属性。
+ *
+ * @param {string | undefined} htmlAttrs
+ * @returns {string}
+ */
+function attrsWithoutClick(htmlAttrs) {
+  if (!htmlAttrs || htmlAttrs === "click") return "";
+  if (htmlAttrs === 'class="click"') return "";
+  return htmlAttrs
+    .replace(/\bclass="click"\s*/, "")
+    .replace(/\bclass="([^"]*)\bclick\b\s*([^"]*)"/, (_, a, b) => {
+      const merged = `${a} ${b}`.trim();
+      return merged ? `class="${merged}"` : "";
+    })
+    .trim();
+}
 
 /**
  * 从 contentStart 起查找剧透闭合定界符 ` !!` 的起始索引。
@@ -66,7 +97,26 @@ class SpoilerInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node, ctx) {
-    return `<span class="cherry-spoiler">${ctx.renderInline(node.children)}</span>`;
+    const inner = ctx.renderInline(node.children);
+    const attrs = node.htmlAttrs;
+    const click = isClickMode(attrs);
+
+    if (click) {
+      let html = `<label class="spoiler click"><input type="checkbox" class="spoiler__toggle" hidden><span class="spoiler__text">${inner}</span></label>`;
+      const extra = attrsWithoutClick(attrs);
+      if (extra) {
+        html = injectAttrsIntoFirstOpenTag(html, extra);
+      }
+      delete node.htmlAttrs;
+      return html;
+    }
+
+    let html = `<span class="spoiler">${inner}</span>`;
+    if (attrs) {
+      html = injectAttrsIntoFirstOpenTag(html, attrs);
+      delete node.htmlAttrs;
+    }
+    return html;
   }
 }
 
