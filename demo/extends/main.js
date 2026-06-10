@@ -2,6 +2,7 @@ import {
   getAvailableExtensions,
   createTransformerWithExtensions,
 } from "@/transformer/extends/extends.js";
+import "@/transformer/extends/style.css";
 
 const markdownInput = document.getElementById("markdown-input");
 const preview = document.getElementById("preview");
@@ -14,8 +15,43 @@ const statusEl = document.getElementById("status");
 // 语法演示数据
 const syntaxExamples = [
   { name: "highlight", desc: "行内高亮语法", markdown: "==高亮文本==", expected: "<p><mark>高亮文本</mark></p>" },
+  {
+    name: "highlight_styles",
+    desc: "高亮风格",
+    markdown: "==默认== ==重要=={.important} ==注意=={.note} ==提示=={.tip} ==警告=={.warning} ==危险=={.danger}",
+    expected: '<p><mark>默认</mark> <mark class="important">重要</mark> <mark class="note">注意</mark> <mark class="tip">提示</mark><br><mark class="warning">警告</mark> <mark class="danger">危险</mark></p>'
+  },
   { name: "emoji", desc: "Emoji 短码", markdown: ":smile: :thumbsup:", expected: "<p>😀 👍</p>" },
-  { name: "html_attrs", desc: "HTML 属性", markdown: "**加粗**{class=\"highlight\"}", expected: "<p><strong class=\"highlight\">加粗</strong></p>" },
+  { 
+    name: "html_attrs_class", 
+    desc: "HTML 属性 - class", 
+    markdown: "**加粗**{highlight}", 
+    expected: '<p><strong class="highlight">加粗</strong></p>' 
+  },
+  { 
+    name: "html_attrs_id", 
+    desc: "HTML 属性 - id", 
+    markdown: "**加粗**{#special}", 
+    expected: '<p><strong id="special">加粗</strong></p>' 
+  },
+  { 
+    name: "html_attrs_mixed", 
+    desc: "HTML 属性 - 混合", 
+    markdown: "**加粗**{#id .class}", 
+    expected: '<p><strong id="id" class="class">加粗</strong></p>' 
+  },
+  { 
+    name: "html_attrs_class_only", 
+    desc: "HTML 属性 - 多个 class", 
+    markdown: "**加粗**{.a .b .c}", 
+    expected: '<p><strong class="a b c">加粗</strong></p>' 
+  },
+  { 
+    name: "html_attrs_old_syntax", 
+    desc: "HTML 属性 - 传统语法", 
+    markdown: "**加粗**{class=\"highlight\" data-a=\"1\"}", 
+    expected: '<p><strong class="highlight" data-a="1">加粗</strong></p>' 
+  },
   { name: "spoiler", desc: "剧透遮罩", markdown: "!!这是剧透!!", expected: "<p><span class=\"cherry-spoiler\">这是剧透</span></p>" },
   { name: "alert", desc: "提示框", markdown: "> [!NOTE]\n> 提示内容", expected: "<div class=\"cherry-alert cherry-alert-note\">\n<strong>NOTE</strong>\n<p>提示内容</p>\n</div>" },
   { name: "extended_tasklist", desc: "任务列表", markdown: "- [ ] 待办\n- [x] 完成", expected: "<ul class=\"contains-task-list\">\n<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled> 待办</li>\n<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled checked> 完成</li>\n</ul>" },
@@ -52,7 +88,7 @@ E=mc^2^，H^^2^^O，大头 ^儿子^ 和 ^^爸爸^^
 
 下面有 !! 这是剧透 !! 请悬停查看
 
-**加粗**{class="highlight" data-id="1"}
+==高亮文本== ==重要=={.important} ==注意=={.note} ==提示=={.tip}
 
 *斜体*{id="em-1"}
 

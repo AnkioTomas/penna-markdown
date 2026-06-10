@@ -1,0 +1,9 @@
+// Cherry Markdown 扩展语法基础样式
+// 所有扩展的最外层容器必须包含 cherry 这个 class
+@use "style/tokens";
+@use "style/highlight";
+
+.cherry {
+  @include tokens.colors;
+  @include highlight.styles;
+}

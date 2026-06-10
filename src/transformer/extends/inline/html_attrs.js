@@ -53,6 +53,7 @@ function isNameChar(ch) {
  * 将 `{...}` 内部解析为 HTML 属性字符串（已做 value 转义）。
  *
  * 支持：
+ * - 简化语法：`.class` → `class="class"`；`#id` → `id="id"`
  * - `key`（布尔属性）
  * - `key="value"` / `key='value'`
  * - `key=value`（不含空白的 value）
@@ -68,6 +69,24 @@ function parseAttrsString(inner) {
   while (i < str.length) {
     i = skipSpaces(str, i);
     if (i >= str.length) break;
+
+    // 简化语法：.class 或 #id
+    if (str[i] === "." || str[i] === "#") {
+      const prefix = str[i];
+      i += 1;
+      const valueStart = i;
+      while (i < str.length && isNameChar(str[i])) i += 1;
+      const value = str.slice(valueStart, i);
+
+      if (!value) return "";
+
+      if (prefix === ".") {
+        out.push(`class="${escapeHtml(value)}"`);
+      } else {
+        out.push(`id="${escapeHtml(value)}"`);
+      }
+      continue;
+    }
 
     const keyStart = i;
     if (!isNameStart(str[i])) return "";
