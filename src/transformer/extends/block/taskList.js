@@ -26,6 +26,17 @@ const TASK_MARKER_CHARS = {
   "!": { state: "urgent", checked: false },
 };
 
+/** 任务状态 → 无障碍标签 */
+const TASK_ARIA_LABELS = {
+  todo: "To-do",
+  done: "Done",
+  in_progress: "In progress",
+  migrated: "Migrated",
+  scheduled: "Scheduled",
+  cancelled: "Cancelled",
+  urgent: "Urgent",
+};
+
 /** 列表项内任务标记：`[ ]`、`[x]` 等 */
 const TASK_MARKER_RE = /^(\s*)\[([ xX/><!\-])\]([ \t]+)/;
 
@@ -50,19 +61,14 @@ function parseTaskListMarker(text) {
 }
 
 /**
- * 渲染任务复选框 HTML。
+ * 渲染任务状态图标标记（由 CSS mask 绘制，见 style/_tasklist.scss）。
  *
- * @param {{ state: string, checked: boolean }} task
+ * @param {{ state: string }} task
  * @returns {string}
  */
-function renderTaskCheckbox(task) {
-  const checked = task.checked ? ' checked=""' : "";
-  const extended = task.state !== "todo" && task.state !== "done";
-  const stateAttr = extended ? ` data-task-state="${task.state}"` : "";
-  const cls = extended
-    ? ` class="task-checkbox task-checkbox-${task.state}"`
-    : "";
-  return `<input${checked} disabled="" type="checkbox"${stateAttr}${cls}>`;
+function renderTaskMarker(task) {
+  const label = TASK_ARIA_LABELS[task.state] ?? task.state;
+  return `<span class="task-marker task-marker-${task.state}" role="img" aria-label="${label}"></span>`;
 }
 
 /**
@@ -160,7 +166,7 @@ function attachTasks(node, tasks) {
  */
 function renderTaskItem(item, ctx, isLoose) {
   const task = item.task;
-  const checkbox = task ? `${renderTaskCheckbox(task)} ` : "";
+  const checkbox = task ? `${renderTaskMarker(task)} ` : "";
   const liAttrs = task ? taskListItemAttrs(task) : "";
 
   if (item.children.length === 0) {
@@ -243,7 +249,7 @@ class TaskListBlockParser extends BaseBlockParser {
       .map((item) => renderTaskItem(item, ctx, isLoose))
       .join("\n");
 
-    return `<${tag}${startAttr}>\n${itemsHtml}\n</${tag}>`;
+    return `<${tag} class="contains-task-list"${startAttr}>\n${itemsHtml}\n</${tag}>`;
   }
 }
 

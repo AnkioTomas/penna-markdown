@@ -39,7 +39,20 @@ const syntaxExamples = [
     markdown: "> [!NOTE]\n> 提示内容，读者应当了解的信息。\n\n> [!TIP]\n> 有用建议，帮助更好地完成任务。\n\n> [!IMPORTANT]\n> 关键信息，达成目标必须知道。\n\n> [!WARNING]\n> 警告信息，需要立即注意。\n\n> [!CAUTION]\n> 风险提示，某些行为可能有负面后果。",
     expected: '<div class="alert note">\n<p class="alert__title">Note</p>\n<p>提示内容，读者应当了解的信息。</p>\n</div>\n<div class="alert tip">\n<p class="alert__title">Tip</p>\n<p>有用建议，帮助更好地完成任务。</p>\n</div>\n<div class="alert important">\n<p class="alert__title">Important</p>\n<p>关键信息，达成目标必须知道。</p>\n</div>\n<div class="alert warning">\n<p class="alert__title">Warning</p>\n<p>警告信息，需要立即注意。</p>\n</div>\n<div class="alert caution">\n<p class="alert__title">Caution</p>\n<p>风险提示，某些行为可能有负面后果。</p>\n</div>'
   },
-  { name: "extended_tasklist", desc: "任务列表", markdown: "- [ ] 待办\n- [x] 完成", expected: "<ul class=\"contains-task-list\">\n<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled> 待办</li>\n<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled checked> 完成</li>\n</ul>" },
+  {
+    name: "extended_tasklist",
+    desc: "任务列表",
+    markdown: "- [ ] 待办事项\n- [x] 已完成\n- [/] 进行中\n- [>] 延期/迁移\n- [<] 提前排期\n- [-] 已取消\n- [!] 紧急",
+    expected: `<ul class="contains-task-list">
+<li class="task-list-item task-list-item-todo" data-task-state="todo"><span class="task-marker task-marker-todo" role="img" aria-label="To-do"></span> 待办事项</li>
+<li class="task-list-item task-list-item-done" data-task-state="done"><span class="task-marker task-marker-done" role="img" aria-label="Done"></span> 已完成</li>
+<li class="task-list-item task-list-item-in_progress" data-task-state="in_progress"><span class="task-marker task-marker-in_progress" role="img" aria-label="In progress"></span> 进行中</li>
+<li class="task-list-item task-list-item-migrated" data-task-state="migrated"><span class="task-marker task-marker-migrated" role="img" aria-label="Migrated"></span> 延期/迁移</li>
+<li class="task-list-item task-list-item-scheduled" data-task-state="scheduled"><span class="task-marker task-marker-scheduled" role="img" aria-label="Scheduled"></span> 提前排期</li>
+<li class="task-list-item task-list-item-cancelled" data-task-state="cancelled"><span class="task-marker task-marker-cancelled" role="img" aria-label="Cancelled"></span> 已取消</li>
+<li class="task-list-item task-list-item-urgent" data-task-state="urgent"><span class="task-marker task-marker-urgent" role="img" aria-label="Urgent"></span> 紧急</li>
+</ul>`,
+  },
   { name: "cherry_syntax", desc: "Cherry 语法", markdown: "# [[title]]", expected: "<h1>演示</h1>" },
   { name: "frontmatter", desc: "Frontmatter", markdown: "---\ntitle: 文档\n---", expected: "<pre style=\"display:none\">title: 文档\n</pre>" },
   { name: "inline_comment", desc: "行内注释", markdown: "%% 注释 %%", expected: "<p></p>" },

@@ -1,0 +1,78 @@
+// 扩展任务列表图标：统一 24×24 几何造型 + CSS mask（与 alert 同方案）
+@mixin styles {
+  .contains-task-list {
+    list-style: none;
+    padding-left: 1.5em;
+
+    .task-list-item {
+      list-style: none;
+      margin: 0.25em 0;
+    }
+
+    .task-list-item-cancelled {
+      color: var(--cherry-c-text-3);
+      text-decoration: line-through;
+      text-decoration-color: color-mix(in srgb, var(--cherry-c-text-3) 60%, transparent);
+    }
+
+    .task-list-item-urgent {
+      font-weight: 600;
+    }
+  }
+
+  .task-marker {
+    --task-marker-color: var(--cherry-c-text-2);
+    --task-marker-icon: none;
+
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin: 0 0.35em 0.05em -1.65em;
+    vertical-align: middle;
+    background-color: var(--task-marker-color);
+    -webkit-mask: var(--task-marker-icon) no-repeat center / contain;
+    mask: var(--task-marker-icon) no-repeat center / contain;
+
+    // [ ] 空心圆角方框
+    &-todo {
+      --task-marker-color: var(--cherry-c-text-3);
+      --task-marker-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' fill-rule='nonzero' d='M7 4.5h10A3.5 3.5 0 0 1 20.5 8v8a3.5 3.5 0 0 1-3.5 3.5H7A3.5 3.5 0 0 1 3.5 16V8A3.5 3.5 0 0 1 7 4.5Zm0 2.25A1.25 1.25 0 0 0 5.75 8v8A1.25 1.25 0 0 0 7 17.25h10A1.25 1.25 0 0 0 18.25 16V8A1.25 1.25 0 0 0 17 6.75H7Z'/%3E%3C/svg%3E");
+    }
+
+    // [x] 实心方框 + 镂空勾
+    &-done {
+      --task-marker-color: var(--cherry-c-tip);
+      --task-marker-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' fill-rule='evenodd' d='M7 4.5h10A3.5 3.5 0 0 1 20.5 8v8a3.5 3.5 0 0 1-3.5 3.5H7A3.5 3.5 0 0 1 3.5 16V8A3.5 3.5 0 0 1 7 4.5ZM9.9 13.1l-1.7-1.7 1.35-1.35 1.7 1.7 4.55-4.55 1.35 1.35L9.9 13.1Z'/%3E%3C/svg%3E");
+    }
+
+    // [/] 圆环 + 右半扇形（50% 进度）
+    &-in_progress {
+      --task-marker-color: var(--cherry-c-note);
+      --task-marker-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' fill-rule='evenodd' d='M12 4a8 8 0 1 1 0 16 8 8 0 1 1-8-8zm0 2.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zm0-2.5v7h7a7 7 0 0 0-7-7z'/%3E%3C/svg%3E");
+    }
+
+    // [>] 圆环 + 右向播放箭头
+    &-migrated {
+      --task-marker-color: var(--cherry-c-warning);
+      --task-marker-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' fill-rule='nonzero' d='M12 4a8 8 0 1 1 0 16 8 8 0 1 1-8-8zm0 2.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zm-1.6 4.1 3.6 2.4-3.6 2.4V12h-2.2v-1.4H10.4V8.6Z'/%3E%3C/svg%3E");
+    }
+
+    // [<] 圆环 + 左向播放箭头
+    &-scheduled {
+      --task-marker-color: var(--cherry-c-brand-1);
+      --task-marker-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' fill-rule='nonzero' d='M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 2.5a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11zm1.6 4.1-3.6 2.4 3.6 2.4V12h2.2v-1.4H13.6V8.6Z'/%3E%3C/svg%3E");
+    }
+
+    // [-] 圆环 + 粗体叉号
+    &-cancelled {
+      --task-marker-color: var(--cherry-c-text-3);
+      --task-marker-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' fill-rule='evenodd' d='M12 4a8 8 0 1 1 0 16 8 8 0 1 1-8-8zm0 2.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zM8.55 8.55l1.5 1.5 1.95-1.95 1.5 1.5-1.95 1.95 1.95 1.95-1.5 1.5-1.95-1.95-1.95 1.95-1.5-1.5 1.95-1.95-1.95-1.95z'/%3E%3C/svg%3E");
+    }
+
+    // [!] 三角描边 + 实心感叹号
+    &-urgent {
+      --task-marker-color: var(--cherry-c-caution);
+      --task-marker-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' fill-rule='evenodd' d='M12 3.5 20.2 19H3.8L12 3.5ZM12 5.9 18.1 17.5H5.9L12 5.9ZM11.2 9.2h1.6v4.2h-1.6V9.2Zm.8 6.8a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2Z'/%3E%3C/svg%3E");
+    }
+  }
+}

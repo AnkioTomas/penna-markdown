@@ -4,10 +4,12 @@
 @use "style/highlight";
 @use "style/spoiler";
 @use "style/alert";
+@use "style/tasklist";
 
 .cherry {
   @include tokens.colors;
   @include highlight.styles;
   @include spoiler.styles;
   @include alert.styles;
+  @include tasklist.styles;
 }
