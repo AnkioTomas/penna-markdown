@@ -39,7 +39,7 @@ class BadgeInlineParser extends BaseInlineParser {
 
     // 不与链接、引用链接抢占
     if (next === "(" || next === "[") return null;
-
+    if (match[1].startsWith("^")) return null;
     return {
       node: createNode(this.type, { text: match[1] }),
       nextIndex,
