@@ -51,10 +51,7 @@ class FrontmatterVarInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node) {
-    const { varName, resolved, value } = node;
-    const text = escapeHtml(value);
-    if (!resolved) return text;
-    return `<span class="frontmatter-var" data-type="frontmatter" data-var="${escapeHtml(varName)}">${text}</span>`;
+    return escapeHtml(node.value);
   }
 }
 

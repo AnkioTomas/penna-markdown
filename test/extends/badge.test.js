@@ -42,7 +42,7 @@ title: Front Title
 # [[title]] and [[必须:tip,top]]`;
     const { html } = both().render(md);
     expect(html).toContain(
-      '<span class="frontmatter-var" data-type="frontmatter" data-var="title">Front Title</span>',
+      "Front Title",
     );
     expect(html).toContain(
       '<span class="cherry-badge cherry-badge-tip cherry-badge-top">必须</span>',

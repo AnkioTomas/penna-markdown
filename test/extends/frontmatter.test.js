@@ -31,15 +31,9 @@ describe("extends/frontmatter", () => {
 
   it("resolves [[name]] anywhere in the document", () => {
     const { html } = engine().render(MD);
-    expect(html).toContain(
-      '<h1><span class="frontmatter-var" data-type="frontmatter" data-var="title">Hello World</span></h1>',
-    );
-    expect(html).toContain(
-      '<span class="frontmatter-var" data-type="frontmatter" data-var="author.name">Alice</span>',
-    );
-    expect(html).toContain(
-      '<span class="frontmatter-var" data-type="frontmatter" data-var="tags">[&quot;docs&quot;,&quot;demo&quot;]</span>',
-    );
+    expect(html).toContain("<h1>Hello World</h1>");
+    expect(html).toContain("By Alice, tags:");
+    expect(html).toContain("[&quot;docs&quot;,&quot;demo&quot;]");
     expect(html).toContain("<p>Unknown: [[missing]]</p>");
     expect(html).toContain("<code>[[title]]</code>");
   });
