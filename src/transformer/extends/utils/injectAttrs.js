@@ -7,11 +7,29 @@
  */
 
 /**
+ * @param {string} str
+ * @returns {string | null}
+ */
+function parseClassValue(str) {
+  const m = str.match(/\bclass="([^"]*)"/);
+  return m ? m[1] : null;
+}
+
+/**
+ * @param {string} str
+ * @returns {string}
+ */
+function stripClassAttr(str) {
+  return str.replace(/\bclass="[^"]*"\s*/, "").trim();
+}
+
+/**
  * 将属性字符串注入到 HTML 片段的第一个开标签上。
  *
  * - 非 HTML 片段、空输入或仅有闭标签时原样返回
  * - 自闭合标签在 `/` 前插入属性
  * - 普通开标签在 `>` 前插入属性
+ * - 若双方均有 class，合并为单一 class 属性
  *
  * @param {string} html
  * @param {string} attrs - 如 `class="x" data-a="1"`
@@ -28,10 +46,27 @@ export function injectAttrsIntoFirstOpenTag(html, attrs) {
   const rest = html.slice(gt + 1);
   const beforeTrimmed = before.replace(/\s*$/, "");
 
-  if (beforeTrimmed.endsWith("/")) {
-    const base = beforeTrimmed.slice(0, -1).replace(/\s*$/, "");
-    return `${base} ${attrs} />${rest}`;
+  const appendAttrs = (tag, extraAttrs) => {
+    if (!extraAttrs) return `${tag}>${rest}`;
+    if (tag.endsWith("/")) {
+      const base = tag.slice(0, -1).replace(/\s*$/, "");
+      return `${base} ${extraAttrs} />${rest}`;
+    }
+    return `${tag} ${extraAttrs}>${rest}`;
+  };
+
+  const existingClass = parseClassValue(beforeTrimmed);
+  const injectedClass = parseClassValue(attrs);
+  const otherAttrs = stripClassAttr(attrs);
+
+  if (existingClass !== null && injectedClass !== null) {
+    const mergedClass = `${existingClass} ${injectedClass}`.trim();
+    const tagWithClass = beforeTrimmed.replace(
+      /\bclass="[^"]*"/,
+      `class="${mergedClass}"`,
+    );
+    return appendAttrs(tagWithClass, otherAttrs);
   }
 
-  return `${beforeTrimmed} ${attrs}>${rest}`;
+  return appendAttrs(beforeTrimmed, attrs);
 }

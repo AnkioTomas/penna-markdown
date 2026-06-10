@@ -65,6 +65,7 @@ function parseAttrsString(inner) {
   const str = String(inner);
   let i = 0;
   const out = [];
+  const classes = [];
 
   while (i < str.length) {
     i = skipSpaces(str, i);
@@ -81,7 +82,7 @@ function parseAttrsString(inner) {
       if (!value) return "";
 
       if (prefix === ".") {
-        out.push(`class="${escapeHtml(value)}"`);
+        classes.push(value);
       } else {
         out.push(`id="${escapeHtml(value)}"`);
       }
@@ -133,7 +134,15 @@ function parseAttrsString(inner) {
       value = str.slice(vStart, i);
     }
 
-    out.push(`${key}="${escapeHtml(value)}"`);
+    if (key === "class") {
+      classes.push(...value.split(/\s+/).filter(Boolean));
+    } else {
+      out.push(`${key}="${escapeHtml(value)}"`);
+    }
+  }
+
+  if (classes.length) {
+    out.push(`class="${escapeHtml(classes.join(" "))}"`);
   }
 
   return out.join(" ");

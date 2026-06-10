@@ -11,6 +11,22 @@
  */
 
 /**
+ * 向前跳过仅含空白的 text 节点，找到可挂载属性的兄弟节点。
+ *
+ * @param {MarkdownNode[]} folded
+ * @returns {MarkdownNode | null}
+ */
+function findAttrTarget(folded) {
+  for (let i = folded.length - 1; i >= 0; i -= 1) {
+    const node = folded[i];
+    if (node?.type === "text" && !String(node.value ?? "").trim()) continue;
+    if (node?.type === "text") return null;
+    return node;
+  }
+  return null;
+}
+
+/**
  * @param {MarkdownNode[] | null | undefined} children
  * @returns {MarkdownNode[] | null | undefined}
  */
@@ -22,9 +38,17 @@ function foldChildren(children) {
   for (const node of children) {
     if (node?.type === "html_attrs") {
       const attrs = node.attrs ?? "";
-      const prev = folded[folded.length - 1];
+      const prev = findAttrTarget(folded);
       if (attrs && prev) {
         prev.htmlAttrs = prev.htmlAttrs ? `${prev.htmlAttrs} ${attrs}` : attrs;
+        while (
+          folded.length > 0 &&
+          folded[folded.length - 1] !== prev &&
+          folded[folded.length - 1]?.type === "text" &&
+          !String(folded[folded.length - 1].value ?? "").trim()
+        ) {
+          folded.pop();
+        }
       }
       continue;
     }
