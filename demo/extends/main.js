@@ -21,35 +21,11 @@ const syntaxExamples = [
     expected: '<p><mark>高亮文本</mark></p>\n<p><mark>默认</mark> <mark class="important">重要</mark> <mark class="note">注意</mark> <mark class="tip">提示</mark> <mark class="warning">警告</mark> <mark class="caution">谨慎</mark> <mark class="danger">危险</mark></p>'
   },
   { name: "emoji", desc: "Emoji 短码", markdown: ":smile: :thumbsup:", expected: "<p>😀 👍</p>" },
-  { 
-    name: "html_attrs_class", 
-    desc: "HTML 属性 - class", 
-    markdown: "**加粗**{highlight}", 
-    expected: '<p><strong class="highlight">加粗</strong></p>' 
-  },
-  { 
-    name: "html_attrs_id", 
-    desc: "HTML 属性 - id", 
-    markdown: "**加粗**{#special}", 
-    expected: '<p><strong id="special">加粗</strong></p>' 
-  },
-  { 
-    name: "html_attrs_mixed", 
-    desc: "HTML 属性 - 混合", 
-    markdown: "**加粗**{#id .class}", 
-    expected: '<p><strong id="id" class="class">加粗</strong></p>' 
-  },
-  { 
-    name: "html_attrs_class_only", 
-    desc: "HTML 属性 - 多个 class", 
-    markdown: "**加粗**{.a .b .c}", 
-    expected: '<p><strong class="a b c">加粗</strong></p>' 
-  },
-  { 
-    name: "html_attrs_old_syntax", 
-    desc: "HTML 属性 - 传统语法", 
-    markdown: "**加粗**{class=\"highlight\" data-a=\"1\"}", 
-    expected: '<p><strong class="highlight" data-a="1">加粗</strong></p>' 
+  {
+    name: "html_attrs",
+    desc: "HTML 属性",
+    markdown: "**加粗**{.highlight}\n\n**加粗**{#special}\n\n**加粗**{#id .class}\n\n**加粗**{.a .b .c}\n\n**加粗**{class=\"highlight\" data-a=\"1\"}",
+    expected: '<p><strong class="highlight">加粗</strong></p>\n<p><strong id="special">加粗</strong></p>\n<p><strong id="id" class="class">加粗</strong></p>\n<p><strong class="a" class="b" class="c">加粗</strong></p>\n<p><strong class="highlight" data-a="1">加粗</strong></p>'
   },
   { name: "spoiler", desc: "剧透遮罩", markdown: "!!这是剧透!!", expected: "<p><span class=\"cherry-spoiler\">这是剧透</span></p>" },
   { name: "alert", desc: "提示框", markdown: "> [!NOTE]\n> 提示内容", expected: "<div class=\"cherry-alert cherry-alert-note\">\n<strong>NOTE</strong>\n<p>提示内容</p>\n</div>" },
