@@ -1,4 +1,5 @@
 @use "sass:list";
+@use "sass:map";
 
 // Layer 1: 原始色板（仅 SCSS 内部，单一数据源）
 $cherry-brand-1: #5086a1;
@@ -56,7 +57,7 @@ $cherry-dark-caution-on-bg: #ffcccc;
 $cherry-dark-danger-on-bg: #ffb3b3;
 $cherry-dark-important-on-bg: #ccccff;
 
-// 高亮下划线专用色（与面板背景色分层，保证细线在页面上可见）
+// 高亮下划线专用色
 $cherry-mark-accent-colors: (
   note: #ff0,
   tip: #39ff14,
@@ -75,7 +76,7 @@ $cherry-dark-mark-accent-colors: (
   important: #a5b4fc,
 );
 
-// 语义色表：name → (bg, on-bg)
+// 语义色表：name → (accent, on-bg)
 $cherry-semantic-colors: (
   note: ($cherry-note, $cherry-note-on-bg),
   tip: ($cherry-tip, $cherry-tip-on-bg),
@@ -94,6 +95,23 @@ $cherry-dark-semantic-colors: (
   important: ($cherry-dark-important, $cherry-dark-important-on-bg),
 );
 
+// Alert 容器色（VitePress hint-container 风格）
+$cherry-alert-container-colors: (
+  note: (text: #206aca, bg: #e6f0ff, border: #8bb8f9),
+  tip: (text: #30a46c, bg: #e6f6ed, border: #8fd4a8),
+  important: (text: #844bbc, bg: #f3ebfc, border: #c4a8e0),
+  warning: (text: #b45309, bg: #fef3e2, border: #fbbf24),
+  caution: (text: #c53030, bg: #fde8e8, border: #fc8181),
+);
+
+$cherry-dark-alert-container-colors: (
+  note: (text: #93c5fd, bg: #172554, border: #3b82f6),
+  tip: (text: #4ade80, bg: #14261a, border: #22c55e),
+  important: (text: #c4b5fd, bg: #2e1065, border: #8b5cf6),
+  warning: (text: #fbbf24, bg: #3d2800, border: #f59e0b),
+  caution: (text: #fca5a5, bg: #3d1515, border: #ef4444),
+);
+
 @mixin _emit-semantic-colors($palette) {
   @each $name, $pair in $palette {
     --cherry-c-#{$name}: #{list.nth($pair, 1)};
@@ -107,28 +125,31 @@ $cherry-dark-semantic-colors: (
   }
 }
 
-// Layer 2 & 3: 语义化 CSS 变量铺底
+@mixin _emit-alert-container-colors($palette) {
+  @each $name, $colors in $palette {
+    --cherry-c-alert-#{$name}-text: #{map.get($colors, text)};
+    --cherry-c-alert-#{$name}-bg: #{map.get($colors, bg)};
+    --cherry-c-alert-#{$name}-border: #{map.get($colors, border)};
+  }
+}
+
 @mixin colors {
-  // 品牌色
   --cherry-c-brand-1: #{$cherry-brand-1};
   --cherry-c-brand-2: #{$cherry-brand-2};
   --cherry-c-brand-3: #{$cherry-brand-3};
   --cherry-c-brand-soft: #{$cherry-brand-soft};
   --cherry-c-brand-on-bg: #{$cherry-brand-on-bg};
 
-  // 页面文本（位于背景之上）
   --cherry-c-text-1: #{$cherry-text-1};
   --cherry-c-text-2: #{$cherry-text-2};
   --cherry-c-text-3: #{$cherry-text-3};
 
-  // 页面背景
   --cherry-c-bg: #{$cherry-bg};
   --cherry-c-bg-elevated: #{$cherry-bg-elevated};
 
-  // 语义色（背景层）+ onBg（语义背景上的文本色）
   @include _emit-semantic-colors($cherry-semantic-colors);
-  // 高亮下划线色（独立于面板背景色）
   @include _emit-mark-accent-colors($cherry-mark-accent-colors);
+  @include _emit-alert-container-colors($cherry-alert-container-colors);
 
   [data-theme="dark"] & {
     --cherry-c-brand-1: #{$cherry-dark-brand-1};
@@ -146,5 +167,6 @@ $cherry-dark-semantic-colors: (
 
     @include _emit-semantic-colors($cherry-dark-semantic-colors);
     @include _emit-mark-accent-colors($cherry-dark-mark-accent-colors);
+    @include _emit-alert-container-colors($cherry-dark-alert-container-colors);
   }
 }

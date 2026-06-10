@@ -35,7 +35,7 @@ function alertMarkdown(type, body) {
 }
 
 function alertHtml(type, title, body) {
-  return `<div class="markdown-alert markdown-alert-${type}">\n<p class="markdown-alert-title">${title}</p>\n<p>${body}</p>\n</div>\n`;
+  return `<div class="alert ${type}">\n<p class="alert__title">${title}</p>\n<p>${body}</p>\n</div>\n`;
 }
 
 describe("alert extension", () => {
@@ -54,7 +54,7 @@ describe("alert extension", () => {
     const t = createTransformerWithExtensions(["alert"]);
     const md = "> [!TIP]\n> First paragraph\n>\n> Second paragraph\n";
     expect(t.render(md).html).toBe(
-      `<div class="markdown-alert markdown-alert-tip">\n<p class="markdown-alert-title">Tip</p>\n<p>First paragraph</p>\n<p>Second paragraph</p>\n</div>\n`,
+      `<div class="alert tip">\n<p class="alert__title">Tip</p>\n<p>First paragraph</p>\n<p>Second paragraph</p>\n</div>\n`,
     );
   });
 

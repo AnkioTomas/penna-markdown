@@ -1,0 +1,72 @@
+// 警报语法 > [!NOTE] / > [!TIP] 等（VitePress hint-container 风格）
+@mixin styles {
+  .alert {
+    --alert-text: var(--cherry-c-text-1);
+    --alert-bg: var(--cherry-c-bg-elevated);
+    --alert-border: var(--cherry-c-brand-2);
+    --alert-icon: none;
+
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--alert-text);
+    background-color: var(--alert-bg);
+    border: 1px solid var(--alert-border);
+    border-radius: 8px;
+    margin: 16px 0;
+    padding: 16px 16px 8px;
+
+    &__title {
+      display: flex;
+      align-items: center;
+      gap: 0.4em;
+      margin: 0 0 8px;
+      font-weight: 600;
+      font-size: 1em;
+      line-height: 1.4;
+      color: var(--alert-text);
+
+      &::before {
+        content: "";
+        width: 1.25em;
+        height: 1.25em;
+        flex-shrink: 0;
+        background: var(--alert-icon) no-repeat center / contain;
+      }
+    }
+
+    &:where(.note) {
+      --alert-text: var(--cherry-c-alert-note-text);
+      --alert-bg: var(--cherry-c-alert-note-bg);
+      --alert-border: var(--cherry-c-alert-note-border);
+      --alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 512 512'%3E%3Cpath fill='%23206aca' d='M256 32C132.26 32 32 132.26 32 256s100.26 224 224 224 224-100.26 224-224S379.74 32 256 32m-8 320h16v-16h-16zm8-48c-17.67 0-32-14.33-32-32V176h32v96h32V176h32v96c0 35.35-28.65 64-64 64'/%3E%3C/svg%3E");
+    }
+
+    &:where(.tip) {
+      --alert-text: var(--cherry-c-alert-tip-text);
+      --alert-bg: var(--cherry-c-alert-tip-bg);
+      --alert-border: var(--cherry-c-alert-tip-border);
+      --alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 512 512'%3E%3Cpath fill='%2330a46c' d='M208 464h96v32h-96zm-16-48h128v32H192zM369.42 62.69C339.35 32.58 299.07 16 256 16A159.62 159.62 0 0 0 96 176c0 46.62 17.87 90.23 49 119.64l4.36 4.09C167.37 316.57 192 339.64 192 360v40h48V269.11L195.72 244L214 217.72L256 240l41.29-22.39l19.1 25.68l-44.39 26V400h48v-40c0-19.88 24.36-42.93 42.15-59.77l4.91-4.66C399.08 265 416 223.61 416 176a159.16 159.16 0 0 0-46.58-113.31'/%3E%3C/svg%3E");
+    }
+
+    &:where(.important) {
+      --alert-text: var(--cherry-c-alert-important-text);
+      --alert-bg: var(--cherry-c-alert-important-bg);
+      --alert-border: var(--cherry-c-alert-important-border);
+      --alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 512 512'%3E%3Cpath fill='%23844bbc' d='M416 208H320V96c0-17.67-14.33-32-32-32h-64c-17.67 0-32 14.33-32 32v112H96c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h288c17.67 0 32-14.33 32-32V240c0-17.67-14.33-32-32-32'/%3E%3C/svg%3E");
+    }
+
+    &:where(.warning) {
+      --alert-text: var(--cherry-c-alert-warning-text);
+      --alert-bg: var(--cherry-c-alert-warning-bg);
+      --alert-border: var(--cherry-c-alert-warning-border);
+      --alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 512 512'%3E%3Cpath fill='%23b45309' d='M85.57 446.25h340.86a32 32 0 0 0 28.17-47.17L284.18 82.58c-12.08-20.84-42.25-20.84-54.33 0L57.4 399.08a32 32 0 0 0 28.17 47.17'/%3E%3Cpath fill='%23b45309' d='M250.26 195.39a16 16 0 0 0-15 20.21l4.39 20.66a16 16 0 0 0 31.42 0l4.39-20.66a16 16 0 0 0-20.21-15 16 16 0 0 0-4.8.59'/%3E%3C/svg%3E");
+    }
+
+    &:where(.caution) {
+      --alert-text: var(--cherry-c-alert-caution-text);
+      --alert-bg: var(--cherry-c-alert-caution-bg);
+      --alert-border: var(--cherry-c-alert-caution-border);
+      --alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 512 512'%3E%3Cpath fill='%23c53030' d='M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208 208-93.31 208-208S370.69 48 256 48m0 304a24 24 0 1 1 24-24 24 24 0 0 1-24 24m32-104a32 32 0 0 1-64 0V176a32 32 0 0 1 64 0Z'/%3E%3C/svg%3E");
+    }
+  }
+}
