@@ -25,6 +25,9 @@ import inlineComment from "@/transformer/extends/inline/comment.js";
 import badgeInline from "@/transformer/extends/inline/badge.js";
 import { subInlineParser, supInlineParser } from "@/transformer/extends/inline/supsub.js";
 import containerBlock from "@/transformer/extends/block/container.js";
+import cardBlock, {
+  cardGridBlockParser,
+} from "@/transformer/extends/block/card.js";
 import tabsBlock from "@/transformer/extends/block/tabs.js";
 import detailBlock from "@/transformer/extends/block/detail.js";
 import iframeBlock from "@/transformer/extends/block/iframe.js";
@@ -173,6 +176,11 @@ const EXTENSION_DEFS = {
   container: {
     inlineParsers: [],
     blockParsers: [containerBlock],
+  },
+  /** 块级卡片与卡片网格。 */
+  card: {
+    inlineParsers: [],
+    blockParsers: [cardGridBlockParser, cardBlock],
   },
   /** 块级标签页语法。 */
   tabs: {

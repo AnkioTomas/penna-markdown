@@ -1,0 +1,139 @@
+import { describe, expect, it } from "vitest";
+import { createTransformer } from "@/transformer/index.js";
+import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
+
+function cardHtml(title, body, { link = "" } = {}) {
+  const titleHtml = title ? `<p class="card-title">${title}</p>\n` : "";
+  if (link) {
+    return `<a class="card link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="card-body">${body}</div>\n</a>\n`;
+  }
+  return `<div class="card">\n${titleHtml}<div class="card-body">${body}</div>\n</div>\n`;
+}
+
+describe("extends/card", () => {
+  const engine = () => createTransformerWithExtensions(["card"]);
+
+  it("renders single card with title attribute", () => {
+    const md = `::: card title="标题" icon="twemoji:astonished-face"
+
+这里是卡片内容。
+:::`;
+    expect(engine().render(md).html).toBe(
+      cardHtml("标题", "<p>这里是卡片内容。</p>"),
+    );
+  });
+
+  it("renders link-card with jump link", () => {
+    const md = `::: link-card title="文档" link="https://example.com"
+
+点击查看文档详情。
+:::`;
+    expect(engine().render(md).html).toBe(
+      cardHtml("文档", "<p>点击查看文档详情。</p>", {
+        link: "https://example.com",
+      }),
+    );
+  });
+
+  it("renders image-card with metadata and description attribute", () => {
+    const md = `::: image-card image="https://example.com/photo.webp" title="阿尔凡齐纳灯塔" description="灯塔位于葡萄牙南部海岸。" href="/" author="Andreas Kunz" date="2024/08/16"
+:::`;
+    const { html } = engine().render(md);
+    expect(html).toContain('class="image-card"');
+    expect(html).toContain('src="https://example.com/photo.webp"');
+    expect(html).toContain('alt="阿尔凡齐纳灯塔"');
+    expect(html).toContain(
+      '<h3 class="title"><a href="/" target="_blank" rel="noopener noreferrer">阿尔凡齐纳灯塔</a></h3>',
+    );
+    expect(html).toContain("<span>Andreas Kunz</span>");
+    expect(html).toContain("<span>2024/08/16</span>");
+    expect(html).toContain(
+      '<p class="description">灯塔位于葡萄牙南部海岸。</p>',
+    );
+  });
+
+  it("renders image-card description from body", () => {
+    const md = `::: image-card image="https://example.com/photo.webp" title="标题" author="Alice"
+正文描述段落。
+:::`;
+    const { html } = engine().render(md);
+    expect(html).toContain(
+      '<div class="description"><p>正文描述段落。</p></div>',
+    );
+    expect(html).not.toContain('class="card-body"');
+  });
+
+  it("renders card grid with default responsive cols", () => {
+    const md = `:::: card-grid
+
+::: card title="A"
+:::
+::: card title="B"
+:::
+
+::::`;
+    const { html } = engine().render(md);
+    expect(html).toContain(
+      'class="card-grid" style="--card-grid-cols-sm: 1; --card-grid-cols-md: 2; --card-grid-cols-lg: 2;"',
+    );
+  });
+
+  it("renders card grid with uniform cols number", () => {
+    const md = `:::: card-grid cols="3"
+
+::: card title="A"
+:::
+::: card title="B"
+:::
+::: card title="C"
+:::
+
+::::`;
+    const { html } = engine().render(md);
+    expect(html).toContain(
+      'style="--card-grid-cols-sm: 3; --card-grid-cols-md: 3; --card-grid-cols-lg: 3;"',
+    );
+  });
+
+  it("renders card grid with breakpoint cols object", () => {
+    const md = `:::: card-grid cols="{ sm: 1, md: 2, lg: 3 }"
+
+::: card title="A"
+:::
+::: card title="B"
+:::
+
+::::`;
+    const { html } = engine().render(md);
+    expect(html).toContain(
+      'style="--card-grid-cols-sm: 1; --card-grid-cols-md: 2; --card-grid-cols-lg: 3;"',
+    );
+  });
+
+  it("renders card grid with mixed card types", () => {
+    const md = `:::: card-grid
+
+::: link-card title="卡片标题 1" link="https://example.com/1"
+
+卡片一内容。
+:::
+
+::: image-card image="https://example.com/a.webp" title="图片卡" href="/"
+:::
+
+::::`;
+    const { html } = engine().render(md);
+    expect(html).toContain('class="card-grid"');
+    expect(html).toContain('href="https://example.com/1"');
+    expect(html).toContain('class="image-card"');
+  });
+
+  it("is disabled without extension", () => {
+    const md = `::: image-card title="标题"
+内容
+:::`;
+    const { html } = createTransformer().render(md);
+    expect(html).not.toContain('class="image-card"');
+    expect(html).toContain("::: image-card");
+  });
+});

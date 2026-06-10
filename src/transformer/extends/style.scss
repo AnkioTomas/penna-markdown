@@ -6,6 +6,7 @@
 @use "style/alert";
 @use "style/tasklist";
 @use "style/badge";
+@use "style/card";
 
 .cherry {
   @include tokens.colors;
@@ -14,4 +15,5 @@
   @include alert.styles;
   @include tasklist.styles;
   @include badge.styles;
+  @include card.styles;
 }

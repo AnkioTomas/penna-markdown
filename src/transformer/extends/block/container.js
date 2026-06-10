@@ -88,7 +88,14 @@ class ContainerBlockParser extends BaseBlockParser {
     if (!open) return null;
 
     const info = parseOpenInfo(open[1]);
-    if (!info) return null;
+    if (
+      !info ||
+      info.containerType === "card" ||
+      info.containerType === "link-card" ||
+      info.containerType === "image-card"
+    ) {
+      return null;
+    }
 
     const innerLines = [];
     let i = index + 1;

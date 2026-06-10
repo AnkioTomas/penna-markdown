@@ -145,6 +145,39 @@ flowchart TD
 :::`,
     expected: "",
   },
+  {
+    name: "card",
+    desc: "卡片 card / link-card / image-card",
+    markdown: `::: card title="标题"
+
+普通卡片内容。
+:::
+
+::: link-card title="文档" link="https://example.com"
+
+点击整卡跳转到外部链接。
+:::
+
+::: image-card image="https://cn.bing.com/th?id=OHR.AlfanzinaLighthouse_ZH-CN9704515669_1920x1080.webp" title="阿尔凡齐纳灯塔，阿尔加维，葡萄牙" href="/" author="Andreas Kunz" date="2024/08/16"
+
+今天照片中的灯塔位于葡萄牙南部海岸阿尔加维的卡沃埃罗。
+:::
+
+:::: card-grid cols="{ sm: 1, md: 2, lg: 2 }"
+
+::: link-card title="指南" link="https://example.com/guide"
+
+快速上手。
+:::
+
+::: image-card image="https://example.com/photo.webp" title="示例图片" author="Alice"
+
+网格中的图片卡片。
+:::
+
+::::`,
+    expected: "",
+  },
   { name: "tabs", desc: "选项卡", markdown: "::: tabs\n@tab 标题 1\n内容\n:::", expected: "<div class=\"cherry-tabs\">\n<input type=\"radio\" name=\"tabs\" id=\"tab-0\" checked>\n<label for=\"tab-0\" class=\"cherry-tabs__label\">标题 1</label>\n<div class=\"cherry-tabs__panel\">\n<p>内容</p>\n</div>\n<div class=\"cherry-tabs__content\"></div>\n</div>" },
   { name: "detail", desc: "展开收起", markdown: "+++ 点击展开\n内容\n+++", expected: "<details class=\"cherry-detail\"><summary>点击展开</summary>\n<p>内容</p>\n</details>" },
   { name: "iframe", desc: "内嵌 iframe", markdown: "!iframe[演示](https://example.com)", expected: "<div class=\"cherry-iframe\" style=\"aspect-ratio: 16 / 9;\"><iframe src=\"https://example.com\" allowfullscreen=\"allowfullscreen\"></iframe></div>" },
