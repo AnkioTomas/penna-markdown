@@ -91,7 +91,12 @@ flowchart TD
 变体：[note]{.note} [tip]{.tip} [warning]{.warning} [caution]{.caution} [danger]{.danger} [important]{.important}`,
     expected: "",
   },
-  { name: "supsub", desc: "上标下标", markdown: "H~2~O，E=mc^2^", expected: "<p>H<sub>2</sub>O，E=mc<sup>2</sup></p>" },
+  {
+    name: "supsub",
+    desc: "上标下标 ^上标^ ~下标~",
+    markdown: "H~2~O，E=mc^2^，x^*a*^，~~删除线~~",
+    expected: "<p>H<sub>2</sub>O，E=mc<sup>2</sup>，x<sup><em>a</em></sup>，<del>删除线</del></p>",
+  },
   { name: "container", desc: "自定义容器", markdown: "::: tip\n内容\n:::", expected: "<div class=\"cherry-container cherry-container-tip\">\n<div class=\"cherry-container__header\">TIP</div>\n<div class=\"cherry-container__body\">\n<p>内容</p>\n</div>\n</div>" },
   { name: "tabs", desc: "选项卡", markdown: "::: tabs\n@tab 标题 1\n内容\n:::", expected: "<div class=\"cherry-tabs\">\n<input type=\"radio\" name=\"tabs\" id=\"tab-0\" checked>\n<label for=\"tab-0\" class=\"cherry-tabs__label\">标题 1</label>\n<div class=\"cherry-tabs__panel\">\n<p>内容</p>\n</div>\n<div class=\"cherry-tabs__content\"></div>\n</div>" },
   { name: "detail", desc: "展开收起", markdown: "+++ 点击展开\n内容\n+++", expected: "<details class=\"cherry-detail\"><summary>点击展开</summary>\n<p>内容</p>\n</details>" },

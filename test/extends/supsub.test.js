@@ -10,16 +10,21 @@ describe("extends/supsub", () => {
     expect(html).toBe("<p>E=mc<sup>2</sup></p>\n");
   });
 
-  it("renders subscript with ^^text^^", () => {
-    const { html } = engine().render("H^^2^^O");
+  it("renders subscript with ~text~", () => {
+    const { html } = engine().render("H~2~O");
     expect(html).toBe("<p>H<sub>2</sub>O</p>\n");
   });
 
   it("renders mixed sup and sub like cherry example", () => {
-    const { html } = engine().render("大头 ^儿子^ 和小头 ^^爸爸^^");
+    const { html } = engine().render("大头 ^儿子^ 和小头 ~爸爸~");
     expect(html).toBe(
       "<p>大头 <sup>儿子</sup> 和小头 <sub>爸爸</sub></p>\n",
     );
+  });
+
+  it("does not conflict with strikethrough", () => {
+    const { html } = engine().render("~~删除~~");
+    expect(html).toBe("<p><del>删除</del></p>\n");
   });
 
   it("supports inline markup inside script", () => {
@@ -33,7 +38,7 @@ describe("extends/supsub", () => {
   });
 
   it("is disabled without extension", () => {
-    const { html } = createTransformer().render("H^^2^^O");
-    expect(html).toBe("<p>H^^2^^O</p>\n");
+    const { html } = createTransformer().render("H~2~O");
+    expect(html).toBe("<p>H~2~O</p>\n");
   });
 });

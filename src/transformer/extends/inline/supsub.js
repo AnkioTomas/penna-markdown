@@ -2,15 +2,15 @@
  * @file 行内上标 / 下标语法
  * @module transformer/extends/inline/supsub
  *
- * 语法：`^^下标^^` / `^上标^`（Cherry 扩展语法）
+ * 语法：`~下标~` / `^上标^`（Cherry 扩展语法）
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { isEscaped } from "@/transformer/gfm/inline/shared.js";
 
-/** 下标定界符正则：`^^...^^` */
-const SUB_RE = /^\^\^([\s\S]+?)\^\^/;
+/** 下标定界符正则：`~...~`（单波浪线，不与 `~~删除线~~` 冲突） */
+const SUB_RE = /^\~([^\~]+?)\~/;
 
 /** 上标定界符正则：`^...^`（单 caret） */
 const SUP_RE = /^\^([\s\S]+?)\^/;
@@ -27,7 +27,8 @@ class SubInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   parse(src, index, ctx) {
-    if (src[index] !== "^" || src[index + 1] !== "^") return null;
+    if (src[index] !== "~") return null;
+    if (src[index + 1] === "~") return null;
     if (isEscaped(src, index)) return null;
 
     const match = src.slice(index).match(SUB_RE);
