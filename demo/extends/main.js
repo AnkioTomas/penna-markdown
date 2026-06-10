@@ -43,14 +43,14 @@ const syntaxExamples = [
     name: "extended_tasklist",
     desc: "任务列表",
     markdown: "- [ ] 待办事项\n- [x] 已完成\n- [/] 进行中\n- [>] 延期/迁移\n- [<] 提前排期\n- [-] 已取消\n- [!] 紧急",
-    expected: `<ul class="contains-task-list">
-<li class="task-list-item task-list-item-todo" data-task-state="todo"><span class="task-marker task-marker-todo" role="img" aria-label="To-do"></span> 待办事项</li>
-<li class="task-list-item task-list-item-done" data-task-state="done"><span class="task-marker task-marker-done" role="img" aria-label="Done"></span> 已完成</li>
-<li class="task-list-item task-list-item-in_progress" data-task-state="in_progress"><span class="task-marker task-marker-in_progress" role="img" aria-label="In progress"></span> 进行中</li>
-<li class="task-list-item task-list-item-migrated" data-task-state="migrated"><span class="task-marker task-marker-migrated" role="img" aria-label="Migrated"></span> 延期/迁移</li>
-<li class="task-list-item task-list-item-scheduled" data-task-state="scheduled"><span class="task-marker task-marker-scheduled" role="img" aria-label="Scheduled"></span> 提前排期</li>
-<li class="task-list-item task-list-item-cancelled" data-task-state="cancelled"><span class="task-marker task-marker-cancelled" role="img" aria-label="Cancelled"></span> 已取消</li>
-<li class="task-list-item task-list-item-urgent" data-task-state="urgent"><span class="task-marker task-marker-urgent" role="img" aria-label="Urgent"></span> 紧急</li>
+    expected: `<ul class="task-list">
+<li class="task-item todo" data-state="todo"><span class="marker" role="img" aria-label="To-do"></span> 待办事项</li>
+<li class="task-item done" data-state="done"><span class="marker" role="img" aria-label="Done"></span> 已完成</li>
+<li class="task-item progress" data-state="in_progress"><span class="marker" role="img" aria-label="In progress"></span> 进行中</li>
+<li class="task-item migrated" data-state="migrated"><span class="marker" role="img" aria-label="Migrated"></span> 延期/迁移</li>
+<li class="task-item scheduled" data-state="scheduled"><span class="marker" role="img" aria-label="Scheduled"></span> 提前排期</li>
+<li class="task-item cancelled" data-state="cancelled"><span class="marker" role="img" aria-label="Cancelled"></span> 已取消</li>
+<li class="task-item urgent" data-state="urgent"><span class="marker" role="img" aria-label="Urgent"></span> 紧急</li>
 </ul>`,
   },
   { name: "cherry_syntax", desc: "Cherry 语法", markdown: "# [[title]]", expected: "<h1>演示</h1>" },

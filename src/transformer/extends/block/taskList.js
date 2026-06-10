@@ -37,6 +37,19 @@ const TASK_ARIA_LABELS = {
   urgent: "Urgent",
 };
 
+/** 任务状态 → HTML class（`in_progress` 等内部名映射为更短的 CSS 类） */
+const TASK_STATE_CLASS = {
+  in_progress: "progress",
+};
+
+/**
+ * @param {string} state
+ * @returns {string}
+ */
+function taskStateClass(state) {
+  return TASK_STATE_CLASS[state] ?? state;
+}
+
 /** 列表项内任务标记：`[ ]`、`[x]` 等 */
 const TASK_MARKER_RE = /^(\s*)\[([ xX/><!\-])\]([ \t]+)/;
 
@@ -68,7 +81,7 @@ function parseTaskListMarker(text) {
  */
 function renderTaskMarker(task) {
   const label = TASK_ARIA_LABELS[task.state] ?? task.state;
-  return `<span class="task-marker task-marker-${task.state}" role="img" aria-label="${label}"></span>`;
+  return `<span class="marker" role="img" aria-label="${label}"></span>`;
 }
 
 /**
@@ -78,7 +91,8 @@ function renderTaskMarker(task) {
  * @returns {string}
  */
 function taskListItemAttrs(task) {
-  return ` class="task-list-item task-list-item-${task.state}" data-task-state="${task.state}"`;
+  const cls = taskStateClass(task.state);
+  return ` class="task-item ${cls}" data-state="${task.state}"`;
 }
 
 /**
@@ -249,7 +263,7 @@ class TaskListBlockParser extends BaseBlockParser {
       .map((item) => renderTaskItem(item, ctx, isLoose))
       .join("\n");
 
-    return `<${tag} class="contains-task-list"${startAttr}>\n${itemsHtml}\n</${tag}>`;
+    return `<${tag} class="task-list"${startAttr}>\n${itemsHtml}\n</${tag}>`;
   }
 }
 
