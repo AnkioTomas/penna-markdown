@@ -1,0 +1,25 @@
+// 高亮语法 ==text== / ==text=={.note}
+@mixin styles {
+  mark {
+    --cherry-mark-text: currentcolor;
+    --cherry-mark-bg: transparent;
+    --cherry-mark-bg-height: 35%;
+    --cherry-mark-bg-shift: 100%;
+    --cherry-mark-linear-color: var(--cherry-c-brand-3);
+    --cherry-mark-bg-image: linear-gradient(var(--cherry-mark-linear-color), var(--cherry-mark-linear-color));
+    color: var(--cherry-mark-text);
+    background-color: var(--cherry-mark-bg);
+    background-image: var(--cherry-mark-bg-image);
+    background-repeat: no-repeat;
+    background-size: 100% var(--cherry-mark-bg-height);
+    background-position: 0 var(--cherry-mark-bg-shift);
+    padding: 2px;
+
+    &.note { --cherry-mark-linear-color: var(--cherry-c-note-mark); }
+    &.tip { --cherry-mark-linear-color: var(--cherry-c-tip-mark); }
+    &.warning { --cherry-mark-linear-color: var(--cherry-c-warning-mark); }
+    &.caution { --cherry-mark-linear-color: var(--cherry-c-caution-mark); }
+    &.danger { --cherry-mark-linear-color: var(--cherry-c-danger-mark); }
+    &.important { --cherry-mark-linear-color: var(--cherry-c-important-mark); }
+  }
+}

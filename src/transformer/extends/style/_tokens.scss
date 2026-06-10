@@ -1,0 +1,150 @@
+@use "sass:list";
+
+// Layer 1: 原始色板（仅 SCSS 内部，单一数据源）
+$cherry-brand-1: #5086a1;
+$cherry-brand-2: #6aa1b7;
+$cherry-brand-3: #8cccd5;
+$cherry-brand-soft: rgba(131, 208, 218, 0.314);
+$cherry-brand-on-bg: #1a3d47;
+
+$cherry-text-1: rgba(60, 60, 67, 1);
+$cherry-text-2: rgba(60, 60, 67, 0.78);
+$cherry-text-3: rgba(60, 60, 67, 0.56);
+
+$cherry-bg: #fff;
+$cherry-bg-elevated: #fafafa;
+
+$cherry-note: #ff0;
+$cherry-tip: #39ff14;
+$cherry-warning: #fc0;
+$cherry-caution: #f99;
+$cherry-danger: #f66;
+$cherry-important: #ccf;
+
+$cherry-note-on-bg: #3d3d00;
+$cherry-tip-on-bg: #004d00;
+$cherry-warning-on-bg: #664400;
+$cherry-caution-on-bg: #660000;
+$cherry-danger-on-bg: #330000;
+$cherry-important-on-bg: #000066;
+
+// 夜间模式原始色板
+$cherry-dark-bg: #141414;
+$cherry-dark-bg-elevated: #1f1f1f;
+
+$cherry-dark-text-1: rgba(255, 255, 255, 0.87);
+$cherry-dark-text-2: rgba(255, 255, 255, 0.6);
+$cherry-dark-text-3: rgba(255, 255, 255, 0.38);
+
+$cherry-dark-brand-1: #6aa1b7;
+$cherry-dark-brand-2: #8cccd5;
+$cherry-dark-brand-3: #a8dce3;
+$cherry-dark-brand-soft: rgba(131, 208, 218, 0.2);
+$cherry-dark-brand-on-bg: #e0f4f8;
+
+$cherry-dark-note: #660;
+$cherry-dark-tip: #063;
+$cherry-dark-warning: #c60;
+$cherry-dark-caution: #c66;
+$cherry-dark-danger: #e44;
+$cherry-dark-important: #66c;
+
+$cherry-dark-note-on-bg: #ffff99;
+$cherry-dark-tip-on-bg: #b3ffb3;
+$cherry-dark-warning-on-bg: #ffeb99;
+$cherry-dark-caution-on-bg: #ffcccc;
+$cherry-dark-danger-on-bg: #ffb3b3;
+$cherry-dark-important-on-bg: #ccccff;
+
+// 高亮下划线专用色（与面板背景色分层，保证细线在页面上可见）
+$cherry-mark-accent-colors: (
+  note: #ff0,
+  tip: #39ff14,
+  warning: #fc0,
+  caution: #f99,
+  danger: #f66,
+  important: #ccf,
+);
+
+$cherry-dark-mark-accent-colors: (
+  note: #db0,
+  tip: #4ade80,
+  warning: #fbbf24,
+  caution: #fca5a5,
+  danger: #f87171,
+  important: #a5b4fc,
+);
+
+// 语义色表：name → (bg, on-bg)
+$cherry-semantic-colors: (
+  note: ($cherry-note, $cherry-note-on-bg),
+  tip: ($cherry-tip, $cherry-tip-on-bg),
+  warning: ($cherry-warning, $cherry-warning-on-bg),
+  caution: ($cherry-caution, $cherry-caution-on-bg),
+  danger: ($cherry-danger, $cherry-danger-on-bg),
+  important: ($cherry-important, $cherry-important-on-bg),
+);
+
+$cherry-dark-semantic-colors: (
+  note: ($cherry-dark-note, $cherry-dark-note-on-bg),
+  tip: ($cherry-dark-tip, $cherry-dark-tip-on-bg),
+  warning: ($cherry-dark-warning, $cherry-dark-warning-on-bg),
+  caution: ($cherry-dark-caution, $cherry-dark-caution-on-bg),
+  danger: ($cherry-dark-danger, $cherry-dark-danger-on-bg),
+  important: ($cherry-dark-important, $cherry-dark-important-on-bg),
+);
+
+@mixin _emit-semantic-colors($palette) {
+  @each $name, $pair in $palette {
+    --cherry-c-#{$name}: #{list.nth($pair, 1)};
+    --cherry-c-#{$name}-on-bg: #{list.nth($pair, 2)};
+  }
+}
+
+@mixin _emit-mark-accent-colors($palette) {
+  @each $name, $color in $palette {
+    --cherry-c-#{$name}-mark: #{$color};
+  }
+}
+
+// Layer 2 & 3: 语义化 CSS 变量铺底
+@mixin colors {
+  // 品牌色
+  --cherry-c-brand-1: #{$cherry-brand-1};
+  --cherry-c-brand-2: #{$cherry-brand-2};
+  --cherry-c-brand-3: #{$cherry-brand-3};
+  --cherry-c-brand-soft: #{$cherry-brand-soft};
+  --cherry-c-brand-on-bg: #{$cherry-brand-on-bg};
+
+  // 页面文本（位于背景之上）
+  --cherry-c-text-1: #{$cherry-text-1};
+  --cherry-c-text-2: #{$cherry-text-2};
+  --cherry-c-text-3: #{$cherry-text-3};
+
+  // 页面背景
+  --cherry-c-bg: #{$cherry-bg};
+  --cherry-c-bg-elevated: #{$cherry-bg-elevated};
+
+  // 语义色（背景层）+ onBg（语义背景上的文本色）
+  @include _emit-semantic-colors($cherry-semantic-colors);
+  // 高亮下划线色（独立于面板背景色）
+  @include _emit-mark-accent-colors($cherry-mark-accent-colors);
+
+  [data-theme="dark"] & {
+    --cherry-c-brand-1: #{$cherry-dark-brand-1};
+    --cherry-c-brand-2: #{$cherry-dark-brand-2};
+    --cherry-c-brand-3: #{$cherry-dark-brand-3};
+    --cherry-c-brand-soft: #{$cherry-dark-brand-soft};
+    --cherry-c-brand-on-bg: #{$cherry-dark-brand-on-bg};
+
+    --cherry-c-text-1: #{$cherry-dark-text-1};
+    --cherry-c-text-2: #{$cherry-dark-text-2};
+    --cherry-c-text-3: #{$cherry-dark-text-3};
+
+    --cherry-c-bg: #{$cherry-dark-bg};
+    --cherry-c-bg-elevated: #{$cherry-dark-bg-elevated};
+
+    @include _emit-semantic-colors($cherry-dark-semantic-colors);
+    @include _emit-mark-accent-colors($cherry-dark-mark-accent-colors);
+  }
+}
