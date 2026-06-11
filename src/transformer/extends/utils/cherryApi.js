@@ -10,6 +10,8 @@
  * 将 LaTeX / JSON / Mermaid 源码转为 `<img>` 标签，由外部 API 生成图片 URL。
  */
 
+import { escapeHtml } from "@/transformer/utils/escape.js";
+
 /** 数学公式渲染 API 基址。 */
 export const MATH_API_HOST = "https://math.vercel.app";
 
@@ -57,20 +59,46 @@ export function parseEchartsJson(src) {
 }
 
 /**
- * 将 LaTeX 数学块渲染为 Cherry-Math HTML 片段。
+ * 构造 math.vercel.app 图片 URL。
  *
- * 根据系统配色选择公式前景色，并构造 math.vercel.app 图片 URL。
- *
- * @param {string} content - LaTeX 源码
- * @param {Object} [options={}]
- * @param {string} [options.apiHost=MATH_API_HOST] - 数学 API 基址
+ * @param {string} content
+ * @param {Object} [options]
+ * @param {string} [options.apiHost]
  * @returns {string}
  */
-export function renderMathBlock(content, { apiHost = MATH_API_HOST } = {}) {
+export function buildMathImageSrc(content, { apiHost = MATH_API_HOST } = {}) {
   const latex = content.trim();
+  if (!latex) return "";
   const color = prefersDarkScheme() ? "white" : "black";
-  const src = `${apiHost}/?from=${encodeURIComponent(latex)}&color=${color}`;
-  return `<div class="Cherry-Math" data-type="mathBlock"><img class="Cherry-Math-Latex" alt="latex" src="${src}" /></div>`;
+  return `${apiHost}/?from=${encodeURIComponent(latex)}&color=${color}`;
+}
+
+/**
+ * 将 LaTeX 数学块渲染为 HTML 片段。
+ *
+ * @param {string} content
+ * @param {Object} [options]
+ * @returns {string}
+ */
+export function renderMathBlock(content, options = {}) {
+  const latex = content.trim();
+  const src = buildMathImageSrc(latex, options);
+  if (!src) return "";
+  return `<div class="cherry-math cherry-math-block" data-type="mathBlock"><img class="cherry-math-latex" alt="${escapeHtml(latex)}" src="${src}" loading="lazy" /></div>`;
+}
+
+/**
+ * 将行内 LaTeX 数学公式渲染为 HTML 片段。
+ *
+ * @param {string} content
+ * @param {Object} [options]
+ * @returns {string}
+ */
+export function renderMathInline(content, options = {}) {
+  const latex = content.trim();
+  const src = buildMathImageSrc(latex, options);
+  if (!src) return "";
+  return `<span class="cherry-math cherry-math-inline" data-type="mathInline"><img class="cherry-math-latex" alt="${escapeHtml(latex)}" src="${src}" loading="lazy" /></span>`;
 }
 
 /**

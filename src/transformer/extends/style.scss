@@ -18,6 +18,7 @@
 @use "style/timeline";
 @use "style/collapse";
 @use "style/media";
+@use "style/math";
 
 .cherry {
   @include tokens.colors;
@@ -38,4 +39,5 @@
   @include timeline.styles;
   @include collapse.styles;
   @include media.styles;
+  @include math.styles;
 }

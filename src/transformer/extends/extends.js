@@ -15,6 +15,7 @@ import alertBlock from "@/transformer/extends/block/alert.js";
 import { foldHtmlAttrsInTree } from "@/transformer/extends/postprocess/foldHtmlAttrs.js";
 import taskListParser from "@/transformer/extends/block/taskList.js";
 import mathBlockParser from "@/transformer/extends/block/mathBlock.js";
+import mathInline from "@/transformer/extends/inline/math.js";
 import specialCodeParser from "@/transformer/extends/block/specialCode.js";
 import frontmatterBlock, {
   attachFrontmatterToRoot,
@@ -133,9 +134,9 @@ const EXTENSION_DEFS = {
     inlineParsers: [],
     blockParsers: [taskListParser],
   },
-  /** 数学块与特殊代码块（mermaid / echarts / card 等）。 */
+  /** 数学公式与特殊代码块（mermaid / echarts / card 等）。 */
   cherry_syntax: {
-    inlineParsers: [],
+    inlineParsers: [mathInline],
     blockParsers: [mathBlockParser, specialCodeParser],
   },
   /**

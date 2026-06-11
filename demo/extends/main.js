@@ -56,7 +56,7 @@ const syntaxExamples = [
   },
   {
     name: "frontmatter",
-    desc: "Frontmatter（变量 + 特殊块）",
+    desc: "Frontmatter 与变量",
     markdown: `---
 title: 演示文档
 author:
@@ -65,15 +65,38 @@ author:
 
 # [[title]]
 
-作者：[[author.name]]
+作者：[[author.name]]`,
+    expected: "",
+  },
+  {
+    name: "math",
+    desc: "数学公式（$ 行内 / $$ 块级）",
+    markdown: `## 行内公式
+
+Euler's identity $e^{i\\pi}+1=0$ is a beautiful formula in $\\mathbb{R}^2$.
+
+## 块级公式（同行）
+
+$$E=mc^2$$
+
+## 块级公式（分行）
 
 $$
-E=mc^2
-$$
-
-\`\`\`mermaid
+\\frac {\\partial^r} {\\partial \\omega^r} \\left(\\frac {y^{\\omega}} {\\omega}\\right)
+= \\left(\\frac {y^{\\omega}} {\\omega}\\right) \\left\\{(\\log y)^r + \\sum_{i=1}^r \\frac {(-1)^ Ir \\cdots (r-i+1) (\\log y)^{ri}} {\\omega^i} \\right\\}
+$$`,
+    expected: "",
+  },
+  {
+    name: "cherry_syntax",
+    desc: "特殊代码块（mermaid / echarts）",
+    markdown: `\`\`\`mermaid
 flowchart TD
-    A --> B
+    Start --> Stop
+\`\`\`
+
+\`\`\`echarts
+{"title":{"text":"Demo"},"series":[{"type":"pie","data":[{"value":1,"name":"A"}]}]}
 \`\`\``,
     expected: "",
   },
@@ -558,6 +581,8 @@ E=mc^2^，H^^2^^O，大头 ^儿子^ 和 ^^爸爸^^
 - [<] 排期
 - [-] 已取消
 - [!] 紧急
+
+Euler's identity $e^{i\\pi}+1=0$ is a beautiful formula in $\\mathbb{R}^2$.
 
 $$
 E=mc^2

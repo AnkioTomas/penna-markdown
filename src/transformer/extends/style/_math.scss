@@ -1,0 +1,35 @@
+@mixin styles {
+  .cherry-math {
+    line-height: 0;
+
+    &-latex {
+      border: 0;
+      background: transparent;
+    }
+  }
+
+  .cherry-math-block {
+    display: block;
+    margin: 16px 0;
+    text-align: center;
+
+    .cherry-math-latex {
+      display: inline-block;
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
+  .cherry-math-inline {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 0.15em;
+
+    .cherry-math-latex {
+      display: inline-block;
+      vertical-align: middle;
+      max-height: 1.35em;
+      width: auto;
+    }
+  }
+}
