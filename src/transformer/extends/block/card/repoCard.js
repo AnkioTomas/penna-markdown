@@ -3,7 +3,8 @@
  * @module transformer/extends/block/card/repoCard
  *
  * ```
- * ::: repo-card repo="vuepress/ecosystem" desc="Official plugins..."
+ * ::: repo-card repo="vuepress/ecosystem"
+ * Official plugins and themes for VuePress2
  * :::
  * ```
  */
@@ -20,37 +21,45 @@ import {
 
 const OPEN_RE = /^ {0,3}:::(?!:)\s+repo-card(?:\s+(.*))?\s*$/;
 
-const LANGUAGE_COLORS = {
-  typescript: "#3178c6",
-  javascript: "#f1e05a",
-  python: "#3572a5",
-  rust: "#dea584",
-  go: "#00add8",
-  java: "#b07219",
-  vue: "#41b883",
-  html: "#e34c26",
-  css: "#563d7c",
-  shell: "#89e051",
-};
-
-/** @type {Record<string, string>} */
-const REPO_BADGE_LOGOS = {
-  stars: "star",
-  forks: "git-fork",
-  license: "law",
+/** shields.io 路径与链接配置 */
+const SHIELD_METRICS = {
+  language: {
+    path: "languages/top",
+    label: "Primary language",
+    link: (repoBase) => `${repoBase}/graphs/languages`,
+    logo: "",
+  },
+  stars: {
+    path: "stars",
+    label: "GitHub stars",
+    link: (repoBase) => `${repoBase}/stargazers`,
+    logo: "star",
+  },
+  forks: {
+    path: "forks",
+    label: "GitHub forks",
+    link: (repoBase) => `${repoBase}/forks`,
+    logo: "git-fork",
+  },
+  license: {
+    path: "license",
+    label: "GitHub license",
+    link: (repoBase) => `${repoBase}#readme`,
+    logo: "law",
+  },
 };
 
 /** @type {Record<string, { labelColor: string; color: string; logoColor: string }>} */
-const REPO_BADGE_PALETTES = {
+const SHIELD_PALETTES = {
   light: {
-    labelColor: "eceff3",
-    color: "6e6e73",
-    logoColor: "6e6e73",
+    labelColor: "f3f4f6",
+    color: "57606a",
+    logoColor: "57606a",
   },
   dark: {
-    labelColor: "262626",
-    color: "999999",
-    logoColor: "999999",
+    labelColor: "21262d",
+    color: "8b949e",
+    logoColor: "8b949e",
   },
 };
 
@@ -68,58 +77,45 @@ function parseRepoSlug(raw) {
 }
 
 /**
- * @param {string} language
- * @param {string} colorAttr
- * @returns {string}
- */
-function resolveLanguageColor(language, colorAttr) {
-  if (colorAttr) return colorAttr;
-  const key = language.trim().toLowerCase();
-  return LANGUAGE_COLORS[key] ?? "#8b949e";
-}
-
-/**
  * @param {string} repo
- * @param {string} metric
+ * @param {string} path
+ * @param {string} logo
  * @param {"light" | "dark"} theme
  * @returns {string}
  */
-function shieldsRepoBadge(repo, metric, theme) {
+function shieldsRepoBadge(repo, path, logo, theme) {
   const slug = encodeURIComponent(repo);
-  const palette = REPO_BADGE_PALETTES[theme];
-  const logo = REPO_BADGE_LOGOS[metric] ?? "";
+  const palette = SHIELD_PALETTES[theme];
   const params = new URLSearchParams({
     style: "flat",
     labelColor: palette.labelColor,
     color: palette.color,
     logoColor: palette.logoColor,
-    logoWidth: "10",
+    logoWidth: "12",
   });
   if (logo) params.set("logo", logo);
-  return `https://img.shields.io/github/${metric}/${slug}?${params}`;
+  return `https://img.shields.io/github/${path}/${slug}?${params}`;
 }
 
 /**
  * @param {string} repo
- * @param {string} metric
- * @param {string} label
+ * @param {keyof typeof SHIELD_METRICS} metric
+ * @param {string} repoBase
  * @returns {string}
  */
-function renderRepoBadgeImg(repo, metric, label) {
-  const light = shieldsRepoBadge(repo, metric, "light");
-  const dark = shieldsRepoBadge(repo, metric, "dark");
-  const alt = escapeHtml(label);
-  return `<p class="repo-stat-badge" title="${alt}"><img class="repo-badge repo-badge--light" src="${escapeHtml(light)}" alt="${alt}" loading="lazy"><img class="repo-badge repo-badge--dark" src="${escapeHtml(dark)}" alt="${alt}" loading="lazy"></p>`;
-}
+function renderRepoShield(repo, metric, repoBase) {
+  const config = SHIELD_METRICS[metric];
+  const light = shieldsRepoBadge(repo, config.path, config.logo, "light");
+  const dark = shieldsRepoBadge(repo, config.path, config.logo, "dark");
+  const alt = escapeHtml(config.label);
+  const href = escapeHtml(config.link(repoBase));
 
-/**
- * @param {string} iconClass
- * @param {string} value
- * @param {string} title
- * @returns {string}
- */
-function renderRepoStatText(iconClass, value, title) {
-  return `<p title="${escapeHtml(title)}"><span class="repo-stat-icon ${iconClass}" aria-hidden="true"></span><span>${escapeHtml(value)}</span></p>`;
+  return [
+    `<a class="repo-shield" href="${href}" target="_blank" rel="noopener noreferrer" title="${alt}">`,
+    `<img class="repo-shield__img repo-shield__img--light" src="${escapeHtml(light)}" alt="${alt}" loading="lazy">`,
+    `<img class="repo-shield__img repo-shield__img--dark" src="${escapeHtml(dark)}" alt="${alt}" loading="lazy">`,
+    `</a>`,
+  ].join("");
 }
 
 class RepoCardBlockParser extends BaseBlockParser {
@@ -137,15 +133,7 @@ class RepoCardBlockParser extends BaseBlockParser {
         title: pickAttr(block.attrs, "title"),
         link: pickAttr(block.attrs, "link") || pickAttr(block.attrs, "href"),
         repo: parseRepoSlug(block.attrs),
-        description:
-          pickAttr(block.attrs, "description") || pickAttr(block.attrs, "desc"),
         visibility: pickAttr(block.attrs, "visibility") || "Public",
-        language: pickAttr(block.attrs, "language"),
-        languageColor: pickAttr(block.attrs, "language-color"),
-        stars: pickAttr(block.attrs, "stars"),
-        forks: pickAttr(block.attrs, "forks"),
-        license: pickAttr(block.attrs, "license"),
-        badges: pickAttr(block.attrs, "badges") !== "false",
         children: ctx.parseBlocks(normalizeInnerLines(block.innerLines)),
       }),
       nextIndex: block.nextIndex,
@@ -158,25 +146,13 @@ class RepoCardBlockParser extends BaseBlockParser {
     const name = String(node.title ?? "") || repo;
     const href =
       String(node.link ?? "") || (repo ? `https://github.com/${repo}` : "");
+    const repoBase = repo ? `https://github.com/${repo}` : "";
     const visibility = String(node.visibility ?? "Public");
-    const language = String(node.language ?? "");
-    const languageColor = resolveLanguageColor(
-      language,
-      String(node.languageColor ?? ""),
-    );
-    const stars = String(node.stars ?? "");
-    const forks = String(node.forks ?? "");
-    const license = String(node.license ?? "");
-    const useBadges = node.badges !== false && Boolean(repo);
-    const description = String(node.description ?? "");
     const bodyHtml = ctx.renderBlock(node.children ?? []);
 
-    let descHtml = "";
-    if (description) {
-      descHtml = `<p class="repo-desc">${escapeHtml(description)}</p>`;
-    } else if (bodyHtml.trim()) {
-      descHtml = `<div class="repo-desc">${bodyHtml}</div>`;
-    }
+    const descHtml = bodyHtml.trim()
+      ? `<div class="repo-desc">${bodyHtml}</div>`
+      : "";
 
     const parts = [`<div class="repo-card">`];
 
@@ -198,32 +174,13 @@ class RepoCardBlockParser extends BaseBlockParser {
       parts.push(descHtml);
     }
 
-    const info = [];
-    if (language) {
-      info.push(
-        `<p><span class="repo-language" style="background-color: ${escapeHtml(languageColor)}"></span><span>${escapeHtml(language)}</span></p>`,
-      );
-    }
-
-    if (useBadges) {
-      if (!stars) info.push(renderRepoBadgeImg(repo, "stars", "GitHub stars"));
-      if (!forks) info.push(renderRepoBadgeImg(repo, "forks", "GitHub forks"));
-      if (!license) info.push(renderRepoBadgeImg(repo, "license", "GitHub license"));
-    }
-
-    if (stars) {
-      info.push(renderRepoStatText("repo-stat-star", stars, `Github Stars: ${stars}`));
-    }
-    if (forks) {
-      info.push(renderRepoStatText("repo-stat-fork", forks, `Github Forks: ${forks}`));
-    }
-    if (license) {
-      info.push(
-        renderRepoStatText("repo-stat-license", license, `Github License: ${license}`),
-      );
-    }
-
-    if (info.length) {
+    if (repo) {
+      const info = [
+        renderRepoShield(repo, "language", repoBase),
+        renderRepoShield(repo, "stars", repoBase),
+        renderRepoShield(repo, "forks", repoBase),
+        renderRepoShield(repo, "license", repoBase),
+      ];
       parts.push(`<div class="repo-info">${info.join("\n")}</div>`);
     }
 
