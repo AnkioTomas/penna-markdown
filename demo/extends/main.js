@@ -408,7 +408,7 @@ console.log('Hello World!')
   {
     name: "iframe",
     desc: "内嵌 iframe",
-    markdown: "@@https://example.com",
+    markdown: "!iframe[演示页面](https://example.com)",
     expected: "",
   },
   {
@@ -522,7 +522,7 @@ E=mc^2^，H^^2^^O，大头 ^儿子^ 和 ^^爸爸^^
   此项初始折叠
 :::
 
-@@https://example.com
+!iframe[演示页面](https://example.com)
 
 !video[演示视频](https://example.com/demo.mp4)
 

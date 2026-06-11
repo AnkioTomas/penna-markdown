@@ -12,7 +12,6 @@ import htmlAttrsInline from "@/transformer/extends/inline/html_attrs.js";
 import highlightInline from "@/transformer/extends/inline/highlight.js";
 import emojiInline from "@/transformer/extends/inline/emoji.js";
 import alertBlock from "@/transformer/extends/block/alert.js";
-import { applyTagFilter } from "@/transformer/gfm/utils/tagfilter.js";
 import { foldHtmlAttrsInTree } from "@/transformer/extends/postprocess/foldHtmlAttrs.js";
 import taskListParser from "@/transformer/extends/block/taskList.js";
 import mathBlockParser from "@/transformer/extends/block/mathBlock.js";
@@ -127,14 +126,6 @@ const EXTENSION_DEFS = {
     afterRender({ node, html }) {
       const attrs = node.htmlAttrs;
       return attrs ? injectAttrsIntoFirstOpenTag(html, attrs) : html;
-    },
-  },
-  /** 渲染后对 HTML 应用 GFM tagfilter 白名单过滤。 */
-  tagfilter: {
-    inlineParsers: [],
-    blockParsers: [],
-    afterRender({ html }) {
-      return applyTagFilter(html);
     },
   },
   /** 扩展任务列表（含扩展状态标记与图标）。 */

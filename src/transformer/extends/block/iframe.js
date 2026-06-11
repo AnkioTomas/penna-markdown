@@ -2,28 +2,18 @@
  * @file 块级语法拓展：Iframe 嵌入
  * @module transformer/extends/block/iframe
  *
- * 语法示例：
- * ```
- * @@https://example.com
- * ```
+ * 语法：`!iframe[标题](https://example.com)`
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
-import { escapeHtml } from "@/transformer/utils/escape.js";
+import {
+  parseIframeSource,
+  renderIframeHtml,
+} from "@/transformer/extends/media/shared.js";
 
-/** iframe 标记行：`@@` + URL */
-const IFRAME_RE = /^ {0,3}@@\s*(https?:\/\/\S+)/;
-
-/**
- * 规范化 iframe URL（去空白、还原 `&amp;`）。
- *
- * @param {string} url
- * @returns {string}
- */
-function normalizeIframeUrl(url) {
-  return url.trim().replace(/&amp;/g, "&");
-}
+/** 块级 iframe 行：`!iframe[` */
+const IFRAME_LINE_RE = /^ {0,3}!iframe\[/;
 
 /**
  * Iframe 嵌入块解析器。
@@ -32,25 +22,31 @@ function normalizeIframeUrl(url) {
  */
 class IframeBlockParser extends BaseBlockParser {
   constructor() {
-    super({ type: "iframe", priority: 87 });
+    super({ type: "iframe_embed", priority: 87 });
   }
 
   /** @inheritdoc */
-  parse(lines, index) {
+  parse(lines, index, ctx) {
     const line = lines[index] ?? "";
-    const match = line.match(IFRAME_RE);
-    if (!match) return null;
+    if (!IFRAME_LINE_RE.test(line)) return null;
 
-    const node = createNode(this.type, {
-      src: normalizeIframeUrl(match[1]),
+    const content = line.replace(/^ {0,3}/, "");
+    const parsed = parseIframeSource(content, 0, ctx);
+    if (!parsed || parsed.nextIndex !== content.length) return null;
+
+    const { href, title, children } = parsed.node;
+    const node = createNode("iframe_embed", {
+      href,
+      title,
+      children,
     });
+
     return { node, nextIndex: index + 1 };
   }
 
   /** @inheritdoc */
   render(node) {
-    const src = escapeHtml(node.src ?? "");
-    return `<div class="cherry-iframe">\n<iframe src="${src}" loading="lazy" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>\n</div>`;
+    return renderIframeHtml(node);
   }
 }
 

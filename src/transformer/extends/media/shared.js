@@ -13,8 +13,11 @@ import {
   parsePlainDestination,
 } from "@/transformer/gfm/inline/shared.js";
 
-/** 媒体标签前缀正则：`!video[` 或 `!audio[` */
+/** 音视频标签前缀：`!video[` / `!audio[` */
 export const MEDIA_RE = /^!(video|audio)\[/;
+
+/** iframe 标签前缀：`!iframe[` */
+export const IFRAME_RE = /^!iframe\[/;
 
 /** 媒体封面属性后缀正则：`{poster=url}` */
 const POSTER_RE = /^\{poster=([^}]+)\}/;
@@ -113,6 +116,38 @@ export function parseMediaSource(src, index, ctx) {
 }
 
 /**
+ * @param {string} url
+ * @returns {boolean}
+ */
+export function isAllowedIframeUrl(url) {
+  return /^https?:\/\//i.test(String(url ?? "").trim());
+}
+
+/**
+ * @param {string} src
+ * @param {number} index
+ * @param {import('@/transformer/core/ParserContext.js').InlineParseContext} ctx
+ */
+export function parseIframeSource(src, index, ctx) {
+  const tagMatch = src.slice(index).match(IFRAME_RE);
+  if (!tagMatch) return null;
+
+  const labelStart = index + tagMatch[0].length;
+  const labelEnd = findLinkTextEnd(src, labelStart);
+  if (labelEnd === -1) return null;
+
+  const alt = src.slice(labelStart, labelEnd);
+  const nextIndex = labelEnd + 1;
+  if (src[nextIndex] !== "(") return null;
+
+  const parsed = parseMediaDestination(src, nextIndex, alt, ctx);
+  if (!parsed || !isAllowedIframeUrl(parsed.node.href)) return null;
+
+  parsed.node.mediaType = "iframe";
+  return parsed;
+}
+
+/**
  * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[]} nodes
  * @returns {string}
  */
@@ -178,4 +213,30 @@ export function renderMediaHtml(node, ctx, options = {}) {
     `</div>`,
     `</figure>`,
   ].join("");
+}
+
+/**
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} node
+ */
+export function renderIframeHtml(node) {
+  const alt = renderAltText(node.children ?? []);
+  const src = escapeHtml(node.href ?? "");
+  const iframeTitle = node.title
+    ? escapeHtml(node.title)
+    : alt.trim()
+      ? escapeHtml(alt)
+      : "";
+  const titleAttr = iframeTitle ? ` title="${iframeTitle}"` : "";
+
+  const frame = [
+    `<div class="cherry-iframe__frame">`,
+    `<iframe src="${src}"${titleAttr} loading="lazy" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>`,
+    `</div>`,
+  ].join("");
+
+  const caption = alt.trim()
+    ? `<figcaption class="cherry-media__caption">${escapeHtml(alt)}</figcaption>`
+    : "";
+
+  return `<figure class="cherry-media cherry-iframe">${frame}${caption}</figure>`;
 }
