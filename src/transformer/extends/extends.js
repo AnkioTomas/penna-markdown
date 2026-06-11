@@ -26,6 +26,7 @@ import badgeInline from "@/transformer/extends/inline/badge.js";
 import { subInlineParser, supInlineParser } from "@/transformer/extends/inline/supsub.js";
 import containerBlock from "@/transformer/extends/block/container.js";
 import { cardBlockParsers } from "@/transformer/extends/block/card/index.js";
+import { fieldBlockParsers } from "@/transformer/extends/block/field/index.js";
 import tabsBlock from "@/transformer/extends/block/tabs.js";
 import stepsBlock from "@/transformer/extends/block/steps.js";
 import detailBlock from "@/transformer/extends/block/detail.js";
@@ -180,6 +181,11 @@ const EXTENSION_DEFS = {
   card: {
     inlineParsers: [],
     blockParsers: cardBlockParsers,
+  },
+  /** 块级字段与字段组。 */
+  field: {
+    inlineParsers: [],
+    blockParsers: fieldBlockParsers,
   },
   /** 块级标签页语法。 */
   tabs: {

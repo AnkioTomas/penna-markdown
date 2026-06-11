@@ -1,0 +1,124 @@
+@mixin styles {
+  .cherry-field-group {
+    margin: 16px 0;
+    border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+    border-radius: 8px;
+    background: var(--cherry-c-bg-elevated);
+    overflow: hidden;
+  }
+
+  .cherry-field {
+    padding: 16px;
+    border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .field-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 8px;
+    }
+
+    .field-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      font-size: 14px;
+      line-height: 1.5;
+
+      .name {
+        font-weight: 600;
+        color: var(--cherry-c-text-1);
+      }
+
+      .required {
+        padding: 1px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--cherry-c-alert-danger-text);
+        background: var(--cherry-c-alert-danger-bg);
+        border: 1px solid var(--cherry-c-alert-danger-border);
+      }
+
+      .optional {
+        padding: 1px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--cherry-c-alert-note-text);
+        background: var(--cherry-c-alert-note-bg);
+        border: 1px solid var(--cherry-c-alert-note-border);
+      }
+
+      .deprecated {
+        padding: 1px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--cherry-c-alert-warning-text);
+        background: var(--cherry-c-alert-warning-bg);
+        border: 1px solid var(--cherry-c-alert-warning-border);
+      }
+    }
+
+    .type {
+      flex-shrink: 0;
+      margin-left: auto;
+      text-align: right;
+
+      code {
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        color: var(--cherry-c-brand-1);
+        background: color-mix(in srgb, var(--cherry-c-brand-soft) 65%, transparent);
+      }
+    }
+
+    .default-value {
+      margin: 0 0 10px;
+      font-size: 13px;
+      text-align: right;
+      color: var(--cherry-c-text-2);
+
+      code {
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        color: var(--cherry-c-text-1);
+        background: color-mix(in srgb, var(--cherry-c-bg) 70%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+      }
+    }
+
+    .description {
+      color: var(--cherry-c-text-2);
+      font-size: 14px;
+      line-height: 1.6;
+
+      > :first-child {
+        margin-top: 0;
+      }
+
+      > :last-child {
+        margin-bottom: 0;
+      }
+
+      .badge {
+        margin-right: 8px;
+      }
+    }
+  }
+}

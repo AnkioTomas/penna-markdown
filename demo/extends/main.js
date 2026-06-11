@@ -191,6 +191,45 @@ console.log('Hello World!')
 :::`,
     expected: "",
   },
+  {
+    name: "field",
+    desc: "字段文档",
+    markdown: `:::: field-group
+::: field theme
+@type ThemeConfig
+@required
+@default { base: '/' }
+主题配置
+:::
+
+::: field enabled
+@type boolean
+@optional
+@default true
+
+是否启用
+:::
+
+::: field callback
+@type (...args: any[]) => void
+@optional
+@default () => (){}
+[v1.0.0 新增]{.tip}
+
+回调函数
+:::
+
+::: field other
+@type string
+@deprecated
+
+[v0.9.0 弃用]{.danger}
+
+已弃用属性
+:::
+::::`,
+    expected: "",
+  },
   { name: "detail", desc: "展开收起", markdown: "+++ 点击展开\n内容\n+++", expected: "<details class=\"cherry-detail\"><summary>点击展开</summary>\n<p>内容</p>\n</details>" },
   { name: "iframe", desc: "内嵌 iframe", markdown: "!iframe[演示](https://example.com)", expected: "<div class=\"cherry-iframe\" style=\"aspect-ratio: 16 / 9;\"><iframe src=\"https://example.com\" allowfullscreen=\"allowfullscreen\"></iframe></div>" },
   { name: "media", desc: "媒体元素", markdown: "!video[演示](https://example.com/demo.mp4)", expected: "<div class=\"cherry-video\"><video src=\"https://example.com/demo.mp4\" controls=\"controls\"></video></div>" },
