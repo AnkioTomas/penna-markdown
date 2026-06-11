@@ -3,11 +3,11 @@ import { createTransformer } from "@/transformer/index.js";
 import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
 
 function cardHtml(title, body, { link = "" } = {}) {
-  const titleHtml = title ? `<p class="card-title">${title}</p>\n` : "";
+  const titleHtml = title ? `<p class="cherry-card__title">${title}</p>\n` : "";
   if (link) {
-    return `<a class="card link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="card-body">${body}</div>\n</a>\n`;
+    return `<a class="cherry-card cherry-link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</a>\n`;
   }
-  return `<div class="card">\n${titleHtml}<div class="card-body">${body}</div>\n</div>\n`;
+  return `<div class="cherry-card">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</div>\n`;
 }
 
 describe("extends/card", () => {
@@ -29,7 +29,7 @@ describe("extends/card", () => {
 :::`;
     const { html } = engine().render(md);
     expect(html).toContain(
-      '<p class="card-title"><strong>加粗</strong>标题</p>',
+      '<p class="cherry-card__title"><strong>加粗</strong>标题</p>',
     );
   });
 
@@ -45,20 +45,40 @@ describe("extends/card", () => {
     );
   });
 
+  it("renders link-card with left icon image", () => {
+    const md = `::: link-card 文档 link="https://example.com" icon="https://example.com/icon.png"
+
+点击查看文档详情。
+:::`;
+    const { html } = engine().render(md);
+    expect(html).toBe(
+      `<a class="cherry-card cherry-link-card cherry-link-card--has-icon" href="https://example.com" target="_blank" rel="noopener noreferrer">\n<img class="cherry-link-card__icon" src="https://example.com/icon.png" alt="" loading="lazy">\n<div class="cherry-link-card__main">\n<p class="cherry-card__title">文档</p>\n<div class="cherry-card__body"><p>点击查看文档详情。</p></div>\n</div>\n</a>\n`,
+    );
+  });
+
+  it("supports image alias for link-card icon", () => {
+    const md = `::: link-card 封面 image="https://example.com/cover.jpg" link="https://example.com"
+:::`;
+    const { html } = engine().render(md);
+    expect(html).toContain('class="cherry-link-card__icon"');
+    expect(html).toContain('src="https://example.com/cover.jpg"');
+    expect(html).toContain('<p class="cherry-card__title">封面</p>');
+  });
+
   it("renders image-card with metadata and description attribute", () => {
     const md = `::: image-card image="https://example.com/photo.webp" title="阿尔凡齐纳灯塔" description="灯塔位于葡萄牙南部海岸。" href="/" author="Andreas Kunz" date="2024/08/16"
 :::`;
     const { html } = engine().render(md);
-    expect(html).toContain('class="image-card"');
+    expect(html).toContain('class="cherry-image-card"');
     expect(html).toContain('src="https://example.com/photo.webp"');
     expect(html).toContain('alt="阿尔凡齐纳灯塔"');
     expect(html).toContain(
-      '<h3 class="title"><a href="/" target="_blank" rel="noopener noreferrer">阿尔凡齐纳灯塔</a></h3>',
+      '<h3 class="cherry-image-card__title"><a href="/" target="_blank" rel="noopener noreferrer">阿尔凡齐纳灯塔</a></h3>',
     );
     expect(html).toContain("<span>Andreas Kunz</span>");
     expect(html).toContain("<span>2024/08/16</span>");
     expect(html).toContain(
-      '<p class="description">灯塔位于葡萄牙南部海岸。</p>',
+      '<p class="cherry-image-card__description">灯塔位于葡萄牙南部海岸。</p>',
     );
   });
 
@@ -68,9 +88,9 @@ describe("extends/card", () => {
 :::`;
     const { html } = engine().render(md);
     expect(html).toContain(
-      '<div class="description"><p>正文描述段落。</p></div>',
+      '<div class="cherry-image-card__description"><p>正文描述段落。</p></div>',
     );
-    expect(html).not.toContain('class="card-body"');
+    expect(html).not.toContain('class="cherry-card__body"');
   });
 
   it("renders card grid with default responsive cols", () => {
@@ -84,7 +104,7 @@ describe("extends/card", () => {
 ::::`;
     const { html } = engine().render(md);
     expect(html).toContain(
-      'class="card-grid" style="--card-grid-cols-sm: 1; --card-grid-cols-md: 2; --card-grid-cols-lg: 2;"',
+      'class="cherry-card-grid" style="--card-grid-cols-sm: 1; --card-grid-cols-md: 2; --card-grid-cols-lg: 2;"',
     );
   });
 
@@ -133,9 +153,9 @@ describe("extends/card", () => {
 
 ::::`;
     const { html } = engine().render(md);
-    expect(html).toContain('class="card-grid"');
+    expect(html).toContain('class="cherry-card-grid"');
     expect(html).toContain('href="https://example.com/1"');
-    expect(html).toContain('class="image-card"');
+    expect(html).toContain('class="cherry-image-card"');
   });
 
   it("renders repo-card with shields.io badges when repo is provided", () => {
@@ -143,16 +163,16 @@ describe("extends/card", () => {
 Official plugins and themes for VuePress2
 :::`;
     const { html } = engine().render(md);
-    expect(html).toContain('class="repo-card"');
+    expect(html).toContain('class="cherry-repo-card"');
     expect(html).toContain(
       '<a href="https://github.com/vuepress/ecosystem"',
     );
     expect(html).toContain("vuepress/ecosystem");
-    expect(html).toContain('<span class="repo-visibility">Public</span>');
+    expect(html).toContain('<span class="cherry-repo-card__visibility">Public</span>');
     expect(html).toContain(
-      '<div class="repo-desc"><p>Official plugins and themes for VuePress2</p></div>',
+      '<div class="cherry-repo-card__desc"><p>Official plugins and themes for VuePress2</p></div>',
     );
-    expect(html).toContain('class="repo-shield repo-shield--stars"');
+    expect(html).toContain('class="cherry-repo-card__shield cherry-repo-card__shield--stars"');
     expect(html).toContain(
       "img.shields.io/github/languages/top/vuepress%2Fecosystem",
     );
@@ -160,7 +180,7 @@ Official plugins and themes for VuePress2
     expect(html).toContain("img.shields.io/github/forks/vuepress%2Fecosystem");
     expect(html).toContain("img.shields.io/github/license/vuepress%2Fecosystem");
     expect(html).toContain("/vuepress/ecosystem/graphs/languages");
-    expect(html).toContain('class="repo-shield__img"');
+    expect(html).toContain('class="cherry-repo-card__shield-img"');
     expect(html).toContain("style=flat");
     expect(html).not.toContain("labelColor=");
     expect(html).not.toContain("logoColor=");
@@ -184,12 +204,12 @@ Official plugins and themes for VuePress2
 ::::`;
     const { html } = engine().render(md);
     expect(html).toContain(
-      'class="card-masonry cols-3" style="gap: 16px; --card-masonry-cols: 3;"',
+      'class="cherry-card-masonry cherry-card-masonry--cols-3" style="gap: 16px; --card-masonry-cols: 3;"',
     );
-    expect(html).toContain('class="card-masonry-item" style="gap: 16px;"');
-    expect(html).toContain('class="masonry-v-6-0"');
-    expect(html).toContain('class="masonry-v-6-3"');
-    expect(html).toContain('class="masonry-v-6-5"');
+    expect(html).toContain('class="cherry-card-masonry__item" style="gap: 16px;"');
+    expect(html).toContain('class="cherry-card-masonry__v-6-0"');
+    expect(html).toContain('class="cherry-card-masonry__v-6-3"');
+    expect(html).toContain('class="cherry-card-masonry__v-6-5"');
   });
 
   it("renders card masonry with nested cards", () => {
@@ -209,10 +229,10 @@ Official plugins and themes for VuePress2
 
 ::::`;
     const { html } = engine().render(md);
-    expect(html).toContain('class="card-masonry cols-2"');
-    expect(html).toContain('class="masonry-v-3-0"');
-    expect(html).toContain('<p class="card-title">卡片1</p>');
-    expect(html).toContain('<p class="card-title">卡片3</p>');
+    expect(html).toContain('class="cherry-card-masonry cherry-card-masonry--cols-2"');
+    expect(html).toContain('class="cherry-card-masonry__v-3-0"');
+    expect(html).toContain('<p class="cherry-card__title">卡片1</p>');
+    expect(html).toContain('<p class="cherry-card__title">卡片3</p>');
   });
 
   it("is disabled without extension", () => {
@@ -220,7 +240,7 @@ Official plugins and themes for VuePress2
 内容
 :::`;
     const { html } = createTransformer().render(md);
-    expect(html).not.toContain('class="image-card"');
+    expect(html).not.toContain('class="cherry-image-card"');
     expect(html).toContain("::: image-card");
   });
 });

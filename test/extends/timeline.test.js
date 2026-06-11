@@ -24,16 +24,16 @@ describe("extends/timeline", () => {
 
   it("renders timeline items with title, time and type", () => {
     const { html } = engine().render(sample);
-    expect(html).toContain('<div class="cherry-timeline placement-left">');
+    expect(html).toContain('<div class="cherry-timeline cherry-timeline--placement-left">');
     expect(html).toContain('<div class="cherry-timeline-box">');
     expect(html).toContain(
-      '<div class="cherry-timeline-item success line-solid placement-left">',
+      '<div class="cherry-timeline-item cherry-timeline-item--success cherry-timeline-item--line-solid cherry-timeline-item--placement-left">',
     );
     expect(html).toContain(
-      '<div class="cherry-timeline-item warning line-solid placement-left">',
+      '<div class="cherry-timeline-item cherry-timeline-item--warning cherry-timeline-item--line-solid cherry-timeline-item--placement-left">',
     );
     expect(html).toContain(
-      '<div class="cherry-timeline-item danger line-solid placement-left">',
+      '<div class="cherry-timeline-item cherry-timeline-item--danger cherry-timeline-item--line-solid cherry-timeline-item--placement-left">',
     );
     expect(html).toContain('<p class="cherry-timeline-title">节点一</p>');
     expect(html).toContain('<p class="cherry-timeline-time">2025-03-20</p>');
@@ -63,7 +63,7 @@ describe("extends/timeline", () => {
   正文内容
 :::`;
     const { html } = engine().render(md);
-    expect(html).toContain('class="cherry-timeline placement-right"');
+    expect(html).toContain('class="cherry-timeline cherry-timeline--placement-right"');
   });
 
   it("supports between placement with item placement", () => {
@@ -74,9 +74,9 @@ describe("extends/timeline", () => {
   正文内容
 :::`;
     const { html } = engine().render(md);
-    expect(html).toContain('class="cherry-timeline placement-between"');
+    expect(html).toContain('class="cherry-timeline cherry-timeline--placement-between"');
     expect(html).toContain(
-      '<div class="cherry-timeline-item info line-solid placement-right">',
+      '<div class="cherry-timeline-item cherry-timeline-item--info cherry-timeline-item--line-solid cherry-timeline-item--placement-right">',
     );
   });
 
@@ -88,9 +88,9 @@ describe("extends/timeline", () => {
   正文内容
 :::`;
     const { html } = engine().render(md);
-    expect(html).toContain('class="cherry-timeline placement-left"');
+    expect(html).toContain('class="cherry-timeline cherry-timeline--placement-left"');
     expect(html).toContain(
-      '<div class="cherry-timeline-item info line-dashed placement-left">',
+      '<div class="cherry-timeline-item cherry-timeline-item--info cherry-timeline-item--line-dashed cherry-timeline-item--placement-left">',
     );
   });
 
@@ -108,7 +108,7 @@ describe("extends/timeline", () => {
 
   it("does not render as generic container", () => {
     const { html } = engine().render(sample);
-    expect(html).not.toContain('class="alert note"');
+    expect(html).not.toContain('cherry-alert--note');
   });
 
   it("is disabled without extension", () => {

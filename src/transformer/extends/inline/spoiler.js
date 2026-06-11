@@ -102,7 +102,7 @@ class SpoilerInlineParser extends BaseInlineParser {
     const click = isClickMode(attrs);
 
     if (click) {
-      let html = `<label class="spoiler click"><input type="checkbox" class="spoiler__toggle" hidden><span class="spoiler__text">${inner}</span></label>`;
+      let html = `<label class="cherry-spoiler click"><input type="checkbox" class="cherry-spoiler__toggle" hidden><span class="cherry-spoiler__text">${inner}</span></label>`;
       const extra = attrsWithoutClick(attrs);
       if (extra) {
         html = injectAttrsIntoFirstOpenTag(html, extra);
@@ -111,7 +111,7 @@ class SpoilerInlineParser extends BaseInlineParser {
       return html;
     }
 
-    let html = `<span class="spoiler">${inner}</span>`;
+    let html = `<span class="cherry-spoiler">${inner}</span>`;
     if (attrs) {
       html = injectAttrsIntoFirstOpenTag(html, attrs);
       delete node.htmlAttrs;

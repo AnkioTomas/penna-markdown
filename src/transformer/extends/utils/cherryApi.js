@@ -143,7 +143,7 @@ export function renderMermaidBlock(content, { apiHost = MERMAID_API_HOST } = {})
   const code = content.trim();
   const payload = base64UrlEncode(JSON.stringify({ code }));
   const src = `${apiHost}/img/${payload}`;
-  return `<figure data-type="mermaid" class="cherry-mermaid-block"><img class="mermaid-container" style="max-width: 100%" src="${src}" alt="" /></figure>`;
+  return `<figure data-type="mermaid" class="cherry-mermaid-block"><img class="cherry-mermaid__img" style="max-width: 100%" src="${src}" alt="" /></figure>`;
 }
 
 /**
@@ -165,5 +165,5 @@ export function renderEchartsBlock(content, { apiHost = ECHARTS_API_HOST } = {})
     options: parseEchartsJson(content),
   };
   const src = `${apiHost}?data=${encodeURIComponent(JSON.stringify(data))}`;
-  return `<div data-type="echarts" class="cherry-echarts-block"><img class="echart-container" style="max-width: 100%" src="${src}" alt="" /></div>`;
+  return `<div data-type="echarts" class="cherry-echarts-block"><img class="cherry-echarts__img" style="max-width: 100%" src="${src}" alt="" /></div>`;
 }

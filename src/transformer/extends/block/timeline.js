@@ -295,7 +295,7 @@ class TimelineBlockParser extends BaseBlockParser {
     const containerPlacement = String(node.placement ?? "left");
     const containerClasses = [
       "cherry-timeline",
-      `placement-${containerPlacement}`,
+      `cherry-timeline--placement-${containerPlacement}`,
     ].join(" ");
 
     const rendered = items.map((item) => {
@@ -307,11 +307,11 @@ class TimelineBlockParser extends BaseBlockParser {
 
       const classes = [
         "cherry-timeline-item",
-        type,
-        `line-${line}`,
+        `cherry-timeline-item--${type}`,
+        `cherry-timeline-item--line-${line}`,
         containerPlacement === "between"
-          ? `placement-${itemPlacement}`
-          : "placement-left",
+          ? `cherry-timeline-item--placement-${itemPlacement}`
+          : "cherry-timeline-item--placement-left",
       ].join(" ");
 
       const style = color

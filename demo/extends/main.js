@@ -20,7 +20,7 @@ const syntaxExamples = [
     name: "highlight",
     desc: "行内高亮",
     markdown: "==高亮文本==\n\n==默认== ==重要=={.important} ==注意=={.note} ==提示=={.tip} ==警告=={.warning} ==谨慎=={.caution} ==危险=={.danger}",
-    expected: '<p><mark>高亮文本</mark></p>\n<p><mark>默认</mark> <mark class="important">重要</mark> <mark class="note">注意</mark> <mark class="tip">提示</mark> <mark class="warning">警告</mark> <mark class="caution">谨慎</mark> <mark class="danger">危险</mark></p>'
+    expected: '<p><mark class="cherry-mark">高亮文本</mark></p>\n<p><mark class="cherry-mark">默认</mark> <mark class="cherry-mark important">重要</mark> <mark class="cherry-mark note">注意</mark> <mark class="cherry-mark tip">提示</mark> <mark class="cherry-mark warning">警告</mark> <mark class="cherry-mark caution">谨慎</mark> <mark class="cherry-mark danger">危险</mark></p>'
   },
   { name: "emoji", desc: "Emoji 短码", markdown: ":smile: :thumbsup:", expected: "<p>😀 👍</p>" },
   {
@@ -39,7 +39,7 @@ const syntaxExamples = [
     name: "alert",
     desc: "提示框",
     markdown: "> [!NOTE]\n> 提示内容，读者应当了解的信息。\n\n> [!TIP]\n> 有用建议，帮助更好地完成任务。\n\n> [!IMPORTANT]\n> 关键信息，达成目标必须知道。\n\n> [!WARNING]\n> 警告信息，需要立即注意。\n\n> [!CAUTION]\n> 风险提示，某些行为可能有负面后果。",
-    expected: '<div class="alert note">\n<p class="alert__title">Note</p>\n<p>提示内容，读者应当了解的信息。</p>\n</div>\n<div class="alert tip">\n<p class="alert__title">Tip</p>\n<p>有用建议，帮助更好地完成任务。</p>\n</div>\n<div class="alert important">\n<p class="alert__title">Important</p>\n<p>关键信息，达成目标必须知道。</p>\n</div>\n<div class="alert warning">\n<p class="alert__title">Warning</p>\n<p>警告信息，需要立即注意。</p>\n</div>\n<div class="alert caution">\n<p class="alert__title">Caution</p>\n<p>风险提示，某些行为可能有负面后果。</p>\n</div>'
+    expected: '<div class="cherry-alert cherry-alert--note">\n<p class="cherry-alert__title">Note</p>\n<p>提示内容，读者应当了解的信息。</p>\n</div>\n<div class="cherry-alert cherry-alert--tip">\n<p class="cherry-alert__title">Tip</p>\n<p>有用建议，帮助更好地完成任务。</p>\n</div>\n<div class="cherry-alert cherry-alert--important">\n<p class="cherry-alert__title">Important</p>\n<p>关键信息，达成目标必须知道。</p>\n</div>\n<div class="cherry-alert cherry-alert--warning">\n<p class="cherry-alert__title">Warning</p>\n<p>警告信息，需要立即注意。</p>\n</div>\n<div class="cherry-alert cherry-alert--caution">\n<p class="cherry-alert__title">Caution</p>\n<p>风险提示，某些行为可能有负面后果。</p>\n</div>'
   },
   {
     name: "tasklist",

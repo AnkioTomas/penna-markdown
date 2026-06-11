@@ -10,23 +10,23 @@ describe("extends/badge", () => {
   it("renders badge with variant and position via html_attrs", () => {
     const { html } = engine().render("核心库 [必须]{.important .top}");
     expect(html).toBe(
-      '<p>核心库 <span class="badge important top">必须</span></p>\n',
+      '<p>核心库 <span class="cherry-badge important top">必须</span></p>\n',
     );
   });
 
   it("renders plain badge with default middle styling", () => {
     const { html } = engine().render("状态 [进行中]");
-    expect(html).toBe('<p>状态 <span class="badge">进行中</span></p>\n');
+    expect(html).toBe('<p>状态 <span class="cherry-badge">进行中</span></p>\n');
   });
 
   it("renders warning badge", () => {
     const { html } = engine().render("[标签]{.warning}");
-    expect(html).toBe('<p><span class="badge warning">标签</span></p>\n');
+    expect(html).toBe('<p><span class="cherry-badge warning">标签</span></p>\n');
   });
 
   it("renders position-only class", () => {
     const { html } = engine().render("[内容]{.top}");
-    expect(html).toBe('<p><span class="badge top">内容</span></p>\n');
+    expect(html).toBe('<p><span class="cherry-badge top">内容</span></p>\n');
   });
 
   it("does not conflict with inline links", () => {
@@ -44,7 +44,7 @@ title: Front Title
 # [[title]] and [必须]{.tip .top}`;
     const { html } = both().render(md);
     expect(html).toContain("Front Title");
-    expect(html).toContain('<span class="badge tip top">必须</span>');
+    expect(html).toContain('<span class="cherry-badge tip top">必须</span>');
   });
 
   it("is disabled without extension", () => {

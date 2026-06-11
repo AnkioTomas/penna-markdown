@@ -4,6 +4,7 @@
  *
  * ```
  * ::: link-card 文档 link="https://example.com"
+ * ::: link-card 文档 link="https://example.com" icon="https://example.com/icon.png"
  * 内容
  * :::
  * ```
@@ -31,13 +32,14 @@ class LinkCardBlockParser extends BaseBlockParser {
     const block = readTripleColonBlock(lines, index, OPEN_RE);
     if (!block) return null;
 
-    const { title, titleNodes, link } = parseLinkCardOpen(block.attrs, ctx);
+    const { title, titleNodes, link, icon } = parseLinkCardOpen(block.attrs, ctx);
 
     return {
       node: createNode(this.type, {
         title,
         titleNodes,
         link,
+        icon,
         children: ctx.parseBlocks(normalizeInnerLines(block.innerLines)),
       }),
       nextIndex: block.nextIndex,
@@ -47,18 +49,42 @@ class LinkCardBlockParser extends BaseBlockParser {
   /** @inheritdoc */
   render(node, ctx) {
     const link = String(node.link ?? "");
+    const icon = String(node.icon ?? "");
     const body = ctx.renderBlock(node.children ?? []);
     const href = link
       ? ` href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer"`
       : "";
 
-    const parts = [`<a class="card link-card"${href}>`];
+    const cardClasses = [
+      "cherry-card",
+      "cherry-link-card",
+      icon ? "cherry-link-card--has-icon" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    const parts = [`<a class="${cardClasses}"${href}>`];
+
+    if (icon) {
+      parts.push(
+        `<img class="cherry-link-card__icon" src="${escapeHtml(icon)}" alt="" loading="lazy">`,
+        `<div class="cherry-link-card__main">`,
+      );
+    }
+
     if (node.title) {
-      parts.push(`<p class="card-title">${ctx.renderInline(node.titleNodes)}</p>`);
+      parts.push(
+        `<p class="cherry-card__title">${ctx.renderInline(node.titleNodes)}</p>`,
+      );
     }
     if (body) {
-      parts.push(`<div class="card-body">${body}</div>`);
+      parts.push(`<div class="cherry-card__body">${body}</div>`);
     }
+
+    if (icon) {
+      parts.push(`</div>`);
+    }
+
     parts.push(`</a>`);
     return parts.join("\n");
   }

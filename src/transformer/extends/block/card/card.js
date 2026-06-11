@@ -43,12 +43,12 @@ class CardBlockParser extends BaseBlockParser {
   render(node, ctx) {
     const body = ctx.renderBlock(node.children ?? []);
 
-    const parts = [`<div class="card">`];
+    const parts = [`<div class="cherry-card">`];
     if (node.title) {
-      parts.push(`<p class="card-title">${ctx.renderInline(node.titleNodes)}</p>`);
+      parts.push(`<p class="cherry-card__title">${ctx.renderInline(node.titleNodes)}</p>`);
     }
     if (body) {
-      parts.push(`<div class="card-body">${body}</div>`);
+      parts.push(`<div class="cherry-card__body">${body}</div>`);
     }
     parts.push(`</div>`);
     return parts.join("\n");

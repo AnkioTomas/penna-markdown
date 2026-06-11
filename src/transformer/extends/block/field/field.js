@@ -80,26 +80,26 @@ class FieldBlockParser extends BaseBlockParser {
           : "Optional";
 
     const typeHtml = fieldType
-      ? `<span class="type"><code>${escapeHtml(fieldType)}</code></span>`
+      ? `<span class="cherry-field__type"><code>${escapeHtml(fieldType)}</code></span>`
       : "";
 
     const defaultHtml = defaultValue
-      ? `<p class="default-value"><code>${escapeHtml(defaultValue)}</code></p>`
+      ? `<p class="cherry-field__default"><code>${escapeHtml(defaultValue)}</code></p>`
       : "";
 
     const descriptionHtml = ctx.renderBlock(node.children ?? []);
 
     return [
-      `<div class="cherry-field ${status}">`,
-      `<div class="field-head">`,
-      `<div class="field-meta">`,
-      `<span class="name">${name}</span>`,
-      `<span class="${status}">${statusLabel}</span>`,
+      `<div class="cherry-field cherry-field--${status}">`,
+      `<div class="cherry-field__head">`,
+      `<div class="cherry-field__meta">`,
+      `<span class="cherry-field__name">${name}</span>`,
+      `<span class="cherry-field__tag cherry-field__tag--${status}">${statusLabel}</span>`,
       `</div>`,
       typeHtml,
       `</div>`,
       defaultHtml,
-      `<div class="description">${descriptionHtml}</div>`,
+      `<div class="cherry-field__description">${descriptionHtml}</div>`,
       `</div>`,
     ].join("");
   }

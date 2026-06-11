@@ -43,7 +43,7 @@ console.log('Hello World!')
     expect(html).toContain("<pre><code");
     expect(html).toContain("console.log('Hello World!')");
     expect(html).toContain("<p>这里是步骤 2 的相关内容</p>");
-    expect(html).toContain('<div class="alert tip">');
+    expect(html).toContain('<div class="cherry-alert cherry-alert--tip">');
     expect(html).toContain("<p>提示容器</p>");
   });
 
@@ -55,7 +55,7 @@ console.log('Hello World!')
 内容
 
 :::`);
-    expect(html).not.toContain('class="alert note"');
+    expect(html).not.toContain('cherry-alert--note');
     expect(html).toContain("cherry-steps");
   });
 

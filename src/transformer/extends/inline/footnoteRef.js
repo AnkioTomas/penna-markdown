@@ -53,7 +53,7 @@ class FootnoteRefInlineParser extends BaseInlineParser {
   render(node) {
     const { id, num, refIndex = 1 } = node;
     if (!num) return `[^${id}]`;
-    return `<sup class="footnote-ref"><a href="#footnote-${num}" id="${footnoteRefId(num, refIndex)}">${num}</a></sup>`;
+    return `<sup class="cherry-footnote-ref"><a href="#footnote-${num}" id="${footnoteRefId(num, refIndex)}">${num}</a></sup>`;
   }
 }
 

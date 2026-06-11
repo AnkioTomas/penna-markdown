@@ -1,26 +1,26 @@
 @mixin styles {
-  .footnotes {
+  .cherry-footnotes {
     margin-top: 32px;
   }
 
-  .footnotes-sep {
+  .cherry-footnotes__sep {
     margin: 0 0 16px;
     border: 0;
     border-top: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
   }
 
-  section.footnotes {
+  .cherry-footnotes__section {
     color: var(--cherry-c-text-2);
     font-size: 14px;
     line-height: 1.6;
   }
 
-  .footnotes-list {
+  .cherry-footnotes__list {
     margin: 0;
     padding-left: 1.25em;
   }
 
-  .footnote-item {
+  .cherry-footnote-item {
     margin: 0 0 10px;
 
     &:last-child {
@@ -36,7 +36,7 @@
     }
   }
 
-  sup.footnote-ref {
+  sup.cherry-footnote-ref {
     font-size: 0.78em;
     line-height: 0;
     vertical-align: super;
@@ -52,7 +52,7 @@
     }
   }
 
-  .footnote-backref {
+  .cherry-footnote-backref {
     margin-left: 4px;
     color: var(--cherry-c-text-3);
     text-decoration: none;

@@ -68,8 +68,8 @@ function renderRepoShield(repo, metric, repoBase) {
   const alt = escapeHtml(config.label);
   const href = escapeHtml(config.link(repoBase));
   return [
-    `<a class="repo-shield repo-shield--${metric}" href="${href}" target="_blank" rel="noopener noreferrer" title="${alt}">`,
-    `<img class="repo-shield__img" src="${escapeHtml(src)}" alt="${alt}" loading="lazy">`,
+    `<a class="cherry-repo-card__shield cherry-repo-card__shield--${metric}" href="${href}" target="_blank" rel="noopener noreferrer" title="${alt}">`,
+    `<img class="cherry-repo-card__shield-img" src="${escapeHtml(src)}" alt="${alt}" loading="lazy">`,
     `</a>`,
   ].join("");
 }
@@ -108,22 +108,22 @@ class RepoCardBlockParser extends BaseBlockParser {
     const bodyHtml = ctx.renderBlock(node.children ?? []);
 
     const descHtml = bodyHtml.trim()
-      ? `<div class="repo-desc">${bodyHtml}</div>`
+      ? `<div class="cherry-repo-card__desc">${bodyHtml}</div>`
       : "";
 
-    const parts = [`<div class="repo-card">`];
+    const parts = [`<div class="cherry-repo-card">`];
 
-    parts.push(`<p class="repo-name">`);
-    parts.push(`<span class="repo-icon" aria-hidden="true"></span>`);
+    parts.push(`<p class="cherry-repo-card__name">`);
+    parts.push(`<span class="cherry-repo-card__icon" aria-hidden="true"></span>`);
     if (href && repo) {
       parts.push(
-        `<span class="repo-link"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(repo)}">${escapeHtml(repo)}</a></span>`,
+        `<span class="cherry-repo-card__link"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(repo)}">${escapeHtml(repo)}</a></span>`,
       );
     } else if (repo) {
-      parts.push(`<span class="repo-link">${escapeHtml(repo)}</span>`);
+      parts.push(`<span class="cherry-repo-card__link">${escapeHtml(repo)}</span>`);
     }
     if (visibility) {
-      parts.push(`<span class="repo-visibility">${escapeHtml(visibility)}</span>`);
+      parts.push(`<span class="cherry-repo-card__visibility">${escapeHtml(visibility)}</span>`);
     }
     parts.push(`</p>`);
 
@@ -138,7 +138,7 @@ class RepoCardBlockParser extends BaseBlockParser {
         renderRepoShield(repo, "forks", repoBase),
         renderRepoShield(repo, "license", repoBase),
       ];
-      parts.push(`<div class="repo-info">${info.join("")}</div>`);
+      parts.push(`<div class="cherry-repo-card__info">${info.join("")}</div>`);
     }
 
     parts.push(`</div>`);

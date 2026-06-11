@@ -82,7 +82,7 @@ console.log(1)
 正文
 :::`;
     const { html } = createTransformerWithExtensions(["tabs", "container"]).render(md);
-    expect(html).toContain('<div class="alert tip">');
+    expect(html).toContain('<div class="cherry-alert cherry-alert--tip">');
     expect(html).toContain("<p>嵌套内容</p>");
     expect(html).toContain("<p>正文</p>");
   });

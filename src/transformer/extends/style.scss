@@ -1,5 +1,5 @@
 // Cherry Markdown 扩展语法基础样式
-// 所有扩展的最外层容器必须包含 cherry 这个 class
+// 结构类统一使用 cherry- 前缀；用户通过 {} 注入的修饰类（如 .tip、.click）保持简短
 @use "style/tokens";
 @use "style/highlight";
 @use "style/spoiler";

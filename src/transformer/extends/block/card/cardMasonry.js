@@ -96,15 +96,15 @@ class CardMasonryBlockParser extends BaseBlockParser {
         const itemHtml = items
           .map(({ index, node: child }) => {
             const html = ctx.renderBlock([child]);
-            return `<div class="masonry-v-${total}-${index}">${html}</div>`;
+            return `<div class="cherry-card-masonry__v-${total}-${index}">${html}</div>`;
           })
           .join("\n");
 
-        return `<div class="card-masonry-item" style="gap: ${gap}px;">\n${itemHtml}\n</div>`;
+        return `<div class="cherry-card-masonry__item" style="gap: ${gap}px;">\n${itemHtml}\n</div>`;
       })
       .join("\n");
 
-    return `<div class="card-masonry cols-${cols}" style="gap: ${gap}px; --card-masonry-cols: ${cols};">\n${columnHtml}\n</div>`;
+    return `<div class="cherry-card-masonry cherry-card-masonry--cols-${cols}" style="gap: ${gap}px; --card-masonry-cols: ${cols};">\n${columnHtml}\n</div>`;
   }
 }
 

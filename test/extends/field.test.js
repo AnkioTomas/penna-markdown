@@ -44,18 +44,18 @@ describe("extends/field", () => {
   it("renders field-group with field metadata and descriptions", () => {
     const { html } = engine().render(sample);
     expect(html).toContain('<div class="cherry-field-group">');
-    expect(html).toContain('<div class="cherry-field required">');
-    expect(html).toContain('<div class="field-head">');
-    expect(html).toContain('<span class="name">theme</span>');
-    expect(html).toContain('<span class="required">Required</span>');
-    expect(html).toContain('<span class="type"><code>ThemeConfig</code></span>');
-    expect(html).toContain('<p class="default-value"><code>{ base: \'/\' }</code></p>');
+    expect(html).toContain('<div class="cherry-field cherry-field--required">');
+    expect(html).toContain('<div class="cherry-field__head">');
+    expect(html).toContain('<span class="cherry-field__name">theme</span>');
+    expect(html).toContain('<span class="cherry-field__tag cherry-field__tag--required">Required</span>');
+    expect(html).toContain('<span class="cherry-field__type"><code>ThemeConfig</code></span>');
+    expect(html).toContain('<p class="cherry-field__default"><code>{ base: \'/\' }</code></p>');
     expect(html).toContain("<p>是否启用</p>");
     expect(html).toContain(
       "<code>(...args: any[]) =&gt; void</code>",
     );
-    expect(html).toContain('<span class="badge tip">v1.0.0 新增</span>');
-    expect(html).toContain('<span class="badge danger">v0.9.0 弃用</span>');
+    expect(html).toContain('<span class="cherry-badge tip">v1.0.0 新增</span>');
+    expect(html).toContain('<span class="cherry-badge danger">v0.9.0 弃用</span>');
     expect(html).toContain("<p>已弃用属性</p>");
     expect(html).not.toContain("<Badge");
   });
@@ -67,14 +67,14 @@ describe("extends/field", () => {
 标题字段
 :::`;
     const { html } = engine().render(md);
-    expect(html).toContain('<div class="cherry-field required">');
-    expect(html).toContain('<span class="name">title</span>');
+    expect(html).toContain('<div class="cherry-field cherry-field--required">');
+    expect(html).toContain('<span class="cherry-field__name">title</span>');
     expect(html).not.toContain("cherry-field-group");
   });
 
   it("does not render as generic container", () => {
     const { html } = engine().render(sample);
-    expect(html).not.toContain('class="alert note"');
+    expect(html).not.toContain('cherry-alert--note');
   });
 
   it("is disabled without extension", () => {

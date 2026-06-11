@@ -63,17 +63,17 @@ class FootnotesSectionParser extends BaseBlockParser {
     const list = items
       .map((item) => {
         const inner = ctx.renderBlock(item.children);
-        const backref = `<a href="#${footnoteFirstRefId(item.num)}" class="footnote-backref" aria-label="返回引用">↩︎</a>`;
+        const backref = `<a href="#${footnoteFirstRefId(item.num)}" class="cherry-footnote-backref" aria-label="返回引用">↩︎</a>`;
         const body = appendFootnoteBackref(inner, backref);
-        return `<li id="${footnoteTargetId(item.num)}" class="footnote-item">${body}</li>`;
+        return `<li id="${footnoteTargetId(item.num)}" class="cherry-footnote-item">${body}</li>`;
       })
       .join("\n");
 
     return [
-      `<div class="footnotes">`,
-      `<hr class="footnotes-sep">`,
-      `<section class="footnotes">`,
-      `<ol class="footnotes-list">`,
+      `<div class="cherry-footnotes">`,
+      `<hr class="cherry-footnotes__sep">`,
+      `<section class="cherry-footnotes__section">`,
+      `<ol class="cherry-footnotes__list">`,
       list,
       `</ol>`,
       `</section>`,

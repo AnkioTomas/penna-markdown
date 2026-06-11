@@ -1,7 +1,8 @@
+// 用户通过 {.variant .top} 注入的变体类名保持简短，不加 cherry 前缀
 $badge-variants: note, tip, warning, caution, danger, important;
 
 @mixin styles {
-  .badge {
+  .cherry-badge {
     transition:
       color 0.25s,
       background-color 0.25s,

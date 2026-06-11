@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 import { createTransformer } from "@/transformer/index.js";
 import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
 
-const FOOTNOTES_TAIL = `<div class="footnotes">
-<hr class="footnotes-sep">
-<section class="footnotes">
-<ol class="footnotes-list">
-<li id="footnote-1" class="footnote-item"><p>这里是放在文章末尾的详细解释，点击数字可以自动跳转。 <a href="#footnote-ref-1" class="footnote-backref" aria-label="返回引用">↩︎</a></p></li>
+const FOOTNOTES_TAIL = `<div class="cherry-footnotes">
+<hr class="cherry-footnotes__sep">
+<section class="cherry-footnotes__section">
+<ol class="cherry-footnotes__list">
+<li id="footnote-1" class="cherry-footnote-item"><p>这里是放在文章末尾的详细解释，点击数字可以自动跳转。 <a href="#footnote-ref-1" class="cherry-footnote-backref" aria-label="返回引用">↩︎</a></p></li>
 </ol>
 </section>
 </div>`;
@@ -21,7 +21,7 @@ describe("extends/footnote", () => {
 [^1]: 这里是放在文章末尾的详细解释，点击数字可以自动跳转。`;
     const { html } = engine().render(md);
     expect(html).toBe(
-      `<p>这是一个需要解释的专业词汇<sup class="footnote-ref"><a href="#footnote-1" id="footnote-ref-1">1</a></sup>。</p>\n${FOOTNOTES_TAIL}\n`,
+      `<p>这是一个需要解释的专业词汇<sup class="cherry-footnote-ref"><a href="#footnote-1" id="footnote-ref-1">1</a></sup>。</p>\n${FOOTNOTES_TAIL}\n`,
     );
   });
 
@@ -32,8 +32,8 @@ describe("extends/footnote", () => {
     const { html } = engine().render(md);
     expect(html).toContain('id="footnote-ref-1"');
     expect(html).toContain('id="footnote-ref-1-2"');
-    expect(html).toContain('href="#footnote-ref-1" class="footnote-backref"');
-    expect(html.match(/class="footnote-item"/g)?.length).toBe(1);
+    expect(html).toContain('href="#footnote-ref-1" class="cherry-footnote-backref"');
+    expect(html.match(/class="cherry-footnote-item"/g)?.length).toBe(1);
   });
 
   it("orders footnotes by first reference appearance", () => {
@@ -54,7 +54,7 @@ describe("extends/footnote", () => {
 [^poem]: 出自 宋·文天祥 **《过零丁洋》**`;
     const { html } = engine().render(md);
     expect(html).toContain("<strong>《过零丁洋》</strong>");
-    expect(html).toContain('class="footnote-backref"');
+    expect(html).toContain('class="cherry-footnote-backref"');
   });
 
   it("leaves undefined footnote refs as plain text", () => {

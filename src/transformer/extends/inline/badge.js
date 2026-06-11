@@ -48,7 +48,7 @@ class BadgeInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node) {
-    return `<span class="badge">${escapeHtml(node.text)}</span>`;
+    return `<span class="cherry-badge">${escapeHtml(node.text)}</span>`;
   }
 }
 

@@ -118,11 +118,11 @@ class ContainerBlockParser extends BaseBlockParser {
 
     if (ALIGN_TYPES.has(containerType)) {
       const parts = [
-        `<div class="align ${escapeHtml(containerType)}">`,
+        `<div class="cherry-align cherry-align--${escapeHtml(containerType)}">`,
       ];
       if (title) {
         parts.push(
-          `<p class="title">${ctx.renderInline(titleNodes)}</p>`,
+          `<p class="cherry-align__title">${ctx.renderInline(titleNodes)}</p>`,
         );
       }
       if (body) parts.push(body);
@@ -131,10 +131,10 @@ class ContainerBlockParser extends BaseBlockParser {
     }
 
     const themeType = THEME_TYPES.has(containerType) ? containerType : "note";
-    const parts = [`<div class="alert ${escapeHtml(themeType)}">`];
+    const parts = [`<div class="cherry-alert cherry-alert--${escapeHtml(themeType)}">`];
     if (title) {
       parts.push(
-        `<p class="alert__title">${ctx.renderInline(titleNodes)}</p>`,
+        `<p class="cherry-alert__title">${ctx.renderInline(titleNodes)}</p>`,
       );
     }
     if (body) parts.push(body);

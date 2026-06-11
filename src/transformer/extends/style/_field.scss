@@ -15,7 +15,7 @@
       border-bottom: none;
     }
 
-    .field-head {
+    &__head {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -23,7 +23,7 @@
       margin: 0 0 8px;
     }
 
-    .field-meta {
+    &__meta {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -31,44 +31,39 @@
       min-width: 0;
       font-size: 14px;
       line-height: 1.5;
+    }
 
-      .name {
-        font-weight: 600;
-        color: var(--cherry-c-text-1);
-      }
+    &__name {
+      font-weight: 600;
+      color: var(--cherry-c-text-1);
+    }
 
-      .required {
-        padding: 1px 8px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 500;
+    &__tag {
+      padding: 1px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+
+      &--required {
         color: var(--cherry-c-alert-danger-text);
         background: var(--cherry-c-alert-danger-bg);
         border: 1px solid var(--cherry-c-alert-danger-border);
       }
 
-      .optional {
-        padding: 1px 8px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 500;
+      &--optional {
         color: var(--cherry-c-alert-note-text);
         background: var(--cherry-c-alert-note-bg);
         border: 1px solid var(--cherry-c-alert-note-border);
       }
 
-      .deprecated {
-        padding: 1px 8px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 500;
+      &--deprecated {
         color: var(--cherry-c-alert-warning-text);
         background: var(--cherry-c-alert-warning-bg);
         border: 1px solid var(--cherry-c-alert-warning-border);
       }
     }
 
-    .type {
+    &__type {
       flex-shrink: 0;
       margin-left: auto;
       text-align: right;
@@ -85,7 +80,7 @@
       }
     }
 
-    .default-value {
+    &__default {
       margin: 0 0 10px;
       font-size: 13px;
       text-align: right;
@@ -103,7 +98,7 @@
       }
     }
 
-    .description {
+    &__description {
       color: var(--cherry-c-text-2);
       font-size: 14px;
       line-height: 1.6;
@@ -116,7 +111,7 @@
         margin-bottom: 0;
       }
 
-      .badge {
+      .cherry-badge {
         margin-right: 8px;
       }
     }

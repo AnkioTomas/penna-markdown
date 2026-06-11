@@ -3,13 +3,13 @@ import { createTransformer } from "@/transformer/index.js";
 import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
 
 function panelHtml(type, title, body) {
-  const titleHtml = title ? `<p class="alert__title">${title}</p>\n` : "";
-  return `<div class="alert ${type}">\n${titleHtml}${body}\n</div>\n`;
+  const titleHtml = title ? `<p class="cherry-alert__title">${title}</p>\n` : "";
+  return `<div class="cherry-alert cherry-alert--${type}">\n${titleHtml}${body}\n</div>\n`;
 }
 
 function alignHtml(type, body, title = "") {
-  const titleHtml = title ? `<p class="title">${title}</p>\n` : "";
-  return `<div class="align ${type}">\n${titleHtml}${body}\n</div>\n`;
+  const titleHtml = title ? `<p class="cherry-align__title">${title}</p>\n` : "";
+  return `<div class="cherry-align cherry-align--${type}">\n${titleHtml}${body}\n</div>\n`;
 }
 
 describe("extends/container", () => {

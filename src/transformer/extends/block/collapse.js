@@ -223,8 +223,8 @@ class CollapseBlockParser extends BaseBlockParser {
     const groupName = accordion ? `cherry-collapse-${++collapseGroupSeq}` : "";
     const containerClasses = [
       "cherry-collapse",
-      accordion ? "accordion" : "",
-      node.expand ? "expand" : "",
+      accordion ? "cherry-collapse--accordion" : "",
+      node.expand ? "cherry-collapse--expand" : "",
     ]
       .filter(Boolean)
       .join(" ");

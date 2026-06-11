@@ -1,6 +1,7 @@
 // 高亮语法 ==text== / ==text=={.note}
+// 用户通过 {.variant} 注入的变体类名保持简短，不加 cherry 前缀
 @mixin styles {
-  mark {
+  .cherry-mark {
     --cherry-mark-text: currentcolor;
     --cherry-mark-bg: transparent;
     --cherry-mark-bg-height: 35%;

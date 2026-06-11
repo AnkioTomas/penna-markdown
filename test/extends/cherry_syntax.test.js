@@ -7,7 +7,7 @@ const MATH_IMG =
 const MATH_FRAC_IMG =
   '<div class="cherry-math cherry-math-block" data-type="mathBlock"><img class="cherry-math-latex" alt="\\frac{a}{b}" src="https://math.vercel.app/?from=%5Cfrac%7Ba%7D%7Bb%7D&color=black" loading="lazy" /></div>';
 const ECHARTS_IMG =
-  '<div data-type="echarts" class="cherry-echarts-block"><img class="echart-container" style="max-width: 100%" src="https://echarts-api.vercel.app?data=%7B%22theme%22%3A%22%22%2C%22width%22%3A600%2C%22height%22%3A400%2C%22options%22%3A%7B%22series%22%3A%5B%7B%22type%22%3A%22bar%22%7D%5D%7D%7D" alt="" /></div>';
+  '<div data-type="echarts" class="cherry-echarts-block"><img class="cherry-echarts__img" style="max-width: 100%" src="https://echarts-api.vercel.app?data=%7B%22theme%22%3A%22%22%2C%22width%22%3A600%2C%22height%22%3A400%2C%22options%22%3A%7B%22series%22%3A%5B%7B%22type%22%3A%22bar%22%7D%5D%7D%7D" alt="" /></div>';
 
 describe("extends/cherry_syntax", () => {
   const engine = () => createTransformerWithExtensions(["cherry_syntax"]);
@@ -49,7 +49,7 @@ describe("extends/cherry_syntax", () => {
     const { html } = engine().render(md);
     expect(html).toContain('<figure data-type="mermaid"');
     expect(html).toContain("https://mermaid.ink/img/");
-    expect(html).toContain('class="mermaid-container"');
+    expect(html).toContain('class="cherry-mermaid__img"');
   });
 
   it("treats ```graph as mermaid alias", () => {

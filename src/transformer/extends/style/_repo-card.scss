@@ -1,5 +1,5 @@
 @mixin styles {
-  .repo-card {
+  .cherry-repo-card {
     border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 24%, transparent);
     border-radius: 8px;
     padding: 16px;
@@ -9,7 +9,7 @@
     font-size: 14px;
     line-height: 1.6;
 
-    .repo-name {
+    &__name {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
@@ -19,7 +19,7 @@
       color: var(--cherry-c-text-1);
     }
 
-    .repo-icon {
+    &__icon {
       width: 16px;
       height: 16px;
       flex-shrink: 0;
@@ -30,7 +30,7 @@
         no-repeat center / contain;
     }
 
-    .repo-link a {
+    &__link a {
       color: inherit;
       text-decoration: none;
 
@@ -40,7 +40,7 @@
       }
     }
 
-    .repo-visibility {
+    &__visibility {
       padding: 2px 8px;
       border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 30%, transparent);
       border-radius: 999px;
@@ -49,7 +49,7 @@
       color: var(--cherry-c-text-2);
     }
 
-    .repo-desc {
+    &__desc {
       margin: 0 0 12px;
       color: var(--cherry-c-text-2);
 
@@ -62,7 +62,7 @@
       }
     }
 
-    .repo-info {
+    &__info {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -72,7 +72,7 @@
       border-top: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 16%, transparent);
     }
 
-    .repo-shield {
+    &__shield {
       display: inline-flex;
       line-height: 0;
       text-decoration: none;
@@ -83,7 +83,7 @@
       }
     }
 
-    .repo-shield__img {
+    &__shield-img {
       display: block;
       height: 20px;
     }

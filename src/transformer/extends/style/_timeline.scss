@@ -1,5 +1,5 @@
 @mixin timeline-type($name, $token) {
-  &.#{ $name } {
+  &--#{ $name } {
     --cherry-timeline-c-line: var(--cherry-c-alert-#{$token}-text);
     --cherry-timeline-c-point: var(--cherry-c-alert-#{$token}-text);
   }
@@ -62,13 +62,13 @@
     }
   }
 
-  .cherry-timeline-item.line-dashed .cherry-timeline-line::after {
+  .cherry-timeline-item--line-dashed .cherry-timeline-line::after {
     width: 0;
     background: transparent;
     border-left: 2px dashed var(--cherry-timeline-c-line);
   }
 
-  .cherry-timeline-item.line-dotted .cherry-timeline-line::after {
+  .cherry-timeline-item--line-dotted .cherry-timeline-line::after {
     width: 0;
     background: transparent;
     border-left: 2px dotted var(--cherry-timeline-c-line);
@@ -117,7 +117,7 @@
     line-height: 1.4;
   }
 
-  .cherry-timeline.placement-right {
+  .cherry-timeline--placement-right {
     .cherry-timeline-item {
       grid-template-columns: 1fr 24px;
 
@@ -132,8 +132,8 @@
     }
   }
 
-  .cherry-timeline.placement-between {
-    .cherry-timeline-item.placement-right {
+  .cherry-timeline--placement-between {
+    .cherry-timeline-item--placement-right {
       grid-template-columns: 1fr 24px;
 
       .cherry-timeline-line {

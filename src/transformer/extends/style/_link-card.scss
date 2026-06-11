@@ -1,5 +1,5 @@
 @mixin styles {
-  .card.link-card {
+  .cherry-card.cherry-link-card {
     position: relative;
     display: block;
     padding-right: 36px;
@@ -41,6 +41,26 @@
     &:focus-visible {
       outline: 2px solid var(--cherry-c-brand-2);
       outline-offset: 2px;
+    }
+
+    &--has-icon {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    &__icon {
+      flex: 0 0 40px;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: color-mix(in srgb, var(--cherry-c-text-3) 10%, var(--cherry-c-bg-elevated));
+    }
+
+    &__main {
+      flex: 1 1 auto;
+      min-width: 0;
     }
   }
 }

@@ -54,7 +54,7 @@ export function parseTitleInline(attrs, ctx) {
  */
 export function stripLinkAttrs(attrs) {
   return String(attrs ?? "")
-    .replace(/\b(?:link|href)="[^"]*"/g, "")
+    .replace(/\b(?:link|href|icon|image)="[^"]*"/g, "")
     .trim();
 }
 
@@ -65,15 +65,18 @@ export function stripLinkAttrs(attrs) {
  *   title: string,
  *   titleNodes: import('@/transformer/core/MarkdownNode.js').MarkdownNode[],
  *   link: string,
+ *   icon: string,
  * }}
  */
 export function parseLinkCardOpen(attrs, ctx) {
   const link = pickAttr(attrs, "link") || pickAttr(attrs, "href");
+  const icon = pickAttr(attrs, "icon") || pickAttr(attrs, "image");
   const title = stripLinkAttrs(attrs);
   return {
     title,
     titleNodes: title ? ctx.parseInline(title) : [],
     link,
+    icon,
   };
 }
 

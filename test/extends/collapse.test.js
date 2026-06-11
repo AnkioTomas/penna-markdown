@@ -36,7 +36,7 @@ describe("extends/collapse", () => {
   正文内容
 :::`;
     const { html } = engine().render(md);
-    expect(html).toContain('<div class="cherry-collapse expand">');
+    expect(html).toContain('<div class="cherry-collapse cherry-collapse--expand">');
     expect(html.match(/<details open>/g)?.length).toBe(2);
   });
 
@@ -51,7 +51,7 @@ describe("extends/collapse", () => {
   正文内容
 :::`;
     const { html } = engine().render(md);
-    expect(html).toContain('<div class="cherry-collapse accordion">');
+    expect(html).toContain('<div class="cherry-collapse cherry-collapse--accordion">');
     expect(html).toContain('name="cherry-collapse-1"');
     expect(html).not.toContain("<details open>");
   });
@@ -123,7 +123,7 @@ describe("extends/collapse", () => {
 
   it("does not render as generic container", () => {
     const { html } = engine().render(sample);
-    expect(html).not.toContain('class="alert note"');
+    expect(html).not.toContain('cherry-alert--note');
   });
 
   it("is disabled without extension", () => {

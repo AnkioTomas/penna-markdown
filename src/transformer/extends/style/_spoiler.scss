@@ -1,6 +1,7 @@
 // 剧透语法 !! text !! / !! text !! {click}
+// 用户通过 {click} 注入的 .click 修饰类保持简短
 @mixin styles {
-  .spoiler {
+  .cherry-spoiler {
     cursor: default;
     transition: filter 0.2s ease;
 
@@ -16,18 +17,18 @@
       cursor: pointer;
       filter: none;
 
-      .spoiler__text {
+      .cherry-spoiler__text {
         filter: blur(4px);
         transition: filter 0.2s ease;
       }
 
-      &:has(.spoiler__toggle:checked) .spoiler__text {
+      &:has(.cherry-spoiler__toggle:checked) .cherry-spoiler__text {
         filter: none;
       }
     }
   }
 
-  .spoiler__toggle {
+  .cherry-spoiler__toggle {
     position: absolute;
     opacity: 0;
     pointer-events: none;
