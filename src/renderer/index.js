@@ -5,6 +5,15 @@
  * 将 Transformer 输出的 HTML 写入预览 DOM。
  */
 
+import { hydrateCherryTheme } from "./cherryTheme.js";
+
+export {
+  hydrateCherryMath,
+  hydrateCherryTheme,
+  isCherryDarkMode,
+  mathImageColor,
+} from "./cherryTheme.js";
+
 /** @type {'innerHTML'} 当前唯一支持的 DOM 更新策略 */
 const STRATEGY_INNER_HTML = "innerHTML";
 
@@ -51,6 +60,7 @@ export function createRenderer({ mount, strategy = STRATEGY_INNER_HTML } = {}) {
       }
 
       runHook("afterUpdate", { mount, input });
+      hydrateCherryTheme(mount);
     },
 
     /**

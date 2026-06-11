@@ -2,7 +2,7 @@
  * @file 块级语法拓展：Cherry 特殊代码块
  * @module transformer/extends/block/specialCode
  *
- * 在 GFM 代码块基础上，对 echarts / math / mermaid 等语言
+ * 在 GFM 代码块基础上，对 echarts / mermaid 等语言
  * 使用专用渲染器；priority > GFM code，非特殊语言交还标准 code parser。
  */
 
@@ -10,7 +10,6 @@ import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import codeParser from "@/transformer/gfm/block/code.js";
 import { unescapeHref, decodeHtmlEntities } from "@/transformer/gfm/inline/shared.js";
 import {
-  renderMathBlock,
   renderEchartsBlock,
   renderMermaidBlock,
 } from "@/transformer/extends/utils/cherryApi.js";
@@ -18,9 +17,6 @@ import {
 /** 语言标识 → 专用渲染函数 */
 const SPECIAL_RENDERERS = {
   echarts: renderEchartsBlock,
-  math: renderMathBlock,
-  katex: renderMathBlock,
-  latex: renderMathBlock,
   mermaid: renderMermaidBlock,
   graph: renderMermaidBlock,
 };

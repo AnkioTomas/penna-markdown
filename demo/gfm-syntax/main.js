@@ -2,6 +2,7 @@ import {
   getAvailableExtensions,
   createTransformerWithExtensions,
 } from "@/transformer/index.js";
+import { hydrateCherryTheme } from "@/renderer/cherryTheme.js";
 import { gfmSyntaxExamples } from "./examples/index.js";
 
 const markdownInput = document.getElementById("markdown-input");
@@ -22,6 +23,7 @@ function render() {
   const { html } = transformer.render(md);
 
   preview.innerHTML = html;
+  hydrateCherryTheme(preview);
   markdownDisplay.textContent = md;
   htmlDisplay.textContent = html;
 

@@ -3,35 +3,24 @@
  * @module transformer/extends/utils/cherryApi
  *
  * 与 cherry-markdown 一致的远程渲染方案：
- * - 数学公式：https://math.vercel.app
+ * - 数学公式：https://math-api-delta.vercel.app
  * - ECharts 图表：https://echarts-api.vercel.app
  * - Mermaid 图表：https://mermaid.ink
  *
  * 将 LaTeX / JSON / Mermaid 源码转为 `<img>` 标签，由外部 API 生成图片 URL。
+ * 主题色由客户端根据 `[data-theme=dark]` 在 hydrate 阶段注入。
  */
 
 import { escapeHtml } from "@/transformer/utils/escape.js";
 
 /** 数学公式渲染 API 基址。 */
-export const MATH_API_HOST = "https://math.vercel.app";
+export const MATH_API_HOST = "https://math-api-delta.vercel.app";
 
 /** ECharts 图表渲染 API 基址。 */
 export const ECHARTS_API_HOST = "https://echarts-api.vercel.app";
 
 /** Mermaid 图表渲染 API 基址。 */
 export const MERMAID_API_HOST = "https://mermaid.ink";
-
-/**
- * 检测当前环境是否偏好深色配色方案。
- *
- * @returns {boolean}
- */
-export function prefersDarkScheme() {
-  return (
-    typeof globalThis.matchMedia === "function" &&
-    globalThis.matchMedia("(prefers-color-scheme: dark)").matches
-  );
-}
 
 /**
  * 解析 ECharts 代码块内容为配置对象。
@@ -48,8 +37,6 @@ export function parseEchartsJson(src) {
   try {
     return JSON.parse(trimmed);
   } catch {
-    // 尝试解析 JavaScript 对象字面量（非严格 JSON）
-    // 使用 Function 构造器而非直接 eval 以保持严格模式
     try {
       return Function(`"use strict"; return ${trimmed}`)();
     } catch {
@@ -59,52 +46,53 @@ export function parseEchartsJson(src) {
 }
 
 /**
- * 构造 math.vercel.app 图片 URL。
+ * 构造 Math API 图片 URL（块级 `from`，行内 `inline`）。
  *
  * @param {string} content
  * @param {Object} [options]
  * @param {string} [options.apiHost]
+ * @param {boolean} [options.inline=false]
+ * @param {string} [options.color]
  * @returns {string}
  */
-export function buildMathImageSrc(content, { apiHost = MATH_API_HOST } = {}) {
+export function buildMathImageSrc(
+  content,
+  { apiHost = MATH_API_HOST, inline = false, color } = {},
+) {
   const latex = content.trim();
   if (!latex) return "";
-  const color = prefersDarkScheme() ? "white" : "black";
-  return `${apiHost}/?from=${encodeURIComponent(latex)}&color=${color}`;
+  const param = inline ? "inline" : "from";
+  let url = `${apiHost}/?${param}=${encodeURIComponent(latex)}`;
+  if (color) url += `&color=${encodeURIComponent(color)}`;
+  return url;
 }
 
 /**
- * 将 LaTeX 数学块渲染为 HTML 片段。
- *
- * @param {string} content
- * @param {Object} [options]
- * @returns {string}
+ * @param {string} latex
+ * @param {boolean} inline
  */
+function mathImgAttrs(latex, inline) {
+  const alt = escapeHtml(latex);
+  const inlineAttr = inline ? ' data-inline="true"' : ' data-inline="false"';
+  return `class="cherry-math-latex" data-latex="${alt}"${inlineAttr} alt="${alt}"`;
+}
+
 export function renderMathBlock(content, options = {}) {
   const latex = content.trim();
   const src = buildMathImageSrc(latex, options);
   if (!src) return "";
-  return `<div class="cherry-math cherry-math-block" data-type="mathBlock"><img class="cherry-math-latex" alt="${escapeHtml(latex)}" src="${src}" loading="lazy" /></div>`;
+  return `<div class="cherry-math cherry-math-block" data-type="mathBlock"><img ${mathImgAttrs(latex, false)} src="${src}" loading="lazy" /></div>`;
 }
 
-/**
- * 将行内 LaTeX 数学公式渲染为 HTML 片段。
- *
- * @param {string} content
- * @param {Object} [options]
- * @returns {string}
- */
 export function renderMathInline(content, options = {}) {
   const latex = content.trim();
-  const src = buildMathImageSrc(latex, options);
+  const src = buildMathImageSrc(latex, { ...options, inline: true });
   if (!src) return "";
-  return `<span class="cherry-math cherry-math-inline" data-type="mathInline"><img class="cherry-math-latex" alt="${escapeHtml(latex)}" src="${src}" loading="lazy" /></span>`;
+  return `<span class="cherry-math cherry-math-inline" data-type="mathInline"><img ${mathImgAttrs(latex, true)} src="${src}" loading="lazy" /></span>`;
 }
 
 /**
  * 将字符串编码为 URL 安全的 Base64（RFC 4648 base64url，无 padding）。
- *
- * Node 环境使用 Buffer，浏览器环境使用 TextEncoder + btoa。
  *
  * @param {string} text
  * @returns {string}
@@ -126,44 +114,97 @@ export function base64UrlEncode(text) {
       .replace(/\//g, "_")
       .replace(/=+$/, "");
   } catch {
-    // 出错时返回空字符串，避免中断后续处理
     return "";
   }
 }
 
 /**
- * 将 Mermaid 代码块渲染为远程图片 HTML 片段。
+ * base64url 解码为 UTF-8 字符串。
  *
- * @param {string} content - Mermaid 源码
- * @param {Object} [options={}]
- * @param {string} [options.apiHost=MERMAID_API_HOST] - Mermaid API 基址
+ * @param {string} payload
  * @returns {string}
  */
-export function renderMermaidBlock(content, { apiHost = MERMAID_API_HOST } = {}) {
+export function base64UrlDecode(payload) {
+  try {
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const pad = base64.length % 4;
+    const normalized = pad ? base64 + "=".repeat(4 - pad) : base64;
+    if (typeof Buffer !== "undefined") {
+      return Buffer.from(normalized, "base64").toString("utf8");
+    }
+    const binary = atob(normalized);
+    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * 构造 mermaid.ink 图片 URL。
+ *
+ * @param {string} code
+ * @param {Object} [options]
+ * @param {string} [options.apiHost]
+ * @param {"dark" | undefined} [options.theme]
+ * @returns {string}
+ */
+export function buildMermaidImageSrc(code, { apiHost = MERMAID_API_HOST, theme } = {}) {
+  const trimmed = code.trim();
+  if (!trimmed) return "";
+  const payload = base64UrlEncode(JSON.stringify({ code: trimmed }));
+  let url = `${apiHost}/img/${payload}`;
+  if (theme === "dark") url += "?theme=dark";
+  return url;
+}
+
+/**
+ * 构造 echarts-api 图片 URL。
+ *
+ * @param {string} content
+ * @param {Object} [options]
+ * @param {string} [options.apiHost]
+ * @param {"dark" | undefined} [options.theme]
+ * @param {number} [options.width=600]
+ * @param {number} [options.height=400]
+ * @returns {string}
+ */
+export function buildEchartsImageSrc(
+  content,
+  { apiHost = ECHARTS_API_HOST, theme, width = 600, height = 400 } = {},
+) {
+  const data = {
+    width,
+    height,
+    options: parseEchartsJson(content),
+  };
+  if (theme === "dark") data.theme = "dark";
+  return `${apiHost}?data=${encodeURIComponent(JSON.stringify(data))}`;
+}
+
+/**
+ * 将 Mermaid 代码块渲染为远程图片 HTML 片段。
+ *
+ * @param {string} content
+ * @param {Object} [options]
+ * @returns {string}
+ */
+export function renderMermaidBlock(content, options = {}) {
   const code = content.trim();
-  const payload = base64UrlEncode(JSON.stringify({ code }));
-  const src = `${apiHost}/img/${payload}`;
-  return `<figure data-type="mermaid" class="cherry-mermaid-block"><img class="cherry-mermaid__img" style="max-width: 100%" src="${src}" alt="" /></figure>`;
+  const src = buildMermaidImageSrc(code, options);
+  const payload = base64UrlEncode(code);
+  return `<figure data-type="mermaid" class="cherry-mermaid-block"><img class="cherry-mermaid__img" data-mermaid="${payload}" style="max-width: 100%" src="${src}" alt="" /></figure>`;
 }
 
 /**
  * 将 ECharts 配置代码块渲染为远程图片 HTML 片段。
  *
- * 根据系统配色选择主题，并将宽高与 options 一并传给 echarts-api。
- *
- * @param {string} content - ECharts 配置 JSON / 对象字面量
- * @param {Object} [options={}]
- * @param {string} [options.apiHost=ECHARTS_API_HOST] - ECharts API 基址
+ * @param {string} content
+ * @param {Object} [options]
  * @returns {string}
  */
-export function renderEchartsBlock(content, { apiHost = ECHARTS_API_HOST } = {}) {
-  const isDark = prefersDarkScheme();
-  const data = {
-    theme: isDark ? "dark" : "",
-    width: 600,
-    height: 400,
-    options: parseEchartsJson(content),
-  };
-  const src = `${apiHost}?data=${encodeURIComponent(JSON.stringify(data))}`;
-  return `<div data-type="echarts" class="cherry-echarts-block"><img class="cherry-echarts__img" style="max-width: 100%" src="${src}" alt="" /></div>`;
+export function renderEchartsBlock(content, options = {}) {
+  const src = buildEchartsImageSrc(content, options);
+  const payload = base64UrlEncode(content.trim());
+  return `<div data-type="echarts" class="cherry-echarts-block"><img class="cherry-echarts__img" data-echarts="${payload}" style="max-width: 100%" src="${src}" alt="" /></div>`;
 }

@@ -2,6 +2,7 @@ import {
   getAvailableExtensions,
   createTransformerWithExtensions,
 } from "@/transformer/index.js";
+import { hydrateCherryTheme } from "@/renderer/cherryTheme.js";
 import { cardExamples } from "./card/index.js";
 import { cherrySyntaxExamples } from "./cherry_syntax/index.js";
 import mediaExample from "./media.js";
@@ -474,6 +475,7 @@ function render() {
   const { html } = engine.render(ast);
 
   preview.innerHTML = html;
+  hydrateCherryTheme(preview);
   markdownDisplay.textContent = md;
   htmlDisplay.textContent = html;
 

@@ -1,4 +1,5 @@
 import { createTransformer } from "@/transformer/index.js";
+import { hydrateCherryTheme } from "@/renderer/cherryTheme.js";
 import example from "../test.md?raw";
 
 const transformer = createTransformer();
@@ -15,6 +16,7 @@ function renderNow() {
   const { html } = transformer.render(md);
   htmlOutput.textContent = html;
   preview.innerHTML = html;
+  hydrateCherryTheme(preview);
 }
 
 let t = 0;
