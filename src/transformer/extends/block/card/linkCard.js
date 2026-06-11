@@ -3,7 +3,7 @@
  * @module transformer/extends/block/card/linkCard
  *
  * ```
- * ::: link-card title="文档" link="https://example.com"
+ * ::: link-card 文档 link="https://example.com"
  * 内容
  * :::
  * ```
@@ -15,8 +15,7 @@ import { escapeHtml } from "@/transformer/utils/escape.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 import {
   CARD_BLOCK_PRIORITY,
-  parseTitleInline,
-  pickAttr,
+  parseLinkCardOpen,
   readTripleColonBlock,
 } from "./shared.js";
 
@@ -32,13 +31,13 @@ class LinkCardBlockParser extends BaseBlockParser {
     const block = readTripleColonBlock(lines, index, OPEN_RE);
     if (!block) return null;
 
-    const { title, titleNodes } = parseTitleInline(block.attrs, ctx);
+    const { title, titleNodes, link } = parseLinkCardOpen(block.attrs, ctx);
 
     return {
       node: createNode(this.type, {
         title,
         titleNodes,
-        link: pickAttr(block.attrs, "link") || pickAttr(block.attrs, "href"),
+        link,
         children: ctx.parseBlocks(normalizeInnerLines(block.innerLines)),
       }),
       nextIndex: block.nextIndex,

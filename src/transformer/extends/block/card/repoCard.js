@@ -3,7 +3,7 @@
  * @module transformer/extends/block/card/repoCard
  *
  * ```
- * ::: repo-card repo="vuepress/ecosystem"
+ * ::: repo-card vuepress/ecosystem
  * Official plugins and themes for VuePress2
  * :::
  * ```
@@ -15,8 +15,7 @@ import { escapeHtml } from "@/transformer/utils/escape.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 import {
   CARD_BLOCK_PRIORITY,
-  parseTitleInline,
-  pickAttr,
+  parseRepoCardOpen,
   readTripleColonBlock,
 } from "./shared.js";
 
@@ -63,19 +62,6 @@ const SHIELD_PALETTES = {
     logoColor: "8b949e",
   },
 };
-
-/**
- * @param {string} raw
- * @returns {string}
- */
-function parseRepoSlug(raw) {
-  const repo = pickAttr(raw, "repo").trim();
-  if (repo) return repo;
-
-  const link = pickAttr(raw, "link") || pickAttr(raw, "href");
-  const match = link.match(/github\.com\/([^/]+\/[^/#?]+)/i);
-  return match?.[1]?.replace(/\.git$/, "") ?? "";
-}
 
 /**
  * @param {string} repo
@@ -129,15 +115,14 @@ class RepoCardBlockParser extends BaseBlockParser {
     const block = readTripleColonBlock(lines, index, OPEN_RE);
     if (!block) return null;
 
-    const { title, titleNodes } = parseTitleInline(block.attrs, ctx);
+    const { repo, link, visibility } = parseRepoCardOpen(block.attrs);
+    if (!repo) return null;
 
     return {
       node: createNode(this.type, {
-        title,
-        titleNodes,
-        link: pickAttr(block.attrs, "link") || pickAttr(block.attrs, "href"),
-        repo: parseRepoSlug(block.attrs),
-        visibility: pickAttr(block.attrs, "visibility") || "Public",
+        repo,
+        link,
+        visibility,
         children: ctx.parseBlocks(normalizeInnerLines(block.innerLines)),
       }),
       nextIndex: block.nextIndex,
@@ -147,13 +132,6 @@ class RepoCardBlockParser extends BaseBlockParser {
   /** @inheritdoc */
   render(node, ctx) {
     const repo = String(node.repo ?? "");
-    const title = String(node.title ?? "");
-    const titleNodes = node.titleNodes ?? [];
-    const hasTitle = Boolean(title);
-    const nameHtml = hasTitle
-      ? ctx.renderInline(titleNodes)
-      : escapeHtml(repo);
-    const nameLabel = hasTitle ? title : repo;
     const href =
       String(node.link ?? "") || (repo ? `https://github.com/${repo}` : "");
     const repoBase = repo ? `https://github.com/${repo}` : "";
@@ -168,12 +146,12 @@ class RepoCardBlockParser extends BaseBlockParser {
 
     parts.push(`<p class="repo-name">`);
     parts.push(`<span class="repo-icon" aria-hidden="true"></span>`);
-    if (href && (hasTitle || repo)) {
+    if (href && repo) {
       parts.push(
-        `<span class="repo-link"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(nameLabel)}">${nameHtml}</a></span>`,
+        `<span class="repo-link"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(repo)}">${escapeHtml(repo)}</a></span>`,
       );
-    } else if (hasTitle || repo) {
-      parts.push(`<span class="repo-link">${nameHtml}</span>`);
+    } else if (repo) {
+      parts.push(`<span class="repo-link">${escapeHtml(repo)}</span>`);
     }
     if (visibility) {
       parts.push(`<span class="repo-visibility">${escapeHtml(visibility)}</span>`);

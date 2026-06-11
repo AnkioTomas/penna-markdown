@@ -34,7 +34,7 @@ describe("extends/card", () => {
   });
 
   it("renders link-card with jump link", () => {
-    const md = `::: link-card title="文档" link="https://example.com"
+    const md = `::: link-card 文档 link="https://example.com"
 
 点击查看文档详情。
 :::`;
@@ -123,7 +123,7 @@ describe("extends/card", () => {
   it("renders card grid with mixed card types", () => {
     const md = `:::: card-grid
 
-::: link-card title="卡片标题 1" link="https://example.com/1"
+::: link-card 卡片标题 1 link="https://example.com/1"
 
 卡片一内容。
 :::
@@ -139,7 +139,7 @@ describe("extends/card", () => {
   });
 
   it("renders repo-card with shields.io badges when repo is provided", () => {
-    const md = `::: repo-card repo="vuepress/ecosystem"
+    const md = `::: repo-card vuepress/ecosystem
 Official plugins and themes for VuePress2
 :::`;
     const { html } = engine().render(md);

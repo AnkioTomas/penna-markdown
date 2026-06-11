@@ -2,10 +2,10 @@
 export default {
   name: "repo-card",
   desc: "仓库卡片 ::: repo-card",
-  markdown: `::: repo-card repo="vuepress/ecosystem"
+  markdown: `::: repo-card vuepress/ecosystem
 Official plugins and themes for VuePress2
 :::
 
-描述写在卡片容器内。语言、Stars、Forks、License 均由 shields.io 根据 \`repo\` 自动拉取。`,
+开标签行直接写 \`owner/repo\`。描述写在卡片容器内，语言 / Stars / Forks / License 由 shields.io 自动拉取。`,
   expected: "",
 };

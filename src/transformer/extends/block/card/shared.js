@@ -47,6 +47,58 @@ export function parseTitleInline(attrs, ctx) {
 }
 
 /**
+ * 去掉开标记行中的 link / href 属性，剩余文本作为标题。
+ *
+ * @param {string} attrs
+ * @returns {string}
+ */
+export function stripLinkAttrs(attrs) {
+  return String(attrs ?? "")
+    .replace(/\b(?:link|href)="[^"]*"/g, "")
+    .trim();
+}
+
+/**
+ * @param {string} attrs
+ * @param {import('@/transformer/core/ParserContext.js').BlockParseContext} ctx
+ * @returns {{
+ *   title: string,
+ *   titleNodes: import('@/transformer/core/MarkdownNode.js').MarkdownNode[],
+ *   link: string,
+ * }}
+ */
+export function parseLinkCardOpen(attrs, ctx) {
+  const link = pickAttr(attrs, "link") || pickAttr(attrs, "href");
+  const title = stripLinkAttrs(attrs);
+  return {
+    title,
+    titleNodes: title ? ctx.parseInline(title) : [],
+    link,
+  };
+}
+
+/**
+ * @param {string} attrs
+ * @returns {{ repo: string, link: string, visibility: string }}
+ */
+export function parseRepoCardOpen(attrs) {
+  const trimmed = String(attrs ?? "").trim();
+  if (!trimmed) {
+    return { repo: "", link: "", visibility: "Public" };
+  }
+
+  const match = trimmed.match(/^(\S+)(?:\s+(.*))?$/);
+  const repo = (match?.[1] ?? "").replace(/\.git$/, "");
+  const rest = match?.[2] ?? "";
+
+  return {
+    repo,
+    link: pickAttr(rest, "link") || pickAttr(rest, "href"),
+    visibility: pickAttr(rest, "visibility") || "Public",
+  };
+}
+
+/**
  * @param {string[]} lines
  * @param {number} start
  * @param {RegExp} openRe

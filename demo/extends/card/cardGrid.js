@@ -4,7 +4,7 @@ export default {
   desc: "卡片网格 :::: card-grid",
   markdown: `:::: card-grid cols="{ sm: 1, md: 2, lg: 2 }"
 
-::: link-card title="指南" link="https://example.com/guide"
+::: link-card 指南 link="https://example.com/guide"
 
 快速上手文档。
 :::
