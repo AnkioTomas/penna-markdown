@@ -2,7 +2,7 @@
  * @file 脚注引用语法
  * @module transformer/extends/inline/footnoteRef
  *
- * 语法：`[^id]`，id 须在文档中存在对应脚注定义。
+ * 语法：`[^id]`
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
@@ -12,6 +12,14 @@ import { lookupFootnoteDefinition } from "@/transformer/extends/utils/footnote.j
 
 /** 脚注引用正则：`[^id]` */
 const FOOTNOTE_REF_RE = /^\[\^([^\]]+)\]/;
+
+/**
+ * @param {number} num
+ * @param {number} refIndex
+ */
+function footnoteRefId(num, refIndex) {
+  return refIndex === 1 ? `footnote-ref-${num}` : `footnote-ref-${num}-${refIndex}`;
+}
 
 /**
  * 脚注引用行内解析器。
@@ -43,9 +51,9 @@ class FootnoteRefInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node) {
-    const { id, num } = node;
+    const { id, num, refIndex = 1 } = node;
     if (!num) return `[^${id}]`;
-    return `<sup><a href="#fn:${num}" id="fnref:${num}" class="footnote" title="${id}">[${num}]</a></sup>`;
+    return `<sup class="footnote-ref"><a href="#footnote-${num}" id="${footnoteRefId(num, refIndex)}">${num}</a></sup>`;
   }
 }
 

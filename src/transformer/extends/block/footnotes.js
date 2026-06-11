@@ -1,9 +1,6 @@
 /**
  * @file 块级语法拓展：文末脚注区块
  * @module transformer/extends/block/footnotes
- *
- * 脚注定义由 footnoteDef 解析器收集；finalizeFootnotes 在文档收尾时
- * 按引用顺序生成 `footnotes` 节点并挂到 root.children。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
@@ -13,8 +10,38 @@ import {
   walkNodes,
 } from "@/transformer/extends/utils/footnote.js";
 
+/** @param {number} num */
+function footnoteTargetId(num) {
+  return `footnote-${num}`;
+}
+
+/** @param {number} num */
+function footnoteFirstRefId(num) {
+  return `footnote-ref-${num}`;
+}
+
+/** @param {number} num @param {number} refIndex */
+function footnoteRefId(num, refIndex) {
+  return refIndex === 1
+    ? footnoteFirstRefId(num)
+    : `footnote-ref-${num}-${refIndex}`;
+}
+
 /**
- * 文末脚注区块渲染器（不参与 parse，仅 render）。
+ * @param {string} html
+ * @param {string} backref
+ */
+function appendFootnoteBackref(html, backref) {
+  const trimmed = html.trim();
+  if (!trimmed) return `<p>${backref}</p>`;
+  if (trimmed.endsWith("</p>")) {
+    return trimmed.replace(/<\/p>\s*$/, ` ${backref}</p>`);
+  }
+  return `${trimmed}\n<p>${backref}</p>`;
+}
+
+/**
+ * 文末脚注区块渲染器。
  *
  * @extends {BaseBlockParser}
  */
@@ -33,15 +60,25 @@ class FootnotesSectionParser extends BaseBlockParser {
     const { items } = node;
     if (!items?.length) return "";
 
-    const body = items
+    const list = items
       .map((item) => {
         const inner = ctx.renderBlock(item.children);
-        const back = `<a href="#fnref:${item.num}" id="fn:${item.num}" class="footnote-ref" title="${item.id}">[${item.num}]</a>`;
-        return `<div class="one-footnote">\n${back}${inner}\n</div>`;
+        const backref = `<a href="#${footnoteFirstRefId(item.num)}" class="footnote-backref" aria-label="返回引用">↩︎</a>`;
+        const body = appendFootnoteBackref(inner, backref);
+        return `<li id="${footnoteTargetId(item.num)}" class="footnote-item">${body}</li>`;
       })
-      .join("");
+      .join("\n");
 
-    return `<div class="footnote">\n<div class="footnote-title">脚注</div>${body}</div>`;
+    return [
+      `<div class="footnotes">`,
+      `<hr class="footnotes-sep">`,
+      `<section class="footnotes">`,
+      `<ol class="footnotes-list">`,
+      list,
+      `</ol>`,
+      `</section>`,
+      `</div>`,
+    ].join("\n");
   }
 }
 
@@ -50,7 +87,6 @@ class FootnotesSectionParser extends BaseBlockParser {
  *
  * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode} root
  * @param {import('@/transformer/core/ParserContext.js').BlockParseContext} ctx
- * @returns {import('@/transformer/core/MarkdownNode.js').MarkdownNode}
  */
 export function finalizeFootnotes(root, ctx) {
   collectFootnoteDefinitions(ctx.store.document().lines, ctx.store);
@@ -62,14 +98,21 @@ export function finalizeFootnotes(root, ctx) {
   });
 
   const idToNum = new Map();
+  const idToRefCount = new Map();
   let num = 0;
+
   for (const node of refs) {
     if (!defs[node.id]) continue;
+
     if (!idToNum.has(node.id)) {
       num += 1;
       idToNum.set(node.id, num);
     }
+
+    const refIndex = (idToRefCount.get(node.id) ?? 0) + 1;
+    idToRefCount.set(node.id, refIndex);
     node.num = idToNum.get(node.id);
+    node.refIndex = refIndex;
   }
 
   if (num === 0) return root;

@@ -435,7 +435,56 @@ console.log('Hello World!')
 !video[带封面](https://example.com/demo.mp4){poster=https://example.com/poster.png}`,
     expected: "",
   },
-  { name: "footnote", desc: "脚注", markdown: "需要解释[^1]。\n\n[^1]: 脚注内容", expected: "<p>需要解释<sup class=\"footnote-ref\"><a href=\"#footnote-1\" id=\"footnote-ref-1\">1</a></sup>。</p>\n<div class=\"footnotes\">\n<hr class=\"footnotes-sep\">\n<section class=\"footnotes\">\n<ol class=\"footnotes-list\">\n<li id=\"footnote-1\" class=\"footnote-item\">\n<p>脚注内容 <a href=\"#footnote-ref-1\" class=\"footnote-backref\">↩</a></p>\n</li>\n</ol>\n</section>\n</div>" },
+  {
+    name: "footnote",
+    desc: "脚注（全面演示）",
+    markdown: `## 基础引用
+
+人生自古谁无死[^poem]，留取丹心照汗青。
+
+[^poem]: 出自 宋·文天祥 **《过零丁洋》**
+
+## 多个脚注
+
+Cherry Markdown[^cherry] 支持 GFM 风格脚注[^gfm]，点击上标可跳转到文末。
+
+[^cherry]: Cherry Markdown Next 扩展语法演示项目。
+[^gfm]: GitHub Flavored Markdown 规范中的脚注扩展。
+
+## 重复引用同一脚注
+
+第一次提到 VuePress[^vp]，后文再次引用 VuePress[^vp]，两次上标编号相同。
+
+[^vp]: VuePress 是 Vue 驱动的静态站点生成器。
+
+重复引用时，文末 ↩︎ 始终回到**第一次**出现的位置（\`footnote-ref-1\`）。
+
+## 引用顺序决定编号
+
+先引用 B[^b]，再引用 A[^a]；编号按**首次引用**排序，而非定义顺序。
+
+[^a]: 定义写在后面，但编号靠后。
+[^b]: 定义写在后面，但编号靠前。
+
+## 富文本脚注
+
+详见 [官方文档](https://example.com/docs)[^doc] 与 \`inline code\`[^code] 示例。
+
+[^doc]: 支持 **加粗**、*斜体*、[链接](https://example.com) 等 Markdown。
+[^code]: 行内代码与列表也支持：
+
+  - 要点一
+  - 要点二
+
+## 多行脚注正文
+
+扩展语法[^ext] 可在定义后继续换行书写，直到空行或下一条定义。
+
+[^ext]: 第一行说明。
+
+  第二行补充内容，属于同一条脚注。`,
+    expected: "",
+  },
 ];
 
 const DEFAULT_MARKDOWN = `---

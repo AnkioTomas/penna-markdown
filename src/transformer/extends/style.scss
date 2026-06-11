@@ -19,6 +19,7 @@
 @use "style/collapse";
 @use "style/media";
 @use "style/math";
+@use "style/footnote";
 
 .cherry {
   @include tokens.colors;
@@ -40,4 +41,5 @@
   @include collapse.styles;
   @include media.styles;
   @include math.styles;
+  @include footnote.styles;
 }
