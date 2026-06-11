@@ -15,6 +15,7 @@ import { escapeHtml } from "@/transformer/utils/escape.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 import {
   CARD_BLOCK_PRIORITY,
+  parseTitleInline,
   pickAttr,
   readTripleColonBlock,
 } from "./shared.js";
@@ -128,9 +129,12 @@ class RepoCardBlockParser extends BaseBlockParser {
     const block = readTripleColonBlock(lines, index, OPEN_RE);
     if (!block) return null;
 
+    const { title, titleNodes } = parseTitleInline(block.attrs, ctx);
+
     return {
       node: createNode(this.type, {
-        title: pickAttr(block.attrs, "title"),
+        title,
+        titleNodes,
         link: pickAttr(block.attrs, "link") || pickAttr(block.attrs, "href"),
         repo: parseRepoSlug(block.attrs),
         visibility: pickAttr(block.attrs, "visibility") || "Public",
@@ -143,7 +147,13 @@ class RepoCardBlockParser extends BaseBlockParser {
   /** @inheritdoc */
   render(node, ctx) {
     const repo = String(node.repo ?? "");
-    const name = String(node.title ?? "") || repo;
+    const title = String(node.title ?? "");
+    const titleNodes = node.titleNodes ?? [];
+    const hasTitle = Boolean(title);
+    const nameHtml = hasTitle
+      ? ctx.renderInline(titleNodes)
+      : escapeHtml(repo);
+    const nameLabel = hasTitle ? title : repo;
     const href =
       String(node.link ?? "") || (repo ? `https://github.com/${repo}` : "");
     const repoBase = repo ? `https://github.com/${repo}` : "";
@@ -158,12 +168,12 @@ class RepoCardBlockParser extends BaseBlockParser {
 
     parts.push(`<p class="repo-name">`);
     parts.push(`<span class="repo-icon" aria-hidden="true"></span>`);
-    if (href && name) {
+    if (href && (hasTitle || repo)) {
       parts.push(
-        `<span class="repo-link"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(name)}">${escapeHtml(name)}</a></span>`,
+        `<span class="repo-link"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(nameLabel)}">${nameHtml}</a></span>`,
       );
-    } else if (name) {
-      parts.push(`<span class="repo-link">${escapeHtml(name)}</span>`);
+    } else if (hasTitle || repo) {
+      parts.push(`<span class="repo-link">${nameHtml}</span>`);
     }
     if (visibility) {
       parts.push(`<span class="repo-visibility">${escapeHtml(visibility)}</span>`);

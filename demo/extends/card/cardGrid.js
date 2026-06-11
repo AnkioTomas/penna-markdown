@@ -14,7 +14,7 @@ export default {
 网格中的图片卡片。
 :::
 
-::: card title="说明"
+::: card 说明
 
 网格中的普通卡片。
 :::

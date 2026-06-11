@@ -14,12 +14,22 @@ describe("extends/card", () => {
   const engine = () => createTransformerWithExtensions(["card"]);
 
   it("renders single card with title attribute", () => {
-    const md = `::: card title="标题" icon="twemoji:astonished-face"
+    const md = `::: card 标题
 
 这里是卡片内容。
 :::`;
     expect(engine().render(md).html).toBe(
       cardHtml("标题", "<p>这里是卡片内容。</p>"),
+    );
+  });
+
+  it("renders card title with inline markdown", () => {
+    const md = `::: card **加粗**标题
+内容
+:::`;
+    const { html } = engine().render(md);
+    expect(html).toContain(
+      '<p class="card-title"><strong>加粗</strong>标题</p>',
     );
   });
 
@@ -66,9 +76,9 @@ describe("extends/card", () => {
   it("renders card grid with default responsive cols", () => {
     const md = `:::: card-grid
 
-::: card title="A"
+::: card A
 :::
-::: card title="B"
+::: card B
 :::
 
 ::::`;
@@ -81,11 +91,11 @@ describe("extends/card", () => {
   it("renders card grid with uniform cols number", () => {
     const md = `:::: card-grid cols="3"
 
-::: card title="A"
+::: card A
 :::
-::: card title="B"
+::: card B
 :::
-::: card title="C"
+::: card C
 :::
 
 ::::`;
@@ -98,9 +108,9 @@ describe("extends/card", () => {
   it("renders card grid with breakpoint cols object", () => {
     const md = `:::: card-grid cols="{ sm: 1, md: 2, lg: 3 }"
 
-::: card title="A"
+::: card A
 :::
-::: card title="B"
+::: card B
 :::
 
 ::::`;
@@ -185,15 +195,15 @@ Official plugins and themes for VuePress2
   it("renders card masonry with nested cards", () => {
     const md = `:::: card-masonry cols="2" gap="12"
 
-::: card title="卡片1"
+::: card 卡片1
 内容一
 :::
 
-::: card title="卡片2"
+::: card 卡片2
 内容二
 :::
 
-::: card title="卡片3"
+::: card 卡片3
 内容三
 :::
 

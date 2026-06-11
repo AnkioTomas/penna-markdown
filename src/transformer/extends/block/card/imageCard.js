@@ -15,6 +15,7 @@ import { escapeHtml } from "@/transformer/utils/escape.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 import {
   CARD_BLOCK_PRIORITY,
+  parseTitleInline,
   pickAttr,
   readTripleColonBlock,
 } from "./shared.js";
@@ -38,16 +39,18 @@ function renderCopyright(author, date) {
 }
 
 /**
- * @param {string} title
+ * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[]} titleNodes
  * @param {string} href
+ * @param {import('@/transformer/core/ParserContext.js').RenderContext} ctx
  * @returns {string}
  */
-function renderTitle(title, href) {
-  if (!title) return "";
+function renderTitle(titleNodes, href, ctx) {
+  if (!titleNodes?.length) return "";
+  const html = ctx.renderInline(titleNodes);
   if (href) {
-    return `<h3 class="title"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a></h3>`;
+    return `<h3 class="title"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${html}</a></h3>`;
   }
-  return `<h3 class="title">${escapeHtml(title)}</h3>`;
+  return `<h3 class="title">${html}</h3>`;
 }
 
 /**
@@ -76,9 +79,12 @@ class ImageCardBlockParser extends BaseBlockParser {
     const block = readTripleColonBlock(lines, index, OPEN_RE);
     if (!block) return null;
 
+    const { title, titleNodes } = parseTitleInline(block.attrs, ctx);
+
     return {
       node: createNode(this.type, {
-        title: pickAttr(block.attrs, "title"),
+        title,
+        titleNodes,
         link: pickAttr(block.attrs, "link") || pickAttr(block.attrs, "href"),
         image: pickAttr(block.attrs, "image"),
         description:
@@ -95,6 +101,7 @@ class ImageCardBlockParser extends BaseBlockParser {
   render(node, ctx) {
     const image = String(node.image ?? "");
     const title = String(node.title ?? "");
+    const titleNodes = node.titleNodes ?? [];
     const link = String(node.link ?? "");
     const author = String(node.author ?? "");
     const date = String(node.date ?? "");
@@ -106,7 +113,7 @@ class ImageCardBlockParser extends BaseBlockParser {
       : "";
 
     const infoParts = [
-      renderTitle(title, link),
+      renderTitle(titleNodes, link, ctx),
       renderCopyright(author, date),
       renderDescription(description, bodyHtml),
     ].filter(Boolean);

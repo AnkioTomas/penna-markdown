@@ -15,6 +15,7 @@ import { escapeHtml } from "@/transformer/utils/escape.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 import {
   CARD_BLOCK_PRIORITY,
+  parseTitleInline,
   pickAttr,
   readTripleColonBlock,
 } from "./shared.js";
@@ -31,9 +32,12 @@ class LinkCardBlockParser extends BaseBlockParser {
     const block = readTripleColonBlock(lines, index, OPEN_RE);
     if (!block) return null;
 
+    const { title, titleNodes } = parseTitleInline(block.attrs, ctx);
+
     return {
       node: createNode(this.type, {
-        title: pickAttr(block.attrs, "title"),
+        title,
+        titleNodes,
         link: pickAttr(block.attrs, "link") || pickAttr(block.attrs, "href"),
         children: ctx.parseBlocks(normalizeInnerLines(block.innerLines)),
       }),
@@ -43,7 +47,6 @@ class LinkCardBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node, ctx) {
-    const title = String(node.title ?? "");
     const link = String(node.link ?? "");
     const body = ctx.renderBlock(node.children ?? []);
     const href = link
@@ -51,8 +54,8 @@ class LinkCardBlockParser extends BaseBlockParser {
       : "";
 
     const parts = [`<a class="card link-card"${href}>`];
-    if (title) {
-      parts.push(`<p class="card-title">${escapeHtml(title)}</p>`);
+    if (node.title) {
+      parts.push(`<p class="card-title">${ctx.renderInline(node.titleNodes)}</p>`);
     }
     if (body) {
       parts.push(`<div class="card-body">${body}</div>`);

@@ -3,7 +3,7 @@
  * @module transformer/extends/block/card/card
  *
  * ```
- * ::: card title="标题"
+ * ::: card 标题
  * 内容
  * :::
  * ```
@@ -11,13 +11,8 @@
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
-import { escapeHtml } from "@/transformer/utils/escape.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
-import {
-  CARD_BLOCK_PRIORITY,
-  pickAttr,
-  readTripleColonBlock,
-} from "./shared.js";
+import { CARD_BLOCK_PRIORITY, readTripleColonBlock } from "./shared.js";
 
 const OPEN_RE = /^ {0,3}:::(?!:)\s+card(?:\s+(.*))?\s*$/;
 
@@ -31,9 +26,13 @@ class CardBlockParser extends BaseBlockParser {
     const block = readTripleColonBlock(lines, index, OPEN_RE);
     if (!block) return null;
 
+    const title = (block.attrs ?? "").trim();
+    const titleNodes = title ? ctx.parseInline(title) : [];
+
     return {
       node: createNode(this.type, {
-        title: pickAttr(block.attrs, "title"),
+        title,
+        titleNodes,
         children: ctx.parseBlocks(normalizeInnerLines(block.innerLines)),
       }),
       nextIndex: block.nextIndex,
@@ -42,12 +41,11 @@ class CardBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node, ctx) {
-    const title = String(node.title ?? "");
     const body = ctx.renderBlock(node.children ?? []);
 
     const parts = [`<div class="card">`];
-    if (title) {
-      parts.push(`<p class="card-title">${escapeHtml(title)}</p>`);
+    if (node.title) {
+      parts.push(`<p class="card-title">${ctx.renderInline(node.titleNodes)}</p>`);
     }
     if (body) {
       parts.push(`<div class="card-body">${body}</div>`);

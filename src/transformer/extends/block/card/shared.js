@@ -29,6 +29,24 @@ export function pickAttr(raw, name) {
 }
 
 /**
+ * 解析 title 属性为行内 AST。
+ *
+ * @param {string} attrs
+ * @param {import('@/transformer/core/ParserContext.js').BlockParseContext} ctx
+ * @returns {{
+ *   title: string,
+ *   titleNodes: import('@/transformer/core/MarkdownNode.js').MarkdownNode[],
+ * }}
+ */
+export function parseTitleInline(attrs, ctx) {
+  const title = pickAttr(attrs, "title");
+  return {
+    title,
+    titleNodes: title ? ctx.parseInline(title) : [],
+  };
+}
+
+/**
  * @param {string[]} lines
  * @param {number} start
  * @param {RegExp} openRe
