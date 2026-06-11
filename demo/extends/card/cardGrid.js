@@ -1,3 +1,7 @@
+import { img } from "../../placeholder.js";
+
+const gridImg = img(400, 240, "网格图片", { bg: "7c3aed" });
+
 /** @type {import('../syntaxExample.js').SyntaxExample} */
 export default {
   name: "card-grid",
@@ -9,7 +13,7 @@ export default {
 快速上手文档。
 :::
 
-::: image-card image="https://example.com/photo.webp" title="示例图片" author="Alice"
+::: image-card image="${gridImg}" title="示例图片" author="Alice"
 
 网格中的图片卡片。
 :::

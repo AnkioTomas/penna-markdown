@@ -1,4 +1,7 @@
-import { createTransformer } from "@/transformer/index.js";
+import {
+  getAvailableExtensions,
+  createTransformerWithExtensions,
+} from "@/transformer/index.js";
 import { gfmSyntaxExamples } from "./examples/index.js";
 
 const markdownInput = document.getElementById("markdown-input");
@@ -9,7 +12,8 @@ const syntaxList = document.getElementById("syntax-list");
 const rerunBtn = document.getElementById("rerun-btn");
 const statusEl = document.getElementById("status");
 
-const transformer = createTransformer();
+const extensionNames = getAvailableExtensions();
+const transformer = createTransformerWithExtensions(extensionNames);
 
 let currentSyntaxIndex = 0;
 
@@ -34,7 +38,8 @@ function render() {
   htmlDisplay.textContent = html;
 
   const badge = check.demo ? "演示" : check.ok ? "通过" : "失败";
-  statusEl.textContent = `GFM 内置语法 · ${badge} · ${new Date().toLocaleTimeString()}`;
+  const extLabel = extensionNames.length ? `${extensionNames.length} 个扩展` : "无扩展";
+  statusEl.textContent = `GFM · ${extLabel} · ${badge} · ${new Date().toLocaleTimeString()}`;
   statusEl.classList.toggle("fail", !check.ok && !check.demo);
 }
 

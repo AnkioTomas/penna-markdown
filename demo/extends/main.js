@@ -4,6 +4,7 @@ import {
 } from "@/transformer/index.js";
 import { cardExamples } from "./card/index.js";
 import { cherrySyntaxExamples } from "./cherry_syntax/index.js";
+import mediaExample from "./media.js";
 
 const markdownInput = document.getElementById("markdown-input");
 const preview = document.getElementById("preview");
@@ -20,7 +21,13 @@ const syntaxExamples = [
     desc: "行内高亮",
     markdown: "==高亮文本==\n\n==默认== ==重要=={.important} ==注意=={.note} ==提示=={.tip} ==警告=={.warning} ==谨慎=={.caution} ==危险=={.danger}",
   },
-  { name: "emoji", desc: "Emoji 短码", markdown: ":smile: :thumbsup:" },
+  {
+    name: "emoji",
+    desc: "Emoji 短码 :name:",
+    markdown: `:smile: :thumbsup: :heart: :rocket: :tada: :+1:
+
+常用：:warning: :bulb: :star: :fire: :sparkles: :check: :赞:`,
+  },
   {
     name: "html_attrs",
     desc: "HTML 属性",
@@ -73,7 +80,13 @@ $$
 $$`,
   },
   ...cherrySyntaxExamples,
-  { name: "inline_comment", desc: "行内注释", markdown: "%% 注释 %%" },
+  {
+    name: "inline_comment",
+    desc: "行内注释 %% ... %%",
+    markdown: `可见文字 %% 读者不可见的编辑备注 %% 继续书写。
+
+整段注释：%% 这一段不会出现在 HTML 里 %%`,
+  },
   {
     name: "badge",
     desc: "徽章 [文本]{.variant .top}",
@@ -398,17 +411,7 @@ console.log('Hello World!')
     desc: "内嵌 iframe",
     markdown: "!iframe[演示页面](https://example.com)",
   },
-  {
-    name: "media",
-    desc: "媒体元素",
-    markdown: `!video[演示视频](https://example.com/demo.mp4)
-
-!audio[背景音乐](https://example.com/a.mp3)
-
-!audio[带封面](https://example.com/a.mp3){poster=https://example.com/cover.png}
-
-!video[带封面](https://example.com/demo.mp4){poster=https://example.com/poster.png}`,
-  },
+  mediaExample,
   {
     name: "footnote",
     desc: "脚注（全面演示）",

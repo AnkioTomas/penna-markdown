@@ -1,9 +1,12 @@
-import { createTransformer } from "@/transformer/index.js";
+import {
+  getAvailableExtensions,
+  createTransformerWithExtensions,
+} from "@/transformer/index.js";
 import { AstTreeView } from "./tree-view.js";
 import { highlightJson } from "./json-highlight.js";
 import example from "../test.md?raw";
 
-const transformer = createTransformer();
+const transformer = createTransformerWithExtensions(getAvailableExtensions());
 
 const markdownInput = document.querySelector("#markdown");
 const resetBtn = document.querySelector("#reset-btn");

@@ -1,7 +1,7 @@
 /** @type {import('../../extends/syntaxExample.js').SyntaxExample} */
 export default {
   name: "lists",
-  desc: "无序 / 有序 / 嵌套列表",
+  desc: "无序 / 有序 / 嵌套 / 松散与紧凑",
   markdown: `- 苹果
 - 香蕉
 - 橙子
@@ -13,6 +13,14 @@ export default {
 - 父项
   - 子项 A
   - 子项 B
-    - 孙项`,
+    - 孙项
+
+松散列表（项间空行）：
+
+- 第一项
+
+  中间段落属于上一项。
+
+- 第二项`,
   expected: "",
 };

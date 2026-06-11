@@ -1,3 +1,7 @@
+import { img } from "../../placeholder.js";
+
+const sampleImg = img(400, 200, "示例图片", { bg: "2563eb" });
+
 /** @type {import('../../extends/syntaxExample.js').SyntaxExample} */
 export default {
   name: "typical",
@@ -6,7 +10,7 @@ export default {
 
 段落与 **加粗**、*斜体*、~~删除线~~。
 
-[链接](https://example.com) 与 ![图片](https://example.com/a.png)
+[链接](https://example.com) 与 ![图片](${sampleImg})
 
 - 无序列表
 - 第二项
@@ -32,7 +36,7 @@ console.log('block')
 `,
   expected: `<h1>标题</h1>
 <p>段落与 <strong>加粗</strong>、<em>斜体</em>、<del>删除线</del>。</p>
-<p><a href="https://example.com">链接</a> 与 <img src="https://example.com/a.png" alt="图片" /></p>
+<p><a href="https://example.com">链接</a> 与 <img src="${sampleImg}" alt="图片" /></p>
 <ul>
 <li>无序列表</li>
 <li>第二项</li>
