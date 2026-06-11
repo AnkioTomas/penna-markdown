@@ -128,6 +128,55 @@ describe("extends/card", () => {
     expect(html).toContain('class="image-card"');
   });
 
+  it("renders card masonry with cols and gap", () => {
+    const md = `:::: card-masonry cols="3" gap="16"
+
+![a](https://example.com/1.png)
+
+![b](https://example.com/2.png)
+
+![c](https://example.com/3.png)
+
+![d](https://example.com/4.png)
+
+![e](https://example.com/5.png)
+
+![f](https://example.com/6.png)
+
+::::`;
+    const { html } = engine().render(md);
+    expect(html).toContain(
+      'class="card-masonry cols-3" style="gap: 16px; --card-masonry-cols: 3;"',
+    );
+    expect(html).toContain('class="card-masonry-item" style="gap: 16px;"');
+    expect(html).toContain('class="masonry-v-6-0"');
+    expect(html).toContain('class="masonry-v-6-3"');
+    expect(html).toContain('class="masonry-v-6-5"');
+  });
+
+  it("renders card masonry with nested cards", () => {
+    const md = `:::: card-masonry cols="2" gap="12"
+
+::: card title="卡片1"
+内容一
+:::
+
+::: card title="卡片2"
+内容二
+:::
+
+::: card title="卡片3"
+内容三
+:::
+
+::::`;
+    const { html } = engine().render(md);
+    expect(html).toContain('class="card-masonry cols-2"');
+    expect(html).toContain('class="masonry-v-3-0"');
+    expect(html).toContain('<p class="card-title">卡片1</p>');
+    expect(html).toContain('<p class="card-title">卡片3</p>');
+  });
+
   it("is disabled without extension", () => {
     const md = `::: image-card title="标题"
 内容

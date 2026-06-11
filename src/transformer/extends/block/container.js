@@ -92,7 +92,8 @@ class ContainerBlockParser extends BaseBlockParser {
       !info ||
       info.containerType === "card" ||
       info.containerType === "link-card" ||
-      info.containerType === "image-card"
+      info.containerType === "image-card" ||
+      info.containerType === "card-masonry"
     ) {
       return null;
     }
