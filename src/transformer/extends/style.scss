@@ -16,6 +16,7 @@
 @use "style/tabs";
 @use "style/field";
 @use "style/timeline";
+@use "style/collapse";
 
 .cherry {
   @include tokens.colors;
@@ -34,4 +35,5 @@
   @include tabs.styles;
   @include field.styles;
   @include timeline.styles;
+  @include collapse.styles;
 }

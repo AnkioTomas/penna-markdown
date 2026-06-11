@@ -1,0 +1,60 @@
+@mixin styles {
+  .cherry-collapse {
+    margin: 16px 0;
+    border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+    border-radius: 8px;
+    background: var(--cherry-c-bg-elevated);
+    overflow: hidden;
+
+    details {
+      border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    summary {
+      padding: 11px 14px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--cherry-c-text-1);
+      background: color-mix(in srgb, var(--cherry-c-bg-elevated) 88%, var(--cherry-c-text-3));
+      list-style: none;
+      line-height: 1.5;
+      user-select: none;
+
+      &::-webkit-details-marker {
+        display: none;
+      }
+
+      &::before {
+        content: "▸";
+        display: inline-block;
+        margin-right: 8px;
+        color: var(--cherry-c-text-3);
+        transition: transform 0.15s ease;
+      }
+    }
+
+    details[open] > summary::before {
+      transform: rotate(90deg);
+    }
+  }
+
+  .cherry-collapse-body {
+    padding: 12px 14px;
+    color: var(--cherry-c-text-2);
+    font-size: 14px;
+    line-height: 1.6;
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+}

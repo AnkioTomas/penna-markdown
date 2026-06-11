@@ -329,7 +329,82 @@ console.log('Hello World!')
 :::`,
     expected: "",
   },
-  { name: "detail", desc: "展开收起", markdown: "+++ 点击展开\n内容\n+++", expected: "<details class=\"cherry-detail\"><summary>点击展开</summary>\n<p>内容</p>\n</details>" },
+  {
+    name: "collapse",
+    desc: "折叠面板",
+    markdown: `## 基本用法
+
+::: collapse
+- 标题 1
+
+  正文内容
+
+- 标题 2
+
+  正文内容
+:::
+
+## 默认全部展开
+
+::: collapse expand
+- 标题 1
+
+  正文内容
+
+- 标题 2
+
+  正文内容
+:::
+
+## 手风琴模式
+
+::: collapse accordion
+- 标题 1
+
+  正文内容
+
+- 标题 2
+
+  正文内容
+
+- 标题 3
+
+  正文内容
+:::
+
+## :+ 标记展开
+
+::: collapse
+- 标题 1
+
+  正文内容
+
+- :+ 标题 2
+
+  展开内容
+
+- :+ 标题 3
+
+  也展开
+:::
+
+## :- 标记折叠（expand 时）
+
+::: collapse expand
+- 标题 1
+
+  正文内容
+
+- :- 标题 2
+
+  折叠内容
+
+- 标题 3
+
+  展开内容
+:::`,
+    expected: "",
+  },
   { name: "iframe", desc: "内嵌 iframe", markdown: "!iframe[演示](https://example.com)", expected: "<div class=\"cherry-iframe\" style=\"aspect-ratio: 16 / 9;\"><iframe src=\"https://example.com\" allowfullscreen=\"allowfullscreen\"></iframe></div>" },
   { name: "media", desc: "媒体元素", markdown: "!video[演示](https://example.com/demo.mp4)", expected: "<div class=\"cherry-video\"><video src=\"https://example.com/demo.mp4\" controls=\"controls\"></video></div>" },
   { name: "footnote", desc: "脚注", markdown: "需要解释[^1]。\n\n[^1]: 脚注内容", expected: "<p>需要解释<sup class=\"footnote-ref\"><a href=\"#footnote-1\" id=\"footnote-ref-1\">1</a></sup>。</p>\n<div class=\"footnotes\">\n<hr class=\"footnotes-sep\">\n<section class=\"footnotes\">\n<ol class=\"footnotes-list\">\n<li id=\"footnote-1\" class=\"footnote-item\">\n<p>脚注内容 <a href=\"#footnote-ref-1\" class=\"footnote-backref\">↩</a></p>\n</li>\n</ol>\n</section>\n</div>" },
@@ -421,12 +496,15 @@ E=mc^2^，H^^2^^O，大头 ^儿子^ 和 ^^爸爸^^
 
 :::
 
-+++ 点击展开更多
-++- 默认展开
-展开的内容
-++ 默认收起
-收起的内容
-+++
+::: collapse expand
+- 点击展开更多
+
+  默认展开的面板内容
+
+- :- 默认收起
+
+  此项初始折叠
+:::
 
 @@https://example.com
 
