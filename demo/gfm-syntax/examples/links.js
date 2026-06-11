@@ -9,5 +9,4 @@ export default {
 <https://example.com/path>
 
 <user@example.com>`,
-  expected: "",
 };

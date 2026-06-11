@@ -21,5 +21,4 @@ export default {
 ![引用图][demo-img]
 
 [demo-img]: ${ref} "引用标题"`,
-  expected: "",
 };

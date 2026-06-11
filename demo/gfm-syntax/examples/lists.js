@@ -22,5 +22,4 @@ export default {
   中间段落属于上一项。
 
 - 第二项`,
-  expected: "",
 };

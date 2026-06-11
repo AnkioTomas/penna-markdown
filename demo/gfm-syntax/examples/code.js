@@ -24,5 +24,4 @@ npm install cherry-markdown-next
 
     const indented = true;
     console.log(indented);`,
-  expected: "",
 };

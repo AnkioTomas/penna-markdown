@@ -13,5 +13,4 @@ export default {
 | --- | --- |
 | 粗体 | \`**text**\` |
 | 代码 | \`\`code\`\``,
-  expected: "",
 };

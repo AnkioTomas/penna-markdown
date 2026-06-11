@@ -16,5 +16,4 @@ export default {
 
 > - [ ] 引用块内的任务
 > - [x] 已完成`,
-  expected: "",
 };

@@ -9,5 +9,4 @@ export default {
 段落中含 <kbd>Ctrl</kbd> + <kbd>C</kbd> 行内标签。
 
 <!-- HTML 注释不会出现在输出中 -->`,
-  expected: "",
 };

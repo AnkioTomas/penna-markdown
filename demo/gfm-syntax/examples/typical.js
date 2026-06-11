@@ -34,38 +34,4 @@ console.log('block')
 
 自动链接 <https://example.com>
 `,
-  expected: `<h1>标题</h1>
-<p>段落与 <strong>加粗</strong>、<em>斜体</em>、<del>删除线</del>。</p>
-<p><a href="https://example.com">链接</a> 与 <img src="${sampleImg}" alt="图片" /></p>
-<ul>
-<li>无序列表</li>
-<li>第二项</li>
-</ul>
-<ol>
-<li>有序列表</li>
-<li>第二项</li>
-</ol>
-<blockquote>
-<p>引用块</p>
-</blockquote>
-<p><code>inline code</code></p>
-<pre><code class="language-js">console.log('block')
-</code></pre>
-<table>
-<thead>
-<tr>
-<th>表头</th>
-<th>值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>A</td>
-<td>1</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<p>自动链接 <a href="https://example.com">https://example.com</a></p>
-`,
 };

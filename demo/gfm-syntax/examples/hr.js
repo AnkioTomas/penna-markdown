@@ -13,5 +13,4 @@ export default {
 下划线分隔
 
 ___`,
-  expected: "",
 };

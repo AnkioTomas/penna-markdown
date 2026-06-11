@@ -102,10 +102,6 @@
   line-height: 1.4;
 }
 
-.gfm-status.fail {
-  color: #b91c1c;
-}
-
 @media (max-width: 1200px) {
   .extends-panels {
     grid-template-columns: 1fr;

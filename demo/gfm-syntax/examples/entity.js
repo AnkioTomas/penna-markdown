@@ -7,5 +7,4 @@ export default {
 &#169; 数字实体
 
 &frac12; 分数`,
-  expected: "",
 };

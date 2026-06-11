@@ -12,7 +12,6 @@ import code from "./code.js";
 import table from "./table.js";
 import hr from "./hr.js";
 import linkReference from "./linkReference.js";
-import footnote from "./footnote.js";
 import html from "./html.js";
 import entity from "./entity.js";
 
@@ -32,7 +31,6 @@ export const gfmSyntaxExamples = [
   table,
   hr,
   linkReference,
-  footnote,
   html,
   entity,
 ];

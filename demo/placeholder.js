@@ -1,3 +1,10 @@
+/** 网易云音乐外链占位 */
+export const audio =
+  "http://music.163.com/song/media/outer/url?id=453003622.mp3";
+
+/** 视频外链占位 */
+export const video = "https://media.w3.org/2010/05/sintel/trailer.mp4";
+
 /**
  * iph.href.lu 占位图
  * @see http://iph.href.lu/

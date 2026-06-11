@@ -5,5 +5,4 @@ export default {
   markdown: `~~已删除的内容~~
 
 可与强调组合：~~**粗体删除**~~、~~*斜体删除*~~`,
-  expected: "",
 };

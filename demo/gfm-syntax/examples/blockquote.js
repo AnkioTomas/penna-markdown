@@ -12,5 +12,4 @@ export default {
 > 嵌套引用
 >> 第二层
 >>> 第三层`,
-  expected: "",
 };

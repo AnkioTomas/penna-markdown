@@ -8,5 +8,4 @@ export default {
 
 [demo]: https://example.com/demo "演示"
 [other]: https://example.com/other`,
-  expected: "",
 };

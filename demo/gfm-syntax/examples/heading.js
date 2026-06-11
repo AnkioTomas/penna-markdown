@@ -13,5 +13,4 @@ export default {
 ##### 五级标题
 
 ###### 六级标题`,
-  expected: "",
 };

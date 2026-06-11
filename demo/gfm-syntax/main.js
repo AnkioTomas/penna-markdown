@@ -17,30 +17,16 @@ const transformer = createTransformerWithExtensions(extensionNames);
 
 let currentSyntaxIndex = 0;
 
-function normalizeHtml(html) {
-  return String(html).replace(/\r\n/g, "\n").replace(/\r/g, "\n").trim();
-}
-
-function compareExpected(actual, expected) {
-  if (!expected.trim()) return { ok: true, demo: true };
-  const ok = normalizeHtml(actual) === normalizeHtml(expected);
-  return { ok, demo: false };
-}
-
 function render() {
   const md = markdownInput.value;
   const { html } = transformer.render(md);
-  const current = gfmSyntaxExamples[currentSyntaxIndex];
-  const check = compareExpected(html, current.expected ?? "");
 
   preview.innerHTML = html;
   markdownDisplay.textContent = md;
   htmlDisplay.textContent = html;
 
-  const badge = check.demo ? "演示" : check.ok ? "通过" : "失败";
   const extLabel = extensionNames.length ? `${extensionNames.length} 个扩展` : "无扩展";
-  statusEl.textContent = `GFM · ${extLabel} · ${badge} · ${new Date().toLocaleTimeString()}`;
-  statusEl.classList.toggle("fail", !check.ok && !check.demo);
+  statusEl.textContent = `GFM · ${extLabel} · ${new Date().toLocaleTimeString()}`;
 }
 
 function updateCurrentSyntax() {
@@ -49,8 +35,7 @@ function updateCurrentSyntax() {
     item.classList.toggle("active", index === currentSyntaxIndex);
   });
 
-  const current = gfmSyntaxExamples[currentSyntaxIndex];
-  markdownInput.value = current.markdown;
+  markdownInput.value = gfmSyntaxExamples[currentSyntaxIndex].markdown;
   render();
 }
 

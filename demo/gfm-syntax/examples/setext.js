@@ -14,5 +14,4 @@ export default {
 
 Setext 二级
 ----------`,
-  expected: "",
 };
