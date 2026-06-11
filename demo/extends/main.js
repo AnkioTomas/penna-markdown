@@ -405,8 +405,24 @@ console.log('Hello World!')
 :::`,
     expected: "",
   },
-  { name: "iframe", desc: "内嵌 iframe", markdown: "!iframe[演示](https://example.com)", expected: "<div class=\"cherry-iframe\" style=\"aspect-ratio: 16 / 9;\"><iframe src=\"https://example.com\" allowfullscreen=\"allowfullscreen\"></iframe></div>" },
-  { name: "media", desc: "媒体元素", markdown: "!video[演示](https://example.com/demo.mp4)", expected: "<div class=\"cherry-video\"><video src=\"https://example.com/demo.mp4\" controls=\"controls\"></video></div>" },
+  {
+    name: "iframe",
+    desc: "内嵌 iframe",
+    markdown: "@@https://example.com",
+    expected: "",
+  },
+  {
+    name: "media",
+    desc: "媒体元素",
+    markdown: `!video[演示视频](https://example.com/demo.mp4)
+
+!audio[背景音乐](https://example.com/a.mp3)
+
+!audio[带封面](https://example.com/a.mp3){poster=https://example.com/cover.png}
+
+!video[带封面](https://example.com/demo.mp4){poster=https://example.com/poster.png}`,
+    expected: "",
+  },
   { name: "footnote", desc: "脚注", markdown: "需要解释[^1]。\n\n[^1]: 脚注内容", expected: "<p>需要解释<sup class=\"footnote-ref\"><a href=\"#footnote-1\" id=\"footnote-ref-1\">1</a></sup>。</p>\n<div class=\"footnotes\">\n<hr class=\"footnotes-sep\">\n<section class=\"footnotes\">\n<ol class=\"footnotes-list\">\n<li id=\"footnote-1\" class=\"footnote-item\">\n<p>脚注内容 <a href=\"#footnote-ref-1\" class=\"footnote-backref\">↩</a></p>\n</li>\n</ol>\n</section>\n</div>" },
 ];
 
@@ -511,6 +527,8 @@ E=mc^2^，H^^2^^O，大头 ^儿子^ 和 ^^爸爸^^
 !video[演示视频](https://example.com/demo.mp4)
 
 !audio[背景音乐](https://example.com/a.mp3)
+
+!audio[带封面](https://example.com/a.mp3){poster=https://example.com/cover.png}
 
 !video[带封面](https://example.com/demo.mp4){poster=https://example.com/poster.png}
 

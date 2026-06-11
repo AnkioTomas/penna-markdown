@@ -50,7 +50,7 @@ class IframeBlockParser extends BaseBlockParser {
   /** @inheritdoc */
   render(node) {
     const src = escapeHtml(node.src ?? "");
-    return `<iframe src="${src}" width="100%" height="400px" sandbox="allow-scripts" frameborder="0" loading="lazy" allow="fullscreen"></iframe>`;
+    return `<div class="cherry-iframe">\n<iframe src="${src}" loading="lazy" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>\n</div>`;
   }
 }
 

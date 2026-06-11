@@ -17,6 +17,7 @@
 @use "style/field";
 @use "style/timeline";
 @use "style/collapse";
+@use "style/media";
 
 .cherry {
   @include tokens.colors;
@@ -36,4 +37,5 @@
   @include field.styles;
   @include timeline.styles;
   @include collapse.styles;
+  @include media.styles;
 }

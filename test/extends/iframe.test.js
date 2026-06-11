@@ -5,16 +5,17 @@ import { createTransformerWithExtensions } from "@/transformer/extends/extends.j
 describe("extends/iframe", () => {
   const engine = () => createTransformerWithExtensions(["iframe"]);
 
-  it("renders @@url as iframe block", () => {
+  it("renders @@url as styled iframe block", () => {
     const { html } = engine().render("@@https://example.com\n");
     expect(html).toBe(
-      '<iframe src="https://example.com" width="100%" height="400px" sandbox="allow-scripts" frameborder="0" loading="lazy" allow="fullscreen"></iframe>\n',
+      '<div class="cherry-iframe">\n<iframe src="https://example.com" loading="lazy" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>\n</div>\n',
     );
   });
 
   it("allows optional spaces after @@", () => {
     const { html } = engine().render("@@ https://example.com/path?q=1\n");
     expect(html).toContain('src="https://example.com/path?q=1"');
+    expect(html).toContain('class="cherry-iframe"');
   });
 
   it("supports indented iframe line", () => {

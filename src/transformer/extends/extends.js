@@ -37,6 +37,7 @@ import footnotesSection, {
   finalizeFootnotes,
 } from "@/transformer/extends/block/footnotes.js";
 import footnoteRefInline from "@/transformer/extends/inline/footnoteRef.js";
+import mediaBlock from "@/transformer/extends/block/media.js";
 import mediaInline from "@/transformer/extends/inline/media.js";
 import spoilerInline from "@/transformer/extends/inline/spoiler.js";
 import { injectAttrsIntoFirstOpenTag } from "@/transformer/extends/utils/injectAttrs.js";
@@ -213,10 +214,10 @@ const EXTENSION_DEFS = {
     inlineParsers: [],
     blockParsers: [iframeBlock],
   },
-  /** 行内媒体语法。 */
+  /** 块级 / 行内媒体语法。 */
   media: {
     inlineParsers: [mediaInline],
-    blockParsers: [],
+    blockParsers: [mediaBlock],
   },
   /** 行内 spoiler 遮罩语法。 */
   spoiler: {
