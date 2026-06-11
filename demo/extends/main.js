@@ -147,7 +147,7 @@ flowchart TD
     expected: "",
   },
   ...cardExamples,
-  { name: "tabs", desc: "选项卡", markdown: "::: tabs\n@tab 标题 1\n内容\n:::", expected: "<div class=\"cherry-tabs\">\n<input type=\"radio\" name=\"tabs\" id=\"tab-0\" checked>\n<label for=\"tab-0\" class=\"cherry-tabs__label\">标题 1</label>\n<div class=\"cherry-tabs__panel\">\n<p>内容</p>\n</div>\n<div class=\"cherry-tabs__content\"></div>\n</div>" },
+  { name: "tabs", desc: "选项卡（可多组）", markdown: "::: tabs\n@tab 第一组 · 标签 A\n第一组内容 A\n@tab:active 第一组 · 标签 B\n第一组内容 B（默认激活）\n:::\n\n::: tabs\n@tab 第二组 · 标签 X\n第二组内容 X\n@tab 第二组 · 标签 Y\n第二组内容 Y（默认第一个）\n:::", expected: "" },
   {
     name: "steps",
     desc: "步骤条",
@@ -245,6 +245,24 @@ E=mc^2^，H^^2^^O，大头 ^儿子^ 和 ^^爸爸^^
 @tab:active 标题 3
 
 默认激活的第三个选项卡
+
+:::
+
+同一页面可并列多组选项卡：
+
+::: tabs
+
+@tab 概览
+
+第二组：概览内容
+
+@tab:active 配置
+
+第二组：配置内容（默认激活）
+
+@tab 日志
+
+第二组：日志内容
 
 :::
 

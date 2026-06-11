@@ -13,6 +13,7 @@
 @use "style/card-grid";
 @use "style/card-masonry";
 @use "style/steps";
+@use "style/tabs";
 
 .cherry {
   @include tokens.colors;
@@ -28,4 +29,5 @@
   @include card-grid.styles;
   @include card-masonry.styles;
   @include steps.styles;
+  @include tabs.styles;
 }

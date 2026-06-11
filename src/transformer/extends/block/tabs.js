@@ -12,7 +12,7 @@
  * :::
  * ```
  *
- * 切换使用 radio + CSS，不依赖 JavaScript。
+ * 切换使用 radio + CSS（:has），不依赖 JavaScript。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
@@ -25,12 +25,50 @@ const OPEN_RE = /^ {0,3}:::(?!:)\s+tabs\s*$/;
 /** 选项卡闭标记行：`:::` */
 const CLOSE_RE = /^ {0,3}:::\s*$/;
 
+/** 嵌套三冒号容器开标记（排除四冒号块） */
+const NESTED_OPEN_RE = /^ {0,3}:::(?!:)\s+\S/;
+
 /** 选项卡标题行：`@tab` 或 `@tab:active` + 可选标题 */
 const TAB_HEAD_RE = /^@tab(:active)?(?:\s+(.*))?$/;
 
-/** 全局选项卡组序号，用于生成唯一 DOM id */
+/** 全局选项卡组序号，用于生成唯一 radio name / id */
 let tabGroupSeq = 0;
 
+/**
+ * 读取选项卡块内部行，正确处理嵌套 `:::` 容器。
+ *
+ * @param {string[]} lines
+ * @param {number} start
+ * @returns {{ innerLines: string[], nextIndex: number } | null}
+ */
+function readTabsInnerLines(lines, start) {
+  const innerLines = [];
+  let depth = 0;
+  let i = start;
+
+  while (i < lines.length) {
+    const line = lines[i] ?? "";
+
+    if (CLOSE_RE.test(line)) {
+      if (depth === 0) {
+        return { innerLines, nextIndex: i + 1 };
+      }
+      depth -= 1;
+      innerLines.push(line);
+      i += 1;
+      continue;
+    }
+
+    if (NESTED_OPEN_RE.test(line)) {
+      depth += 1;
+    }
+
+    innerLines.push(line);
+    i += 1;
+  }
+
+  return null;
+}
 
 /**
  * 将内部行拆分为多个选项卡段。
@@ -73,7 +111,7 @@ function resolveActiveIndex(tabs) {
 }
 
 /**
- * 生成下一个选项卡组 DOM id。
+ * 生成下一个选项卡组 id 前缀。
  *
  * @returns {string}
  */
@@ -97,18 +135,10 @@ class TabsBlockParser extends BaseBlockParser {
     const line = lines[index] ?? "";
     if (!OPEN_RE.test(line)) return null;
 
-    const innerLines = [];
-    let i = index + 1;
+    const block = readTabsInnerLines(lines, index + 1);
+    if (!block) return null;
 
-    while (i < lines.length) {
-      if (CLOSE_RE.test(lines[i] ?? "")) break;
-      innerLines.push(lines[i]);
-      i += 1;
-    }
-
-    if (i >= lines.length) return null;
-
-    const sections = parseTabSections(normalizeInnerLines(innerLines));
+    const sections = parseTabSections(normalizeInnerLines(block.innerLines));
     if (sections.length === 0) return null;
 
     const activeIndex = resolveActiveIndex(sections);
@@ -126,7 +156,7 @@ class TabsBlockParser extends BaseBlockParser {
 
     return {
       node: createNode(this.type, { children: tabs }),
-      nextIndex: i + 1,
+      nextIndex: block.nextIndex,
     };
   }
 
@@ -136,7 +166,6 @@ class TabsBlockParser extends BaseBlockParser {
     if (tabs.length === 0) return "";
 
     const groupId = nextGroupId();
-    const styleRules = [];
     const inputs = [];
     const labels = [];
     const panels = [];
@@ -144,10 +173,6 @@ class TabsBlockParser extends BaseBlockParser {
     tabs.forEach((tab, index) => {
       const inputId = `${groupId}-${index}`;
       const checked = tab.active ? " checked" : "";
-      styleRules.push(
-        `#${groupId} #${inputId}:checked ~ .cherry-tabs__panels > .cherry-tabs__panel:nth-child(${index + 1}) { display: block; }`,
-        `#${groupId} #${inputId}:checked ~ .cherry-tabs__nav > label[for="${inputId}"] { background: var(--cherry-tabs-active-bg, #fff); border-bottom-color: var(--cherry-tabs-active-color, #3b82f6); font-weight: 600; }`,
-      );
       inputs.push(
         `<input type="radio" class="cherry-tabs__radio" name="${groupId}" id="${inputId}"${checked}>`,
       );
@@ -160,8 +185,7 @@ class TabsBlockParser extends BaseBlockParser {
     });
 
     return [
-      `<div class="cherry-tabs" id="${groupId}">`,
-      `<style>${styleRules.join("")}</style>`,
+      `<div class="cherry-tabs">`,
       inputs.join(""),
       `<div class="cherry-tabs__nav">${labels.join("")}</div>`,
       `<div class="cherry-tabs__panels">${panels.join("")}</div>`,

@@ -28,6 +28,7 @@ tab 3 内容
     expect(html).toContain('class="cherry-tabs__nav"');
     expect(html).toContain('class="cherry-tabs__panels"');
     expect(html).not.toContain("<script");
+    expect(html).not.toContain("<style");
   });
 
   it("renders tab titles and panel content", () => {
@@ -69,6 +70,21 @@ console.log(1)
     const { html } = engine().render(md);
     expect(html).toContain("<pre><code");
     expect(html).toContain("console.log(1)");
+  });
+
+  it("supports nested containers inside tab panels", () => {
+    const md = `::: tabs
+@tab 提示
+::: tip 标题
+嵌套内容
+:::
+@tab 其他
+正文
+:::`;
+    const { html } = createTransformerWithExtensions(["tabs", "container"]).render(md);
+    expect(html).toContain('<div class="alert tip">');
+    expect(html).toContain("<p>嵌套内容</p>");
+    expect(html).toContain("<p>正文</p>");
   });
 
   it("is disabled without extension", () => {
