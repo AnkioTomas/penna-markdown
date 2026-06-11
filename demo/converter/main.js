@@ -1,5 +1,6 @@
 import { createTransformer } from "@/transformer/index.js";
 import { hydrateCherryTheme } from "@/renderer/cherryTheme.js";
+import "../theme-watch.js";
 import example from "../test.md?raw";
 
 const transformer = createTransformer();

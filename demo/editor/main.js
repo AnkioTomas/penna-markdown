@@ -1,3 +1,4 @@
+import "../highlight-setup.js";
 import { createEditor } from "@/editor/index.js";
 import {
   getAvailableExtensions,

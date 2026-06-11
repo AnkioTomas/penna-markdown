@@ -5,14 +5,40 @@
  * 将 Transformer 输出的 HTML 写入预览 DOM。
  */
 
-import { hydrateCherryTheme } from "./cherryTheme.js";
+import { setupCherryCodeHighlight } from "./codeHighlight.js";
+import {
+  hydrateCherryTheme,
+  refreshCherryTheme,
+  watchCherryTheme,
+} from "./cherryTheme.js";
 
 export {
+  CHERRY_THEME_CHANGE_EVENT,
+  dispatchCherryThemeChange,
   hydrateCherryMath,
   hydrateCherryTheme,
   isCherryDarkMode,
   mathImageColor,
+  refreshCherryTheme,
+  watchCherryTheme,
 } from "./cherryTheme.js";
+export { hydrateCherryCodeCopy } from "./codeCopy.js";
+export { hydrateCherryCodeCollapse } from "./codeCollapse.js";
+export {
+  createCodeHighlightPlugin,
+  hydrateCherryCodeHighlight,
+  registerCherryCodeHighlightLoader,
+  resetCherryCodeHighlightTheme,
+  setupCherryCodeHighlight,
+} from "./codeHighlight.js";
+export { loadHighlightJsAdapter } from "./adapters/highlightjs.js";
+export {
+  DEFAULT_HIGHLIGHT_JS_CDN,
+  DEFAULT_HIGHLIGHT_JS_CSS,
+  loadHighlightJsFromCdn,
+} from "./adapters/highlightjsCdn.js";
+export { loadShikiAdapter } from "./adapters/shiki.js";
+export { loadScript, loadStylesheet } from "./utils/loadScript.js";
 
 /** @type {'innerHTML'} 当前唯一支持的 DOM 更新策略 */
 const STRATEGY_INNER_HTML = "innerHTML";
@@ -23,15 +49,26 @@ const STRATEGY_INNER_HTML = "innerHTML";
  * @param {Object} [options={}]
  * @param {HTMLElement} options.mount - 预览区 DOM 节点
  * @param {typeof STRATEGY_INNER_HTML} [options.strategy='innerHTML'] - 渲染策略，目前仅支持 innerHTML
+ * @param {boolean} [options.watchTheme=true] - 是否监听 `data-theme` / `cherry-theme-change` 并自动刷新
+ * @param {import('./codeHighlight.js').CodeHighlightSetup} [options.codeHighlight] - 代码高亮：cdn / load / highlight 回调
  * @returns {RendererApi}
  */
-export function createRenderer({ mount, strategy = STRATEGY_INNER_HTML } = {}) {
+export function createRenderer({
+  mount,
+  strategy = STRATEGY_INNER_HTML,
+  watchTheme = true,
+  codeHighlight,
+} = {}) {
   if (!mount) {
     throw new Error("渲染器需要 mount 元素");
   }
 
+  setupCherryCodeHighlight(codeHighlight);
+
   /** @type {RendererPlugin[]} */
   const plugins = [];
+  /** @type {(() => void) | null} */
+  let unwatchTheme = watchTheme ? watchCherryTheme(mount, refreshCherryTheme) : null;
 
   /**
    * 依次调用插件钩子。
@@ -75,6 +112,8 @@ export function createRenderer({ mount, strategy = STRATEGY_INNER_HTML } = {}) {
     /** 清空预览 DOM 并触发销毁钩子 */
     destroy() {
       runHook("beforeDestroy", { mount });
+      unwatchTheme?.();
+      unwatchTheme = null;
       mount.innerHTML = "";
       runHook("afterDestroy", { mount });
     },

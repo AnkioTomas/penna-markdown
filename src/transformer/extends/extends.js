@@ -40,6 +40,7 @@ import footnoteRefInline from "@/transformer/extends/inline/footnoteRef.js";
 import mediaBlock from "@/transformer/extends/block/media.js";
 import mediaInline from "@/transformer/extends/inline/media.js";
 import spoilerInline from "@/transformer/extends/inline/spoiler.js";
+import enhancedCodeParser from "@/transformer/extends/block/enhancedCode.js";
 import { injectAttrsIntoFirstOpenTag } from "@/transformer/extends/utils/injectAttrs.js";
 
 /**
@@ -224,6 +225,11 @@ const EXTENSION_DEFS = {
     inlineParsers: [footnoteRefInline],
     blockParsers: [footnoteDefBlock, footnotesSection],
     afterParse: finalizeFootnotes,
+  },
+  /** 增强围栏代码块：title、语言标签、复制按钮。 */
+  code_block: {
+    inlineParsers: [],
+    blockParsers: [enhancedCodeParser],
   },
 };
 

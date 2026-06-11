@@ -3,6 +3,8 @@ import {
   createTransformerWithExtensions,
 } from "@/transformer/index.js";
 import { hydrateCherryTheme } from "@/renderer/cherryTheme.js";
+import "../highlight-setup.js";
+import "../theme-watch.js";
 import { gfmSyntaxExamples } from "./examples/index.js";
 
 const markdownInput = document.getElementById("markdown-input");

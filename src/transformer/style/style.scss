@@ -32,6 +32,7 @@
 @use "../extends/style/media";
 @use "../extends/style/math";
 @use "../extends/style/footnote";
+@use "../extends/style/code-block";
 
 .cherry {
   @include tokens.colors;
@@ -67,4 +68,5 @@
   @include media.styles;
   @include math.styles;
   @include footnote.styles;
+  @include code-block.styles;
 }

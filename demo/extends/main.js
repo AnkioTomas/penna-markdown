@@ -3,8 +3,11 @@ import {
   createTransformerWithExtensions,
 } from "@/transformer/index.js";
 import { hydrateCherryTheme } from "@/renderer/cherryTheme.js";
+import "../highlight-setup.js";
+import "../theme-watch.js";
 import { cardExamples } from "./card/index.js";
 import { cherrySyntaxExamples } from "./cherry_syntax/index.js";
+import codeBlockExample from "./code_block/index.js";
 import mediaExample from "./media.js";
 
 const markdownInput = document.getElementById("markdown-input");
@@ -81,6 +84,7 @@ $$
 $$`,
   },
   ...cherrySyntaxExamples,
+  codeBlockExample,
   {
     name: "inline_comment",
     desc: "行内注释 %% ... %%",
