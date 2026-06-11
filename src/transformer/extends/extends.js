@@ -25,10 +25,7 @@ import inlineComment from "@/transformer/extends/inline/comment.js";
 import badgeInline from "@/transformer/extends/inline/badge.js";
 import { subInlineParser, supInlineParser } from "@/transformer/extends/inline/supsub.js";
 import containerBlock from "@/transformer/extends/block/container.js";
-import cardBlock, {
-  cardGridBlockParser,
-} from "@/transformer/extends/block/card.js";
-import cardMasonryBlockParser from "@/transformer/extends/block/cardMasonry.js";
+import { cardBlockParsers } from "@/transformer/extends/block/card/index.js";
 import tabsBlock from "@/transformer/extends/block/tabs.js";
 import detailBlock from "@/transformer/extends/block/detail.js";
 import iframeBlock from "@/transformer/extends/block/iframe.js";
@@ -181,7 +178,7 @@ const EXTENSION_DEFS = {
   /** 块级卡片、卡片网格与瀑布流。 */
   card: {
     inlineParsers: [],
-    blockParsers: [cardMasonryBlockParser, cardGridBlockParser, cardBlock],
+    blockParsers: cardBlockParsers,
   },
   /** 块级标签页语法。 */
   tabs: {

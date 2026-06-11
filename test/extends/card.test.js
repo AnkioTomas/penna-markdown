@@ -128,6 +128,40 @@ describe("extends/card", () => {
     expect(html).toContain('class="image-card"');
   });
 
+  it("renders repo-card with shields.io badges when repo is provided", () => {
+    const md = `::: repo-card repo="vuepress/ecosystem" desc="Official plugins and themes for VuePress2" language="TypeScript"
+:::`;
+    const { html } = engine().render(md);
+    expect(html).toContain('class="repo-card"');
+    expect(html).toContain(
+      '<a href="https://github.com/vuepress/ecosystem"',
+    );
+    expect(html).toContain("vuepress/ecosystem");
+    expect(html).toContain('<span class="repo-visibility">Public</span>');
+    expect(html).toContain(
+      '<p class="repo-desc">Official plugins and themes for VuePress2</p>',
+    );
+    expect(html).toContain('class="repo-stat-badge"');
+    expect(html).toContain("img.shields.io/github/stars/vuepress%2Fecosystem");
+    expect(html).toContain("img.shields.io/github/forks/vuepress%2Fecosystem");
+    expect(html).toContain("img.shields.io/github/license/vuepress%2Fecosystem");
+    expect(html).toContain("repo-badge--light");
+    expect(html).toContain("repo-badge--dark");
+    expect(html).toContain("labelColor=eceff3");
+    expect(html).toContain("labelColor=262626");
+    expect(html).toContain('style="background-color: #3178c6"');
+  });
+
+  it("renders repo-card with manual stats when badges disabled", () => {
+    const md = `::: repo-card repo="vuepress/ecosystem" badges="false" stars="65" forks="88" license="MIT"
+:::`;
+    const { html } = engine().render(md);
+    expect(html).toContain("<span>65</span>");
+    expect(html).toContain("<span>88</span>");
+    expect(html).toContain("<span>MIT</span>");
+    expect(html).not.toContain("img.shields.io");
+  });
+
   it("renders card masonry with cols and gap", () => {
     const md = `:::: card-masonry cols="3" gap="16"
 

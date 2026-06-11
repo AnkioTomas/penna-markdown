@@ -7,6 +7,11 @@
 @use "style/tasklist";
 @use "style/badge";
 @use "style/card";
+@use "style/link-card";
+@use "style/image-card";
+@use "style/repo-card";
+@use "style/card-grid";
+@use "style/card-masonry";
 
 .cherry {
   @include tokens.colors;
@@ -16,4 +21,9 @@
   @include tasklist.styles;
   @include badge.styles;
   @include card.styles;
+  @include link-card.styles;
+  @include image-card.styles;
+  @include repo-card.styles;
+  @include card-grid.styles;
+  @include card-masonry.styles;
 }

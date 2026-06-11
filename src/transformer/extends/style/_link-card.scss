@@ -1,0 +1,46 @@
+@mixin styles {
+  .card.link-card {
+    position: relative;
+    display: block;
+    padding-right: 36px;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s,
+      transform 0.2s;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      width: 16px;
+      height: 16px;
+      transform: translateY(-50%);
+      background-color: var(--cherry-c-text-3);
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z'/%3E%3C/svg%3E")
+        no-repeat center / contain;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z'/%3E%3C/svg%3E")
+        no-repeat center / contain;
+      transition:
+        transform 0.2s,
+        background-color 0.2s;
+    }
+
+    &:hover {
+      border-color: color-mix(in srgb, var(--cherry-c-brand-2) 60%, transparent);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--cherry-c-text-1) 8%, transparent);
+
+      &::after {
+        transform: translateY(-50%) translateX(2px);
+        background-color: var(--cherry-c-brand-2);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--cherry-c-brand-2);
+      outline-offset: 2px;
+    }
+  }
+}

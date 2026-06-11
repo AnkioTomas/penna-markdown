@@ -1,0 +1,32 @@
+@mixin styles {
+  .card-masonry {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    margin: 16px 0;
+
+    .card-masonry-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    [class^="masonry-v-"] {
+      > :first-child {
+        margin-top: 0;
+      }
+
+      > :last-child {
+        margin-bottom: 0;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+    }
+  }
+}
