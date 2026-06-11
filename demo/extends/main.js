@@ -147,7 +147,24 @@ flowchart TD
     expected: "",
   },
   ...cardExamples,
-  { name: "tabs", desc: "选项卡（可多组）", markdown: "::: tabs\n@tab 第一组 · 标签 A\n第一组内容 A\n@tab:active 第一组 · 标签 B\n第一组内容 B（默认激活）\n:::\n\n::: tabs\n@tab 第二组 · 标签 X\n第二组内容 X\n@tab 第二组 · 标签 Y\n第二组内容 Y（默认第一个）\n:::", expected: "" },
+  {
+    name: "tabs",
+    desc: "选项卡（可多组）",
+    markdown: `::: tabs
+@tab 第一组 · 标签 A
+第一组内容 A
+@tab:active 第一组 · 标签 B
+第一组内容 B（默认激活）
+:::
+
+::: tabs
+@tab 第二组 · 标签 X
+第二组内容 X
+@tab 第二组 · 标签 Y
+第二组内容 Y（默认第一个）
+:::`,
+    expected: "",
+  },
   {
     name: "steps",
     desc: "步骤条",
