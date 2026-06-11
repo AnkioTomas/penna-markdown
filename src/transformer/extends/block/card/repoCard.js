@@ -21,67 +21,39 @@ import {
 
 const OPEN_RE = /^ {0,3}:::(?!:)\s+repo-card(?:\s+(.*))?\s*$/;
 
-/** shields.io 路径与链接配置 */
+/** shields.io 路径与链接配置（配色全部使用 shields 原生默认值） */
 const SHIELD_METRICS = {
   language: {
     path: "languages/top",
     label: "Primary language",
     link: (repoBase) => `${repoBase}/graphs/languages`,
-    logo: "",
   },
   stars: {
     path: "stars",
-    label: "GitHub stars",
+    label: "Stars",
     link: (repoBase) => `${repoBase}/stargazers`,
-    logo: "star",
   },
   forks: {
     path: "forks",
-    label: "GitHub forks",
+    label: "Forks",
     link: (repoBase) => `${repoBase}/forks`,
-    logo: "git-fork",
   },
   license: {
     path: "license",
-    label: "GitHub license",
+    label: "License",
     link: (repoBase) => `${repoBase}#readme`,
-    logo: "law",
-  },
-};
-
-/** @type {Record<string, { labelColor: string; color: string; logoColor: string }>} */
-const SHIELD_PALETTES = {
-  light: {
-    labelColor: "f3f4f6",
-    color: "57606a",
-    logoColor: "57606a",
-  },
-  dark: {
-    labelColor: "21262d",
-    color: "8b949e",
-    logoColor: "8b949e",
   },
 };
 
 /**
  * @param {string} repo
- * @param {string} path
- * @param {string} logo
- * @param {"light" | "dark"} theme
+ * @param {keyof typeof SHIELD_METRICS} metric
  * @returns {string}
  */
-function shieldsRepoBadge(repo, path, logo, theme) {
+function shieldsRepoBadge(repo, metric) {
+  const config = SHIELD_METRICS[metric];
   const slug = encodeURIComponent(repo);
-  const palette = SHIELD_PALETTES[theme];
-  const params = new URLSearchParams({
-    style: "flat",
-    labelColor: palette.labelColor,
-    color: palette.color,
-    logoColor: palette.logoColor,
-    logoWidth: "12",
-  });
-  if (logo) params.set("logo", logo);
-  return `https://img.shields.io/github/${path}/${slug}?${params}`;
+  return `https://img.shields.io/github/${config.path}/${slug}?style=flat`;
 }
 
 /**
@@ -92,15 +64,12 @@ function shieldsRepoBadge(repo, path, logo, theme) {
  */
 function renderRepoShield(repo, metric, repoBase) {
   const config = SHIELD_METRICS[metric];
-  const light = shieldsRepoBadge(repo, config.path, config.logo, "light");
-  const dark = shieldsRepoBadge(repo, config.path, config.logo, "dark");
+  const src = shieldsRepoBadge(repo, metric);
   const alt = escapeHtml(config.label);
   const href = escapeHtml(config.link(repoBase));
-
   return [
-    `<a class="repo-shield" href="${href}" target="_blank" rel="noopener noreferrer" title="${alt}">`,
-    `<img class="repo-shield__img repo-shield__img--light" src="${escapeHtml(light)}" alt="${alt}" loading="lazy">`,
-    `<img class="repo-shield__img repo-shield__img--dark" src="${escapeHtml(dark)}" alt="${alt}" loading="lazy">`,
+    `<a class="repo-shield repo-shield--${metric}" href="${href}" target="_blank" rel="noopener noreferrer" title="${alt}">`,
+    `<img class="repo-shield__img" src="${escapeHtml(src)}" alt="${alt}" loading="lazy">`,
     `</a>`,
   ].join("");
 }
@@ -169,7 +138,7 @@ class RepoCardBlockParser extends BaseBlockParser {
         renderRepoShield(repo, "forks", repoBase),
         renderRepoShield(repo, "license", repoBase),
       ];
-      parts.push(`<div class="repo-info">${info.join("\n")}</div>`);
+      parts.push(`<div class="repo-info">${info.join("")}</div>`);
     }
 
     parts.push(`</div>`);

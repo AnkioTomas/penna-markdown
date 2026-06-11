@@ -152,7 +152,7 @@ Official plugins and themes for VuePress2
     expect(html).toContain(
       '<div class="repo-desc"><p>Official plugins and themes for VuePress2</p></div>',
     );
-    expect(html).toContain('class="repo-shield"');
+    expect(html).toContain('class="repo-shield repo-shield--stars"');
     expect(html).toContain(
       "img.shields.io/github/languages/top/vuepress%2Fecosystem",
     );
@@ -160,10 +160,10 @@ Official plugins and themes for VuePress2
     expect(html).toContain("img.shields.io/github/forks/vuepress%2Fecosystem");
     expect(html).toContain("img.shields.io/github/license/vuepress%2Fecosystem");
     expect(html).toContain("/vuepress/ecosystem/graphs/languages");
-    expect(html).toContain("repo-shield__img--light");
-    expect(html).toContain("repo-shield__img--dark");
-    expect(html).toContain("labelColor=f3f4f6");
-    expect(html).toContain("labelColor=21262d");
+    expect(html).toContain('class="repo-shield__img"');
+    expect(html).toContain("style=flat");
+    expect(html).not.toContain("labelColor=");
+    expect(html).not.toContain("logoColor=");
   });
 
   it("renders card masonry with cols and gap", () => {

@@ -66,41 +66,26 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 10px 12px;
+      gap: 8px;
+      margin-top: 4px;
+      padding-top: 12px;
+      border-top: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 16%, transparent);
     }
 
     .repo-shield {
       display: inline-flex;
-      align-items: center;
       line-height: 0;
       text-decoration: none;
-      border-radius: 6px;
-      transition: opacity 0.15s ease, transform 0.15s ease;
+      transition: opacity 0.15s ease;
 
       &:hover {
-        opacity: 0.88;
-        transform: translateY(-1px);
+        opacity: 0.85;
       }
     }
 
     .repo-shield__img {
       display: block;
       height: 20px;
-      border-radius: 6px;
-    }
-
-    .repo-shield__img--dark {
-      display: none;
-    }
-
-    [data-theme="dark"] & {
-      .repo-shield__img--light {
-        display: none;
-      }
-
-      .repo-shield__img--dark {
-        display: block;
-      }
     }
   }
 }
