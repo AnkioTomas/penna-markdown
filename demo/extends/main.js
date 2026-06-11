@@ -4,6 +4,7 @@ import {
 } from "@/transformer/extends/extends.js";
 import "@/transformer/extends/style.css";
 import { cardExamples } from "./card/index.js";
+import { cherrySyntaxExamples } from "./cherry_syntax/index.js";
 
 const markdownInput = document.getElementById("markdown-input");
 const preview = document.getElementById("preview");
@@ -87,19 +88,7 @@ $$
 $$`,
     expected: "",
   },
-  {
-    name: "cherry_syntax",
-    desc: "特殊代码块（mermaid / echarts）",
-    markdown: `\`\`\`mermaid
-flowchart TD
-    Start --> Stop
-\`\`\`
-
-\`\`\`echarts
-{"title":{"text":"Demo"},"series":[{"type":"pie","data":[{"value":1,"name":"A"}]}]}
-\`\`\``,
-    expected: "",
-  },
+  ...cherrySyntaxExamples,
   { name: "inline_comment", desc: "行内注释", markdown: "%% 注释 %%", expected: "<p></p>" },
   {
     name: "badge",
@@ -595,12 +584,6 @@ $$
 \`\`\`mermaid
 flowchart TD
     Start --> Stop
-\`\`\`
-
-\`\`\`card
-#list/2
-[文档](https://example.com) Cherry 扩展语法说明
-[演示](https://example.com) 在线体验编辑器
 \`\`\`
 
 未启用扩展时，==高亮== 与花括号会按普通文本渲染。

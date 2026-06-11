@@ -2,7 +2,7 @@
  * @file 块级语法拓展：Cherry 特殊代码块
  * @module transformer/extends/block/specialCode
  *
- * 在 GFM 代码块基础上，对 echarts / math / mermaid / card 等语言
+ * 在 GFM 代码块基础上，对 echarts / math / mermaid 等语言
  * 使用专用渲染器；priority > GFM code，非特殊语言交还标准 code parser。
  */
 
@@ -14,7 +14,6 @@ import {
   renderEchartsBlock,
   renderMermaidBlock,
 } from "@/transformer/extends/utils/cherryApi.js";
-import { renderCardBlock } from "@/transformer/extends/utils/cherryCard.js";
 
 /** 语言标识 → 专用渲染函数 */
 const SPECIAL_RENDERERS = {
@@ -24,7 +23,6 @@ const SPECIAL_RENDERERS = {
   latex: renderMathBlock,
   mermaid: renderMermaidBlock,
   graph: renderMermaidBlock,
-  card: renderCardBlock,
 };
 
 /** 受 Cherry 接管的围栏语言集合 */

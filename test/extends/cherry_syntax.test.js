@@ -58,13 +58,12 @@ describe("extends/cherry_syntax", () => {
     expect(html).toContain('<figure data-type="mermaid"');
   });
 
-  it("renders ```card fenced block", () => {
+  it("falls back to normal fenced code for ```card", () => {
     const md = "```card\n#list/1\n[Title](https://example.com) Description\n```";
     const { html } = engine().render(md);
-    expect(html).toContain('data-type="card"');
-    expect(html).toContain('class="cherry-card cherry-card-list-container"');
-    expect(html).toContain('href="https://example.com"');
-    expect(html).toContain("Title");
-    expect(html).toContain("Description");
+    expect(html).toBe(
+      '<pre><code class="language-card">#list/1\n[Title](https://example.com) Description\n</code></pre>\n',
+    );
+    expect(html).not.toContain("cherry-card-block");
   });
 });
