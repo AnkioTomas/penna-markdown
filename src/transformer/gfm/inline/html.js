@@ -8,6 +8,7 @@
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { isEscaped } from "@/transformer/gfm/inline/shared.js";
+import {applyTagFilter} from "@/transformer/gfm/utils/tagfilter.js";
 
 const tagname = '[A-Za-z][A-Za-z0-9-]*';
 const attribute_name = '[a-zA-Z_:][a-zA-Z0-9_.:-]*';
@@ -49,7 +50,7 @@ class HTMLInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node) {
-    return node.value;
+    return applyTagFilter(node.value);
   }
 }
 

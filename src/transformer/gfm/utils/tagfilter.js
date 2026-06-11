@@ -8,7 +8,7 @@
 
 /** 需过滤的危险 HTML 标签名正则 */
 const FILTERED_TAG =
-  /<\/?(?:title|textarea|style|xmp|iframe|noembed|noframes|script|plaintext)(?=[\s/>]|$)/gi;
+  /<\/?(?:title|textarea|style|xmp|noembed|noframes|script|plaintext)(?=[\s/>]|$)/gi;
 
 /**
  * 对 HTML 字符串应用 GFM tagfilter。

@@ -7,6 +7,7 @@
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
+import {applyTagFilter} from "@/transformer/gfm/utils/tagfilter.js";
 
 /** HTML 标签名正则片段 */
 const tagname = '[A-Za-z][A-Za-z0-9-]*';
@@ -128,7 +129,7 @@ class HTMLBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node) {
-    return node.value;
+    return applyTagFilter(node.value);
   }
 }
 
