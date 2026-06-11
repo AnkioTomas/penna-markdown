@@ -3,26 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>扩展语法 · Cherry Markdown Next</title>
+    <title>GFM 语法 · Cherry Markdown Next</title>
     <link rel="stylesheet" href="../styles.css" />
     <link rel="stylesheet" href="../style/style.css" />
-    
     <style>
-      .ext-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 8px;
-        font-size: 13px;
-        cursor: pointer;
-      }
-
-      .ext-empty {
-        font-size: 12px;
-        color: #6b7280;
-        margin: 0;
-      }
-
       .extends-main {
         display: flex;
         flex-direction: column;
@@ -92,7 +76,6 @@
         line-height: 1.6;
       }
 
-
       .syntax-list {
         max-height: 600px;
         overflow-y: auto;
@@ -128,50 +111,8 @@
         line-height: 1.4;
       }
 
-      .cherry-tabs {
-        margin: 12px 0;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        overflow: hidden;
-      }
-
-      .cherry-tabs__radio {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .cherry-tabs__nav {
-        display: flex;
-        gap: 4px;
-        padding: 8px 8px 0;
-        background: #f9fafb;
-        border-bottom: 1px solid #e5e7eb;
-      }
-
-      .cherry-tabs__label {
-        display: inline-block;
-        padding: 8px 14px;
-        cursor: pointer;
-        border: 1px solid transparent;
-        border-bottom: 2px solid transparent;
-        border-radius: 6px 6px 0 0;
-        font-size: 13px;
-        color: #4b5563;
-      }
-
-      .cherry-tabs__panels {
-        background: #fff;
-      }
-
-      .cherry-tabs__panel {
-        display: none;
-        padding: 14px 16px;
-      }
-
-      .extends-panel.ast pre {
-        max-height: 320px;
-        font-size: 11px;
+      .gfm-status.fail {
+        color: #b91c1c;
       }
 
       @media (max-width: 1200px) {
@@ -185,33 +126,31 @@
     <script src="../shared/require-server.js"></script>
     <div class="layout">
       <aside class="sidebar">
-        <h1>扩展语法</h1>
+        <h1>GFM 语法</h1>
         <p class="sub">
           <a href="../index.html">返回入口</a>
         </p>
         <p class="sub">
-          默认启用所有扩展。左侧选择语法演示。
+          内置 GFM 解析器（无 Cherry 扩展）。左侧选择语法演示。
         </p>
         <div class="toolbar">
           <button id="rerun-btn" type="button">重新渲染</button>
         </div>
-        
         <p id="status" class="gfm-status"></p>
-        <div id="extensions-list"></div>
+        <div id="syntax-list" class="syntax-list"></div>
       </aside>
       <main class="main extends-main">
         <textarea id="markdown-input" placeholder="输入 Markdown..."></textarea>
         <div class="extends-panels">
-          
           <section class="extends-panel">
             <h2>预览</h2>
-            <div class="body preview cherry-gfm cherry-extends" id="preview"></div>
+            <div class="body preview cherry-gfm" id="preview"></div>
           </section>
           <section class="extends-panel">
-            <h2>Markdown / 期望 HTML</h2>
+            <h2>Markdown / HTML</h2>
             <div class="body">
               <pre id="markdown-display"></pre>
-              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 12px 0;">
+              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 12px 0;" />
               <pre id="html-display"></pre>
             </div>
           </section>

@@ -7,10 +7,11 @@
     <link rel="stylesheet" href="./home.css" />
   </head>
   <body>
+    <script src="./shared/require-server.js"></script>
     <div class="wrap">
       <header class="header">
         <h1>Cherry Markdown Next Demo</h1>
-        <p>选择一个功能开始使用。</p>
+        <p>选择一个功能开始使用。请通过 <code>pnpm demo</code> 启动开发服务，不要直接双击打开 HTML。</p>
       </header>
 
       <section class="cards">
@@ -25,6 +26,10 @@
         <a class="card" href="./ast/index.html">
           <div class="card-title">AST 调试台</div>
           <div class="card-desc">左侧输入 Markdown，右侧查看 AST 与解析耗时</div>
+        </a>
+        <a class="card" href="./gfm-syntax/index.html">
+          <div class="card-title">GFM 语法</div>
+          <div class="card-desc">内置 GFM 语法交互演示（标题、表格、删除线等）</div>
         </a>
         <a class="card" href="./gfm/index.html">
           <div class="card-title">GFM 测试</div>

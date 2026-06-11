@@ -1,5 +1,4 @@
-import { createTransformer } from "../../src/transformer/index.js";
-import { createExtensionOptions } from "../../src/transformer/extends/extends.js";
+import { createTransformer, createExtensionOptions } from "@/transformer/index.js";
 
 /** @type {Map<string, import("../../src/transformer/TransformerEngine.js").TransformerEngine>} */
 const engineCache = new Map();
@@ -62,7 +61,7 @@ function renderCase(item, result) {
       </div>
       <div class="panel">
         <h4>预览</h4>
-        <div class="preview"></div>
+        <div class="preview cherry-gfm"></div>
         ${result.ok || result.skipped ? "" : `<div class="fail-msg"></div>`}
       </div>
       <div class="panel case-expected">

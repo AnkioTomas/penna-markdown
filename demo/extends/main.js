@@ -1,8 +1,7 @@
 import {
   getAvailableExtensions,
   createTransformerWithExtensions,
-} from "@/transformer/extends/extends.js";
-import "@/transformer/extends/style.css";
+} from "@/transformer/index.js";
 import { cardExamples } from "./card/index.js";
 import { cherrySyntaxExamples } from "./cherry_syntax/index.js";
 

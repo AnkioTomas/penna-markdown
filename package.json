@@ -23,18 +23,8 @@
       "require": "./dist/transformer.min.cjs",
       "default": "./dist/transformer.min.mjs"
     },
-    "./transformer.extends": {
-      "import": "./dist/transformer.extends.mjs",
-      "require": "./dist/transformer.extends.cjs",
-      "default": "./dist/transformer.extends.mjs"
-    },
-    "./transformer.extends.min": {
-      "import": "./dist/transformer.extends.min.mjs",
-      "require": "./dist/transformer.extends.min.cjs",
-      "default": "./dist/transformer.extends.min.mjs"
-    },
-    "./transformer.extends.css": "./dist/transformer.extends.css",
-    "./transformer.extends.min.css": "./dist/transformer.extends.min.css",
+    "./transformer.css": "./dist/transformer.css",
+    "./transformer.min.css": "./dist/transformer.min.css",
     "./renderer": {
       "import": "./dist/renderer.mjs",
       "require": "./dist/renderer.cjs",
@@ -52,7 +42,7 @@
   ],
   "scripts": {
     "build": "node scripts/build.js",
-    "demo": "vite --config demo/vite.config.js --host",
+    "demo": "node scripts/build.js --styles-only && vite --config demo/vite.config.js --host",
     "demo:build": "vite build --config demo/vite.config.js",
     "fetch:gfm": "node scripts/fetch-gfm-spec.js",
     "fetch:gfm:split": "node scripts/fetch-gfm-spec.js --split",

@@ -1,6 +1,6 @@
 // Cherry Markdown 扩展语法基础样式
 // 结构类统一使用 cherry- 前缀；用户通过 {} 注入的修饰类（如 .tip、.click）保持简短
-@use "style/tokens";
+@use "../style/tokens";
 @use "style/highlight";
 @use "style/spoiler";
 @use "style/alert";
@@ -21,7 +21,7 @@
 @use "style/math";
 @use "style/footnote";
 
-.cherry {
+.cherry-extends {
   @include tokens.colors;
   @include highlight.styles;
   @include spoiler.styles;

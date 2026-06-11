@@ -1,0 +1,117 @@
+@use "sass:list";
+@use "sass:map";
+
+// ==========================================
+// Layer 1: 基础静态色板 (保持不变)
+// ==========================================
+$cherry-brand-1: #5086a1;
+$cherry-brand-2: #6aa1b7;
+$cherry-brand-3: #8cccd5;
+$cherry-brand-soft: rgba(131, 208, 218, 0.314);
+$cherry-brand-on-bg: #1a3d47;
+
+$cherry-text-1: rgba(60, 60, 67, 1);
+$cherry-text-2: rgba(60, 60, 67, 0.78);
+$cherry-text-3: rgba(60, 60, 67, 0.56);
+
+$cherry-bg: #fff;
+$cherry-bg-elevated: #fafafa;
+
+// 夜间模式静态色板
+$cherry-dark-bg: #141414;
+$cherry-dark-bg-elevated: #1f1f1f;
+
+$cherry-dark-text-1: rgba(255, 255, 255, 0.87);
+$cherry-dark-text-2: rgba(255, 255, 255, 0.6);
+$cherry-dark-text-3: rgba(255, 255, 255, 0.38);
+
+$cherry-dark-brand-1: #6aa1b7;
+$cherry-dark-brand-2: #8cccd5;
+$cherry-dark-brand-3: #a8dce3;
+$cherry-dark-brand-soft: rgba(131, 208, 218, 0.2);
+$cherry-dark-brand-on-bg: #e0f4f8;
+
+
+// ==========================================
+// Layer 2: 核心语义“双核”字典
+// 格式: name: (基础主色, 荧光高亮色)
+// ==========================================
+$cherry-core-semantics: (
+        note:      (#206aca, #ff0),
+        tip:       (#30a46c, #39ff14),
+        warning:   (#b45309, #fc0),
+        caution:   (#c53030, #f99),
+        danger:    (#dc2626, #f66),
+        important: (#844bbc, #ccf),
+);
+
+$cherry-dark-core-semantics: (
+        note:      (#93c5fd, #db0),
+        tip:       (#4ade80, #4ade80),
+        warning:   (#fbbf24, #fbbf24),
+        caution:   (#fca5a5, #fca5a5),
+        danger:    (#f87171, #f87171),
+        important: (#c4b5fd, #a5b4fc),
+);
+
+
+// ==========================================
+// Layer 3: 终极颜色衍生工厂 Mixin
+// ==========================================
+@mixin generate-semantic-suite($palette, $is-dark: false) {
+  @each $name, $pair in $palette {
+    $base-color: list.nth($pair, 1);
+    $mark-color: list.nth($pair, 2);
+
+    --cherry-c-#{$name}: #{$base-color};
+    --cherry-c-#{$name}-mark: #{$mark-color};
+
+    $contrast-color: if($is-dark, #000, #fff);
+    --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 20%, #{$contrast-color});
+
+    $bg-opacity: if($is-dark, 15%, 10%);
+    $border-opacity: if($is-dark, 40%, 30%);
+
+    --cherry-c-alert-#{$name}-text: #{$base-color};
+    --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
+    --cherry-c-alert-#{$name}-border: color-mix(in srgb, #{$base-color} #{$border-opacity}, transparent);
+  }
+}
+
+
+// ==========================================
+// Layer 4: 注入全局 CSS 变量
+// ==========================================
+@mixin colors {
+  --cherry-c-brand-1: #{$cherry-brand-1};
+  --cherry-c-brand-2: #{$cherry-brand-2};
+  --cherry-c-brand-3: #{$cherry-brand-3};
+  --cherry-c-brand-soft: #{$cherry-brand-soft};
+  --cherry-c-brand-on-bg: #{$cherry-brand-on-bg};
+
+  --cherry-c-text-1: #{$cherry-text-1};
+  --cherry-c-text-2: #{$cherry-text-2};
+  --cherry-c-text-3: #{$cherry-text-3};
+
+  --cherry-c-bg: #{$cherry-bg};
+  --cherry-c-bg-elevated: #{$cherry-bg-elevated};
+
+  @include generate-semantic-suite($cherry-core-semantics, false);
+
+  [data-theme="dark"] & {
+    --cherry-c-brand-1: #{$cherry-dark-brand-1};
+    --cherry-c-brand-2: #{$cherry-dark-brand-2};
+    --cherry-c-brand-3: #{$cherry-dark-brand-3};
+    --cherry-c-brand-soft: #{$cherry-dark-brand-soft};
+    --cherry-c-brand-on-bg: #{$cherry-dark-brand-on-bg};
+
+    --cherry-c-text-1: #{$cherry-dark-text-1};
+    --cherry-c-text-2: #{$cherry-dark-text-2};
+    --cherry-c-text-3: #{$cherry-dark-text-3};
+
+    --cherry-c-bg: #{$cherry-dark-bg};
+    --cherry-c-bg-elevated: #{$cherry-dark-bg-elevated};
+
+    @include generate-semantic-suite($cherry-dark-core-semantics, true);
+  }
+}

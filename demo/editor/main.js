@@ -1,4 +1,4 @@
-import { createEditor } from "../../src/editor/index.js";
+import { createEditor } from "@/editor/index.js";
 import example from "../test.md?raw";
 
 const mount = document.querySelector("#editor");

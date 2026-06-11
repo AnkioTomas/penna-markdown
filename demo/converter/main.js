@@ -1,4 +1,4 @@
-import { createTransformer } from "../../src/transformer/index.js";
+import { createTransformer } from "@/transformer/index.js";
 import example from "../test.md?raw";
 
 const transformer = createTransformer();

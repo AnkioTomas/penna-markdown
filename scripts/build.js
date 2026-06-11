@@ -1,6 +1,6 @@
 /**
  * 构建脚本：
- * - transformer / transformer.extends：现代 ESM、传统 IIFE、CJS，及对应 min 产物 + extends 样式
+ * - transformer：现代 ESM、传统 IIFE、CJS，及对应 min 产物 + transformer.css
  * - renderer / editor：ESM、CJS、IIFE（开发态，含 sourcemap）
  */
 
@@ -12,6 +12,8 @@ import { fileURLToPath } from "node:url";
 
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = resolve(rootDir, "dist");
+const styleEntry = resolve(rootDir, "style/style.scss");
+const transformerDir = resolve(rootDir, "src/transformer");
 
 const alias = {
   "@": resolve(rootDir, "src"),
@@ -24,16 +26,12 @@ const base = {
   alias,
 };
 
-/** transformer 系列入口 */
-const transformerEntries = [
-  { in: "src/transformer/index.js", name: "transformer", globalName: "CherryNextTransformer" },
-  {
-    in: "src/transformer/extends/extends.js",
-    name: "transformer.extends",
-    globalName: "CherryNextTransformerExtends",
-    style: "src/transformer/extends/style.scss",
-  },
-];
+/** transformer 入口 */
+const transformerEntry = {
+  in: "src/transformer/index.js",
+  name: "transformer",
+  globalName: "CherryNextTransformer",
+};
 
 /** 其余子系统入口 */
 const simpleEntries = [
@@ -54,23 +52,15 @@ async function buildOne(entryPath, options) {
 }
 
 /**
- * transformer 多架构产物：
- * - 现代：ESM（es2020）
- * - 传统：IIFE（es5，script 标签）
- * - Node：CJS（es2020）
- * 每种格式均输出开发版（含 sourcemap）与 min 版。
- *
- * @param {{ in: string, name: string, globalName: string, style?: string }} entry
+ * @param {{ in: string, name: string, globalName: string }} entry
  */
 async function buildTransformerEntry(entry) {
   const entryPath = resolve(rootDir, entry.in);
   const out = (file) => resolve(distDir, file);
 
   const modernTarget = ["es2020"];
-  // esbuild 无法将 bundled 依赖降到 es5，传统产物用 IIFE + es2015 覆盖 script 直引场景
   const traditionalTarget = ["es2015"];
 
-  // 现代架构 — ESM
   await buildOne(entryPath, {
     outfile: out(`${entry.name}.mjs`),
     format: "esm",
@@ -86,7 +76,6 @@ async function buildTransformerEntry(entry) {
     legalComments: "none",
   });
 
-  // Node — CJS
   await buildOne(entryPath, {
     outfile: out(`${entry.name}.cjs`),
     format: "cjs",
@@ -102,7 +91,6 @@ async function buildTransformerEntry(entry) {
     legalComments: "none",
   });
 
-  // 传统架构 — IIFE（<script> 直引）
   await buildOne(entryPath, {
     outfile: out(`${entry.name}.iife.js`),
     format: "iife",
@@ -119,40 +107,30 @@ async function buildTransformerEntry(entry) {
     sourcemap: false,
     legalComments: "none",
   });
-
-  if (entry.style) {
-    compileTransformerStyles(entry.name, entry.style);
-  }
 }
 
-/**
- * 编译 extends SCSS 为 dist 下的 CSS（常量和 min 两份）。
- *
- * @param {string} name
- * @param {string} styleEntry
- */
-function compileTransformerStyles(name, styleEntry) {
-  const input = resolve(rootDir, styleEntry);
-  const loadPaths = [resolve(rootDir, dirname(styleEntry))];
+function compileTransformerStyles() {
+  const loadPaths = [transformerDir, resolve(transformerDir, "gfm"), resolve(transformerDir, "extends")];
 
-  const expanded = sass.compile(input, {
+  const expanded = sass.compile(styleEntry, {
     loadPaths,
     style: "expanded",
     sourceMap: true,
   });
-  writeFileSync(resolve(distDir, `${name}.css`), expanded.css);
+  writeFileSync(resolve(distDir, "transformer.css"), expanded.css);
+  writeFileSync(resolve(rootDir, "style/style.css"), expanded.css);
   if (expanded.sourceMap) {
     writeFileSync(
-      resolve(distDir, `${name}.css.map`),
+      resolve(distDir, "transformer.css.map"),
       JSON.stringify(expanded.sourceMap),
     );
   }
 
-  const compressed = sass.compile(input, {
+  const compressed = sass.compile(styleEntry, {
     loadPaths,
     style: "compressed",
   });
-  writeFileSync(resolve(distDir, `${name}.min.css`), compressed.css);
+  writeFileSync(resolve(distDir, "transformer.min.css"), compressed.css);
 }
 
 /**
@@ -183,23 +161,24 @@ async function buildSimpleEntry(entry) {
   });
 }
 
+const stylesOnly = process.argv.includes("--styles-only");
+
 mkdirSync(distDir, { recursive: true });
-rmSync(distDir, { recursive: true, force: true });
-mkdirSync(distDir, { recursive: true });
 
-for (const entry of transformerEntries) {
-  await buildTransformerEntry(entry);
+if (stylesOnly) {
+  compileTransformerStyles();
+  console.log("styles done: transformer.css / transformer.min.css / style/style.css");
+} else {
+  rmSync(distDir, { recursive: true, force: true });
+  mkdirSync(distDir, { recursive: true });
+  compileTransformerStyles();
+  await buildTransformerEntry(transformerEntry);
+
+  for (const entry of simpleEntries) {
+    await buildSimpleEntry(entry);
+  }
+
+  const built = [transformerEntry.name, ...simpleEntries.map((e) => e.name)].join(", ");
+  console.log("build done:", built);
+  console.log("transformer outputs: js bundles + transformer.css / transformer.min.css");
 }
-
-for (const entry of simpleEntries) {
-  await buildSimpleEntry(entry);
-}
-
-const built = [
-  ...transformerEntries.map((e) => e.name),
-  ...simpleEntries.map((e) => e.name),
-].join(", ");
-console.log("build done:", built);
-console.log(
-  "transformer outputs: modern (.mjs/.min.mjs), traditional (.iife.js/.min.js), cjs, extends css",
-);

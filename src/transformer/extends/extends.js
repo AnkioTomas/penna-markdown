@@ -7,7 +7,7 @@
  * 扩展逻辑与 TransformerEngine 核心解耦，通过 afterParse / afterRender 钩子接入。
  */
 
-import { createTransformer } from "@/transformer/index.js";
+import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import htmlAttrsInline from "@/transformer/extends/inline/html_attrs.js";
 import highlightInline from "@/transformer/extends/inline/highlight.js";
 import emojiInline from "@/transformer/extends/inline/emoji.js";
@@ -359,7 +359,7 @@ export function createExtensionOptions(names = [], baseOptions = {}) {
  * @returns {import('@/transformer/TransformerEngine.js').TransformerEngine}
  */
 export function createTransformerWithExtensions(names = [], options = {}) {
-  return createTransformer(createExtensionOptions(names, options));
+  return new TransformerEngine(createExtensionOptions(names, options));
 }
 
 export default {

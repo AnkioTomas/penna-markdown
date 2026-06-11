@@ -313,16 +313,6 @@ body {
   border: none;
 }
 
-.panel .preview table {
-  border-collapse: collapse;
-}
-
-.panel .preview th,
-.panel .preview td {
-  border: 1px solid #d1d5db;
-  padding: 4px 8px;
-}
-
 .panel .fail-msg {
   margin-top: 8px;
   font-size: 12px;

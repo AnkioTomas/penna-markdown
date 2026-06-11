@@ -23,5 +23,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-/src/transformer/extends/style.css
-/src/transformer/extends/style.css.map
+/style/style.css
+/style/style.css.map

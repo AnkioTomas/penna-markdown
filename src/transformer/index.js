@@ -7,6 +7,13 @@
 
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 
+export {
+  getAvailableExtensions,
+  createExtensionParsers,
+  createExtensionOptions,
+  createTransformerWithExtensions,
+} from "@/transformer/extends/extends.js";
+
 /**
  * 创建 Transformer 引擎实例。
  *
