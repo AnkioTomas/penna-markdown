@@ -1,15 +1,17 @@
+@use "../../style/rem" as *;
+
 @mixin styles {
   .cherry-field-group {
-    margin: 16px 0;
-    border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
-    border-radius: 8px;
+    margin: rem(16) 0;
+    border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+    border-radius: rem(8);
     background: var(--cherry-c-bg-elevated);
     overflow: hidden;
   }
 
   .cherry-field {
-    padding: 16px;
-    border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+    padding: rem(16);
+    border-bottom: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
 
     &:last-child {
       border-bottom: none;
@@ -19,17 +21,17 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      margin: 0 0 8px;
+      gap: rem(16);
+      margin: 0 0 rem(8);
     }
 
     &__meta {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 8px;
+      gap: rem(8);
       min-width: 0;
-      font-size: 14px;
+      font-size: rem(14);
       line-height: 1.5;
     }
 
@@ -39,27 +41,27 @@
     }
 
     &__tag {
-      padding: 1px 8px;
-      border-radius: 999px;
-      font-size: 12px;
+      padding: rem(1) rem(8);
+      border-radius: rem(999);
+      font-size: rem(12);
       font-weight: 500;
 
       &--required {
         color: var(--cherry-c-alert-danger-text);
         background: var(--cherry-c-alert-danger-bg);
-        border: 1px solid var(--cherry-c-alert-danger-border);
+        border: rem(1) solid var(--cherry-c-alert-danger-border);
       }
 
       &--optional {
         color: var(--cherry-c-alert-note-text);
         background: var(--cherry-c-alert-note-bg);
-        border: 1px solid var(--cherry-c-alert-note-border);
+        border: rem(1) solid var(--cherry-c-alert-note-border);
       }
 
       &--deprecated {
         color: var(--cherry-c-alert-warning-text);
         background: var(--cherry-c-alert-warning-bg);
-        border: 1px solid var(--cherry-c-alert-warning-border);
+        border: rem(1) solid var(--cherry-c-alert-warning-border);
       }
     }
 
@@ -69,9 +71,9 @@
       text-align: right;
 
       code {
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-size: 12px;
+        padding: rem(2) rem(6);
+        border-radius: rem(4);
+        font-size: rem(12);
         font-family:
           ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
           "Courier New", monospace;
@@ -81,26 +83,26 @@
     }
 
     &__default {
-      margin: 0 0 10px;
-      font-size: 13px;
+      margin: 0 0 rem(10);
+      font-size: rem(13);
       text-align: right;
       color: var(--cherry-c-text-2);
 
       code {
-        padding: 2px 6px;
-        border-radius: 4px;
+        padding: rem(2) rem(6);
+        border-radius: rem(4);
         font-family:
           ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
           "Courier New", monospace;
         color: var(--cherry-c-text-1);
         background: color-mix(in srgb, var(--cherry-c-bg) 70%, transparent);
-        border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+        border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
       }
     }
 
     &__description {
       color: var(--cherry-c-text-2);
-      font-size: 14px;
+      font-size: rem(14);
       line-height: 1.6;
 
       > :first-child {
@@ -112,7 +114,7 @@
       }
 
       .cherry-badge {
-        margin-right: 8px;
+        margin-right: rem(8);
       }
     }
   }

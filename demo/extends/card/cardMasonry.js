@@ -17,5 +17,4 @@ export default {
 ![森林](https://images.unsplash.com/photo-1731756748993-85e1513dfc76?w=800&auto=format&fit=crop&q=60)
 
 ::::`,
-  expected: "",
 };

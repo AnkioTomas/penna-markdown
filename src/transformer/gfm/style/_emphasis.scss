@@ -1,0 +1,14 @@
+@mixin styles {
+  strong {
+    font-weight: 600;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  del {
+    color: var(--cherry-c-text-3);
+    text-decoration: line-through;
+  }
+}

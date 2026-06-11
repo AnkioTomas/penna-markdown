@@ -11,28 +11,6 @@ const statusEl = document.getElementById("status");
 
 const transformer = createTransformer();
 
-const DEFAULT_MARKDOWN = `# GFM 语法演示
-
-Cherry Markdown Next 内置 **GFM**（GitHub Flavored Markdown）解析器。
-
-## 常用语法
-
-- **强调**：*斜体*、**粗体**、~~删除线~~
-- [链接](https://github.github.com/gfm/)
-- 围栏代码块与表格
-
-| 类型 | 说明 |
-| --- | --- |
-| 块级 | 标题、引用、列表、代码、表格 |
-| 行内 | 链接、图片、强调、自动链接 |
-
-> 左侧选择单项语法查看示例；右侧可编辑 Markdown 实时预览。
-
----
-
-自动链接：<https://example.com>
-`;
-
 let currentSyntaxIndex = 0;
 
 function normalizeHtml(html) {
@@ -95,7 +73,6 @@ function renderSyntaxList() {
   });
 }
 
-markdownInput.value = DEFAULT_MARKDOWN;
 renderSyntaxList();
 updateCurrentSyntax();
 

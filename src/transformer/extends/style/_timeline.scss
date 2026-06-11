@@ -1,3 +1,5 @@
+@use "../../style/rem" as *;
+
 @mixin timeline-type($name, $token) {
   &--#{ $name } {
     --cherry-timeline-c-line: var(--cherry-c-alert-#{$token}-text);
@@ -13,7 +15,7 @@
     --cherry-timeline-c-text: var(--cherry-c-text-2);
     --cherry-timeline-c-time: var(--cherry-c-text-3);
 
-    margin: 16px 0;
+    margin: rem(16) 0;
   }
 
   .cherry-timeline-box {
@@ -23,9 +25,9 @@
 
   .cherry-timeline-item {
     display: grid;
-    grid-template-columns: 24px 1fr;
-    gap: 0 16px;
-    padding-bottom: 24px;
+    grid-template-columns: rem(24) 1fr;
+    gap: 0 rem(16);
+    padding-bottom: rem(24);
     color: var(--cherry-timeline-c-text);
 
     @include timeline-type(info, note);
@@ -53,11 +55,11 @@
     &::after {
       content: "";
       position: absolute;
-      top: 14px;
-      bottom: -24px;
+      top: rem(14);
+      bottom: rem(-24);
       left: 50%;
       transform: translateX(-50%);
-      width: 2px;
+      width: rem(2);
       background: var(--cherry-timeline-c-line);
     }
   }
@@ -65,24 +67,24 @@
   .cherry-timeline-item--line-dashed .cherry-timeline-line::after {
     width: 0;
     background: transparent;
-    border-left: 2px dashed var(--cherry-timeline-c-line);
+    border-left: rem(2) dashed var(--cherry-timeline-c-line);
   }
 
   .cherry-timeline-item--line-dotted .cherry-timeline-line::after {
     width: 0;
     background: transparent;
-    border-left: 2px dotted var(--cherry-timeline-c-line);
+    border-left: rem(2) dotted var(--cherry-timeline-c-line);
   }
 
   .cherry-timeline-point {
     position: relative;
     z-index: 1;
-    width: 12px;
-    height: 12px;
-    margin-top: 4px;
+    width: rem(12);
+    height: rem(12);
+    margin-top: rem(4);
     border-radius: 50%;
     background: var(--cherry-timeline-c-point);
-    box-shadow: 0 0 0 3px var(--cherry-c-bg-elevated);
+    box-shadow: 0 0 0 rem(3) var(--cherry-c-bg-elevated);
   }
 
   .cherry-timeline-container {
@@ -90,7 +92,7 @@
   }
 
   .cherry-timeline-content {
-    font-size: 14px;
+    font-size: rem(14);
     line-height: 1.6;
 
     > :first-child {
@@ -103,23 +105,23 @@
   }
 
   .cherry-timeline-title {
-    margin: 0 0 8px;
-    font-size: 15px;
+    margin: 0 0 rem(8);
+    font-size: rem(15);
     font-weight: 600;
     color: var(--cherry-timeline-c-title);
     line-height: 1.5;
   }
 
   .cherry-timeline-time {
-    margin: 8px 0 0;
-    font-size: 13px;
+    margin: rem(8) 0 0;
+    font-size: rem(13);
     color: var(--cherry-timeline-c-time);
     line-height: 1.4;
   }
 
   .cherry-timeline--placement-right {
     .cherry-timeline-item {
-      grid-template-columns: 1fr 24px;
+      grid-template-columns: 1fr rem(24);
 
       .cherry-timeline-line {
         order: 2;
@@ -134,7 +136,7 @@
 
   .cherry-timeline--placement-between {
     .cherry-timeline-item--placement-right {
-      grid-template-columns: 1fr 24px;
+      grid-template-columns: 1fr rem(24);
 
       .cherry-timeline-line {
         order: 2;

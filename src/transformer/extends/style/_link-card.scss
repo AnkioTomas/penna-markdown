@@ -1,8 +1,10 @@
+@use "../../style/rem" as *;
+
 @mixin styles {
   .cherry-card.cherry-link-card {
     position: relative;
     display: block;
-    padding-right: 36px;
+    padding-right: rem(36);
     text-decoration: none;
     cursor: pointer;
     transition:
@@ -14,9 +16,9 @@
       content: "";
       position: absolute;
       top: 50%;
-      right: 14px;
-      width: 16px;
-      height: 16px;
+      right: rem(14);
+      width: rem(16);
+      height: rem(16);
       transform: translateY(-50%);
       background-color: var(--cherry-c-text-3);
       -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z'/%3E%3C/svg%3E")
@@ -30,30 +32,30 @@
 
     &:hover {
       border-color: color-mix(in srgb, var(--cherry-c-brand-2) 60%, transparent);
-      box-shadow: 0 4px 12px color-mix(in srgb, var(--cherry-c-text-1) 8%, transparent);
+      box-shadow: 0 rem(4) rem(12) color-mix(in srgb, var(--cherry-c-text-1) 8%, transparent);
 
       &::after {
-        transform: translateY(-50%) translateX(2px);
+        transform: translateY(-50%) translateX(rem(2));
         background-color: var(--cherry-c-brand-2);
       }
     }
 
     &:focus-visible {
-      outline: 2px solid var(--cherry-c-brand-2);
-      outline-offset: 2px;
+      outline: rem(2) solid var(--cherry-c-brand-2);
+      outline-offset: rem(2);
     }
 
     &--has-icon {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: rem(12);
     }
 
     &__icon {
-      flex: 0 0 40px;
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
+      flex: 0 0 rem(40);
+      width: rem(40);
+      height: rem(40);
+      border-radius: rem(8);
       object-fit: cover;
       background: color-mix(in srgb, var(--cherry-c-text-3) 10%, var(--cherry-c-bg-elevated));
     }

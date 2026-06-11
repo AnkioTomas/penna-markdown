@@ -1,12 +1,14 @@
-@mixin media-shell($radius: 10px) {
-  margin: 16px 0;
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent);
+@use "../../style/rem" as *;
+
+@mixin media-shell($radius: rem(10)) {
+  margin: rem(16) 0;
+  border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent);
   border-radius: $radius;
   background: var(--cherry-c-bg-elevated);
   overflow: hidden;
   box-shadow:
-    0 1px 2px color-mix(in srgb, var(--cherry-c-text-1) 6%, transparent),
-    0 8px 24px color-mix(in srgb, var(--cherry-c-text-1) 4%, transparent);
+    0 rem(1) rem(2) color-mix(in srgb, var(--cherry-c-text-1) 6%, transparent),
+    0 rem(8) rem(24) color-mix(in srgb, var(--cherry-c-text-1) 4%, transparent);
 }
 
 @mixin styles {
@@ -23,17 +25,17 @@
       outline: none;
 
       &--inline {
-        margin: 8px 0;
-        border-radius: 8px;
+        margin: rem(8) 0;
+        border-radius: rem(8);
       }
     }
 
     &__caption {
       margin: 0;
-      padding: 10px 14px 12px;
-      border-top: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+      padding: rem(10) rem(14) rem(12);
+      border-top: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
       color: var(--cherry-c-text-2);
-      font-size: 13px;
+      font-size: rem(13);
       line-height: 1.5;
       text-align: center;
     }
@@ -65,14 +67,14 @@
   .cherry-audio-player {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 14px 16px;
+    gap: rem(14);
+    padding: rem(14) rem(16);
 
     &__cover {
-      flex: 0 0 56px;
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
+      flex: 0 0 rem(56);
+      width: rem(56);
+      height: rem(56);
+      border-radius: rem(12);
       background:
         linear-gradient(
           145deg,
@@ -80,8 +82,8 @@
           color-mix(in srgb, var(--cherry-c-brand-1) 72%, #000)
         );
       box-shadow:
-        inset 0 1px 0 color-mix(in srgb, #fff 24%, transparent),
-        0 6px 16px color-mix(in srgb, var(--cherry-c-brand-1) 28%, transparent);
+        inset 0 rem(1) 0 color-mix(in srgb, #fff 24%, transparent),
+        0 rem(6) rem(16) color-mix(in srgb, var(--cherry-c-brand-1) 28%, transparent);
       position: relative;
       overflow: hidden;
 
@@ -90,9 +92,9 @@
         position: absolute;
         inset: 0;
         margin: auto;
-        width: 18px;
-        height: 18px;
-        border: 2px solid color-mix(in srgb, #fff 88%, transparent);
+        width: rem(18);
+        height: rem(18);
+        border: rem(2) solid color-mix(in srgb, #fff 88%, transparent);
         border-radius: 50%;
       }
 
@@ -101,8 +103,8 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        width: 10px;
-        height: 14px;
+        width: rem(10);
+        height: rem(14);
         background: color-mix(in srgb, #fff 92%, transparent);
         clip-path: polygon(0 0, 100% 50%, 0 100%);
         transform: translate(-34%, -50%);
@@ -110,7 +112,7 @@
 
       &--image {
         background: color-mix(in srgb, var(--cherry-c-text-3) 12%, var(--cherry-c-bg-elevated));
-        box-shadow: 0 4px 12px color-mix(in srgb, var(--cherry-c-text-1) 10%, transparent);
+        box-shadow: 0 rem(4) rem(12) color-mix(in srgb, var(--cherry-c-text-1) 10%, transparent);
 
         &::before,
         &::after {
@@ -132,9 +134,9 @@
     }
 
     &__title {
-      margin: 0 0 8px;
+      margin: 0 0 rem(8);
       color: var(--cherry-c-text-1);
-      font-size: 14px;
+      font-size: rem(14);
       font-weight: 600;
       line-height: 1.4;
       white-space: nowrap;
@@ -145,10 +147,10 @@
     &__track {
       display: block;
       width: 100%;
-      height: 36px;
+      height: rem(36);
       margin: 0;
       border: 0;
-      border-radius: 999px;
+      border-radius: rem(999);
       background: color-mix(in srgb, var(--cherry-c-text-3) 10%, transparent);
       outline: none;
 
@@ -157,7 +159,7 @@
       }
 
       &::-webkit-media-controls-enclosure {
-        border-radius: 999px;
+        border-radius: rem(999);
         background: transparent;
       }
 
@@ -168,14 +170,14 @@
       }
 
       &::-webkit-media-controls-timeline {
-        border-radius: 999px;
-        margin-inline: 4px;
+        border-radius: rem(999);
+        margin-inline: rem(4);
       }
 
       &::-webkit-media-controls-current-time-display,
       &::-webkit-media-controls-time-remaining-display {
         color: var(--cherry-c-text-2);
-        font-size: 11px;
+        font-size: rem(11);
         font-variant-numeric: tabular-nums;
       }
     }

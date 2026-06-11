@@ -40,5 +40,4 @@ stateDiagram-v2
 flowchart LR
     输入 --> 解析 --> 渲染
 \`\`\``,
-  expected: "",
 };

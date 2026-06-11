@@ -1,3 +1,5 @@
+@use "../../style/rem" as *;
+
 @mixin styles {
   .cherry-card-grid {
     --card-grid-cols-sm: 1;
@@ -6,14 +8,14 @@
 
     display: grid;
     grid-template-columns: repeat(var(--card-grid-cols-sm), minmax(0, 1fr));
-    gap: 16px;
-    margin: 16px 0;
+    gap: rem(16);
+    margin: rem(16) 0;
 
-    @media (min-width: 768px) {
+    @media (min-width: rem(768)) {
       grid-template-columns: repeat(var(--card-grid-cols-md), minmax(0, 1fr));
     }
 
-    @media (min-width: 960px) {
+    @media (min-width: rem(960)) {
       grid-template-columns: repeat(var(--card-grid-cols-lg), minmax(0, 1fr));
     }
   }

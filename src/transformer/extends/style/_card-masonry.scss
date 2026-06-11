@@ -1,9 +1,11 @@
+@use "../../style/rem" as *;
+
 @mixin styles {
   .cherry-card-masonry {
     display: flex;
     align-items: flex-start;
     width: 100%;
-    margin: 16px 0;
+    margin: rem(16) 0;
 
     &__item {
       flex: 1;
@@ -25,7 +27,7 @@
         display: block;
         width: 100%;
         height: auto;
-        border-radius: 8px;
+        border-radius: rem(8);
       }
     }
   }

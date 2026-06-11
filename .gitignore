@@ -9,7 +9,6 @@ lerna-debug.log*
 
 node_modules
 dist
-dist-demo
 dist-ssr
 *.local
 
@@ -23,5 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-/style/style.css
-/style/style.css.map

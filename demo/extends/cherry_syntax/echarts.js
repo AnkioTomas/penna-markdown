@@ -43,5 +43,4 @@ export default {
 \`\`\`
 
 配置体为标准 JSON；渲染为远程图片，随系统深浅色切换主题。`,
-  expected: "",
 };

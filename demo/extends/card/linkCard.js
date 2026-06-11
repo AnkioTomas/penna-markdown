@@ -6,5 +6,4 @@ export default {
 
 点击整卡跳转到外部链接，左侧可显示 icon 图片。
 :::`,
-  expected: "",
 };

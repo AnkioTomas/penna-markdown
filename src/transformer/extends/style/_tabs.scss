@@ -1,19 +1,21 @@
+@use "../../style/rem" as *;
+
 @mixin styles {
   $max-tabs: 16;
 
   .cherry-tabs {
-    margin: 16px 0;
-    border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
-    border-radius: 8px;
+    margin: rem(16) 0;
+    border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+    border-radius: rem(8);
     background: var(--cherry-c-bg-elevated);
     overflow: hidden;
 
     &__radio {
       position: absolute;
-      width: 1px;
-      height: 1px;
+      width: rem(1);
+      height: rem(1);
       padding: 0;
-      margin: -1px;
+      margin: rem(-1);
       overflow: hidden;
       clip: rect(0, 0, 0, 0);
       white-space: nowrap;
@@ -23,9 +25,9 @@
     &__nav {
       display: flex;
       flex-wrap: nowrap;
-      gap: 2px;
-      padding: 0 8px;
-      border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+      gap: rem(2);
+      padding: 0 rem(8);
+      border-bottom: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
       overflow-x: auto;
       scrollbar-width: thin;
     }
@@ -33,10 +35,10 @@
     &__label {
       flex: 0 0 auto;
       margin: 0;
-      padding: 11px 14px;
-      border-bottom: 2px solid transparent;
+      padding: rem(11) rem(14);
+      border-bottom: rem(2) solid transparent;
       color: var(--cherry-c-text-2);
-      font-size: 14px;
+      font-size: rem(14);
       font-weight: 500;
       line-height: 1.4;
       cursor: pointer;
@@ -52,9 +54,9 @@
     }
 
     &__panels {
-      padding: 16px;
+      padding: rem(16);
       color: var(--cherry-c-text-2);
-      font-size: 14px;
+      font-size: rem(14);
       line-height: 1.6;
     }
 

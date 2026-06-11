@@ -1,17 +1,19 @@
+@use "../../style/rem" as *;
+
 @mixin styles {
   .cherry-card {
-    border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 24%, transparent);
-    border-radius: 8px;
-    padding: 16px;
+    border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 24%, transparent);
+    border-radius: rem(8);
+    padding: rem(16);
     background-color: var(--cherry-c-bg-elevated);
     color: var(--cherry-c-text-2);
-    font-size: 14px;
+    font-size: rem(14);
     line-height: 1.6;
 
     &__title {
-      margin: 0 0 12px;
+      margin: 0 0 rem(12);
       font-weight: 600;
-      font-size: 1em;
+      font-size: rem(14);
       line-height: 1.4;
       color: var(--cherry-c-text-1);
     }

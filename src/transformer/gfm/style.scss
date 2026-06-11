@@ -1,8 +1,0 @@
-// GFM 内置语法样式（语义标签）
-@use "../style/tokens";
-@use "style/content";
-
-.cherry-gfm {
-  @include tokens.colors;
-  @include content.styles;
-}

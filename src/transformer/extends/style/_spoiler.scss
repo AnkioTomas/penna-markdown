@@ -1,3 +1,5 @@
+@use "../../style/rem" as *;
+
 // 剧透语法 !! text !! / !! text !! {click}
 // 用户通过 {click} 注入的 .click 修饰类保持简短
 @mixin styles {
@@ -6,7 +8,7 @@
     transition: filter 0.2s ease;
 
     // 默认：悬浮显示
-    filter: blur(4px);
+    filter: blur(rem(4));
 
     &:hover {
       filter: none;
@@ -18,7 +20,7 @@
       filter: none;
 
       .cherry-spoiler__text {
-        filter: blur(4px);
+        filter: blur(rem(4));
         transition: filter 0.2s ease;
       }
 

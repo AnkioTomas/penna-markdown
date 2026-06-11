@@ -12,8 +12,8 @@ import { fileURLToPath } from "node:url";
 
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = resolve(rootDir, "dist");
-const styleEntry = resolve(rootDir, "style/style.scss");
 const transformerDir = resolve(rootDir, "src/transformer");
+const styleEntry = resolve(transformerDir, "style/style.scss");
 
 const alias = {
   "@": resolve(rootDir, "src"),
@@ -118,7 +118,6 @@ function compileTransformerStyles() {
     sourceMap: true,
   });
   writeFileSync(resolve(distDir, "transformer.css"), expanded.css);
-  writeFileSync(resolve(rootDir, "style/style.css"), expanded.css);
   if (expanded.sourceMap) {
     writeFileSync(
       resolve(distDir, "transformer.css.map"),
@@ -167,7 +166,7 @@ mkdirSync(distDir, { recursive: true });
 
 if (stylesOnly) {
   compileTransformerStyles();
-  console.log("styles done: transformer.css / transformer.min.css / style/style.css");
+  console.log("styles done: transformer.css / transformer.min.css");
 } else {
   rmSync(distDir, { recursive: true, force: true });
   mkdirSync(distDir, { recursive: true });

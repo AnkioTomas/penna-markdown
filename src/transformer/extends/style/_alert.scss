@@ -1,3 +1,5 @@
+@use "../../style/rem" as *;
+
 // 警报语法 > [!NOTE] / ::: note 等（GitHub Octicons，16×16 小尺寸清晰）
 @mixin styles {
   .cherry-alert {
@@ -6,29 +8,29 @@
     --alert-border: var(--cherry-c-brand-2);
     --alert-icon: none;
 
-    font-size: 14px;
+    font-size: rem(14);
     line-height: 1.6;
     color: var(--alert-text);
     background-color: var(--alert-bg);
-    border: 1px solid var(--alert-border);
-    border-radius: 8px;
-    margin: 16px 0;
-    padding: 16px 16px 8px;
+    border: rem(1) solid var(--alert-border);
+    border-radius: rem(8);
+    margin: rem(16) 0;
+    padding: rem(16) rem(16) rem(8);
 
     &__title {
       display: flex;
       align-items: center;
-      gap: 0.5em;
-      margin: 0 0 8px;
+      gap: rem(8);
+      margin: 0 0 rem(8);
       font-weight: 600;
-      font-size: 1em;
+      font-size: rem(14);
       line-height: 1.4;
       color: var(--alert-text);
 
       &::before {
         content: "";
-        width: 16px;
-        height: 16px;
+        width: rem(16);
+        height: rem(16);
         flex-shrink: 0;
         background-color: var(--alert-text);
         -webkit-mask: var(--alert-icon) no-repeat center / contain;
@@ -87,8 +89,8 @@
   }
 
   .cherry-align {
-    margin: 16px 0;
-    font-size: 14px;
+    margin: rem(16) 0;
+    font-size: rem(14);
     line-height: 1.6;
 
     &--left {
@@ -108,7 +110,7 @@
     }
 
     &__title {
-      margin: 0 0 8px;
+      margin: 0 0 rem(8);
       font-weight: 600;
       color: var(--cherry-c-text-2);
     }

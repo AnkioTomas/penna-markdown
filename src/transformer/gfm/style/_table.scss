@@ -1,0 +1,26 @@
+@use "../../style/rem" as *;
+
+@mixin styles {
+  table {
+    width: 100%;
+    margin: 0 0 rem(16);
+    border-collapse: collapse;
+    display: block;
+    overflow-x: auto;
+  }
+
+  th,
+  td {
+    padding: rem(6) rem(12);
+    border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 30%, transparent);
+  }
+
+  th {
+    font-weight: 600;
+    background: var(--cherry-c-bg-elevated);
+  }
+
+  tr:nth-child(even) td {
+    background: color-mix(in srgb, var(--cherry-c-bg-elevated) 70%, transparent);
+  }
+}

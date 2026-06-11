@@ -1,13 +1,15 @@
+@use "../../style/rem" as *;
+
 @mixin styles {
   .cherry-image-card {
-    margin: 16px 0;
-    border-radius: 8px;
+    margin: rem(16) 0;
+    border-radius: rem(8);
     overflow: hidden;
 
     &__media {
       position: relative;
       overflow: hidden;
-      border-radius: 8px;
+      border-radius: rem(8);
       background-color: var(--cherry-c-bg-elevated);
     }
 
@@ -21,7 +23,7 @@
     &__info {
       position: absolute;
       inset: auto 0 0;
-      padding: 12px 16px 14px;
+      padding: rem(12) rem(16) rem(14);
       color: #fff;
       background: linear-gradient(
         180deg,
@@ -36,7 +38,7 @@
 
     &__title {
       margin: 0;
-      font-size: 1.05em;
+      font-size: rem(16.8);
       font-weight: 600;
       line-height: 1.4;
 
@@ -63,12 +65,12 @@
     }
 
     &__copyright {
-      font-size: 12px;
+      font-size: rem(12);
       line-height: 1.4;
     }
 
     &__description {
-      font-size: 13px;
+      font-size: rem(13);
       line-height: 1.55;
 
       > :first-child {
@@ -83,7 +85,7 @@
     &:hover,
     &:focus-within {
       .cherry-image-card__info {
-        padding: 20px 16px 16px;
+        padding: rem(20) rem(16) rem(16);
         background: linear-gradient(
           180deg,
           transparent 0%,
@@ -93,17 +95,17 @@
       }
 
       .cherry-image-card__title {
-        margin: 0 0 8px;
+        margin: 0 0 rem(8);
       }
 
       .cherry-image-card__copyright {
-        max-height: 2.5em;
+        max-height: rem(30);
         opacity: 0.88;
-        margin: 0 0 8px;
+        margin: 0 0 rem(8);
       }
 
       .cherry-image-card__description {
-        max-height: 12em;
+        max-height: rem(156);
         opacity: 0.95;
         overflow-y: auto;
       }

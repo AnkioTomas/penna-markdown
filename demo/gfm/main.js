@@ -43,8 +43,8 @@ function renderCase(item, result) {
   section.id = `case-${item.id}`;
   section.dataset.section = item.section;
 
-  const badgeClass = result.skipped ? "skip" : result.ok ? "pass" : "fail";
-  const badgeText = result.skipped ? "跳过" : result.ok ? "通过" : "失败";
+  const badgeClass = result.ok ? "pass" : "fail";
+  const badgeText = result.ok ? "通过" : "失败";
 
   section.innerHTML = `
     <div class="case-header">
@@ -61,8 +61,8 @@ function renderCase(item, result) {
       </div>
       <div class="panel">
         <h4>预览</h4>
-        <div class="preview cherry-gfm"></div>
-        ${result.ok || result.skipped ? "" : `<div class="fail-msg"></div>`}
+        <div class="preview cherry"></div>
+        ${result.ok ? "" : `<div class="fail-msg"></div>`}
       </div>
       <div class="panel case-expected">
         <h4>期望 HTML (GFM)</h4>
@@ -79,7 +79,7 @@ function renderCase(item, result) {
   section.querySelector(".preview").innerHTML = result.actualHtml ?? "";
   section.querySelector(".expected").textContent = item.html;
   section.querySelector(".actual").textContent = result.actualHtml ?? "";
-  if (!result.ok && !result.skipped) {
+  if (!result.ok) {
     section.querySelector(".fail-msg").textContent = result.message ?? "与期望 HTML 不一致";
   }
 
@@ -113,8 +113,8 @@ function buildNav(visibleResults) {
     for (const { item, result } of entries) {
       const link = document.createElement("a");
       link.href = `#case-${item.id}`;
-      const icon = result.skipped ? "○" : result.ok ? "✓" : "✗";
-      const cls = result.skipped ? "skip" : result.ok ? "pass" : "fail";
+      const icon = result.ok ? "✓" : "✗";
+      const cls = result.ok ? "pass" : "fail";
       link.innerHTML = `#${item.example} <span class="status ${cls}">${icon}</span>`;
       group.appendChild(link);
     }
@@ -132,8 +132,7 @@ function getFilter() {
 
 function matchesFilter(item, result, { q, section, status }) {
   if (status === "pass" && !result.ok) return false;
-  if (status === "fail" && (result.ok || result.skipped)) return false;
-  if (status === "skip" && !result.skipped) return false;
+  if (status === "fail" && result.ok) return false;
   if (section && item.section !== section) return false;
   if (!q) return true;
   return (
@@ -149,7 +148,6 @@ function runCase(item) {
   const check = compareHtml(html, item.html);
   return {
     ok: check.ok,
-    skipped: false,
     actualHtml: html,
     message: check.ok ? undefined : "HTML 与 GFM 期望不一致",
   };
@@ -157,9 +155,9 @@ function runCase(item) {
 
 function updateSummary(visibleResults) {
   const totalPass = allResults.filter(({ result }) => result.ok).length;
-  const totalFail = allResults.filter(({ result }) => !result.ok && !result.skipped).length;
+  const totalFail = allResults.filter(({ result }) => !result.ok).length;
   const visiblePass = visibleResults.filter(({ result }) => result.ok).length;
-  const visibleFail = visibleResults.filter(({ result }) => !result.ok && !result.skipped).length;
+  const visibleFail = visibleResults.filter(({ result }) => !result.ok).length;
 
   summaryPass.textContent = `通过 ${totalPass}`;
   summaryFail.textContent = `失败 ${totalFail}`;
@@ -221,7 +219,7 @@ sectionSelect.addEventListener("change", () => applyFilter());
 statusSelect.addEventListener("change", () => applyFilter());
 
 summaryFail.addEventListener("click", () => {
-  const totalFail = allResults.filter(({ result }) => !result.ok && !result.skipped).length;
+  const totalFail = allResults.filter(({ result }) => !result.ok).length;
   if (totalFail === 0) return;
   statusSelect.value = statusSelect.value === "fail" ? "" : "fail";
   applyFilter();
@@ -229,4 +227,4 @@ summaryFail.addEventListener("click", () => {
 
 init();
 
-window.cherryGfmDemo = { transformer, runTests, applyFilter };
+window.cherryGfmDemo = { getTransformer, runTests, applyFilter };

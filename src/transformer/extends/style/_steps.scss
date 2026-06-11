@@ -1,6 +1,8 @@
+@use "../../style/rem" as *;
+
 @mixin styles {
   .cherry-steps {
-    margin: 16px 0;
+    margin: rem(16) 0;
 
     > ol {
       list-style: none;
@@ -13,9 +15,9 @@
       position: relative;
       counter-increment: cherry-step;
       list-style: none;
-      margin: 0 0 0 14px;
-      padding: 0 0 24px 34px;
-      border-left: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+      margin: 0 0 0 rem(14);
+      padding: 0 0 rem(24) rem(34);
+      border-left: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
 
       &::before {
         content: counter(cherry-step);
@@ -26,18 +28,18 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 26px;
-        height: 26px;
+        width: rem(26);
+        height: rem(26);
         border-radius: 50%;
         background: var(--cherry-c-bg);
-        border: 1.5px solid color-mix(in srgb, var(--cherry-c-brand-2) 50%, transparent);
+        border: rem(1.5) solid color-mix(in srgb, var(--cherry-c-brand-2) 50%, transparent);
         color: var(--cherry-c-brand-1);
-        font-size: 12px;
+        font-size: rem(12);
         font-weight: 600;
         font-variant-numeric: tabular-nums;
         line-height: 1;
-        letter-spacing: -0.02em;
-        box-shadow: 0 0 0 3px var(--cherry-c-bg);
+        letter-spacing: rem(-0.32);
+        box-shadow: 0 0 0 rem(3) var(--cherry-c-bg);
         z-index: 1;
       }
 
@@ -47,11 +49,11 @@
       }
 
       > p:first-child {
-        margin: 0 0 8px;
-        padding-top: 2px;
+        margin: 0 0 rem(8);
+        padding-top: rem(2);
         font-weight: 600;
         color: var(--cherry-c-text-1);
-        line-height: 22px;
+        line-height: rem(22);
       }
 
       > :not(p:first-child) {

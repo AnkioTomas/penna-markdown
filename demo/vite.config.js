@@ -1,5 +1,5 @@
 /**
- * Demo：单页语法测试（index.html）。
+ * Demo 开发服务器：直接消费 src 源码，无需预编译 dist。
  */
 
 import { defineConfig } from "vite";
@@ -9,21 +9,12 @@ import { fileURLToPath } from "node:url";
 const demoDir = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(demoDir, "..");
 
-const indexHtml = resolve(demoDir, "index.html");
-const editorHtml = resolve(demoDir, "editor/index.html");
-const converterHtml = resolve(demoDir, "converter/index.html");
-const gfmHtml = resolve(demoDir, "gfm/index.html");
-const gfmSyntaxHtml = resolve(demoDir, "gfm-syntax/index.html");
-const astHtml = resolve(demoDir, "ast/index.html");
-const extendsHtml = resolve(demoDir, "extends/index.html");
-
 export default defineConfig({
   root: demoDir,
   base: "./",
   resolve: {
     alias: {
       "@": resolve(rootDir, "src"),
-      "@style": resolve(rootDir, "style"),
     },
   },
   css: {
@@ -42,21 +33,6 @@ export default defineConfig({
     port: 5173,
     fs: {
       allow: [rootDir],
-    },
-  },
-  build: {
-    outDir: resolve(demoDir, "../dist-demo"),
-    emptyOutDir: true,
-    rollupOptions: {
-      input: {
-        index: indexHtml,
-        editor: editorHtml,
-        converter: converterHtml,
-        gfm: gfmHtml,
-        gfmSyntax: gfmSyntaxHtml,
-        ast: astHtml,
-        extends: extendsHtml,
-      },
     },
   },
 });

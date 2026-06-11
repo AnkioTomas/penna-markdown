@@ -5,184 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>扩展语法 · Cherry Markdown Next</title>
     <link rel="stylesheet" href="../styles.css" />
-    <link rel="stylesheet" href="../style/style.css" />
-    
-    <style>
-      .ext-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 8px;
-        font-size: 13px;
-        cursor: pointer;
-      }
-
-      .ext-empty {
-        font-size: 12px;
-        color: #6b7280;
-        margin: 0;
-      }
-
-      .extends-main {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .extends-main textarea {
-        width: 100%;
-        min-height: 180px;
-        padding: 12px;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        font-size: 13px;
-        line-height: 1.5;
-        resize: vertical;
-      }
-
-      .extends-panels {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-      }
-
-      .extends-panel {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 10px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .extends-panel h2 {
-        margin: 0;
-        padding: 10px 14px;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        color: #6b7280;
-        background: #fafafa;
-        border-bottom: 1px solid #f3f4f6;
-      }
-
-      .extends-panel .body {
-        padding: 12px 14px;
-        flex: 1;
-        overflow: auto;
-      }
-
-      .extends-panel pre {
-        margin: 0;
-        padding: 10px;
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
-        border-radius: 6px;
-        font-size: 12px;
-        line-height: 1.5;
-        white-space: pre-wrap;
-        word-break: break-word;
-        max-height: 320px;
-        overflow: auto;
-      }
-
-      .extends-panel .preview {
-        min-height: 80px;
-        line-height: 1.6;
-      }
-
-
-      .syntax-list {
-        max-height: 600px;
-        overflow-y: auto;
-        padding-right: 4px;
-      }
-
-      .syntax-item {
-        padding: 8px 10px;
-        margin-bottom: 4px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 13px;
-        transition: background 0.2s;
-      }
-
-      .syntax-item:hover {
-        background: #f3f4f6;
-      }
-
-      .syntax-item.active {
-        background: #dbeafe;
-        border-left: 3px solid #3b82f6;
-      }
-
-      .syntax-name {
-        font-weight: 600;
-        margin-bottom: 4px;
-      }
-
-      .syntax-desc {
-        font-size: 11px;
-        color: #6b7280;
-        line-height: 1.4;
-      }
-
-      .cherry-tabs {
-        margin: 12px 0;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        overflow: hidden;
-      }
-
-      .cherry-tabs__radio {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .cherry-tabs__nav {
-        display: flex;
-        gap: 4px;
-        padding: 8px 8px 0;
-        background: #f9fafb;
-        border-bottom: 1px solid #e5e7eb;
-      }
-
-      .cherry-tabs__label {
-        display: inline-block;
-        padding: 8px 14px;
-        cursor: pointer;
-        border: 1px solid transparent;
-        border-bottom: 2px solid transparent;
-        border-radius: 6px 6px 0 0;
-        font-size: 13px;
-        color: #4b5563;
-      }
-
-      .cherry-tabs__panels {
-        background: #fff;
-      }
-
-      .cherry-tabs__panel {
-        display: none;
-        padding: 14px 16px;
-      }
-
-      .extends-panel.ast pre {
-        max-height: 320px;
-        font-size: 11px;
-      }
-
-      @media (max-width: 1200px) {
-        .extends-panels {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="../syntax-demo.css" />
+    <link rel="stylesheet" href="../cherry.scss" />
   </head>
   <body>
-    <script src="../shared/require-server.js"></script>
     <div class="layout">
       <aside class="sidebar">
         <h1>扩展语法</h1>
@@ -195,23 +21,21 @@
         <div class="toolbar">
           <button id="rerun-btn" type="button">重新渲染</button>
         </div>
-        
         <p id="status" class="gfm-status"></p>
-        <div id="extensions-list"></div>
+        <div id="extensions-list" class="syntax-list"></div>
       </aside>
       <main class="main extends-main">
         <textarea id="markdown-input" placeholder="输入 Markdown..."></textarea>
         <div class="extends-panels">
-          
           <section class="extends-panel">
             <h2>预览</h2>
-            <div class="body preview cherry-gfm cherry-extends" id="preview"></div>
+            <div class="body preview cherry" id="preview"></div>
           </section>
           <section class="extends-panel">
-            <h2>Markdown / 期望 HTML</h2>
+            <h2>Markdown / HTML</h2>
             <div class="body">
               <pre id="markdown-display"></pre>
-              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 12px 0;">
+              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 12px 0;" />
               <pre id="html-display"></pre>
             </div>
           </section>

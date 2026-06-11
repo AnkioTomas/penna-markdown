@@ -9,5 +9,4 @@ export default {
 - 要点一
 - 要点二
 :::`,
-  expected: "",
 };

@@ -1,13 +1,15 @@
+@use "../../style/rem" as *;
+
 @mixin styles {
   .cherry-collapse {
-    margin: 16px 0;
-    border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
-    border-radius: 8px;
+    margin: rem(16) 0;
+    border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+    border-radius: rem(8);
     background: var(--cherry-c-bg-elevated);
     overflow: hidden;
 
     details {
-      border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+      border-bottom: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
 
       &:last-child {
         border-bottom: none;
@@ -15,9 +17,9 @@
     }
 
     summary {
-      padding: 11px 14px;
+      padding: rem(11) rem(14);
       cursor: pointer;
-      font-size: 14px;
+      font-size: rem(14);
       font-weight: 600;
       color: var(--cherry-c-text-1);
       background: color-mix(in srgb, var(--cherry-c-bg-elevated) 88%, var(--cherry-c-text-3));
@@ -32,7 +34,7 @@
       &::before {
         content: "▸";
         display: inline-block;
-        margin-right: 8px;
+        margin-right: rem(8);
         color: var(--cherry-c-text-3);
         transition: transform 0.15s ease;
       }
@@ -44,9 +46,9 @@
   }
 
   .cherry-collapse-body {
-    padding: 12px 14px;
+    padding: rem(12) rem(14);
     color: var(--cherry-c-text-2);
-    font-size: 14px;
+    font-size: rem(14);
     line-height: 1.6;
 
     > :first-child {
