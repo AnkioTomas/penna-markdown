@@ -29,6 +29,7 @@ import { cardBlockParsers } from "@/transformer/extends/block/card/index.js";
 import { fieldBlockParsers } from "@/transformer/extends/block/field/index.js";
 import tabsBlock from "@/transformer/extends/block/tabs.js";
 import stepsBlock from "@/transformer/extends/block/steps.js";
+import timelineBlock from "@/transformer/extends/block/timeline.js";
 import detailBlock from "@/transformer/extends/block/detail.js";
 import iframeBlock from "@/transformer/extends/block/iframe.js";
 import footnoteDefBlock from "@/transformer/extends/block/footnoteDef.js";
@@ -196,6 +197,11 @@ const EXTENSION_DEFS = {
   steps: {
     inlineParsers: [],
     blockParsers: [stepsBlock],
+  },
+  /** 块级时间线语法。 */
+  timeline: {
+    inlineParsers: [],
+    blockParsers: [timelineBlock],
   },
   /** 块级折叠详情语法。 */
   detail: {

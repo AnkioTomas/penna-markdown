@@ -230,6 +230,105 @@ console.log('Hello World!')
 ::::`,
     expected: "",
   },
+  {
+    name: "timeline",
+    desc: "时间线",
+    markdown: `## 基础垂直 · 节点类型与彩色线条
+
+::: timeline
+- 节点一
+  time=2025-03-20 type=success
+
+  成功类型，线条与圆点同色。
+
+- 节点二
+  time=2025-04-20 type=warning
+
+  警告类型。
+
+- 节点三
+  time=2025-01-22 type=danger
+
+  危险类型。
+
+- 节点四
+  time=2025-06-01 type=important
+
+  重要类型。
+:::
+
+## 多行标题
+
+::: timeline
+- 主标题
+  副标题（同属标题行）
+  time=2025-03-20 type=tip
+
+  标题可跨多行，配置行紧跟最后一行标题之后。
+:::
+
+## 线条风格（容器默认 + 单项覆盖）
+
+::: timeline line="dotted"
+- 节点一
+  time=2025-03-20
+
+  继承容器 dotted 线条。
+
+- 节点二
+  time=2025-04-20 type=success line=dashed
+
+  单项覆盖为 dashed。
+
+- 节点三
+  time=2025-01-22 type=danger line=solid
+
+  单项覆盖为 solid。
+:::
+
+## 右对齐
+
+::: timeline placement="right"
+- 节点一
+  time=2025-03-20 type=success
+
+  内容在时间轴右侧。
+
+- 节点二
+  time=2025-04-20 type=warning
+
+  右对齐布局。
+:::
+
+## 两端对齐
+
+::: timeline placement="between"
+- 节点一
+  time=2025-03-20 placement=right type=success
+
+  本项在右侧。
+
+- 节点二
+  time=2025-04-20 type=warning
+
+  本项在左侧（默认）。
+
+- 节点三
+  time=2025-01-22 type=danger placement=right
+
+  再次右侧。
+:::
+
+## 自定义颜色
+
+::: timeline
+- 自定义色
+  time=2025-03-20 color=#3cf
+
+  color 覆盖线条与圆点颜色。
+:::`,
+    expected: "",
+  },
   { name: "detail", desc: "展开收起", markdown: "+++ 点击展开\n内容\n+++", expected: "<details class=\"cherry-detail\"><summary>点击展开</summary>\n<p>内容</p>\n</details>" },
   { name: "iframe", desc: "内嵌 iframe", markdown: "!iframe[演示](https://example.com)", expected: "<div class=\"cherry-iframe\" style=\"aspect-ratio: 16 / 9;\"><iframe src=\"https://example.com\" allowfullscreen=\"allowfullscreen\"></iframe></div>" },
   { name: "media", desc: "媒体元素", markdown: "!video[演示](https://example.com/demo.mp4)", expected: "<div class=\"cherry-video\"><video src=\"https://example.com/demo.mp4\" controls=\"controls\"></video></div>" },

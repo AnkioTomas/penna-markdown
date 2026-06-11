@@ -15,6 +15,7 @@
 @use "style/steps";
 @use "style/tabs";
 @use "style/field";
+@use "style/timeline";
 
 .cherry {
   @include tokens.colors;
@@ -32,4 +33,5 @@
   @include steps.styles;
   @include tabs.styles;
   @include field.styles;
+  @include timeline.styles;
 }
