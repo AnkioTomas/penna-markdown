@@ -148,6 +148,32 @@ flowchart TD
   },
   ...cardExamples,
   { name: "tabs", desc: "选项卡", markdown: "::: tabs\n@tab 标题 1\n内容\n:::", expected: "<div class=\"cherry-tabs\">\n<input type=\"radio\" name=\"tabs\" id=\"tab-0\" checked>\n<label for=\"tab-0\" class=\"cherry-tabs__label\">标题 1</label>\n<div class=\"cherry-tabs__panel\">\n<p>内容</p>\n</div>\n<div class=\"cherry-tabs__content\"></div>\n</div>" },
+  {
+    name: "steps",
+    desc: "步骤条",
+    markdown: `::: steps
+
+1. 步骤 1
+
+\`\`\`ts
+console.log('Hello World!')
+\`\`\`
+
+2. 步骤 2
+
+这里是步骤 2 的相关内容
+
+3. 步骤 3
+
+::: tip 提示
+提示容器
+:::
+
+4. 结束
+
+:::`,
+    expected: "",
+  },
   { name: "detail", desc: "展开收起", markdown: "+++ 点击展开\n内容\n+++", expected: "<details class=\"cherry-detail\"><summary>点击展开</summary>\n<p>内容</p>\n</details>" },
   { name: "iframe", desc: "内嵌 iframe", markdown: "!iframe[演示](https://example.com)", expected: "<div class=\"cherry-iframe\" style=\"aspect-ratio: 16 / 9;\"><iframe src=\"https://example.com\" allowfullscreen=\"allowfullscreen\"></iframe></div>" },
   { name: "media", desc: "媒体元素", markdown: "!video[演示](https://example.com/demo.mp4)", expected: "<div class=\"cherry-video\"><video src=\"https://example.com/demo.mp4\" controls=\"controls\"></video></div>" },

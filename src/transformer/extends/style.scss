@@ -12,6 +12,7 @@
 @use "style/repo-card";
 @use "style/card-grid";
 @use "style/card-masonry";
+@use "style/steps";
 
 .cherry {
   @include tokens.colors;
@@ -26,4 +27,5 @@
   @include repo-card.styles;
   @include card-grid.styles;
   @include card-masonry.styles;
+  @include steps.styles;
 }

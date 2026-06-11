@@ -27,6 +27,7 @@ import { subInlineParser, supInlineParser } from "@/transformer/extends/inline/s
 import containerBlock from "@/transformer/extends/block/container.js";
 import { cardBlockParsers } from "@/transformer/extends/block/card/index.js";
 import tabsBlock from "@/transformer/extends/block/tabs.js";
+import stepsBlock from "@/transformer/extends/block/steps.js";
 import detailBlock from "@/transformer/extends/block/detail.js";
 import iframeBlock from "@/transformer/extends/block/iframe.js";
 import footnoteDefBlock from "@/transformer/extends/block/footnoteDef.js";
@@ -184,6 +185,11 @@ const EXTENSION_DEFS = {
   tabs: {
     inlineParsers: [],
     blockParsers: [tabsBlock],
+  },
+  /** 块级步骤条语法。 */
+  steps: {
+    inlineParsers: [],
+    blockParsers: [stepsBlock],
   },
   /** 块级折叠详情语法。 */
   detail: {
