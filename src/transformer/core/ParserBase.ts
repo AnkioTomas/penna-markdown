@@ -33,7 +33,7 @@ export abstract class BaseInlineParser {
       _index: number,
       _ctx: InlineParseContext,
   ): boolean {
-    return false;
+    return true;
   }
 
 
@@ -66,7 +66,7 @@ export abstract class BaseBlockParser {
     index: number,
     ctx: BlockParseContext,
   ): boolean {
-    return false;
+    return true;
   }
 
   parse(
