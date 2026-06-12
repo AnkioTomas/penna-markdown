@@ -3,6 +3,7 @@
  * @module renderer/codeHighlight
  */
 
+import { readCodeLinesText } from "@/transformer/extends/utils/renderCodeLines.js";
 import { parseHighlightLinesAttr } from "@/transformer/extends/utils/parseLineHighlight.js";
 import { isCherryDarkMode } from "./cherryTheme.js";
 
@@ -65,7 +66,8 @@ function decodeSource(encoded) {
 function readCodeSource(codeEl) {
   const stored = codeEl.dataset.cherrySource;
   if (stored) return decodeSource(stored);
-  const text = codeEl.textContent ?? "";
+
+  const text = readCodeLinesText(codeEl);
   codeEl.dataset.cherrySource = encodeSource(text);
   return text;
 }

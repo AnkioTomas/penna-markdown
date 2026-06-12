@@ -3,6 +3,8 @@
  * @module renderer/codeCopy
  */
 
+import { readCodeLinesText } from "@/transformer/extends/utils/renderCodeLines.js";
+
 /**
  * @param {ParentNode | null | undefined} container
  * @returns {HTMLElement | null}
@@ -55,13 +57,13 @@ export function hydrateCherryCodeCopy(container) {
       const codeEl = panel?.querySelector("code");
       if (!codeEl) return;
 
-      let code = codeEl.textContent ?? "";
+      let code = readCodeLinesText(codeEl);
       const stored = codeEl.dataset.cherrySource;
       if (stored) {
         try {
           code = decodeURIComponent(escape(atob(stored)));
         } catch {
-          // keep textContent fallback
+          // keep reconstructed text
         }
       }
       if (!code) return;

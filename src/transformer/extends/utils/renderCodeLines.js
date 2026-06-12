@@ -1,5 +1,5 @@
 /**
- * @file 代码块逐行 HTML 渲染（含行高亮 / 折叠）
+ * @file 代码块逐行 HTML 渲染（含行号 / 行高亮 / 折叠）
  * @module transformer/extends/utils/renderCodeLines
  */
 
@@ -34,7 +34,22 @@ export function wrapCodeLineHtml(lineHtml, lineNumber, highlightSet, folded = fa
     classes.push("cherry-code-block__line--folded");
   }
   const body = lineHtml === "" ? " " : lineHtml;
-  return `<span class="${classes.join(" ")}" data-line="${lineNumber}">${body}</span>`;
+  return `<span class="${classes.join(" ")}" data-line="${lineNumber}"><span class="cherry-code-block__ln" aria-hidden="true">${lineNumber}</span><span class="cherry-code-block__code">${body}</span></span>`;
+}
+
+/**
+ * 从已渲染的行 DOM 还原源码（排除行号列）。
+ *
+ * @param {ParentNode} codeEl
+ * @returns {string}
+ */
+export function readCodeLinesText(codeEl) {
+  const lines = codeEl.querySelectorAll(".line");
+  if (lines.length === 0) return codeEl.textContent ?? "";
+
+  return [...lines]
+    .map((line) => line.querySelector(".cherry-code-block__code")?.textContent ?? line.textContent ?? "")
+    .join("\n");
 }
 
 /**
@@ -64,7 +79,7 @@ export function renderCodeLinesHtml(content, highlightLines = [], collapse = nul
       return wrapCodeLineHtml(escapeHtml(line), lineNumber, highlightSet, folded);
     })
     .filter(Boolean)
-    .join("\n");
+    .join("");
 
   return { html, collapse: analysis };
 }

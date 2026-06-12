@@ -93,7 +93,7 @@
       display: none;
     }
 
-    --cb-line-height: 1.45;
+    --cb-line-height: 1.35;
 
     &__pre,
     &__panel > pre {
@@ -117,11 +117,15 @@
         font-family: inherit;
         line-height: inherit;
         color: inherit;
-        white-space: pre;
+        white-space: normal;
         background: transparent;
         border: 0;
         border-radius: 0;
       }
+    }
+
+    &__pre--lines code {
+      white-space: normal;
     }
 
     // highlight.js token（scoped）
@@ -203,34 +207,51 @@
     }
 
     .line {
-      display: block;
+      display: flex;
+      align-items: flex-start;
       min-height: 0;
       margin: 0;
       padding: 0;
       line-height: var(--cb-line-height);
     }
 
+    &__ln {
+      flex: 0 0 rem(36);
+      padding-right: rem(12);
+      font-size: rem(12);
+      font-variant-numeric: tabular-nums;
+      line-height: var(--cb-line-height);
+      color: var(--cherry-c-text-3);
+      text-align: right;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    &__code {
+      flex: 1 1 auto;
+      min-width: 0;
+      white-space: pre;
+    }
+
     &__line--highlighted {
       --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 14%, transparent);
       --cb-line-border: color-mix(in srgb, var(--cherry-c-brand-1) 65%, transparent);
 
-      margin: 0 rem(-18);
-      padding: 0 rem(18) 0 rem(15);
+      margin: 0 rem(-16);
+      padding: 0 rem(16);
       background: var(--cb-line-highlight);
       border-left: rem(3) solid var(--cb-line-border);
     }
 
-    [data-theme="dark"] & &__line--highlighted {
-      --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 22%, transparent);
-      --cb-line-border: color-mix(in srgb, var(--cherry-c-brand-2) 80%, transparent);
+    [data-theme="dark"] & {
+      .cherry-code-block__line--highlighted {
+        --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 22%, transparent);
+        --cb-line-border: color-mix(in srgb, var(--cherry-c-brand-2) 80%, transparent);
+      }
     }
 
-    &__panel--collapsible &__line--folded {
+    &__panel--collapsed .cherry-code-block__line--folded {
       display: none;
-    }
-
-    &__panel--collapsible:not(&__panel--collapsed) &__line--folded {
-      display: block;
     }
 
     &__expand {
@@ -268,7 +289,7 @@
       transition: transform 0.2s ease;
     }
 
-    &__panel--collapsible:not(&__panel--collapsed) &__expand-icon {
+    &__panel--collapsible:not(.cherry-code-block__panel--collapsed) .cherry-code-block__expand-icon {
       transform: rotate(180deg);
     }
   }

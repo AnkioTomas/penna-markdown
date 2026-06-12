@@ -38,7 +38,7 @@ export function renderEnhancedCodeBlock(node) {
   const codeBody = rendered.html;
   const collapseAnalysis = rendered.collapse;
 
-  const codeHtml = `<pre class="cherry-code-block__pre"><code${classAttr} data-cherry-code>${codeBody}</code></pre>`;
+  const codeHtml = `<pre class="cherry-code-block__pre cherry-code-block__pre--lines"><code${classAttr} data-cherry-code>${codeBody}</code></pre>`;
 
   const copyBtn =
     '<button type="button" class="cherry-copy-code-button" aria-label="复制代码" data-copied="已复制"></button>';

@@ -52,5 +52,5 @@ export function highlightCodeByLines(hljs, code, lang, highlightLines, panel) {
       return wrapCodeLineHtml(inner, lineNumber, highlightSet, folded);
     })
     .filter(Boolean)
-    .join("\n");
+    .join("");
 }

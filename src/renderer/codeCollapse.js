@@ -26,17 +26,17 @@ export function hydrateCherryCodeCollapse(container) {
 
   root.querySelectorAll(".cherry-code-block__panel--collapsible").forEach((panel) => {
     const btn = panel.querySelector(".cherry-code-block__expand");
-    if (!(btn instanceof HTMLButtonElement)) return;
+    if (!btn || !("addEventListener" in btn)) return;
     if (btn.dataset.cherryCollapseBound === "1") return;
     btn.dataset.cherryCollapseBound = "1";
 
     const label = btn.querySelector(".cherry-code-block__expand-label");
 
     btn.addEventListener("click", () => {
-      const collapsed = panel.classList.toggle("cherry-code-block__panel--collapsed");
-      btn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+      const isCollapsed = panel.classList.toggle("cherry-code-block__panel--collapsed");
+      btn.setAttribute("aria-expanded", isCollapsed ? "false" : "true");
       if (label) {
-        label.textContent = collapsed ? "展开代码" : "收起代码";
+        label.textContent = isCollapsed ? "展开代码" : "收起代码";
       }
     });
   });

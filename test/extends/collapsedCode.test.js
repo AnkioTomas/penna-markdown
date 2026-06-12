@@ -53,6 +53,7 @@ describe("extends/collapsedCode", () => {
     expect(html).toContain('class="cherry-code-block__expand"');
     expect(html).toContain('data-cherry-collapsed="1"');
     expect(html).toContain('class="line cherry-code-block__line--folded"');
+    expect(html).toContain('class="cherry-code-block__ln"');
     expect(html).not.toContain("... more code");
     expect(html).toContain("body {");
   });
