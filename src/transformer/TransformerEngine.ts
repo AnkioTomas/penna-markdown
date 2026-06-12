@@ -33,7 +33,9 @@ export class TransformerEngine {
     for (const p of options.blockParsers ?? []) {
       this.registry.registerBlockParser(p);
     }
-
+    if (options.syntaxOptions){
+      this.registry.setOptions(options.syntaxOptions)
+    }
 
   }
 
@@ -49,7 +51,7 @@ export class TransformerEngine {
     const blockParser = new BlockParseEngine(this.registry,store,(text) => inlineParser.parse(text));
 
     const ast = blockParser.parse(lines);
-    ast.props = {store: store.getAll()};
+    ast.props = { store };
     return ast;
   }
 
@@ -63,10 +65,10 @@ export class TransformerEngine {
     const ctx = new class implements RenderContext{
         store: ParserStore = store as ParserStore;
         renderInline(nodes?: MarkdownNode[]): string {
-            throw that._renderInline(nodes ?? [],ctx);
+            return that._renderInline(nodes ?? [], ctx);
         }
         renderBlock(nodes?: MarkdownNode[]): string {
-          throw that._renderBlocks(nodes ?? [],ctx);
+          return that._renderBlocks(nodes ?? [], ctx);
         }
 
     }
@@ -75,13 +77,13 @@ export class TransformerEngine {
 
   _renderInline(nodes: MarkdownNode[], ctx: RenderContext): string {
     return nodes.map((node) =>
-        this.registry.getInlineRenderer(node.type)?.(node, ctx) ?? ""
+        this.registry.getInlineParser(node.type)?.render(node, ctx) ?? ""
     ).join("");
   }
 
   _renderBlocks(blocks: MarkdownNode[], ctx: RenderContext): string {
     return blocks.map((node) =>
-        this.registry.getBlockRenderer(node.type)?.(node, ctx) ?? ""
+        this.registry.getBlockParser(node.type)?.render(node, ctx) ?? ""
     ).join("\n");
   }
   _withTrailingNewline(html: string): string {

@@ -22,10 +22,15 @@ export interface BlockParseResult {
 export abstract class BaseInlineParser {
   readonly type: string;
   readonly priority: number;
+  private options: Record<string, any> = {};
 
   protected constructor(type: string, priority: number) {
     this.type = type;
     this.priority = priority;
+  }
+
+  setOptions(options:Record<string, any>): void {
+    this.options = options;
   }
 
   canOpenAt(
@@ -54,12 +59,14 @@ export abstract class BaseInlineParser {
 export abstract class BaseBlockParser {
   readonly type: string;
   readonly priority: number;
-
+  private options: Record<string, any> = {};
   protected constructor(type: string, priority: number) {
     this.type = type;
     this.priority = priority;
   }
-
+  setOptions(options:Record<string, any>): void {
+    this.options = options;
+  }
   /** 轻量级预检：是否可在 index 行开启本语法（禁止写入 store） */
   canOpenAt(
     lines: string[],

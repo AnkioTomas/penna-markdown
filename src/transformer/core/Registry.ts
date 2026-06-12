@@ -14,10 +14,9 @@ export type NodeRenderer = (node: MarkdownNode, ctx: RenderContext) => string;
 export class Registry {
   readonly inlineParsers = new Map<string, BaseInlineParser>();
   readonly blockParsers = new Map<string, BaseBlockParser>();
-  readonly inlineRenderers = new Map<string, NodeRenderer>();
-  readonly blockRenderers = new Map<string, NodeRenderer>();
   private _sortedInline: BaseInlineParser[] | null = null;
   private _sortedBlock: BaseBlockParser[] | null = null;
+  private _
 
   constructor() {
     for (const p of gfmInlineSyntax) this.registerInlineParser(p);
@@ -33,32 +32,21 @@ export class Registry {
 
   private _register(
     map: Map<string, BaseInlineParser | BaseBlockParser>,
-    renderers: Map<string, NodeRenderer>,
     parser: BaseInlineParser | BaseBlockParser,
   ): void {
     if (!parser?.type) throw new TypeError("parser required type parameter");
     map.set(parser.type, parser as BaseInlineParser & BaseBlockParser);
-    if (typeof parser.render === "function") {
-      renderers.set(parser.type, (node, ctx) => parser.render(node, ctx));
-    }
     this._invalidateCache();
   }
 
   registerInlineParser(parser: BaseInlineParser): void {
-    this._register(this.inlineParsers, this.inlineRenderers, parser);
+    this._register(this.inlineParsers, parser);
   }
 
   registerBlockParser(parser: BaseBlockParser): void {
-    this._register(this.blockParsers, this.blockRenderers, parser);
+    this._register(this.blockParsers, parser);
   }
 
-  registerInlineRenderer(type: string, fn: NodeRenderer): void {
-    this.inlineRenderers.set(type, fn);
-  }
-
-  registerBlockRenderer(type: string, fn: NodeRenderer): void {
-    this.blockRenderers.set(type, fn);
-  }
 
   getInlineParsers(): BaseInlineParser[] {
     if (!this._sortedInline) {
@@ -86,16 +74,11 @@ export class Registry {
     return this.blockParsers.get(type);
   }
 
-  getInlineRenderer(type: string): NodeRenderer | undefined {
-    return this.inlineRenderers.get(type);
-  }
 
-  getBlockRenderer(type: string): NodeRenderer | undefined {
-    return this.blockRenderers.get(type);
+  setOptions(syntaxOptions: Record<string, Record<string, any>>) {
+    for (const [key, options] of Object.entries(syntaxOptions)) {
+      this.inlineParsers.get(key)?.setOptions(options);
+      this.blockParsers.get(key)?.setOptions(options);
+    }
   }
-
-  isInlineType(type: string): boolean {
-    return this.inlineParsers.has(type) || this.inlineRenderers.has(type);
-  }
-
 }

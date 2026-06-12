@@ -3,5 +3,5 @@ import type {BaseBlockParser, BaseInlineParser} from "@/transformer/core/ParserB
 export interface TransformerEngineOptions {
     inlineParsers?: BaseInlineParser[];
     blockParsers?: BaseBlockParser[];
-    SyntaxOptions?: Record<string, Record<string, any>>
+    syntaxOptions?: Record<string, Record<string, any>>
 }
