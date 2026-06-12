@@ -6,7 +6,7 @@
 export type InlineFrame = Record<string, unknown>;
 
 export class ParserStore {
-  private readonly lines: string[];
+  lines: string[];
   private store: Record<string, unknown>;
 
   constructor(lines: string[]) {
@@ -67,5 +67,9 @@ export class ParserStore {
    */
   clear(): void {
     this.store = {};
+  }
+
+  getAll():Record<string, unknown>{
+    return this.store;
   }
 }

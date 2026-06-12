@@ -49,7 +49,7 @@ export class TransformerEngine {
     const blockParser = new BlockParseEngine(this.registry,store,(text) => inlineParser.parse(text));
 
     const ast = blockParser.parse(lines);
-    ast.props = {store};
+    ast.props = {store: store.getAll()};
     return ast;
   }
 
