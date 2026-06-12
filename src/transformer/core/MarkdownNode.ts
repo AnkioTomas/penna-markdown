@@ -10,9 +10,9 @@
 /** Markdown AST 节点 */
 export interface MarkdownNode {
   type: string;
+  length: number;
   children?: MarkdownNode[];
   value?: string;
-  length: number;
   props?: Record<string, unknown>;
 }
 
