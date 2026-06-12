@@ -1,13 +1,17 @@
 /**
- * @file Markdown AST 节点定义
+ * @file Markdown AST 节点
  * @module transformer/core/MarkdownNode
- *
- * 基类只描述所有节点共有的树形结构；各语法 parser 通过索引签名挂载
- * 自有字段（如 code.lang、list.ordered、link.href、text.noMerge 等），
- * 避免在根类型上堆积大量可选属性。
  */
 
-/** Markdown AST 节点 */
+/**
+ * AST 节点。
+ *
+ * @property type     - 节点类型（`paragraph` / `text` / `code` …）
+ * @property length   - 源文本跨度长度（字符数）
+ * @property value    - 字面量文本（`text`、`html` 等叶子节点）
+ * @property children - 子节点（块级容器、行内包装节点）
+ * @property props    - 语法扩展属性（`href`、`lang`、`ordered`、`noMerge` …）
+ */
 export interface MarkdownNode {
   type: string;
   length: number;
@@ -19,10 +23,18 @@ export interface MarkdownNode {
 /**
  * 创建 AST 节点。
  *
- * - 有 `value` 或显式 `children`：按传入字段构造（text 等叶子节点不补 children）
- * - 否则视为容器节点，默认 `children: []`
+ * @param type     - 节点类型
+ * @param length   - 源文本跨度长度
+ * @param value    - 字面量文本（可选）
+ * @param children - 子节点（可选）
+ * @param props    - 扩展属性（可选）
  */
-export function createNode(type: string, length: number,value?: string, children?: MarkdownNode[],props?: Record<string, unknown>): MarkdownNode {
-  return {type, value, length, props, children};
+export function createNode(
+  type: string,
+  length: number,
+  value?: string,
+  children?: MarkdownNode[],
+  props?: Record<string, unknown>,
+): MarkdownNode {
+  return { type, value, length, props, children };
 }
-
