@@ -6,7 +6,9 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { createNode, MarkdownNode} from "@/transformer/core/MarkdownNode.js";
+import {BlockParseContext} from "@/transformer/core/context/BlockParseContext";
+import {RenderContext} from "@/transformer/core/context/RenderContext";
 
 /**
  * GFM thematic break：0–3 列缩进，同一字符 (-、*、_) 重复 ≥3 次，中间可有空格或 tab。
@@ -14,7 +16,7 @@ import { createNode } from "@/transformer/core/MarkdownNode.js";
  * @param {string} line
  * @returns {boolean}
  */
-export function isThematicBreakLine(line) {
+export function isThematicBreakLine(line: string): boolean {
   return /^( {0,3})([-*_])([ \t]*\2){2,}[ \t]*$/.test(line ?? "");
 }
 
@@ -25,20 +27,25 @@ export function isThematicBreakLine(line) {
  */
 class ThematicBreakParser extends BaseBlockParser {
   constructor() {
-    super({ type: "hr", priority: 95 });
+    super("hr", 9000);
   }
 
   /** @inheritdoc */
-  parse(lines, index, ctx) {
+  canOpenAt(lines: string[], index: number): boolean {
+    return isThematicBreakLine(lines[index] ?? "");
+  }
+
+  /** @inheritdoc */
+  parse(lines: string[], index: number, ctx: BlockParseContext) {
     const line = lines[index] ?? "";
     if (!isThematicBreakLine(line)) return null;
 
-    const node = createNode(this.type);
-    return { node, nextIndex: index + 1 };
+    const node = createNode(this.type, line.length);
+    return {node, nextIndex: index + 1};
   }
 
   /** @inheritdoc */
-  render(node, ctx) {
+  render(node: MarkdownNode, ctx: RenderContext | undefined) {
     return "<hr />";
   }
 }
