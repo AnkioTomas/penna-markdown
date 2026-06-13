@@ -7,7 +7,8 @@ import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { RenderContext } from "@/transformer/core/context/RenderContext";
-import {isBlankString} from "@/transformer/utils/normalize";
+import { isBlankString } from "@/transformer/utils/normalize";
+import { isIndentedCodeLine, stripVisualIndent } from "@/transformer/utils/tabs.js";
 
 class ParagraphBlockParser extends BaseBlockParser {
     constructor() {
@@ -27,14 +28,14 @@ class ParagraphBlockParser extends BaseBlockParser {
                 break;
             }
 
-            // 2. 尝试被打断检测 (如果是第一行，无需检测打断，因为它自己就是起点)
-            // 依赖于我们之前设计的 ctx.isBlockStarter
-            if (i > index && ctx.isBlockStarter(line)) {
+            // 2. 强块级起点打断（缩进代码块不能打断段落，见 CommonMark §4.8）
+            if (i > index && ctx.isBlockStarter(line) && !isIndentedCodeLine(line)) {
                 break;
             }
 
-            // 3. 消费该行
-            paragraphLines.push(line);
+            // 3. 消费该行（惰性延续的缩进行剥掉一层 4 列缩进）
+            const text = i > index && isIndentedCodeLine(line) ? stripVisualIndent(line) : line;
+            paragraphLines.push(text);
             length += line.length;
             i += 1;
         }
