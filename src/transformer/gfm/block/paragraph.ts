@@ -1,20 +1,14 @@
 /**
- * @file 块级语法：段落
- * @module transformer/gfm/block/paragraph
- *
- * CommonMark 段落：连续非空行合并，可被高优先级块级语法中断。
- */
-
-import {BaseBlockParser} from "@/transformer/core/ParserBase.js";
-import {createNode, MarkdownNode} from "@/transformer/core/MarkdownNode.js";
-import {RenderContext} from "@/transformer/core/context/RenderContext";
-import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
-
-/**
  * 段落块解析器（兜底块级语法，priority 最低）。
  *
  * @extends {BaseBlockParser}
  */
+import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
+import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
+import { RenderContext } from "@/transformer/core/context/RenderContext";
+import {isBlankString} from "@/transformer/utils/normalize";
+
 class ParagraphBlockParser extends BaseBlockParser {
     constructor() {
         super("paragraph", -1000);
@@ -22,13 +16,46 @@ class ParagraphBlockParser extends BaseBlockParser {
 
     /** @inheritdoc */
     parse(lines: string[], index: number, ctx: BlockParseContext) {
-        const line = lines[index] ?? "";
-        const node = createNode(this.type,line.length,line, ctx.parseInline(line));
-        return {node, nextIndex: index + 1};
+        let i = index;
+        let length = 0;
+        const paragraphLines: string[] = [];
+
+        while (i < lines.length) {
+            const line = lines[i];
+
+            if (isBlankString(line)) {
+                break;
+            }
+
+            // 2. 尝试被打断检测 (如果是第一行，无需检测打断，因为它自己就是起点)
+            // 依赖于我们之前设计的 ctx.isBlockStarter
+            if (i > index && ctx.isBlockStarter(line)) {
+                break;
+            }
+
+            // 3. 消费该行
+            paragraphLines.push(line);
+            length += line.length;
+            i += 1;
+        }
+
+        if (paragraphLines.length === 0) return null;
+
+        // CommonMark 要求多行段落合并时，保留换行符。
+        const content = paragraphLines.join("\n");
+
+        const node = createNode(
+            this.type,
+            length, // 注意：如果你的 length 严格要求计算换行符，需补偿 (paragraphLines.length - 1)
+            content,
+            ctx.parseInline(content) // 把合并后的多行完整文本扔给内联解析器
+        );
+
+        return { node, nextIndex: i };
     }
 
     /** @inheritdoc */
-    render(node: MarkdownNode, ctx: RenderContext ) {
+    render(node: MarkdownNode, ctx: RenderContext) {
         return `<p>${ctx.renderInline(node.children)}</p>`;
     }
 }

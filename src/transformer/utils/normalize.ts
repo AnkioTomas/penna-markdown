@@ -28,3 +28,21 @@ export function normalizeInnerLines(lines) {
 export function isWhitespace(ch) {
   return ch === " " || ch === "\t";
 }
+
+export function isBlank(char:string) {
+  return char == ' ' || char == '\t' || char == '\n' || char == '\r';
+}
+
+/**
+ * 高效判断字符串是否全为空白符（替代正则表达式或 .trim() === ""）
+ * @param str 需要检查的字符串
+ */
+export function isBlankString(str: string): boolean {
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    if (char !== ' ' && char !== '\t' && char !== '\n' && char !== '\r') {
+      return false;
+    }
+  }
+  return true;
+}
