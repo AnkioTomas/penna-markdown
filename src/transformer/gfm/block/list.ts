@@ -11,93 +11,39 @@ import { BlockParseContext } from "@/transformer/core/context/BlockParseContext"
 import { RenderContext } from "@/transformer/core/context/RenderContext";
 
 import { canGenericLazyContinue } from "@/transformer/utils/lazyContinuation.js";
-import {isBlankString} from "@/transformer/utils/normalize";
+import { isBlankString } from "@/transformer/utils/normalize";
+import { expandLinePrefixTabs, expandListItemContent, getIndent, parseListMarkerLine } from "@/transformer/utils/tabs.js";
 
 interface ListMarkerInfo {
   isOrdered: boolean;
   bulletChar?: string;
   delimiter?: string;
   start?: number;
-  indent: number;       // 前置缩进 (0-3)
-  contentStart: number; // 文本内容真实开始的索引
-  isBlank: boolean;     // 标记后是否全为空白
+  indent: number;           // 前置缩进 (0-3)
+  contentStart: number;     // 文本内容真实开始的字符索引
+  contentStartCol: number;  // 文本内容开始的视觉列（Tab 按 4 列展开）
+  isBlank: boolean;         // 标记后是否全为空白
 }
 
 /**
- * 提取 List 标记，返回列表属性及内容的起始索引。
- * * 采用纯游标遍历，不使用正则表达式。
+ * 提取 List 标记，委托 tabs 模块按视觉列解析（含 marker 后 Tab）。
  */
-function getListMarkerInfo(line: string): ListMarkerInfo | null {
-  let i = 0;
-  let spaceCount = 0;
-
-  // 1. 跳过最多 3 个前导空格
-  while (i < line.length && line[i] === ' ' && spaceCount < 3) {
-    spaceCount++;
-    i++;
-  }
-
-  if (i >= line.length) return null;
-
-  const indent = spaceCount;
-  const char = line[i];
-  let isOrdered = false;
-  let bulletChar: string | undefined;
-  let delimiter: string | undefined;
-  let start: number | undefined;
-
-  // 2. 检查无序列表 marker
-  if (char === '-' || char === '*' || char === '+') {
-    bulletChar = char;
-    i++;
-  }
-  // 3. 检查有序列表 marker
-  else if (char >= '0' && char <= '9') {
-    isOrdered = true;
-    let startStr = "";
-    while (i < line.length && line[i] >= '0' && line[i] <= '9') {
-      startStr += line[i];
-      i++;
-    }
-    // 规范：数字不能超过 9 位
-    if (startStr.length === 0 || startStr.length > 9) return null;
-
-    if (i < line.length && (line[i] === '.' || line[i] === ')')) {
-      delimiter = line[i];
-      start = parseInt(startStr, 10);
-      i++;
-    } else {
-      return null;
-    }
-  } else {
-    return null;
-  }
-
-  // 4. Marker 后必须有空格或到达行尾
-  if (i < line.length && line[i] !== ' ' && line[i] !== '\t') {
-    return null;
-  }
-
-  let spacesAfter = 0;
-  while (i < line.length && (line[i] === ' ' || line[i] === '\t')) {
-    spacesAfter++;
-    i++;
-  }
-
-  // CommonMark 规范：如果 Marker 后的空格超过 4 个，视为代码缩进，内容从 Marker后第1个空格算起。
-  let contentStart = i;
-  if (spacesAfter > 4) {
-    contentStart = i - spacesAfter + 1;
-  }
+function getListMarkerInfo(
+  line: string,
+  { allowIndented = false }: { allowIndented?: boolean } = {},
+): ListMarkerInfo | null {
+  const marker = parseListMarkerLine(line, { allowIndented });
+  if (!marker) return null;
 
   return {
-    isOrdered,
-    bulletChar,
-    delimiter,
-    start,
-    indent,
-    contentStart,
-    isBlank: isBlankString(line.slice(contentStart))
+    isOrdered: marker.ordered,
+    bulletChar: marker.bulletChar ?? undefined,
+    delimiter: marker.delimiter ?? undefined,
+    start: marker.start ?? undefined,
+    indent: marker.markerColumn,
+    contentStart: marker.contentOffset,
+    contentStartCol: marker.contentStartCol,
+    isBlank: isBlankString(marker.content),
   };
 }
 
@@ -167,7 +113,7 @@ class ListBlockParser extends BaseBlockParser {
       // 剥去内容起始的缩进
       const firstLine = lines[i];
       itemLength += firstLine.length;
-      itemLines.push(firstLine.slice(itemMarker.contentStart));
+      itemLines.push(expandListItemContent(firstLine, itemMarker.contentStart));
 
       if (hadBlankLineBetweenItems && listItems.length > 0) {
         isListLoose = true;
@@ -189,30 +135,24 @@ class ListBlockParser extends BaseBlockParser {
         }
 
         // B. 遇到新的 Marker
-        const nextMarker = getListMarkerInfo(currentLine);
+        const nextMarker = getListMarkerInfo(currentLine, { allowIndented: true });
         if (nextMarker) {
-          // 如果是一个同级别的兄弟节点，退出内层循环，让外层去收割它
-          if (nextMarker.isOrdered === initialMarker.isOrdered &&
+          const sameListType = nextMarker.isOrdered === initialMarker.isOrdered &&
               nextMarker.bulletChar === initialMarker.bulletChar &&
-              nextMarker.delimiter === initialMarker.delimiter) {
+              nextMarker.delimiter === initialMarker.delimiter;
+          // 与当前列表同级的新 item：marker 列回到列表起始列；否则可能是嵌套列表或惰性延续
+          if (sameListType && nextMarker.indent <= initialMarker.indent) {
             break;
           }
-          // 如果是一个不同类型的 Marker，且缩进不够，视为打断
-          if (nextMarker.indent < itemMarker.contentStart) {
+          if (!sameListType && getIndent(currentLine) < itemMarker.contentStartCol) {
             break;
           }
         }
 
-        // C. 检查缩进
-        let currentIndent = 0;
-        while (currentIndent < currentLine.length && currentLine[currentIndent] === ' ') {
-          currentIndent++;
-        }
-
-        // C-1. 缩进足够，毫无疑问属于当前 Item
-        if (currentIndent >= itemMarker.contentStart) {
+        // C. 检查缩进（Tab 按 4 列制表位计入视觉列）
+        if (getIndent(currentLine) >= itemMarker.contentStartCol) {
           itemLength += currentLine.length;
-          itemLines.push(currentLine.slice(itemMarker.contentStart));
+          itemLines.push(expandLinePrefixTabs(currentLine).slice(itemMarker.contentStartCol));
           i++;
           continue;
         }

@@ -9,39 +9,11 @@ import {BaseBlockParser} from "@/transformer/core/ParserBase.js";
 import {createNode, MarkdownNode} from "@/transformer/core/MarkdownNode.js";
 import {BlockParseContext} from "@/transformer/core/context/BlockParseContext";
 import {RenderContext} from "@/transformer/core/context/RenderContext";
-import {isBlank, isBlankString, normalizeInnerLines} from "@/transformer/utils/normalize";
+import {isBlankString, normalizeInnerLines} from "@/transformer/utils/normalize";
 import {canGenericLazyContinue} from "@/transformer/utils/lazyContinuation";
+import { stripBlockquoteMarker } from "@/transformer/utils/tabs.js";
 
-/**
- * 提取 Blockquote 标记，返回实际内容的起始索引。
- * CommonMark 规范: 0-3 个前置空格 + '>' + 可选的 1 个跟随空格。
- * * @param line 当前行字符串
- * @returns 剥离 marker 后的起始索引。如果不是引用块行，返回 -1。
- */
-function getBlockquoteContentStartIndex(line: string): number {
-    let i = 0;
-    let spaceCount = 0;
-
-    // 1. 跳过最多 3 个前导空格
-    while (i < line.length && line[i] === ' ' && spaceCount < 3) {
-        spaceCount++;
-        i++;
-    }
-
-    // 2. 检查 Marker (必须是 '>')
-    if (i >= line.length || line[i] !== '>') {
-        return -1;
-    }
-
-    i++; // 跳过 '>'
-
-    // 3. 剥离可选的 1 个跟随空格
-    if (i < line.length && line[i] === ' ') {
-        i++;
-    }
-
-    return i;
-}
+const BLOCKQUOTE_LINE = /^( {0,3})>/;
 
 /**
  * 引用块解析器。
@@ -56,14 +28,13 @@ class BlockquoteBlockParser extends BaseBlockParser {
     /** @inheritdoc */
     canOpenAt(lines: string[], index: number, _ctx: BlockParseContext): boolean {
         const line = lines[index] ?? "";
-        return getBlockquoteContentStartIndex(line) !== -1;
+        return BLOCKQUOTE_LINE.test(line);
     }
 
     /** @inheritdoc */
     parse(lines: string[], index: number, ctx: BlockParseContext) {
         const line = lines[index] ?? "";
-        const startIndex = getBlockquoteContentStartIndex(line);
-        if (startIndex === -1) return null;
+        if (!BLOCKQUOTE_LINE.test(line)) return null;
         let innerLines: string[] = [];
 
         let length = 0;
@@ -73,17 +44,15 @@ class BlockquoteBlockParser extends BaseBlockParser {
         while (i < lines.length) {
             const ln = lines[i];
             length += ln.length;
-            const contentStart = getBlockquoteContentStartIndex(ln);
 
             // --- 1. 当前行依然是引用块 ---
-            if (contentStart !== -1) {
+            if (BLOCKQUOTE_LINE.test(ln)) {
                 length += ln.length;
-                const stripped = ln.slice(contentStart);
+                const stripped = stripBlockquoteMarker(ln);
 
                 if (isBlankString(stripped)) {
                     const next = lines[i + 1] ?? "";
-                    // 检查下一行是否仍然在引用块中
-                    if (getBlockquoteContentStartIndex(next) !== -1) {
+                    if (BLOCKQUOTE_LINE.test(next)) {
                         innerLines.push("");
                         i += 1;
                         continue;
