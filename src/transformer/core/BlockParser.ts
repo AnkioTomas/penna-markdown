@@ -30,6 +30,24 @@ export class BlockParseEngine {
             parseInline(text: string): MarkdownNode[] {
                 return that.__parseInline(text);
             }
+
+            isBlockStarter(line: string): boolean {
+                const dummyLines = [line];
+
+                // 遍历所有注册的块级解析器 (注意：优先级最高的先遍历)
+                for (const parser of that.registry.getBlockParsers()) {
+                    // 排除掉 Paragraph 本身，因为纯文本肯定能被段落接受
+                    if (parser.type === 'paragraph') continue;
+
+                    // 如果有任何一个高优先级的解析器说“我能解析这行作为开头！”
+                    // 那就说明这是一个强起点，需要打断！
+                    if (parser.canOpenAt(dummyLines, 0, this)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
     }
 
