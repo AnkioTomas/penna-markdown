@@ -34,23 +34,23 @@ export abstract class BaseInlineParser {
   }
 
   canOpenAt(
-      _src: string,
-      _index: number,
-      _ctx: InlineParseContext,
+      src: string,
+      index: number,
+      ctx: InlineParseContext,
   ): boolean {
     return true;
   }
 
 
   parse(
-    _src: string,
-    _index: number,
-    _ctx: InlineParseContext,
+    src: string,
+    index: number,
+    ctx: InlineParseContext,
   ): InlineParseResult | null {
     return null;
   }
 
-  render(_node: MarkdownNode, _ctx: RenderContext): string {
+  render(node: MarkdownNode, ctx: RenderContext): string {
     return "";
   }
 }

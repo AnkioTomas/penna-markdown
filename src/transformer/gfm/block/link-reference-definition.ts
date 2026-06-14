@@ -14,16 +14,7 @@ import {isBlankString} from "@/transformer/utils/normalize";
  * 规范化 reference label (全小写，合并连续空白)
  */
 export function normalizeRefLabel(label: string): string {
-  let out = "";
-  for (let i = 0; i < label.length; i++) {
-    if (label[i] === "\\" && i + 1 < label.length) {
-      out += label[i + 1];
-      i += 1;
-    } else {
-      out += label[i];
-    }
-  }
-  return out.trim().toLowerCase().replace(/\s+/g, " ");
+  return label.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
 /**
@@ -117,7 +108,6 @@ function parseLRDString(text: string): { consumedCharIndex: number, id: string, 
   // 6. 提取 Title (可选)
   let title = "";
   skipWhitespace(true);
-  let hasValidTitle = false;
 
   if (i < text.length && (text[i] === '"' || text[i] === "'" || text[i] === '(')) {
     const opener = text[i];
@@ -128,9 +118,15 @@ function parseLRDString(text: string): { consumedCharIndex: number, id: string, 
     let closed = false;
     while (i < text.length) {
       if (text[i] === '\\' && i + 1 < text.length) {
-        tempTitle += text[i + 1]; i += 2; continue;
+        tempTitle += text[i + 1];
+        i += 2;
+        continue;
       }
-      if (text[i] === closer) { closed = true; i++; break; }
+      if (text[i] === closer) {
+        closed = true;
+        i++;
+        break;
+      }
       tempTitle += text[i];
       i++;
     }
@@ -141,7 +137,6 @@ function parseLRDString(text: string): { consumedCharIndex: number, id: string, 
       while (j < text.length && (text[j] === ' ' || text[j] === '\t')) j++;
       if (j >= text.length || text[j] === '\n' || text[j] === '\r') {
         title = tempTitle;
-        hasValidTitle = true;
         afterDestIndex = j; // 如果 Title 合法，游标更新为包含 Title 的长度
       }
     }
@@ -157,7 +152,7 @@ function parseLRDString(text: string): { consumedCharIndex: number, id: string, 
  */
 class LinkReferenceDefinitionParser extends BaseBlockParser {
   constructor() {
-    super("linkReferenceDef", 190);
+    super("linkReferenceDef", 2000);
   }
 
   /** @inheritdoc */
@@ -195,9 +190,10 @@ class LinkReferenceDefinitionParser extends BaseBlockParser {
 
     // 核心业务：写入 ctx.store，给后续的 Inline 解析器使用
     // 注意：按照规范，如果遇到同名 ID 的定义，第一个生效，后面的丢弃。
-    const store = ctx.store as any; // 假定 store 里有对应的 set / get 方法
-    if (!store.hasLinkReference(result.id)) {
-      store.setLinkReference(result.id, { href: result.href, title: result.title });
+    const key = "ref_" + result.id;
+
+    if (!ctx.store.has(key)) {
+      ctx.store.set(key,result);
     }
 
     // 返回 node 为 null，表示这段文本被消耗了，但不要在 AST 树里占位置
