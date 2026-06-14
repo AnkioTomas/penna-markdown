@@ -25,7 +25,7 @@ export function normalizeInnerLines(lines: string[]): string[] {
  * @param {string} ch
  * @returns {boolean}
  */
-export function isWhitespace(ch) {
+export function isWhitespace(ch: string): boolean {
   return ch === " " || ch === "\t";
 }
 

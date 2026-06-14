@@ -9,18 +9,17 @@ import { BlockParseContext } from "@/transformer/core/context/BlockParseContext"
 import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
 import { isBlankString } from "@/transformer/utils/normalize";
 
-export function getSetextUnderlineInfo(line: string): { level: number } | null {
+export function getSetextUnderlineInfo(line: string): number  {
   let i = skipBlockPrefixSpaces(line);
-  if (i >= line.length) return null;
+  if (i >= line.length) return -1;
 
   const char = line[i];
-  if (char !== '=' && char !== '-') return null;
-
+  if (char !== '=' && char !== '-') return -1;
   const level = char === '=' ? 1 : 2;
   while (i < line.length && line[i] === char) i += 1;
   while (i < line.length && (line[i] === ' ' || line[i] === '\t')) i += 1;
 
-  return i < line.length ? null : { level };
+  return i < line.length ? -1 : level;
 }
 
 class SetextHeadingBlockParser extends BaseBlockParser {
@@ -29,9 +28,9 @@ class SetextHeadingBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   canOpenAt(lines: string[], index: number, ctx: BlockParseContext): boolean {
-    // 1. 如果当前行本身就是空行或下划线，直接 pass (下划线不能没有前置文本)
-    if (isBlankString(lines[index])) return false;
-    if (getSetextUnderlineInfo(lines[index])) return false;
+    let line = lines[index];
+    if (isBlankString(line)) return false;
+    if (line.startsWith("- ")) return false;
 
     // 2. 抛出预读探针，往下扫！
     let i = index + 1;
@@ -42,7 +41,7 @@ class SetextHeadingBlockParser extends BaseBlockParser {
       if (isBlankString(line)) return false;
 
       // 命中目标！这确实是个 Setext 标题
-      if (getSetextUnderlineInfo(line)) return true;
+      if (getSetextUnderlineInfo(line) > 0) return true;
 
       i++;
     }
@@ -60,13 +59,13 @@ class SetextHeadingBlockParser extends BaseBlockParser {
       const line = lines[i];
       const underline = getSetextUnderlineInfo(line);
 
-      if (underline) {
+      if (underline > 0) {
         // 吃掉下划线，结账！
         length += line.length;
         const content = contentLines.join("\n");
 
         const node = createNode("setext_heading", length, undefined, ctx.parseInline(content), {
-          level: underline.level
+          level: underline
         });
 
         return { node, nextIndex: i + 1 };
@@ -84,7 +83,7 @@ class SetextHeadingBlockParser extends BaseBlockParser {
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: any) {
     const level = node.props?.level || 1;
-    return `<h${level}>${ctx.renderInline(node.children)}</h${level}>`;
+    return `<h${level}>${ctx.renderInline(node.children).trim()}</h${level}>`;
   }
 }
 
