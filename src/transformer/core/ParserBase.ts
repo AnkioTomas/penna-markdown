@@ -21,12 +21,10 @@ export interface BlockParseResult {
 /** 行内语法解析器基类 */
 export abstract class BaseInlineParser {
   readonly type: string;
-  readonly priority: number;
   private options: Record<string, any> = {};
 
-  protected constructor(type: string, priority: number) {
+  protected constructor(type: string) {
     this.type = type;
-    this.priority = priority;
   }
 
   setOptions(options:Record<string, any>): void {
@@ -58,11 +56,9 @@ export abstract class BaseInlineParser {
 /** 块级语法解析器基类 */
 export abstract class BaseBlockParser {
   readonly type: string;
-  readonly priority: number;
   private options: Record<string, any> = {};
-  protected constructor(type: string, priority: number) {
+  protected constructor(type: string) {
     this.type = type;
-    this.priority = priority;
   }
   setOptions(options:Record<string, any>): void {
     this.options = options;
