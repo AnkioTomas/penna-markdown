@@ -9,8 +9,10 @@
 /** Tab 制表位宽度（CommonMark 规范） */
 const TAB_WIDTH = 4;
 
-/** 缩进代码块最小缩进列数 */
+/** 缩进代码块 / 块结构分界（CommonMark 规范） */
 const CODE_INDENT = 4;
+
+
 
 /**
  * 计算字符串在 index 处的视觉列位置。
@@ -51,7 +53,7 @@ export function findIndexAtColumn(str, targetCol) {
  * @param {string} line
  * @returns {number}
  */
-export function getIndent(line) {
+export function getIndent(line: string): number {
   let col = 0;
   for (let i = 0; i < line.length; i += 1) {
     const c = line[i];
@@ -94,7 +96,7 @@ export function expandLinePrefixTabs(line) {
  * @param {string} line
  * @returns {boolean}
  */
-export function isIndentedCodeLine(line) {
+export function isIndentedCodeLine(line: string): boolean {
   return getIndent(line) >= CODE_INDENT;
 }
 
@@ -105,7 +107,7 @@ export function isIndentedCodeLine(line) {
  * @param {number} [spaces=CODE_INDENT]
  * @returns {string}
  */
-export function stripVisualIndent(line, spaces = CODE_INDENT) {
+export function stripVisualIndent(line: string, spaces: number = CODE_INDENT): string {
   return line.slice(findIndexAtColumn(line, spaces));
 }
 
@@ -255,7 +257,7 @@ export function parseListMarkerLine(line, { allowIndented = false } = {}) {
   const rest = line.slice(offset);
   let bulletChar = null;
   let ordered = false;
-  let start = null;
+  let start: number | null = null;
   let delimiter = null;
   let markerLen = 0;
 
