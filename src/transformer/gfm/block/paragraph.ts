@@ -7,6 +7,7 @@ import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { RenderContext } from "@/transformer/core/context/RenderContext";
+import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
 import { isBlankString } from "@/transformer/utils/normalize";
 import { isIndentedCodeLine, stripVisualIndent } from "@/transformer/utils/tabs.js";
 
@@ -33,8 +34,13 @@ class ParagraphBlockParser extends BaseBlockParser {
                 break;
             }
 
-            // 3. 消费该行（惰性延续的缩进行剥掉一层 4 列缩进）
-            const text = i > index && isIndentedCodeLine(line) ? stripVisualIndent(line) : line;
+            // 3. 消费该行：缩进代码剥 4 列；否则剥块级前导空格（最多 3 列）
+            let text: string;
+            if (i > index && isIndentedCodeLine(line)) {
+                text = stripVisualIndent(line);
+            } else {
+                text = line.slice(skipBlockPrefixSpaces(line));
+            }
             paragraphLines.push(text);
             length += line.length;
             i += 1;

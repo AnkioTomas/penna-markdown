@@ -10,6 +10,7 @@ import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { RenderContext } from "@/transformer/core/context/RenderContext";
 
+import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
 import { canGenericLazyContinue } from "@/transformer/utils/lazyContinuation.js";
 import { isBlankString } from "@/transformer/utils/normalize";
 import { expandLinePrefixTabs, expandListItemContent, getIndent, listsMatch, parseListMarkerLine } from "@/transformer/utils/tabs.js";
@@ -101,6 +102,11 @@ class ListBlockParser extends BaseBlockParser {
 
       // 2. 如果 Marker 类型与当前列表不匹配，退出外层循环 (交由外层去开启新的 List)
       if (!listsMatch(itemMarker, initialMarker)) {
+        break;
+      }
+
+      // 3. thematic break 优先于 list item（GFM Example 30）
+      if (isThematicBreakLine(lines[i] ?? "")) {
         break;
       }
 
