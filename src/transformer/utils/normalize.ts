@@ -11,7 +11,7 @@
  * @param {string[]} lines
  * @returns {string[]}
  */
-export function normalizeInnerLines(lines) {
+export function normalizeInnerLines(lines: string[]): string[] {
   let start = 0;
   let end = lines.length;
   while (start < end && lines[start].trim() === "") start += 1;

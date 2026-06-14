@@ -8,7 +8,7 @@
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
-import { sanitizeHtml } from "@/transformer/utils/sanitize.js";
+import { sanitizeHtml } from "@/transformer/utils/escape.js";
 import { isBlankString } from "@/transformer/utils/normalize"; // 请确保这个路径与你的实际项目一致
 
 // --- 预编译正则：剥离了前导空格检测，只用来精确匹配 HTML 语法 ---
@@ -88,7 +88,7 @@ function detectHtmlBlockType(line: string): number | null {
  */
 class HTMLBlockParser extends BaseBlockParser {
   constructor() {
-    super("html_block", 120);
+    super("html_block", 3000);
   }
 
   /** @inheritdoc */
