@@ -18,7 +18,7 @@ const ENTITY_PREFIX_RE =
  * @param {number} index
  * @returns {{ value: string, length: number } | null}
  */
-export function tryParseEntity(src, index) {
+export function tryParseEntity(src: string, index: number): { value: string; length: number; } | null {
   if (src[index] !== "&") return null;
 
   const match = src.slice(index).match(ENTITY_PREFIX_RE);
@@ -40,7 +40,7 @@ export function tryParseEntity(src, index) {
  * @param {string} text
  * @returns {string}
  */
-export function decodeHtmlEntities(text) {
+export function decodeHtmlEntities(text: string): string {
   return text.replace(ENTITY_PREFIX_RE, (match) => {
     try {
       return decodeHTMLStrict(match);
