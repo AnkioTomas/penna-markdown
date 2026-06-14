@@ -31,7 +31,7 @@ class TextInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode) {
-    return escapeText(node.value);
+    return escapeText(node.value ?? "");
   }
 }
 
