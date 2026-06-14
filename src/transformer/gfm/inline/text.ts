@@ -5,7 +5,7 @@
  * priority 最低，逐字符消费未被其他行内语法匹配的输入。
  */
 
-import { escapeText } from "@/transformer/utils/escape.js";
+import { escapeText, parseBackslash } from "@/transformer/utils/escape.js";
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode} from "@/transformer/core/MarkdownNode.js";
 import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
@@ -23,6 +23,15 @@ class TextInlineParser extends BaseInlineParser {
   /** @inheritdoc */
   parse(src: string, index: number, ctx: InlineParseContext) {
     if (index >= src.length) return null;
+
+    const escaped = parseBackslash(src, index);
+    if (escaped) {
+      return {
+        node: createNode(this.type, escaped.nextIndex - index, escaped.value),
+        nextIndex: escaped.nextIndex,
+      };
+    }
+
     return {
       node: createNode(this.type, 1, src[index]),
       nextIndex: index + 1,

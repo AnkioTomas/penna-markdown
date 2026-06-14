@@ -31,6 +31,13 @@ export function escapeText(text: string): string {
   return escapeHtml(text);
 }
 
+/** CommonMark 可被反斜杠转义的 ASCII 标点 */
+export const ESCAPABLE = /[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
+
+export function isEscapable(ch: string): boolean {
+  return ESCAPABLE.test(ch);
+}
+
 /**
  * 定界符前奇数个 `\` 表示该字符被转义。
  */
@@ -38,6 +45,30 @@ export function isEscaped(src: string, index: number): boolean {
   let n = 0;
   for (let i = index - 1; i >= 0 && src[i] === "\\"; i -= 1) n += 1;
   return n % 2 === 1;
+}
+
+/**
+ * 解析行首 `\` 转义序列，返回字面量文本与下一游标。
+ * `\` + 可转义标点 → 标点；`\` + 其它 / 行尾 → `\`。
+ */
+export function parseBackslash(
+  src: string,
+  index: number,
+): { value: string; nextIndex: number } | null {
+  if (src[index] !== "\\") return null;
+  const next = src[index + 1];
+  if (next === undefined) {
+    return { value: "\\", nextIndex: index + 1 };
+  }
+  if (isEscapable(next)) {
+    return { value: next, nextIndex: index + 2 };
+  }
+  return { value: "\\", nextIndex: index + 1 };
+}
+
+/** 扫描时跳过单个字符或一个 `\` 转义序列。 */
+export function skipTextUnit(src: string, index: number): number {
+  return parseBackslash(src, index)?.nextIndex ?? index + 1;
 }
 
 /**

@@ -6,7 +6,6 @@
  * 百位为语义分层，同层内以 10 递增/递减区分先后（如 330 > 320 > 310）。
  */
 
-import escape from "@/transformer/gfm/inline/escape.js";
 import autolink from "@/transformer/gfm/inline/autolinks.js";
 import entity from "@/transformer/gfm/inline/entity.js";
 import text from "@/transformer/gfm/inline/text.js";
@@ -29,18 +28,15 @@ import images from "@/transformer/gfm/inline/images.js";
 import rawhtmlInline from "@/transformer/gfm/inline/html.js";
 import rawhtmlBlock from "@/transformer/gfm/block/html.js";
 import strong from "@/transformer/gfm/inline/strong";
-import type { SyntaxMap } from "@/transformer/utils/syntaxMap.js";
 import type { BaseBlockParser, BaseInlineParser } from "@/transformer/core/ParserBase.js";
 
 /** 默认行内语法 */
-export const gfmInlineSyntax: SyntaxMap<BaseInlineParser> = {
+export const gfmInlineSyntax: Record<number,BaseInlineParser> = {
   // 900：字面/定界
   900: strikethrough,
   890: codeSpan,
   // 800：换行
   800: __break,
-  // 700：转义
-  700: escape,
   // 600：实体
   600: entity,
   // 300：强调
@@ -57,7 +53,7 @@ export const gfmInlineSyntax: SyntaxMap<BaseInlineParser> = {
 };
 
 /** 默认块级语法 */
-export const gfmBlockSyntax: SyntaxMap<BaseBlockParser> = {
+export const gfmBlockSyntax: Record<number,BaseBlockParser> = {
   // 900：分隔线
   900: hr,
   // 800：表格

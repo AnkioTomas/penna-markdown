@@ -15,7 +15,7 @@ import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
  */
 class BreakParser extends BaseInlineParser {
   constructor() {
-    // 优先级应高于 escape (100) 和 text，确保优先处理反斜杠换行
+    // 优先级高于 text，确保 `\` + 换行 优先于普通反斜杠转义
     super("break");
   }
 
