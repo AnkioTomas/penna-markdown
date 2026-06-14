@@ -327,16 +327,21 @@ export function parseListMarkerLine(line, { allowIndented = false } = {}) {
   };
 }
 
+interface ListMarkerLike {
+  ordered?: boolean;
+  isOrdered?: boolean;
+  bulletChar?: string | null;
+  delimiter?: string | null;
+}
+
 /**
  * 判断两个列表 marker 是否属于同一列表类型。
- *
- * @param {ReturnType<typeof parseListMarkerLine>} a
- * @param {ReturnType<typeof parseListMarkerLine>} b
- * @returns {boolean}
  */
-export function listsMatch(a, b) {
+export function listsMatch(a: ListMarkerLike | null, b: ListMarkerLike | null): boolean {
   if (!a || !b) return false;
-  if (a.ordered !== b.ordered) return false;
-  if (a.ordered) return a.delimiter === b.delimiter;
+  const aOrdered = a.ordered ?? a.isOrdered;
+  const bOrdered = b.ordered ?? b.isOrdered;
+  if (aOrdered !== bOrdered) return false;
+  if (aOrdered) return a.delimiter === b.delimiter;
   return a.bulletChar === b.bulletChar;
 }

@@ -8,14 +8,11 @@
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
-
-// --- 纯字符判定辅助函数 ---
+import { isEscaped } from "@/transformer/utils/escape.js";
+import { isInlineWhitespace, skipInlineWhitespace } from "@/transformer/utils/normalize.js";
 
 const isAlpha = (c: string) => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 const isDigit = (c: string) => (c >= '0' && c <= '9');
-const isSpace = (c: string) => c === ' ' || c === '\t' || c === '\n' || c === '\r';
-
-// 标签名字符: [A-Za-z0-9-]
 const isTagChar = (c: string) => isAlpha(c) || isDigit(c) || c === '-';
 
 // 属性名起始字符: [a-zA-Z_:]
@@ -25,31 +22,18 @@ const isAttrNameStart = (c: string) => isAlpha(c) || c === '_' || c === ':';
 const isAttrNameChar = (c: string) => isAttrNameStart(c) || isDigit(c) || c === '.' || c === '-';
 
 // 无引号属性值禁止的字符: [^"'=<>` \t\r\n]
-const isUnquotedValid = (c: string) => c && c !== '"' && c !== "'" && c !== '=' && c !== '<' && c !== '>' && c !== '`' && !isSpace(c);
-
-const skipSpaces = (src: string, index: number) => {
-  let i = index;
-  while (i < src.length && isSpace(src[i])) i++;
-  return i;
-};
+const isUnquotedValid = (c: string) => c && c !== '"' && c !== "'" && c !== '=' && c !== '<' && c !== '>' && c !== '`' && !isInlineWhitespace(c);
 
 class HTMLInlineParser extends BaseInlineParser {
   constructor() {
-    super("html_inline", 150);
+    super("html_inline");
   }
 
   /** @inheritdoc */
   parse(src: string, index: number, ctx: any) {
     if (src[index] !== '<') return null;
 
-    // 转义检查：判断前置反斜杠的数量
-    let backslashCount = 0;
-    let i = index - 1;
-    while (i >= 0 && src[i] === '\\') {
-      backslashCount++;
-      i--;
-    }
-    if (backslashCount % 2 !== 0) return null;
+    if (isEscaped(src, index)) return null;
 
     // 状态机路由分发
     const nextChar = src[index + 1];
@@ -125,7 +109,7 @@ class HTMLInlineParser extends BaseInlineParser {
 
     while (p < src.length && isTagChar(src[p])) p++;
 
-    p = skipSpaces(src, p);
+    p = skipInlineWhitespace(src, p);
 
     if (p < src.length && src[p] === ">") return p + 1;
     return -1;
@@ -140,7 +124,7 @@ class HTMLInlineParser extends BaseInlineParser {
 
     // 扫属性列表
     while (p < src.length) {
-      const spaceEnd = skipSpaces(src, p);
+      const spaceEnd = skipInlineWhitespace(src, p);
       if (spaceEnd === p) break; // 如果没有空格隔开，说明要么是 /> 要么是非法字符
 
       p = spaceEnd;
@@ -152,9 +136,9 @@ class HTMLInlineParser extends BaseInlineParser {
       while (p < src.length && isAttrNameChar(src[p])) p++;
 
       // 解析属性值 (可选)
-      const beforeEq = skipSpaces(src, p);
+      const beforeEq = skipInlineWhitespace(src, p);
       if (beforeEq < src.length && src[beforeEq] === "=") {
-        p = skipSpaces(src, beforeEq + 1);
+        p = skipInlineWhitespace(src, beforeEq + 1);
         if (p >= src.length) return -1;
 
         const quote = src[p];
@@ -175,7 +159,7 @@ class HTMLInlineParser extends BaseInlineParser {
       }
     }
 
-    p = skipSpaces(src, p);
+    p = skipInlineWhitespace(src, p);
 
     // 标签收尾
     if (p < src.length && src[p] === "/") p++;

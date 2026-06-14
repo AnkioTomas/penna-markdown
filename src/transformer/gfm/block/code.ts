@@ -9,6 +9,7 @@ import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
+import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
 
 /**
  * 围栏代码块解析器。
@@ -17,26 +18,20 @@ import { BlockParseContext } from "@/transformer/core/context/BlockParseContext"
  */
 class CodeBlockParser extends BaseBlockParser {
   constructor() {
-    super("code", 3000);
+    super("code");
   }
 
   /** @inheritdoc */
   canOpenAt(lines: string[], index: number, _ctx: BlockParseContext): boolean {
     const line = lines[index] ?? "";
-    let i = 0;
+    const indent = skipBlockPrefixSpaces(line);
+    if (indent >= 4) return false;
 
-    // 1. 检查前导空格 (最多支持 3 个)
-    while (i < line.length && line[i] === ' ' && i < 4) {
-      i++;
-    }
-    if (i >= 4) return false;
-
-    // 2. 检查围栏字符
-    const fenceChar = line[i];
+    const fenceChar = line[indent];
     if (fenceChar !== '`' && fenceChar !== '~') return false;
 
-    // 3. 统计围栏长度
     let fenceLength = 0;
+    let i = indent;
     while (i < line.length && line[i] === fenceChar) {
       fenceLength++;
       i++;
@@ -49,13 +44,7 @@ class CodeBlockParser extends BaseBlockParser {
   parse(lines: string[], index: number, ctx: BlockParseContext) {
     const line = lines[index] ?? "";
 
-    // --- 解析起始行 (Start line) ---
-    let indentCount = 0;
-    while (indentCount < line.length && line[indentCount] === ' ' && indentCount < 4) {
-      indentCount++;
-    }
-
-    // 如果缩进大于等于 4，说明是缩进代码块，不是围栏代码块
+    const indentCount = skipBlockPrefixSpaces(line);
     if (indentCount >= 4) return null;
 
     const fenceChar = line[indentCount];

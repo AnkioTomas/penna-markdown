@@ -2,7 +2,8 @@
  * @file GFM 内置语法注册
  * @module transformer/gfm/builtin
  *
- * 导出默认行内/块级解析器列表，并向 Registry 注册 GFM 扩展（如强调定界符 finalizer）。
+ * 键为 priority（唯一，≥0，越大越先匹配），值为 parser。
+ * 百位为语义分层，同层内以 10 递增/递减区分先后（如 330 > 320 > 310）。
  */
 
 import escape from "@/transformer/gfm/inline/escape.js";
@@ -21,54 +22,58 @@ import hr from "@/transformer/gfm/block/hr.js";
 import list from "@/transformer/gfm/block/list.js";
 import table from "@/transformer/gfm/block/table.js";
 import paragraph from "@/transformer/gfm/block/paragraph.js";
-import linkRef from "@/transformer/gfm/block/link-reference-definition.js"
+import linkRef from "@/transformer/gfm/block/link-reference-definition.js";
 import links from "@/transformer/gfm/inline/links.js";
 import __break from "@/transformer/gfm/inline/break.js";
 import images from "@/transformer/gfm/inline/images.js";
 import rawhtmlInline from "@/transformer/gfm/inline/html.js";
 import rawhtmlBlock from "@/transformer/gfm/block/html.js";
-import linkReferenceValue from "@/transformer/gfm/inline/link-reference-value.js";
 import strong from "@/transformer/gfm/inline/strong";
+import type { SyntaxMap } from "@/transformer/utils/syntaxMap.js";
+import type { BaseBlockParser, BaseInlineParser } from "@/transformer/core/ParserBase.js";
 
-/** 默认行内语法解析器（按注册顺序） */
-export const gfmInlineSyntax = [
-    /*  escape,
-      images,
-      links,
-      autolink,
-      rawhtmlInline,
+/** 默认行内语法 */
+export const gfmInlineSyntax: SyntaxMap<BaseInlineParser> = {
+  // 900：字面/定界
+  900: strikethrough,
+  890: codeSpan,
+  // 800：换行
+  800: __break,
+  // 700：转义
+  700: escape,
+  // 600：实体
+  600: entity,
+  // 300：强调
+  330: strong,
+  320: emphasis,
+  // 200：链接与图片
+  230: images,
+  220: links,
+  // 100：HTML / autolink
+  120: rawhtmlInline,
+  110: autolink,
+  // 0：兜底
+  0: text,
+};
 
-      codeSpan,
-      strikethrough,
-      emphasis,
-        ,*/
-    images,
-    autolink,
-    rawhtmlInline,
-    links,
-    strong,
-    emphasis,
-    strikethrough,
-    linkReferenceValue,
-    entity,
-    escape,
-    __break,
-    codeSpan,
-    text,
-];
-
-/** 默认块级语法解析器（按注册顺序） */
-export const gfmBlockSyntax = [
-    rawhtmlBlock,
-    indentedCode,
-    linkRef,
-    table,
-    hr,
-    atxHeading,
-    setextHeading,
-    list,
-    blockquote,
-    code,
-    paragraph,
-];
-
+/** 默认块级语法 */
+export const gfmBlockSyntax: SyntaxMap<BaseBlockParser> = {
+  // 900：分隔线
+  900: hr,
+  // 800：表格
+  800: table,
+  // 500：引用
+  500: blockquote,
+  // 400：HTML / 围栏代码 / 缩进代码 / 链接定义
+  430: rawhtmlBlock,
+  420: code,
+  410: indentedCode,
+  400: linkRef,
+  // 300：标题
+  320: atxHeading,
+  310: setextHeading,
+  // 200：列表
+  200: list,
+  // 0：兜底
+  0: paragraph,
+};

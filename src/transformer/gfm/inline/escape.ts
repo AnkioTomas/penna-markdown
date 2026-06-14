@@ -20,7 +20,7 @@ const ESCAPABLE = /[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
  */
 class EscapeInlineParser extends BaseInlineParser {
   constructor() {
-    super("escape", 7000);
+    super("escape");
   }
 
   canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {

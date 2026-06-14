@@ -16,7 +16,7 @@ import { BlockParseContext } from "@/transformer/core/context/BlockParseContext"
  */
 class StrikethroughInlineParser extends BaseInlineParser {
   constructor() {
-    super("strikethrough", 9000);
+    super("strikethrough");
   }
 
   /** @inheritdoc */

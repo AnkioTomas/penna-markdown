@@ -8,8 +8,9 @@
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
+import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
 import { sanitizeHtml } from "@/transformer/utils/escape.js";
-import { isBlankString } from "@/transformer/utils/normalize"; // 请确保这个路径与你的实际项目一致
+import { isBlankString } from "@/transformer/utils/normalize";
 
 // --- 预编译正则：剥离了前导空格检测，只用来精确匹配 HTML 语法 ---
 const tagname = '[A-Za-z][A-Za-z0-9-]*';
@@ -48,14 +49,10 @@ function isHtmlBlockClosed(line: string, type: number): boolean {
  * 快速探测：判断是否是 HTML 块，并返回其 Type (1-7)
  */
 function detectHtmlBlockType(line: string): number | null {
-  // 1. 极速过滤：跳过最多 3 个空格
-  let i = 0;
-  while (i < line.length && line[i] === ' ' && i < 3) i++;
-
-  // 2. 极速阻断：不以 `<` 开头绝对不是 HTML 块
+  const i = skipBlockPrefixSpaces(line);
   if (i >= line.length || line[i] !== '<') return null;
 
-  const rest = line.slice(i); // 例如 "<div>..."
+  const rest = line.slice(i);
 
   // Type 1: <script, <pre, <style, <textarea
   if (/^<(?:script|pre|style|textarea)(?:\s|>|$)/i.test(rest)) return 1;
@@ -88,7 +85,7 @@ function detectHtmlBlockType(line: string): number | null {
  */
 class HTMLBlockParser extends BaseBlockParser {
   constructor() {
-    super("html_block", 3000);
+    super("html_block");
   }
 
   /** @inheritdoc */

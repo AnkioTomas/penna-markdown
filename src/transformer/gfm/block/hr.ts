@@ -27,7 +27,7 @@ export function isThematicBreakLine(line: string): boolean {
  */
 class ThematicBreakParser extends BaseBlockParser {
   constructor() {
-    super("hr", 9000);
+    super("hr");
   }
 
   /** @inheritdoc */

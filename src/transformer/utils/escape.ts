@@ -31,6 +31,22 @@ export function escapeText(text: string): string {
   return escapeHtml(text);
 }
 
+/**
+ * 定界符前奇数个 `\` 表示该字符被转义。
+ */
+export function isEscaped(src: string, index: number): boolean {
+  let n = 0;
+  for (let i = index - 1; i >= 0 && src[i] === "\\"; i -= 1) n += 1;
+  return n % 2 === 1;
+}
+
+/**
+ * 生成可选的 HTML 属性片段（值非空时转义并输出）。
+ */
+export function htmlAttr(name: string, value: string): string {
+  return value ? ` ${name}="${escapeHtml(value)}"` : "";
+}
+
 const DEFAULT_CONFIG: Config = {
   // =========================================================================
   // 允许的 HTML 标签 (ALLOWED_TAGS)

@@ -8,14 +8,14 @@
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import { isDelimiterWhitespace } from "@/transformer/utils/normalize.js";
 
 const isAlphanumeric = (char: string) => /[A-Za-z0-9]/.test(char);
-const isWhitespace = (char: string) => !char || char === ' ' || char === '\t' || char === '\n' || char === '\r';
 
 class StrongInlineParser extends BaseInlineParser {
     constructor() {
-        // 优先级 3010，必须高于斜体 (3000)，确保 ** 优先被此解析器捕获
-        super("strong", 3010);
+    // 须高于 emphasis，确保 ** 优先被此解析器捕获
+        super("strong");
     }
 
     /** @inheritdoc */
@@ -28,7 +28,7 @@ class StrongInlineParser extends BaseInlineParser {
 
         // 2. 校验起始符有效性
         const nextChar = src[index + 2] || '';
-        if (isWhitespace(nextChar)) return null;
+        if (isDelimiterWhitespace(nextChar)) return null;
 
         // GFM 规范：下划线 `_` 不能在词语内部触发
         if (marker === '_') {
@@ -54,8 +54,8 @@ class StrongInlineParser extends BaseInlineParser {
                 const prevChar = src[j - 1] || '';
                 const charAfter = src[j + 2] || '';
 
-                let isValidCloser = !isWhitespace(prevChar);
-                let isValidOpener = !isWhitespace(charAfter);
+                let isValidCloser = !isDelimiterWhitespace(prevChar);
+                let isValidOpener = !isDelimiterWhitespace(charAfter);
 
                 // 下划线 `_` 的词内限制
                 if (marker === '_') {

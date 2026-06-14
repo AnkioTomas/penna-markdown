@@ -8,14 +8,14 @@
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import { isDelimiterWhitespace } from "@/transformer/utils/normalize.js";
 
 const isAlphanumeric = (char: string) => /[A-Za-z0-9]/.test(char);
-const isWhitespace = (char: string) => !char || char === ' ' || char === '\t' || char === '\n' || char === '\r';
 
 class EmphasisInlineParser extends BaseInlineParser {
   constructor() {
-    // 优先级 3000，在 Strong (3010) 之后执行
-    super("emphasis", 3000);
+    // 在 strong 之后执行；遇双字符定界符时跳过
+    super("emphasis");
   }
 
   /** @inheritdoc */
@@ -28,7 +28,7 @@ class EmphasisInlineParser extends BaseInlineParser {
 
     // 1. 校验起始符有效性
     const nextChar = src[index + 1] || '';
-    if (isWhitespace(nextChar)) return null;
+    if (isDelimiterWhitespace(nextChar)) return null;
 
     // GFM 规范：下划线 `_` 不能在词语内部触发
     if (marker === '_') {
@@ -59,8 +59,8 @@ class EmphasisInlineParser extends BaseInlineParser {
         const prevChar = src[j - 1] || '';
         const charAfter = src[j + 1] || '';
 
-        let isValidCloser = !isWhitespace(prevChar);
-        let isValidOpener = !isWhitespace(charAfter);
+        let isValidCloser = !isDelimiterWhitespace(prevChar);
+        let isValidOpener = !isDelimiterWhitespace(charAfter);
 
         if (marker === '_') {
           if (isValidCloser && isAlphanumeric(charAfter)) isValidCloser = false;

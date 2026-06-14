@@ -4,66 +4,65 @@
  */
 
 import type { BaseBlockParser, BaseInlineParser } from "./ParserBase.js";
+import { gfmBlockSyntax, gfmInlineSyntax } from "@/transformer/gfm/index.js";
+
+type InlineEntry = { parser: BaseInlineParser; priority: number };
+type BlockEntry = { parser: BaseBlockParser; priority: number };
 
 export class Registry {
-  readonly inlineParsers = new Map<string, BaseInlineParser>();
-  readonly blockParsers = new Map<string, BaseBlockParser>();
-  private readonly _inlinePriority = new Map<string, number>();
-  private readonly _blockPriority = new Map<string, number>();
-  private _sortedInline: BaseInlineParser[] | null = null;
-  private _sortedBlock: BaseBlockParser[] | null = null;
+  private readonly _inline: InlineEntry[] = [];
+  private readonly _block: BlockEntry[] = [];
 
-  private _invalidateCache(): void {
-    this._sortedInline = null;
-    this._sortedBlock = null;
+  constructor() {
+    for (const [pri, parser] of Object.entries(gfmInlineSyntax)) {
+      this.registerInlineParser(parser, Number(pri));
+    }
+    for (const [pri, parser] of Object.entries(gfmBlockSyntax)) {
+      this.registerBlockParser(parser, Number(pri));
+    }
+
+    // TODO 拓展部分
+
   }
 
   registerInlineParser(parser: BaseInlineParser, priority: number): void {
     if (!parser?.type) throw new TypeError("parser required type parameter");
-    if (!Number.isFinite(priority)) throw new TypeError("priority required");
-    this.inlineParsers.set(parser.type, parser);
-    this._inlinePriority.set(parser.type, priority);
-    this._invalidateCache();
+    const idx = this._inline.findIndex((e) => e.parser.type === parser.type);
+    const entry = { parser, priority };
+    if (idx >= 0) this._inline[idx] = entry;
+    else this._inline.push(entry);
+    this._inline.sort((a, b) => b.priority - a.priority);
   }
 
   registerBlockParser(parser: BaseBlockParser, priority: number): void {
     if (!parser?.type) throw new TypeError("parser required type parameter");
-    if (!Number.isFinite(priority)) throw new TypeError("priority required");
-    this.blockParsers.set(parser.type, parser);
-    this._blockPriority.set(parser.type, priority);
-    this._invalidateCache();
+    const idx = this._block.findIndex((e) => e.parser.type === parser.type);
+    const entry = { parser, priority };
+    if (idx >= 0) this._block[idx] = entry;
+    else this._block.push(entry);
+    this._block.sort((a, b) => b.priority - a.priority);
   }
 
   getInlineParsers(): BaseInlineParser[] {
-    if (!this._sortedInline) {
-      this._sortedInline = [...this.inlineParsers.values()].sort(
-        (a, b) => (this._inlinePriority.get(b.type) ?? 0) - (this._inlinePriority.get(a.type) ?? 0),
-      );
-    }
-    return this._sortedInline;
+    return this._inline.map((e) => e.parser);
   }
 
   getBlockParsers(): BaseBlockParser[] {
-    if (!this._sortedBlock) {
-      this._sortedBlock = [...this.blockParsers.values()].sort(
-        (a, b) => (this._blockPriority.get(b.type) ?? 0) - (this._blockPriority.get(a.type) ?? 0),
-      );
-    }
-    return this._sortedBlock;
+    return this._block.map((e) => e.parser);
   }
 
   getInlineParser(type: string): BaseInlineParser | undefined {
-    return this.inlineParsers.get(type);
+    return this._inline.find((e) => e.parser.type === type)?.parser;
   }
 
   getBlockParser(type: string): BaseBlockParser | undefined {
-    return this.blockParsers.get(type);
+    return this._block.find((e) => e.parser.type === type)?.parser;
   }
 
   setOptions(syntaxOptions: Record<string, Record<string, unknown>>): void {
     for (const [key, options] of Object.entries(syntaxOptions)) {
-      this.inlineParsers.get(key)?.setOptions(options);
-      this.blockParsers.get(key)?.setOptions(options);
+      this.getInlineParser(key)?.setOptions(options);
+      this.getBlockParser(key)?.setOptions(options);
     }
   }
 }

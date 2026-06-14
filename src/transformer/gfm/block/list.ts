@@ -12,7 +12,7 @@ import { RenderContext } from "@/transformer/core/context/RenderContext";
 
 import { canGenericLazyContinue } from "@/transformer/utils/lazyContinuation.js";
 import { isBlankString } from "@/transformer/utils/normalize";
-import { expandLinePrefixTabs, expandListItemContent, getIndent, parseListMarkerLine } from "@/transformer/utils/tabs.js";
+import { expandLinePrefixTabs, expandListItemContent, getIndent, listsMatch, parseListMarkerLine } from "@/transformer/utils/tabs.js";
 
 interface ListMarkerInfo {
   isOrdered: boolean;
@@ -54,7 +54,7 @@ function getListMarkerInfo(
  */
 class ListBlockParser extends BaseBlockParser {
   constructor() {
-    super("list", 50);
+    super("list");
   }
 
   /** @inheritdoc */
@@ -100,9 +100,7 @@ class ListBlockParser extends BaseBlockParser {
       if (!itemMarker) break;
 
       // 2. 如果 Marker 类型与当前列表不匹配，退出外层循环 (交由外层去开启新的 List)
-      if (itemMarker.isOrdered !== initialMarker.isOrdered ||
-          itemMarker.bulletChar !== initialMarker.bulletChar ||
-          itemMarker.delimiter !== initialMarker.delimiter) {
+      if (!listsMatch(itemMarker, initialMarker)) {
         break;
       }
 
@@ -137,14 +135,10 @@ class ListBlockParser extends BaseBlockParser {
         // B. 遇到新的 Marker
         const nextMarker = getListMarkerInfo(currentLine, { allowIndented: true });
         if (nextMarker) {
-          const sameListType = nextMarker.isOrdered === initialMarker.isOrdered &&
-              nextMarker.bulletChar === initialMarker.bulletChar &&
-              nextMarker.delimiter === initialMarker.delimiter;
-          // 与当前列表同级的新 item：marker 列回到列表起始列；否则可能是嵌套列表或惰性延续
-          if (sameListType && nextMarker.indent <= initialMarker.indent) {
+          if (listsMatch(nextMarker, initialMarker) && nextMarker.indent <= initialMarker.indent) {
             break;
           }
-          if (!sameListType && getIndent(currentLine) < itemMarker.contentStartCol) {
+          if (!listsMatch(nextMarker, initialMarker) && getIndent(currentLine) < itemMarker.contentStartCol) {
             break;
           }
         }

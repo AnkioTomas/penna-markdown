@@ -1,57 +1,55 @@
-import {BaseInlineParser, InlineParseResult} from "@/transformer/core/ParserBase";
-import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
-import {createNode, MarkdownNode} from "@/transformer/core/MarkdownNode";
-import {RenderContext} from "@/transformer/core/context/RenderContext";
-import {normalizeRefLabel} from "@/transformer/gfm/block/link-reference-definition";
-import {escapeHtml} from "@/transformer/utils/escape";
+import { BaseInlineParser, InlineParseResult } from "@/transformer/core/ParserBase";
+import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
+import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode";
+import { RenderContext } from "@/transformer/core/context/RenderContext";
+import { escapeHtml, htmlAttr } from "@/transformer/utils/escape";
+import { findLinkTextEnd } from "@/transformer/utils/linkLabel";
+import { normalizeLinkRefLabel } from "@/transformer/utils/normalize";
 
+/**
+ * 仅处理已定义 shortcut reference：`[label]` 后不接 `(` / `[`，且 store 中有对应定义。
+ * 完整链接语义由 links 解析器负责。
+ */
 class LinkReferenceValueParser extends BaseInlineParser {
-    constructor() {
-        super("link_reference_value", 2000);
+  constructor() {
+    super("link_reference_value");
+  }
+
+  canOpenAt(src: string, index: number, _ctx: InlineParseContext): boolean {
+    if (src[index] !== "[") return false;
+    if (index > 0 && src[index - 1] === "!") return false;
+    return true;
+  }
+
+  parse(src: string, index: number, ctx: InlineParseContext): InlineParseResult | null {
+    const end = findLinkTextEnd(src, index + 1);
+    if (end === -1) return null;
+
+    const nextIndex = end + 1;
+    if (nextIndex < src.length) {
+      const next = src[nextIndex];
+      if (next === "(" || next === "[") return null;
     }
 
-    canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {
-        return src[index].startsWith("[");
-    }
+    const id = src.slice(index + 1, end);
+    const label = "ref_" + normalizeLinkRefLabel(id);
+    if (!ctx.store.get<{ href: string; title: string }>(label)) return null;
 
-    parse(src: string, index: number, ctx: InlineParseContext): InlineParseResult | null {
-        const end = findLinkTextEnd(src, index + 1);
-        if (end == -1) return null;
-        let id = src.substring(index + 1, end);
-        let label = "ref_" + normalizeRefLabel(id);
-        return {
-            node: createNode(
-                this.type, end - index + 1, undefined, [], {
-                    label,
-                    id
-                }
-            ), nextIndex: end + 1
-        }
-    }
+    return {
+      node: createNode(this.type, nextIndex - index, undefined, [], { label, id }),
+      nextIndex,
+    };
+  }
 
-    render(node: MarkdownNode, ctx: RenderContext): string {
-        let label = node.props?.label as string;
-        let id = node.props?.id as string;
-        if (label == '') return `[${id}]`;
-        let result = ctx.store.get<{ consumedCharIndex: number, id: string, href: string, title: string }>(label)
+  render(node: MarkdownNode, ctx: RenderContext): string {
+    const label = node.props?.label as string;
+    const id = node.props?.id as string;
+    const result = ctx.store.get<{ href: string; title: string }>(label);
+    if (!result) return `[${id}]`;
 
-        if (result) {
-            const title = result.title || "";
-            const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
-            return `<a href="${escapeHtml(result.href)}"${titleAttr}>${escapeHtml(id)}</a>`;
-        }
-        return `[${id}]`;
-    }
-
-
-}
-
-export function findLinkTextEnd(src: string, start: number = 0) {
-    for (let i = start; i < src.length; i++) {
-        let char = src[i];
-        if (char === ']' && src[i - 1] !== '\\') return i;
-    }
-    return -1;
+    const title = result.title || "";
+    return `<a href="${escapeHtml(result.href)}"${htmlAttr("title", title)}>${escapeHtml(id)}</a>`;
+  }
 }
 
 export default new LinkReferenceValueParser();

@@ -19,7 +19,7 @@ import {InlineParseContext} from "@/transformer/core/context/InlineParseContext"
  */
 class EntityInlineParser extends BaseInlineParser {
   constructor() {
-    super("entity", 6000);
+    super("entity");
   }
 
   canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {
@@ -40,10 +40,8 @@ class EntityInlineParser extends BaseInlineParser {
   }
 
   /** @inheritdoc */
-  render(node: MarkdownNode, _ctx: any) {
-    const value = node.props?.value as string || "";
-    // 因为这是行内文本节点，渲染出来的内容会被嵌入 HTML 中，所以必须再次进行 HTML 转义！
-    return escapeHtml(value);
+  render(node: MarkdownNode) {
+    return escapeHtml(node.value ?? "");
   }
 }
 

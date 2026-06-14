@@ -46,3 +46,59 @@ export function isBlankString(str: string): boolean {
   }
   return true;
 }
+
+/**
+ * 行内空白（含 form feed / vertical tab）。
+ */
+export function isInlineWhitespace(ch: string): boolean {
+  return ch === " " || ch === "\t" || ch === "\n" || ch === "\r" || ch === "\v" || ch === "\f";
+}
+
+/**
+ * 定界符边界空白判定（缺失字符视为空白）。
+ */
+export function isDelimiterWhitespace(ch: string): boolean {
+  return !ch || ch === " " || ch === "\t" || ch === "\n" || ch === "\r";
+}
+
+/**
+ * 规范化 reference link label（小写、合并连续空白）。
+ */
+export function normalizeLinkRefLabel(label: string): string {
+  return label.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+export interface SkipInlineWhitespaceOptions {
+  /** 是否允许跳过换行 */
+  allowNewline?: boolean;
+  /** 最多跳过的换行数 */
+  maxNewlines?: number;
+}
+
+/**
+ * 跳过行内连续空白。
+ */
+export function skipInlineWhitespace(
+  src: string,
+  index: number,
+  { allowNewline = false, maxNewlines = 1 }: SkipInlineWhitespaceOptions = {},
+): number {
+  let i = index;
+  let newlineCount = 0;
+  while (i < src.length) {
+    const ch = src[i];
+    if (isInlineWhitespace(ch) && ch !== "\n" && ch !== "\r") {
+      i += 1;
+      continue;
+    }
+    if (ch === "\n" || ch === "\r") {
+      if (!allowNewline || newlineCount >= maxNewlines) break;
+      newlineCount += 1;
+      i += 1;
+      if (ch === "\r" && src[i] === "\n") i += 1;
+      continue;
+    }
+    break;
+  }
+  return i;
+}

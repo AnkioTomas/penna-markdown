@@ -6,27 +6,26 @@
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
-import {isBlankString} from "@/transformer/utils/normalize";
+import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
+import { isBlankString } from "@/transformer/utils/normalize";
 
-// 提取下划线的工具函数
 export function getSetextUnderlineInfo(line: string): { level: number } | null {
-  let i = 0; let spaceCount = 0;
-  while (i < line.length && line[i] === ' ' && spaceCount < 3) { spaceCount++; i++; }
+  let i = skipBlockPrefixSpaces(line);
   if (i >= line.length) return null;
 
   const char = line[i];
   if (char !== '=' && char !== '-') return null;
 
   const level = char === '=' ? 1 : 2;
-  while (i < line.length && line[i] === char) i++;
-  while (i < line.length && (line[i] === ' ' || line[i] === '\t')) i++;
+  while (i < line.length && line[i] === char) i += 1;
+  while (i < line.length && (line[i] === ' ' || line[i] === '\t')) i += 1;
 
   return i < line.length ? null : { level };
 }
 
 class SetextHeadingBlockParser extends BaseBlockParser {
   // 优先级必须高于 Paragraph
-  constructor() { super("setext_heading", 100); }
+  constructor() { super("setext_heading"); }
 
   /** @inheritdoc */
   canOpenAt(lines: string[], index: number, ctx: BlockParseContext): boolean {

@@ -9,7 +9,8 @@ import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { RenderContext } from "@/transformer/core/context/RenderContext";
-import {isBlankString} from "@/transformer/utils/normalize";
+import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
+import { isBlankString } from "@/transformer/utils/normalize";
 
 type Alignment = "left" | "center" | "right" | "none";
 
@@ -18,12 +19,8 @@ type Alignment = "left" | "center" | "right" | "none";
  * 处理了 GFM 表格特有的转义管道符 `\|` 以及首尾的边界条件。
  * @returns 包含单元格数组与是否含有未转义管道符的标志
  */
-export function parseTableRow(line: string): { cells: string[], hasUnescapedPipe: boolean } | null {
-  let start = 0;
-  // 1. 跳过最多 3 个前导空格
-  while (start < line.length && line[start] === ' ' && start < 3) {
-    start++;
-  }
+export function parseTableRow(line: string): { cells: string[]; hasUnescapedPipe: boolean } | null {
+  let start = skipBlockPrefixSpaces(line);
 
   let end = line.length;
   // 2. 忽略尾随的空白符
@@ -128,7 +125,7 @@ function parseDelimiterRow(line: string): Alignment[] | null {
  */
 class TableBlockParser extends BaseBlockParser {
   constructor() {
-    super("table", 8000);
+    super("table");
   }
 
   /** @inheritdoc */

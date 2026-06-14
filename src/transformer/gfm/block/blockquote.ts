@@ -22,7 +22,7 @@ const BLOCKQUOTE_LINE = /^( {0,3})>/;
  */
 class BlockquoteBlockParser extends BaseBlockParser {
     constructor() {
-        super("blockquote", 4000); // 假定 super 接受 (type, priority)
+        super("blockquote")
     }
 
     /** @inheritdoc */
@@ -47,7 +47,6 @@ class BlockquoteBlockParser extends BaseBlockParser {
 
             // --- 1. 当前行依然是引用块 ---
             if (BLOCKQUOTE_LINE.test(ln)) {
-                length += ln.length;
                 const stripped = stripBlockquoteMarker(ln);
 
                 if (isBlankString(stripped)) {

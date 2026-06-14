@@ -45,7 +45,7 @@ function isValidBacktickString(src: string, pos: number, len: number): boolean {
  */
 class InlineCodeParser extends BaseInlineParser {
     constructor() {
-        super("code_span", 9000);
+        super("code_span");
     }
 
     canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {

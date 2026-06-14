@@ -12,7 +12,7 @@ import { isIndentedCodeLine, stripVisualIndent } from "@/transformer/utils/tabs.
 
 class ParagraphBlockParser extends BaseBlockParser {
     constructor() {
-        super("paragraph", -1000);
+        super("paragraph");
     }
 
     /** @inheritdoc */

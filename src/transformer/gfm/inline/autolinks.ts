@@ -62,7 +62,7 @@ const literalBracketInner = (src: string, start: number, end: number): string =>
  */
 class AutolinksInlineParser extends BaseInlineParser {
   constructor() {
-    super("autolink", 90);
+    super("autolink");
   }
 
   /** @inheritdoc */
