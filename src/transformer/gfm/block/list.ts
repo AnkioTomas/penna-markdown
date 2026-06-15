@@ -196,7 +196,7 @@ class ListBlockParser extends BaseBlockParser {
         }
       }
 
-      // 一把梭解析子节点
+      ctx.markLinesInContainer(itemLines);
       const itemChildren = ctx.parseBlocks(itemLines);
       listItems.push(createNode("list_item", itemLength, undefined, itemChildren));
       length += itemLength;

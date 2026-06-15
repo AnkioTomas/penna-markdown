@@ -84,6 +84,8 @@ class BlockquoteBlockParser extends BaseBlockParser {
         }
 
 
+        ctx.markLinesInContainer(innerLines);
+
         const node = createNode("blockquote", length, undefined, ctx.parseBlocks(innerLines));
 
         return {node, nextIndex: i};

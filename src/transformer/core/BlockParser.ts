@@ -21,6 +21,43 @@ export class BlockParseEngine {
         this.__parseInline = parseInline;
         const that = this;
         this.ctx = new class implements BlockParseContext {
+
+
+            private containers = new Set<string>()
+
+            private calcHash(lines:string[]){
+              const text = lines.join('\n');
+
+              let hash = 0;
+              for (let i = 0; i < text.length; i++) {
+                hash = ((hash << 5) - hash) + text.charCodeAt(i);
+                hash |= 0; // 转为32位整数
+              }
+
+              return hash.toString(16);
+            }
+
+            private hashNumber(lines:string[], index:number){
+              let hash = this.calcHash(lines);
+              return `${hash}:${index}`;
+            }
+          markLinesInContainer(lines: string[]): void {
+            let hash = this.calcHash(lines);
+
+            for (let i = 0; i < lines.length; i++) {
+              let h = `${hash}:${i}`;
+              this.containers.add(h);
+            }
+
+          }
+            markLineInContainer(lines: string[], index: number): void {
+                let hash = this.hashNumber(lines, index);
+                this.containers.add(hash);
+            }
+            inContainer(lines: string[], index: number): boolean {
+                let hash = this.hashNumber(lines, index);
+                return this.containers.has(hash);
+            }
             readonly store: ParserStore = store;
 
             parseBlocks(lines: string[]): MarkdownNode[] {
