@@ -65,11 +65,10 @@ export const gfmBlockSyntax: Record<number,BaseBlockParser> = {
   420: code,
   410: indentedCode,
   400: linkRef,
-  // 300：标题
+  // 300：标题 / 列表（列表须高于 setext，GFM Example 64/69）
   320: atxHeading,
+  315: list,
   310: setextHeading,
-  // 200：列表
-  200: list,
   // 0：兜底
   0: paragraph,
 };
