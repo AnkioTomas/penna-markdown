@@ -10,7 +10,7 @@
 const TAB_WIDTH = 4;
 
 /** 缩进代码块 / 块结构分界（CommonMark 规范） */
-const CODE_INDENT = 4;
+export const CODE_INDENT = 4;
 
 
 
