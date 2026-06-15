@@ -9,7 +9,6 @@ import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
-import { sanitizeHtml } from "@/transformer/utils/escape.js";
 import { isBlankString } from "@/transformer/utils/normalize";
 
 // --- 预编译正则：剥离了前导空格检测，只用来精确匹配 HTML 语法 ---
@@ -95,7 +94,7 @@ class HTMLBlockParser extends BaseBlockParser {
 
     if (!type) return false;
 
-    // GFM 规范边界限制：Type 7 不能打断正在进行中的段落！
+    // Type 7 不能打断段落（须前有空行，CommonMark §4.6）
     if (type === 7) {
       if (index > 0 && !isBlankString(lines[index - 1] ?? "")) {
         return false;
@@ -143,9 +142,7 @@ class HTMLBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode) {
-    const rawHtml = node.props?.value as string || "";
-    // 输出前，进行强制净化！
-    return sanitizeHtml(rawHtml);
+    return (node.props?.value as string) || "";
   }
 }
 

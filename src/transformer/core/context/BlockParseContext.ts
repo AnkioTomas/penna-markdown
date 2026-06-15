@@ -3,7 +3,7 @@ import {MarkdownNode} from "@/transformer/core/MarkdownNode";
 
 export interface BlockParseContext {
     readonly store: ParserStore;
-    isBlockStarter(line: string): boolean
+    isBlockStarter(lines: string[], index: number): boolean
     parseInline(text: string): MarkdownNode[];
     parseBlocks(lines: string[]): MarkdownNode[];
     // 标记某行在容器内部

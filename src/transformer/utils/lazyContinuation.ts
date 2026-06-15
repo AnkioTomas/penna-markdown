@@ -38,7 +38,7 @@ export function canGenericLazyContinue(
   parseFn: (lines: string[]) => MarkdownNode[]
 ): boolean {
   if (currentLines.length === 0) return false;
-  if (ctx.isBlockStarter(nextLine)) {
+  if (ctx.isBlockStarter([nextLine], 0)) {
     return false;
   }
 

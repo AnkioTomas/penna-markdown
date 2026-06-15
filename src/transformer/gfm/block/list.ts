@@ -160,7 +160,7 @@ class ListBlockParser extends BaseBlockParser {
         // C-2. 缩进不足，尝试惰性延续 (Lazy Continuation)
 
         // 规则 1：先检查是否被强块级起点打断 (无缝接入你设计的上下文探针)
-        if (ctx.isBlockStarter && ctx.isBlockStarter(currentLine)) {
+        if (ctx.isBlockStarter && ctx.isBlockStarter(lines, i)) {
           break;
         }
 
