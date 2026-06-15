@@ -2,7 +2,7 @@
  * @file 行内语法：链接
  * @module transformer/gfm/inline/links
  *
- * 行内链接：inline、full/collapsed/shortcut reference 形式。
+ * 行内链接：inline、full/collapsed reference；shortcut 由 link_reference_value 处理。
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
@@ -43,12 +43,7 @@ class LinkInlineParser extends BaseInlineParser {
     if (nextIndex < src.length && src[nextIndex] === "(") {
       const inline = parseInlineLinkParen(src, nextIndex);
       if (inline) {
-        return this.createResolvedLinkNode(index, inline.next, inline.href, inline.title, children);
-      }
-
-      const def = this.lookupReference(ctx, labelText);
-      if (def) {
-        return this.createResolvedLinkNode(index, nextIndex, def.href, def.title, children);
+        return this.createInlineLinkNode(index, inline.next, inline.href, inline.title, children);
       }
       return null;
     }
@@ -58,26 +53,24 @@ class LinkInlineParser extends BaseInlineParser {
       if (refLabelEnd !== -1) {
         const refLabel = src.slice(nextIndex + 1, refLabelEnd);
         const refId = refLabel.length > 0 ? refLabel : labelText;
-        const def = this.lookupReference(ctx, refId);
-        if (!def) return null;
-        return this.createResolvedLinkNode(index, refLabelEnd + 1, def.href, def.title, children);
+        const end = refLabelEnd + 1;
+        return {
+          node: createNode(
+            "link",
+            end - index,
+            src.slice(index, end),
+            children,
+            { refKey: normalizeLinkRefLabel(refId) },
+          ),
+          nextIndex: end,
+        };
       }
-    }
-
-    const def = this.lookupReference(ctx, labelText);
-    if (def) {
-      return this.createResolvedLinkNode(index, nextIndex, def.href, def.title, children);
     }
 
     return null;
   }
 
-  private lookupReference(ctx: InlineParseContext, label: string) {
-    const key = "ref_" + normalizeLinkRefLabel(label);
-    return ctx.store.get<{ href: string; title: string }>(key) ?? null;
-  }
-
-  private createResolvedLinkNode(
+  private createInlineLinkNode(
     startIndex: number,
     endIndex: number,
     href: string,
@@ -93,6 +86,16 @@ class LinkInlineParser extends BaseInlineParser {
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext) {
     const inner = ctx.renderInline(node.children);
+    const refKey = node.props?.refKey as string | undefined;
+
+    if (refKey) {
+      const def = ctx.store.get<{ href: string; title: string }>("ref_" + refKey);
+      if (!def) return node.value ?? `[${inner}][${refKey}]`;
+
+      const title = def.title || "";
+      return `<a href="${escapeHtml(def.href)}"${htmlAttr("title", title)}>${inner}</a>`;
+    }
+
     const href = (node.props?.href as string) || "";
     const title = (node.props?.title as string) || "";
     return `<a href="${escapeHtml(href)}"${htmlAttr("title", title)}>${inner}</a>`;

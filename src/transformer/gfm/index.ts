@@ -23,6 +23,7 @@ import table from "@/transformer/gfm/block/table.js";
 import paragraph from "@/transformer/gfm/block/paragraph.js";
 import linkRef from "@/transformer/gfm/block/link-reference-definition.js";
 import links from "@/transformer/gfm/inline/links.js";
+import linkReferenceValue from "@/transformer/gfm/inline/link-reference-value.js";
 import __break from "@/transformer/gfm/inline/break.js";
 import images from "@/transformer/gfm/inline/images.js";
 import rawhtmlInline from "@/transformer/gfm/inline/html.js";
@@ -44,6 +45,7 @@ export const gfmInlineSyntax: Record<number,BaseInlineParser> = {
   320: emphasis,
   // 200：链接与图片
   230: images,
+  225: linkReferenceValue,
   220: links,
   // 100：HTML / autolink
   120: rawhtmlInline,

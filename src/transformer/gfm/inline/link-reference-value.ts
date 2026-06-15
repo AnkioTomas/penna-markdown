@@ -7,8 +7,8 @@ import { findLinkTextEnd } from "@/transformer/utils/linkLabel";
 import { normalizeLinkRefLabel } from "@/transformer/utils/normalize";
 
 /**
- * 仅处理已定义 shortcut reference：`[label]` 后不接 `(` / `[`，且 store 中有对应定义。
- * 完整链接语义由 links 解析器负责。
+ * Shortcut reference：`[label]`（后不接 `(` / `[`）。
+ * parse 只建节点；render 再查 store。
  */
 class LinkReferenceValueParser extends BaseInlineParser {
   constructor() {
@@ -21,7 +21,7 @@ class LinkReferenceValueParser extends BaseInlineParser {
     return true;
   }
 
-  parse(src: string, index: number, ctx: InlineParseContext): InlineParseResult | null {
+  parse(src: string, index: number, _ctx: InlineParseContext): InlineParseResult | null {
     const end = findLinkTextEnd(src, index + 1);
     if (end === -1) return null;
 
@@ -33,7 +33,6 @@ class LinkReferenceValueParser extends BaseInlineParser {
 
     const id = src.slice(index + 1, end);
     const label = "ref_" + normalizeLinkRefLabel(id);
-    if (!ctx.store.get<{ href: string; title: string }>(label)) return null;
 
     return {
       node: createNode(this.type, nextIndex - index, undefined, [], { label, id }),

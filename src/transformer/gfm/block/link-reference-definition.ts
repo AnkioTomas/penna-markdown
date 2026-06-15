@@ -10,27 +10,116 @@ import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
 import {
+  normalizeLinkDestination,
+  normalizeLinkTitle,
   parseAngleDestination,
   parseLinkTitle,
   parsePlainDestination,
-  unescapeHref,
 } from "@/transformer/utils/linkDestination.js";
 import { findLinkLabelEnd } from "@/transformer/utils/linkLabel.js";
+import { getSetextUnderlineInfo } from "@/transformer/gfm/block/setext_heading.js";
 import { isBlankString, normalizeLinkRefLabel, skipInlineWhitespace } from "@/transformer/utils/normalize";
 
 export { normalizeLinkRefLabel as normalizeRefLabel };
 
+function isObviousBlockStarter(line: string): boolean {
+  const t = line.trimStart();
+  if (!t) return false;
+  if (/^#{1,6}(?:\s|$)/.test(t)) return true;
+  if (/^>{1,}/.test(t)) return true;
+  if (/^(`{3,}|~{3,})/.test(t)) return true;
+  if (/^(?:-|\*|_)(?:\s*(?:-|\*|_)){2,}\s*$/.test(t)) return true;
+  if (getSetextUnderlineInfo(line) > 0) return true;
+  if (/^[-*+]\s/.test(t) || /^\d+\.\s/.test(t)) return true;
+  return false;
+}
+
 interface LRDResult {
-  consumedCharIndex: number;
   id: string;
   href: string;
   title: string;
 }
 
+function isLRDLineStart(line: string): boolean {
+  let i = skipBlockPrefixSpaces(line);
+  if (i >= line.length || line[i] !== "[") return false;
+  const labelEnd = findLinkLabelEnd(line, i + 1);
+  if (labelEnd === -1) return false;
+  i = labelEnd + 1;
+  i = skipInlineWhitespace(line, i, { allowNewline: false });
+  return i < line.length && line[i] === ":";
+}
+
+function tryParseLRDBlock(
+  lines: string[],
+  index: number,
+): { result: LRDResult; nextIndex: number } | null {
+  let endIdx = index;
+  let result: LRDResult | null = null;
+  let nextIndex = index;
+
+  while (endIdx < lines.length && !isBlankString(lines[endIdx] ?? "")) {
+    if (endIdx > index && (isLRDLineStart(lines[endIdx] ?? "") || isObviousBlockStarter(lines[endIdx] ?? ""))) {
+      break;
+    }
+    const parsed = parseLRDString(lines.slice(index, endIdx + 1).join("\n"));
+    if (parsed) {
+      result = parsed;
+      nextIndex = endIdx + 1;
+    } else if (result !== null) {
+      break;
+    }
+    endIdx += 1;
+  }
+
+  if (!result) return null;
+  return { result, nextIndex };
+}
+
+/** label 跨行但未闭合 — 无效定义，静默吞掉 */
+function hasMultilineBrokenLabel(lines: string[], index: number): boolean {
+  const line = lines[index] ?? "";
+  let i = skipBlockPrefixSpaces(line);
+  if (i >= line.length || line[i] !== "[") return false;
+  if (findLinkLabelEnd(line, i + 1) !== -1) return false;
+
+  let endIdx = index + 1;
+  while (endIdx <= lines.length) {
+    const chunk = lines.slice(index, endIdx).join("\n");
+    if (/\]:\s*\S/.test(chunk) && parseLRDString(chunk) === null) {
+      return true;
+    }
+    if (endIdx >= lines.length || isBlankString(lines[endIdx] ?? "")) {
+      return false;
+    }
+    endIdx += 1;
+  }
+  return false;
+}
+
+/** 无效定义（label 含换行）：吞掉至 `]: dest` 完成 */
+function consumeInvalidLRDBlock(lines: string[], index: number): number {
+  let endIdx = index + 1;
+  while (endIdx <= lines.length) {
+    const chunk = lines.slice(index, endIdx).join("\n");
+    if (/\]:\s*\S/.test(chunk)) {
+      return endIdx;
+    }
+    if (endIdx >= lines.length || isBlankString(lines[endIdx] ?? "")) {
+      return endIdx;
+    }
+    if (endIdx > index && (isObviousBlockStarter(lines[endIdx] ?? "") || isLRDLineStart(lines[endIdx] ?? ""))) {
+      return endIdx;
+    }
+    endIdx += 1;
+  }
+  return endIdx;
+}
+
 /**
- * 纯游标解析 LRD 字符串。
+ * 纯游标解析 LRD 字符串；失败返回 null（不部分注册）。
  */
-function parseLRDString(text: string): LRDResult | null {
+export function parseLRDString(text: string): LRDResult | null {
   let i = skipBlockPrefixSpaces(text);
   if (i >= text.length || text[i] !== "[") return null;
 
@@ -48,36 +137,45 @@ function parseLRDString(text: string): LRDResult | null {
   i = skipInlineWhitespace(text, i, { allowNewline: true, maxNewlines: 1 });
   if (i >= text.length) return null;
 
-  let href = "";
+  let hrefRaw = "";
+  let usedAngle = false;
   if (text[i] === "<") {
+    usedAngle = true;
     const dest = parseAngleDestination(text, i);
     if (!dest) return null;
-    href = dest.href;
+    hrefRaw = dest.href;
     i = dest.next;
   } else {
     const dest = parsePlainDestination(text, i);
-    href = dest.href;
+    hrefRaw = dest.href;
     i = dest.next;
   }
 
-  href = unescapeHref(href);
-  if (href === "") return null;
-
-  let afterDestIndex = i;
-  let title = "";
-
+  const beforeTitleWs = i;
   i = skipInlineWhitespace(text, i, { allowNewline: true, maxNewlines: 1 });
-  const titleParsed = parseLinkTitle(text, i);
-  if (titleParsed?.closed) {
-    let j = titleParsed.next;
-    while (j < text.length && (text[j] === " " || text[j] === "\t")) j += 1;
-    if (j >= text.length || text[j] === "\n" || text[j] === "\r") {
-      title = unescapeHref(titleParsed.title);
-      afterDestIndex = j;
-    }
+
+  if (usedAngle && i === beforeTitleWs && i < text.length) {
+    const ch = text[i];
+    if (ch === '"' || ch === "'" || ch === "(") return null;
   }
 
-  return { consumedCharIndex: afterDestIndex, id, href, title };
+  let titleRaw = "";
+  if (i < text.length && (text[i] === '"' || text[i] === "'" || text[i] === "(")) {
+    const titleParsed = parseLinkTitle(text, i);
+    if (!titleParsed?.closed) return null;
+    if (/\n\s*\n/.test(titleParsed.title)) return null;
+    titleRaw = titleParsed.title;
+    i = titleParsed.next;
+  }
+
+  i = skipInlineWhitespace(text, i, { allowNewline: true, maxNewlines: Number.MAX_SAFE_INTEGER });
+  if (i < text.length) return null;
+
+  return {
+    id,
+    href: normalizeLinkDestination(hrefRaw),
+    title: titleRaw ? normalizeLinkTitle(titleRaw) : "",
+  };
 }
 
 class LinkReferenceDefinitionParser extends BaseBlockParser {
@@ -86,38 +184,34 @@ class LinkReferenceDefinitionParser extends BaseBlockParser {
   }
 
   /** @inheritdoc */
-  canOpenAt(lines: string[], index: number): boolean {
-    return skipBlockPrefixSpaces(lines[index] ?? "") < (lines[index] ?? "").length
-      && lines[index]![skipBlockPrefixSpaces(lines[index]!)] === "[";
+  canOpenAt(lines: string[], index: number, ctx: BlockParseContext): boolean {
+    if (index > 0 && !isBlankString(lines[index - 1] ?? "")) {
+      if (!ctx.isBlockStarter(lines, index - 1)) return false;
+    }
+    const line = lines[index] ?? "";
+    if (skipBlockPrefixSpaces(line) >= line.length || line[skipBlockPrefixSpaces(line)] !== "[") {
+      return false;
+    }
+    return tryParseLRDBlock(lines, index) !== null
+      || hasMultilineBrokenLabel(lines, index);
   }
 
   /** @inheritdoc */
   parse(lines: string[], index: number, ctx: BlockParseContext) {
-    if (!this.canOpenAt(lines, index)) return null;
-
-    const chunkLines: string[] = [];
-    let endIdx = index;
-    while (endIdx < lines.length && !isBlankString(lines[endIdx])) {
-      chunkLines.push(lines[endIdx]);
-      endIdx += 1;
+    const parsed = tryParseLRDBlock(lines, index);
+    if (parsed) {
+      const key = "ref_" + parsed.result.id;
+      if (!ctx.store.has(key)) {
+        ctx.store.set(key, parsed.result);
+      }
+      return { node: null, nextIndex: parsed.nextIndex };
     }
 
-    const textChunk = chunkLines.join("\n");
-    const result = parseLRDString(textChunk);
-    if (!result) return null;
-
-    const consumedText = textChunk.slice(0, result.consumedCharIndex);
-    let lineCount = 1;
-    for (const char of consumedText) {
-      if (char === "\n") lineCount += 1;
+    if (hasMultilineBrokenLabel(lines, index)) {
+      return { node: null, nextIndex: consumeInvalidLRDBlock(lines, index) };
     }
 
-    const key = "ref_" + result.id;
-    if (!ctx.store.has(key)) {
-      ctx.store.set(key, result);
-    }
-
-    return { node: null, nextIndex: index + lineCount };
+    return null;
   }
 
   /** @inheritdoc */
