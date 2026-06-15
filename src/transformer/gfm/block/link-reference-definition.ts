@@ -50,6 +50,23 @@ function isLRDLineStart(line: string): boolean {
   return i < line.length && line[i] === ":";
 }
 
+/** LRD 的 destination/title 续行（非新定义起点） */
+function isLRDContinuationLine(line: string): boolean {
+  if (isLRDLineStart(line)) return false;
+  if (/^[\t ]/.test(line)) return true;
+  const trimmed = line.trimStart();
+  return trimmed.startsWith("<") || trimmed.startsWith("/");
+}
+
+function canFollowLRDLine(lines: string[], index: number, ctx: BlockParseContext): boolean {
+  if (index <= 0) return true;
+  if (isBlankString(lines[index - 1] ?? "")) return true;
+  const prev = lines[index - 1] ?? "";
+  return ctx.isBlockStarter(lines, index - 1)
+    || isLRDLineStart(prev)
+    || isLRDContinuationLine(prev);
+}
+
 function tryParseLRDBlock(
   lines: string[],
   index: number,
@@ -185,9 +202,7 @@ class LinkReferenceDefinitionParser extends BaseBlockParser {
 
   /** @inheritdoc */
   canOpenAt(lines: string[], index: number, ctx: BlockParseContext): boolean {
-    if (index > 0 && !isBlankString(lines[index - 1] ?? "")) {
-      if (!ctx.isBlockStarter(lines, index - 1)) return false;
-    }
+    if (!canFollowLRDLine(lines, index, ctx)) return false;
     const line = lines[index] ?? "";
     if (skipBlockPrefixSpaces(line) >= line.length || line[skipBlockPrefixSpaces(line)] !== "[") {
       return false;

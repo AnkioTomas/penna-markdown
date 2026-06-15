@@ -31,23 +31,24 @@ class LinkReferenceValueParser extends BaseInlineParser {
       if (next === "(" || next === "[") return null;
     }
 
-    const id = src.slice(index + 1, end);
-    const label = "ref_" + normalizeLinkRefLabel(id);
+    const labelText = src.slice(index + 1, end);
+    const label = "ref_" + normalizeLinkRefLabel(labelText);
+    const children = _ctx.parseInline(labelText);
 
     return {
-      node: createNode(this.type, nextIndex - index, undefined, [], { label, id }),
+      node: createNode(this.type, nextIndex - index, undefined, children, { label }),
       nextIndex,
     };
   }
 
   render(node: MarkdownNode, ctx: RenderContext): string {
     const label = node.props?.label as string;
-    const id = node.props?.id as string;
+    const inner = ctx.renderInline(node.children);
     const result = ctx.store.get<{ href: string; title: string }>(label);
-    if (!result) return `[${id}]`;
+    if (!result) return `[${inner}]`;
 
     const title = result.title || "";
-    return `<a href="${escapeHtml(result.href)}"${htmlAttr("title", title)}>${escapeHtml(id)}</a>`;
+    return `<a href="${escapeHtml(result.href)}"${htmlAttr("title", title)}>${inner}</a>`;
   }
 }
 
