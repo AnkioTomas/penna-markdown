@@ -48,8 +48,8 @@ class ParagraphBlockParser extends BaseBlockParser {
 
         if (paragraphLines.length === 0) return null;
 
-        // CommonMark 要求多行段落合并时，保留换行符。
-        const content = paragraphLines.join("\n");
+        // CommonMark：段落末尾的行尾空白在解析 inline 前剥离（行内 hard break 的空格在 \n 前，不受影响）
+        const content = paragraphLines.join("\n").replace(/[ \t]+$/, "");
 
         const node = createNode(
             this.type,
