@@ -188,16 +188,16 @@ class TableBlockParser extends BaseBlockParser {
         break;
       }
 
-      // 3. 解析为表格数据行
+      // 3. 解析为表格数据行（无 | 的行视为惰性延续，整行作为首格）
       const rowParsed = parseTableRow(line);
-      // GFM 规范：数据行内部即使列不够/超出，只要是普通行且不是别的块语法，就算作表格的一部分
-      // 但它本身必须包含未转义管道符，否则宣告表格中断
-      if (!rowParsed || !rowParsed.hasUnescapedPipe) {
-        break;
-      }
+      if (!rowParsed) break;
 
-      // 截断或补齐空格至表头列数
-      const rowCells = rowParsed.cells.slice(0, numCols);
+      let rowCells: string[];
+      if (rowParsed.hasUnescapedPipe) {
+        rowCells = rowParsed.cells.slice(0, numCols);
+      } else {
+        rowCells = [rowParsed.cells[0] ?? ""];
+      }
       while (rowCells.length < numCols) rowCells.push("");
 
       bodyRows.push(
