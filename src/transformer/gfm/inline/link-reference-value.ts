@@ -3,6 +3,7 @@ import { InlineParseContext } from "@/transformer/core/context/InlineParseContex
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode";
 import { RenderContext } from "@/transformer/core/context/RenderContext";
 import { escapeHtml, htmlAttr } from "@/transformer/utils/escape";
+import { parseInlineLinkParen, scanFailedAngleInlineLinkEnd } from "@/transformer/utils/linkDestination";
 import { findLinkTextEnd } from "@/transformer/utils/linkLabel";
 import { normalizeLinkRefLabel } from "@/transformer/utils/normalize";
 
@@ -28,7 +29,11 @@ class LinkReferenceValueParser extends BaseInlineParser {
     const nextIndex = end + 1;
     if (nextIndex < src.length) {
       const next = src[nextIndex];
-      if (next === "(" || next === "[") return null;
+      if (next === "[") return null;
+      if (next === "(") {
+        if (parseInlineLinkParen(src, nextIndex)) return null;
+        if (scanFailedAngleInlineLinkEnd(src, nextIndex) !== -1) return null;
+      }
     }
 
     const labelText = src.slice(index + 1, end);

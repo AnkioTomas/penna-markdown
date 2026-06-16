@@ -6,6 +6,8 @@
  */
 
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import { isEscaped } from "@/transformer/utils/escape.js";
+import { scanDelims } from "@/transformer/utils/flanking.js";
 import { skipInlineWhitespace } from "@/transformer/utils/normalize.js";
 import {
   parseAngleDestination,
@@ -212,11 +214,46 @@ export function findLinkLabelEnd(src: string, start: number): number {
   return -1;
 }
 
+/** 外侧 emphasis 定界符在 link text 的 `]` 之前闭合 → 该 `[` 不构成有效 label。 */
+function emphasisClosesLinkTextBeforeEnd(
+  src: string,
+  openBracket: number,
+  pos: number,
+): boolean {
+  const ch = src[pos];
+  if (ch !== "*" && ch !== "_") return false;
+  const scanned = scanDelims(src, pos, ch);
+  if (!scanned?.canClose) return false;
+
+  let needed = scanned.numdelims;
+  let i = openBracket - 1;
+  while (i >= 0 && needed > 0) {
+    if (src[i] === ch && !isEscaped(src, i)) {
+      const openScan = scanDelims(src, i, ch);
+      if (openScan?.canOpen) {
+        needed -= Math.min(openScan.numdelims, needed);
+        if (needed === 0) break;
+        i -= openScan.numdelims;
+        continue;
+      }
+    }
+    i -= 1;
+  }
+  if (needed > 0) return false;
+
+  let j = pos + scanned.numdelims;
+  while (j < src.length && (src[j] === " " || src[j] === "\t")) j += 1;
+  if (src[j] === "]") return false;
+
+  return true;
+}
+
 /**
  * 查找 link label / image alt 的闭合 `]`。
  * 遵循 GFM：code/html/autolink 优先；label 内 inline link 整块跳过。
  */
 export function findLinkTextEnd(src: string, start: number): number {
+  const openBracket = start - 1;
   let level = 1;
   let i = start;
   let justSkippedLink = false;
@@ -226,6 +263,10 @@ export function findLinkTextEnd(src: string, start: number): number {
       i += 2;
       justSkippedLink = false;
       continue;
+    }
+
+    if (level === 1 && emphasisClosesLinkTextBeforeEnd(src, openBracket, i)) {
+      return -1;
     }
 
     if (src[i] === "`") {

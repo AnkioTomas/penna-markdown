@@ -14,7 +14,11 @@ import {
   findLinkLabelEnd,
   findLinkTextEnd,
 } from "@/transformer/utils/linkLabel.js";
-import { normalizeLinkRefLabel } from "@/transformer/utils/normalize.js";
+import {
+  collectFullReferenceCandidates,
+  findReferenceWindowEnd,
+  renderReferenceLinkSpan,
+} from "@/transformer/utils/linkReference.js";
 import type { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
 import type { RenderContext } from "@/transformer/core/context/RenderContext";
 
@@ -58,18 +62,21 @@ class LinkInlineParser extends BaseInlineParser {
     if (nextIndex < src.length && src[nextIndex] === "[") {
       const refLabelEnd = findLinkLabelEnd(src, nextIndex + 1);
       if (refLabelEnd !== -1) {
-        const refLabel = src.slice(nextIndex + 1, refLabelEnd);
-        const refId = refLabel.length > 0 ? refLabel : labelText;
         const end = refLabelEnd + 1;
+        const windowEnd = findReferenceWindowEnd(src, index);
+        const window = src.slice(index, windowEnd);
         return {
           node: createNode(
             "link",
-            end - index,
+            windowEnd - index,
             src.slice(index, end),
             children,
-            { refKey: normalizeLinkRefLabel(refId) },
+            {
+              refWindow: window,
+              refCandidates: collectFullReferenceCandidates(window, ctx.parseInline.bind(ctx)),
+            },
           ),
-          nextIndex: end,
+          nextIndex: windowEnd,
         };
       }
     }
@@ -94,17 +101,18 @@ class LinkInlineParser extends BaseInlineParser {
   render(node: MarkdownNode, ctx: RenderContext) {
     if (node.props?.literal) return node.value ?? "";
 
-    const inner = ctx.renderInline(node.children);
-    const refKey = node.props?.refKey as string | undefined;
-
-    if (refKey) {
-      const def = ctx.store.get<{ href: string; title: string }>("ref_" + refKey);
-      if (!def) return node.value ?? `[${inner}][${refKey}]`;
-
-      const title = def.title || "";
-      return `<a href="${escapeHtml(def.href)}"${htmlAttr("title", title)}>${inner}</a>`;
+    const refCandidates = node.props?.refCandidates;
+    if (refCandidates && node.value) {
+      const window = (node.props?.refWindow as string) || node.value;
+      return renderReferenceLinkSpan(
+        window,
+        refCandidates as Parameters<typeof renderReferenceLinkSpan>[1],
+        ctx,
+        node.value,
+      );
     }
 
+    const inner = ctx.renderInline(node.children);
     const href = (node.props?.href as string) || "";
     const title = (node.props?.title as string) || "";
     return `<a href="${escapeHtml(href)}"${htmlAttr("title", title)}>${inner}</a>`;

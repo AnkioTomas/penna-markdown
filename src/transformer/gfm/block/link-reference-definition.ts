@@ -93,46 +93,6 @@ function tryParseLRDBlock(
   return { result, nextIndex };
 }
 
-/** label 跨行但未闭合 — 无效定义，静默吞掉 */
-function hasMultilineBrokenLabel(lines: string[], index: number): boolean {
-  const line = lines[index] ?? "";
-  let i = skipBlockPrefixSpaces(line);
-  if (i >= line.length || line[i] !== "[") return false;
-  if (findLinkLabelEnd(line, i + 1) !== -1) return false;
-
-  let endIdx = index + 1;
-  while (endIdx <= lines.length) {
-    const chunk = lines.slice(index, endIdx).join("\n");
-    if (/\]:\s*\S/.test(chunk) && parseLRDString(chunk) === null) {
-      return true;
-    }
-    if (endIdx >= lines.length || isBlankString(lines[endIdx] ?? "")) {
-      return false;
-    }
-    endIdx += 1;
-  }
-  return false;
-}
-
-/** 无效定义（label 含换行）：吞掉至 `]: dest` 完成 */
-function consumeInvalidLRDBlock(lines: string[], index: number): number {
-  let endIdx = index + 1;
-  while (endIdx <= lines.length) {
-    const chunk = lines.slice(index, endIdx).join("\n");
-    if (/\]:\s*\S/.test(chunk)) {
-      return endIdx;
-    }
-    if (endIdx >= lines.length || isBlankString(lines[endIdx] ?? "")) {
-      return endIdx;
-    }
-    if (endIdx > index && (isObviousBlockStarter(lines[endIdx] ?? "") || isLRDLineStart(lines[endIdx] ?? ""))) {
-      return endIdx;
-    }
-    endIdx += 1;
-  }
-  return endIdx;
-}
-
 /**
  * 纯游标解析 LRD 字符串；失败返回 null（不部分注册）。
  */
@@ -207,8 +167,7 @@ class LinkReferenceDefinitionParser extends BaseBlockParser {
     if (skipBlockPrefixSpaces(line) >= line.length || line[skipBlockPrefixSpaces(line)] !== "[") {
       return false;
     }
-    return tryParseLRDBlock(lines, index) !== null
-      || hasMultilineBrokenLabel(lines, index);
+    return tryParseLRDBlock(lines, index) !== null;
   }
 
   /** @inheritdoc */
@@ -220,10 +179,6 @@ class LinkReferenceDefinitionParser extends BaseBlockParser {
         ctx.store.set(key, parsed.result);
       }
       return { node: null, nextIndex: parsed.nextIndex };
-    }
-
-    if (hasMultilineBrokenLabel(lines, index)) {
-      return { node: null, nextIndex: consumeInvalidLRDBlock(lines, index) };
     }
 
     return null;
