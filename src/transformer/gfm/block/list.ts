@@ -13,7 +13,7 @@ import { RenderContext } from "@/transformer/core/context/RenderContext";
 import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
 import { canGenericLazyContinue } from "@/transformer/utils/lazyContinuation.js";
 import { isBlankString } from "@/transformer/utils/normalize";
-import { expandLinePrefixTabs, expandListItemContent, getIndent, listsMatch, parseListMarkerLine } from "@/transformer/utils/tabs.js";
+import { expandLinePrefixTabs, expandListItemContent, getIndent, isIndentedCodeLine, listsMatch, parseListMarkerLine } from "@/transformer/utils/tabs.js";
 
 interface ListMarkerInfo {
   isOrdered: boolean;
@@ -117,7 +117,13 @@ class ListBlockParser extends BaseBlockParser {
       // 剥去内容起始的缩进
       const firstLine = lines[i];
       itemLength += firstLine.length;
-      itemLines.push(expandListItemContent(firstLine, itemMarker.contentStart));
+      const rawMarker = parseListMarkerLine(firstLine);
+      let firstContent = expandListItemContent(firstLine, itemMarker.contentStart);
+      // GFM 规则 #2：marker 行以 4+ 空格缩进代码开头（不含 tab 场景，见 Example 7）
+      if (rawMarker && /^ {4,}/.test(rawMarker.content)) {
+        firstContent = expandLinePrefixTabs(rawMarker.content);
+      }
+      itemLines.push(firstContent);
 
       if (hadBlankLineBetweenItems && listItems.length > 0) {
         isListLoose = true;
@@ -126,15 +132,22 @@ class ListBlockParser extends BaseBlockParser {
       hadBlankLineBetweenItems = false;
       i++;
 
+      let itemHadBlankLine = false;
+
       // 消费 List Item 的内部行
       while (i < lines.length) {
         const currentLine = lines[i];
 
         // A. 遇到空行
         if (isBlankString(currentLine)) {
+          itemHadBlankLine = true;
           itemLines.push("");
           itemLength += currentLine.length;
           i++;
+          // GFM #258：空 marker 后至多一行空行，再遇到空行则结束 item
+          if (itemMarker.isBlank) {
+            break;
+          }
           continue;
         }
 
@@ -158,9 +171,13 @@ class ListBlockParser extends BaseBlockParser {
         }
 
         // C-2. 缩进不足，尝试惰性延续 (Lazy Continuation)
+        // 空行之后不允许 lazy continue（GFM #233 / #254 / #238）
+        if (itemHadBlankLine) {
+          break;
+        }
 
-        // 规则 1：先检查是否被强块级起点打断 (无缝接入你设计的上下文探针)
-        if (ctx.isBlockStarter && ctx.isBlockStarter(lines, i)) {
+        // 规则 1：强块级起点打断（4 空格缩进行除外，见 GFM #269）
+        if (ctx.isBlockStarter(lines, i) && !isIndentedCodeLine(currentLine)) {
           break;
         }
 
@@ -182,21 +199,24 @@ class ListBlockParser extends BaseBlockParser {
         break;
       }
 
+      // 空 marker 行首占位（含 `-   ` 仅空格）不是内容
+      if (itemMarker.isBlank) {
+        while (itemLines.length > 0 && isBlankString(itemLines[0])) {
+          itemLines.shift();
+        }
+      }
+
       // 移除尾部多余的空行，并标记遇到了空行
       while (itemLines.length > 0 && isBlankString(itemLines[itemLines.length - 1])) {
         itemLines.pop();
         hadBlankLineBetweenItems = true;
       }
 
-      // 如果列表项内部夹杂空行，列表变松散 (Loose)
-      for (const l of itemLines) {
-        if (isBlankString(l)) {
-          isListLoose = true;
-          break;
-        }
+      // 列表项内部仍含空行 → loose（GFM #234）；尾部空行 pop 后不算
+      if (itemHadBlankLine && itemLines.some((l) => isBlankString(l))) {
+        isListLoose = true;
       }
 
-      ctx.markLinesInContainer(itemLines);
       const itemChildren = ctx.parseBlocks(itemLines);
       listItems.push(createNode("list_item", itemLength, undefined, itemChildren));
       length += itemLength;
