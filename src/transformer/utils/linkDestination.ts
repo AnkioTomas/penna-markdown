@@ -9,7 +9,7 @@ import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
 import { skipInlineWhitespace, type SkipInlineWhitespaceOptions } from "@/transformer/utils/normalize.js";
 
 /** 行内链接 destination / title 之间的空白（可含单个换行）。 */
-const INLINE_LINK_WS: SkipInlineWhitespaceOptions = {
+export const INLINE_LINK_WS: SkipInlineWhitespaceOptions = {
   allowNewline: true,
   maxNewlines: 1,
 };
