@@ -5,6 +5,7 @@
 
 import type { BaseBlockParser, BaseInlineParser } from "./ParserBase.js";
 import { gfmBlockSyntax, gfmInlineSyntax } from "@/transformer/gfm/index.js";
+import {extendBlockSyntax, extendInlineSyntax} from "@/transformer/extends";
 
 type InlineEntry = { parser: BaseInlineParser; priority: number };
 type BlockEntry = { parser: BaseBlockParser; priority: number };
@@ -18,6 +19,12 @@ export class Registry {
       this.registerInlineParser(parser, Number(pri));
     }
     for (const [pri, parser] of Object.entries(gfmBlockSyntax)) {
+      this.registerBlockParser(parser, Number(pri));
+    }
+    for (const [pri, parser] of Object.entries(extendInlineSyntax)) {
+      this.registerInlineParser(parser, Number(pri));
+    }
+    for (const [pri, parser] of Object.entries(extendBlockSyntax)) {
       this.registerBlockParser(parser, Number(pri));
     }
   }
