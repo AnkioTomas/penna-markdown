@@ -3,6 +3,7 @@
  * @module transformer/utils/flanking
  */
 
+import { isEscaped } from "@/transformer/utils/escape.js";
 import { isUnicodeWhitespace } from "@/transformer/utils/normalize.js";
 
 function isUnicodePunctuation(ch: string): boolean {
@@ -30,7 +31,7 @@ export function scanDelims(
   marker: "*" | "_",
 ): DelimScan | null {
   if (src[pos] !== marker) return null;
-  if (pos > 0 && src[pos - 1] === "\\") return null;
+  if (isEscaped(src, pos)) return null;
 
   let numdelims = 0;
   let i = pos;

@@ -298,6 +298,14 @@ function totalUsedDelims(
     .reduce((sum, m) => sum + m.useDelims, 0);
 }
 
+export function openConsumeStart(
+  m: EmphasisMatch,
+  allMatches: readonly EmphasisMatch[],
+): number {
+  const openUsed = totalUsedDelims(allMatches, m.openPos, m.openOrig, "open");
+  return m.openPos + m.openOrig - openUsed;
+}
+
 function stitchConsumed(
   m: EmphasisMatch,
   allMatches: readonly EmphasisMatch[],
@@ -309,6 +317,28 @@ function stitchConsumed(
     close: [m.closePos, m.closePos + closeUsed],
     end: m.closePos + closeUsed,
   };
+}
+
+export function collectEmphasisMatches(
+  src: string,
+  parts: ScannedPart[],
+): EmphasisMatch[] {
+  const excluded = parts
+    .filter((p) => p.node.type !== "text")
+    .map((p) => [p.start, p.end] as [number, number]);
+  return matchDelimiters(src, collectDelimiters(src, excluded));
+}
+
+function topLevelAtConsumeStart(
+  matches: EmphasisMatch[],
+  openIndex: number,
+): EmphasisMatch[] {
+  return uniqueTopLevel(matchesActiveInSpan(matches, 0, Number.MAX_SAFE_INTEGER))
+    .filter((m) => openConsumeStart(m, matches) === openIndex)
+    .sort((a, b) => {
+      if (a.useDelims !== b.useDelims) return a.useDelims - b.useDelims;
+      return closeEnd(b) - closeEnd(a);
+    });
 }
 
 function buildInnerNodes(
@@ -327,7 +357,6 @@ function buildInnerNodes(
     ),
   );
   const nestable = nested.filter((child) => shouldNestChild(m, child, src));
-  const marker = src[m.openPos];
 
   if (nestable.length > 0) {
     return stitch(
@@ -342,11 +371,16 @@ function buildInnerNodes(
     );
   }
 
-  let inner = src.slice(innerLo, innerHi);
-  if (m.useDelims >= 2) {
-    inner = inner.replaceAll(marker.repeat(m.useDelims), "");
+  const flattenOnly = nested.filter((child) => !shouldNestChild(m, child, src));
+  if (flattenOnly.length > 0) {
+    let inner = src.slice(innerLo, innerHi);
+    if (m.useDelims >= 2) {
+      inner = inner.replaceAll(src[m.openPos].repeat(m.useDelims), "");
+    }
+    return parseInline(inner);
   }
-  return parseInline(inner);
+
+  return parseInline(src.slice(innerLo, innerHi));
 }
 
 function materialize(
@@ -421,8 +455,9 @@ function stitch(
     parseInline,
   );
 
-  const beforeEnd = Math.max(lo, Math.min(m.openPos, hi));
-  const afterStart = ownsDelims ? Math.min(end, hi) : Math.min(m.closePos, hi);
+  const openStart = openConsumeStart(m, allMatches);
+  const beforeEnd = Math.max(lo, Math.min(ownsDelims ? m.openPos : openStart, hi));
+  const afterStart = Math.min(end, hi);
   const spanLen = ownsDelims ? end - m.openPos : innerHi - innerLo;
 
   const nodes: MarkdownNode[] = [];
@@ -441,12 +476,7 @@ export function applyEmphasis(
   src: string,
   parseInline: (text: string) => MarkdownNode[],
 ): MarkdownNode[] {
-  const excluded = parts
-    .filter((p) => p.node.type !== "text")
-    .map((p) => [p.start, p.end] as [number, number]);
-
-  const delimiters = collectDelimiters(src, excluded);
-  const matches = matchDelimiters(src, delimiters);
+  const matches = collectEmphasisMatches(src, parts);
   if (matches.length === 0) {
     return parts.map((p) => p.node);
   }
@@ -454,25 +484,23 @@ export function applyEmphasis(
   return stitch(src, 0, src.length, matches, parts, [], parseInline);
 }
 
-/** 在 openIndex 处尝试匹配 emphasis/strong（供 GFM emphasis parser 调用） */
+/** 定界符 run 起点（index 可能落在 run 中部） */
+export function delimiterRunStart(src: string, index: number): number {
+  const marker = src[index];
+  let start = index;
+  while (start > 0 && src[start - 1] === marker) start -= 1;
+  return start;
+}
+
+/** 在 openIndex（实际消耗起点）处构建 emphasis/strong 节点 */
 export function parseEmphasisAt(
   src: string,
   openIndex: number,
   parts: ScannedPart[],
   parseInline: (text: string) => MarkdownNode[],
 ): { node: MarkdownNode; nextIndex: number } | null {
-  const excluded = parts
-    .filter((p) => p.node.type !== "text")
-    .map((p) => [p.start, p.end] as [number, number]);
-
-  const matches = matchDelimiters(src, collectDelimiters(src, excluded));
-  const candidates = uniqueTopLevel(matchesActiveInSpan(matches, 0, src.length))
-    .filter((m) => m.openPos === openIndex)
-    .sort((a, b) => {
-      if (a.useDelims !== b.useDelims) return a.useDelims - b.useDelims;
-      return closeEnd(b) - closeEnd(a);
-    });
-
+  const matches = collectEmphasisMatches(src, parts);
+  const candidates = topLevelAtConsumeStart(matches, openIndex);
   if (candidates.length === 0) return null;
 
   const m = candidates[0];
@@ -483,4 +511,25 @@ export function parseEmphasisAt(
     node: createNode(type, end - openIndex, undefined, innerNodes),
     nextIndex: end,
   };
+}
+
+/** opener run 内、消耗起点之前的字面量长度；无匹配则为 0 */
+export function literalOpenerPrefixLen(
+  src: string,
+  index: number,
+  parts: ScannedPart[],
+): number {
+  const marker = src[index];
+  if (marker !== "*" && marker !== "_") return 0;
+
+  const runStart = delimiterRunStart(src, index);
+  const matches = collectEmphasisMatches(src, parts);
+  const candidates = uniqueTopLevel(matchesActiveInSpan(matches, 0, src.length))
+    .filter((m) => m.openPos === runStart);
+
+  if (candidates.length === 0) return 0;
+
+  const openStart = openConsumeStart(candidates[0], matches);
+  if (index >= openStart) return 0;
+  return openStart - index;
 }
