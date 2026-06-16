@@ -84,19 +84,19 @@ class AutolinksInlineParser extends BaseInlineParser {
     }
 
     if (close === -1) {
-      return { node: createNode("text", 1, "<", undefined, { bracketLiteral: true }), nextIndex: index + 1 };
+      return { node: createNode("text", 1, "<"), nextIndex: index + 1 };
     }
 
     const totalLength = close + 1 - index;
 
     if (close === index + 1) {
-      return { node: createNode("text", totalLength, "<>", undefined, { bracketLiteral: true }), nextIndex: close + 1 };
+      return { node: createNode("text", totalLength, "<>"), nextIndex: close + 1 };
     }
 
     // Autolink 内部不允许有空白符
     if (hasWhitespace) {
       return {
-        node: createNode("text", totalLength, literalBracketInner(src, index + 1, close), undefined, { bracketLiteral: true }),
+        node: createNode("text", totalLength, literalBracketInner(src, index + 1, close)),
         nextIndex: close + 1,
       };
     }
@@ -128,11 +128,11 @@ class AutolinksInlineParser extends BaseInlineParser {
     // 4. 解析失败的降级处理
     // GFM 边缘情况：如果 /> 闭合时不是 autolink，交给普通转义处理
     if (src[close - 1] === '\\') {
-      return { node: createNode("text", 1, "<", undefined, { bracketLiteral: true }), nextIndex: index + 1 };
+      return { node: createNode("text", 1, "<"), nextIndex: index + 1 };
     }
 
     return {
-      node: createNode("text", totalLength, literalBracketInner(src, index + 1, close), undefined, { bracketLiteral: true }),
+      node: createNode("text", totalLength, literalBracketInner(src, index + 1, close)),
       nextIndex: close + 1,
     };
   }

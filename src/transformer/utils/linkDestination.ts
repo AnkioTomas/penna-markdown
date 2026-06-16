@@ -174,6 +174,65 @@ export interface ParsedInlineLink {
   next: number;
 }
 
+/** angle destination 内因换行导致解析失败。 */
+export function isAngleDestinationBrokenByNewline(src: string, openIndex: number): boolean {
+  if (src[openIndex] !== "<") return false;
+  let k = openIndex + 1;
+  while (k < src.length) {
+    if (src[k] === "\n") return true;
+    if (src[k] === "\\") {
+      if (k + 1 < src.length && isAsciiPunct(src[k + 1])) {
+        k += 2;
+        continue;
+      }
+      k += 1;
+      continue;
+    }
+    if (src[k] === ">") return false;
+    if (src[k] === "<") return false;
+    k += 1;
+  }
+  return false;
+}
+
+function findAngleCloseRelaxed(src: string, openIndex: number): number {
+  for (let k = openIndex + 1; k < src.length; k += 1) {
+    if (src[k] === ">") return k;
+  }
+  return -1;
+}
+
+/**
+ * 行内链接 `( <...含换行...> )` 解析失败时，扫描整段字面量的闭合位置。
+ *
+ * @param src 源文本
+ * @param parenStart `(` 的位置
+ */
+export function scanFailedAngleInlineLinkEnd(src: string, parenStart: number): number {
+  if (src[parenStart] !== "(") return -1;
+
+  let j = skipInlineWhitespace(src, parenStart + 1);
+  if (j >= src.length || src[j] !== "<") return -1;
+  if (!isAngleDestinationBrokenByNewline(src, j)) return -1;
+
+  const close = findAngleCloseRelaxed(src, j);
+  if (close === -1) return -1;
+  j = close + 1;
+
+  j = skipInlineWhitespace(src, j);
+
+  const titleParsed = parseLinkTitle(src, j);
+  if (titleParsed?.closed) {
+    j = titleParsed.next;
+  } else if (titleParsed && !titleParsed.closed) {
+    return -1;
+  }
+
+  j = skipInlineWhitespace(src, j);
+  if (j >= src.length || src[j] !== ")") return -1;
+  return j + 1;
+}
+
 /**
  * 解析 `(href "title")` 形式的行内链接 destination 与可选 title。
  *

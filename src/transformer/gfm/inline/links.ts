@@ -8,7 +8,7 @@
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml, htmlAttr } from "@/transformer/utils/escape.js";
-import { parseInlineLinkParen } from "@/transformer/utils/linkDestination.js";
+import { parseInlineLinkParen, scanFailedAngleInlineLinkEnd } from "@/transformer/utils/linkDestination.js";
 import {
   containsNestedLink,
   findLinkLabelEnd,
@@ -44,6 +44,13 @@ class LinkInlineParser extends BaseInlineParser {
       const inline = parseInlineLinkParen(src, nextIndex);
       if (inline) {
         return this.createInlineLinkNode(index, inline.next, inline.href, inline.title, children);
+      }
+      const failedEnd = scanFailedAngleInlineLinkEnd(src, nextIndex);
+      if (failedEnd !== -1) {
+        return {
+          node: createNode("link", failedEnd - index, src.slice(index, failedEnd), undefined, { literal: true }),
+          nextIndex: failedEnd,
+        };
       }
       return null;
     }
@@ -85,6 +92,8 @@ class LinkInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext) {
+    if (node.props?.literal) return node.value ?? "";
+
     const inner = ctx.renderInline(node.children);
     const refKey = node.props?.refKey as string | undefined;
 
