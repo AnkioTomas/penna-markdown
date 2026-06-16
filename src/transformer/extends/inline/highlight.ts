@@ -7,10 +7,10 @@
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
-import { matchDelimited } from "@/transformer/gfm/inline/shared.js";
+import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
 
 /** 高亮定界符正则 */
-const RE = /^==(.+?)==/;
+const RE = /^==([\s\S]+?)==/;
 
 /**
  * 行内高亮解析器。
@@ -19,16 +19,22 @@ const RE = /^==(.+?)==/;
  */
 class HighlightInlineParser extends BaseInlineParser {
   constructor() {
-    super({ type: "highlight", priority: 48 });
+    super("highlight");
+  }
+
+  canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {
+    return !(src[index] !== "=" || src[index + 1] !== "=");
+
   }
 
   /** @inheritdoc */
-  parse(src, index, ctx) {
-    const m = matchDelimited(src, index, RE);
-    if (!m) return null;
+  parse(src: string, index: number, ctx: InlineParseContext) {
+    const match = src.slice(index).match(RE);
+    if (!match) return null;
+
     return {
-      node: createNode(this.type, { children: ctx.parseInline(m.inner) }),
-      nextIndex: index + m.length,
+      node: createNode(this.type, match[0].length, undefined, ctx.parseInline(match[1])),
+      nextIndex: index + match[0].length,
     };
   }
 

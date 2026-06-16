@@ -6,66 +6,50 @@
  *
  * 语义：
  * - `{class="x"}` 解析为 `html_attrs` 节点
- * - 扩展后处理将其折叠到前一个兄弟节点的 `props.htmlAttrs`
- * - 扩展 afterRender 将属性注入该节点渲染出的开标签
+ * - 渲染时将属性注入到前一个兄弟节点的开标签
  *
  * 例如：`**bold**{class="x"}` -> `<strong class="x">bold</strong>`
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
-import { createNode } from "@/transformer/core/MarkdownNode.js";
-import { escapeHtml } from "@/transformer/utils/escape.js";
-import { isEscaped } from "@/transformer/gfm/inline/shared.js";
+import { createNode, MarkdownNode} from "@/transformer/core/MarkdownNode.js";
+import {escapeHtml, isEscaped} from "@/transformer/utils/escape.js";
+import {RenderContext} from "@/transformer/core/context/RenderContext";
+import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
 
 /**
  * 跳过 index 起的连续空白字符。
- *
- * @param {string} str
- * @param {number} i
- * @returns {number} 跳过空白后的新索引
  */
-function skipSpaces(str, i) {
+function skipSpaces(str: string, i: number): number {
   while (i < str.length && /\s/.test(str[i])) i += 1;
   return i;
 }
 
 /**
  * 判断字符是否为 XML/HTML 属性名起始字符。
- *
- * @param {string} ch
- * @returns {boolean}
  */
-function isNameStart(ch) {
+function isNameStart(ch: string): boolean {
   return /[A-Za-z_:]/.test(ch);
 }
 
 /**
  * 判断字符是否为 XML/HTML 属性名后续字符。
- *
- * @param {string} ch
- * @returns {boolean}
  */
-function isNameChar(ch) {
+function isNameChar(ch: string): boolean {
   return /[A-Za-z0-9_:-]/.test(ch);
 }
 
 /**
  * 将 `{...}` 内部解析为 HTML 属性字符串（已做 value 转义）。
  *
- * 支持：
- * - 简化语法：`.class` → `class="class"`；`#id` → `id="id"`
- * - `key`（布尔属性）
- * - `key="value"` / `key='value'`
- * - `key=value`（不含空白的 value）
- *
  * @param {string} inner - 花括号内的原始字符串
- * @returns {string} 属性字符串，如 `class="x" data-a="1"`；解析失败返回空字符串
+ * @returns {string | null} 属性字符串，如 `class="x" data-a="1"`；解析失败返回 null
  */
-function parseAttrsString(inner) {
+function parseAttrsString(inner: string): string | null {
   const str = String(inner);
   let i = 0;
-  const out = [];
-  const classes = [];
+  const out: string[] = [];
+  const classes: string[] = [];
 
   while (i < str.length) {
     i = skipSpaces(str, i);
@@ -79,7 +63,7 @@ function parseAttrsString(inner) {
       while (i < str.length && isNameChar(str[i])) i += 1;
       const value = str.slice(valueStart, i);
 
-      if (!value) return "";
+      if (!value) return null;
 
       if (prefix === ".") {
         classes.push(value);
@@ -90,7 +74,7 @@ function parseAttrsString(inner) {
     }
 
     const keyStart = i;
-    if (!isNameStart(str[i])) return "";
+    if (!isNameStart(str[i])) return null;
     i += 1;
     while (i < str.length && isNameChar(str[i])) i += 1;
     const key = str.slice(keyStart, i);
@@ -106,7 +90,7 @@ function parseAttrsString(inner) {
     // key=value
     i += 1; // skip '='
     i = skipSpaces(str, i);
-    if (i >= str.length) return "";
+    if (i >= str.length) return null;
 
     let value = "";
     const quote = str[i] === '"' || str[i] === "'" ? str[i] : "";
@@ -115,7 +99,6 @@ function parseAttrsString(inner) {
       while (i < str.length) {
         const ch = str[i];
         if (ch === "\\") {
-          // 保留常见转义（\" \' \\），其余退化为字面字符
           if (i + 1 < str.length) {
             value += str[i + 1];
             i += 2;
@@ -126,7 +109,7 @@ function parseAttrsString(inner) {
         value += ch;
         i += 1;
       }
-      if (i >= str.length || str[i] !== quote) return "";
+      if (i >= str.length || str[i] !== quote) return null;
       i += 1; // skip closing quote
     } else {
       const vStart = i;
@@ -145,7 +128,42 @@ function parseAttrsString(inner) {
     out.push(`class="${escapeHtml(classes.join(" "))}"`);
   }
 
-  return out.join(" ");
+  return out.length > 0 ? out.join(" ") : null;
+}
+
+/**
+ * HTML 开标签属性注入辅助函数
+ */
+function injectAttrsToHtml(html: string, attrs: string): string {
+  if (!html || !attrs || !html.startsWith("<")) return html;
+
+  const gt = html.indexOf(">");
+  if (gt === -1) return html;
+
+  const before = html.slice(0, gt);
+  const rest = html.slice(gt + 1);
+  const beforeTrimmed = before.replace(/\s*$/, "");
+
+  const appendAttrs = (tag: string, extraAttrs: string): string => {
+    if (!extraAttrs) return `${tag}>${rest}`;
+    if (tag.endsWith("/")) {
+      const base = tag.slice(0, -1).replace(/\s*$/, "");
+      return `${base} ${extraAttrs} />${rest}`;
+    }
+    return `${tag} ${extraAttrs}>${rest}`;
+  };
+
+  const existingClassMatch = beforeTrimmed.match(/\bclass="([^"]*)"/);
+  const injectedClassMatch = attrs.match(/\bclass="([^"]*)"/);
+
+  if (existingClassMatch && injectedClassMatch) {
+    const mergedClass = `${existingClassMatch[1]} ${injectedClassMatch[1]}`.trim();
+    const tagWithClass = beforeTrimmed.replace(/\bclass="[^"]*"/, `class="${mergedClass}"`);
+    const otherAttrs = attrs.replace(/\bclass="[^"]*"\s*/, "").trim();
+    return appendAttrs(tagWithClass, otherAttrs);
+  }
+
+  return appendAttrs(beforeTrimmed, attrs);
 }
 
 /**
@@ -155,16 +173,15 @@ function parseAttrsString(inner) {
  */
 class HtmlAttrsInlineParser extends BaseInlineParser {
   constructor() {
-    // priority 不要太高：让代码 span / 其它关键语法先匹配
-    super({ type: "html_attrs", priority: 30 });
+    super("html_attrs");
   }
 
   /** @inheritdoc */
-  parse(src, index) {
+  parse(src: string, index: number, ctx: InlineParseContext) {
     if (src[index] !== "{") return null;
     if (isEscaped(src, index)) return null;
 
-    // 找最近的未转义 '}'，不支持嵌套
+    // 找最近的未转义 '}'
     let close = -1;
     for (let i = index + 1; i < src.length; i += 1) {
       if (src[i] === "\\") {
@@ -178,36 +195,41 @@ class HtmlAttrsInlineParser extends BaseInlineParser {
     }
 
     if (close === -1) {
-      return { node: createNode("text", { value: "{" }), nextIndex: index + 1 };
+      return {node: createNode("text", 1, "{"), nextIndex: index + 1};
     }
 
     const rawInner = src.slice(index + 1, close);
     const inner = rawInner.trim();
     if (!inner) {
       return {
-        node: createNode("text", { value: `{${rawInner}}` }),
+        node: createNode("text", rawInner.length + 2, `{${rawInner}}`),
         nextIndex: close + 1,
       };
     }
 
     const attrsString = parseAttrsString(inner);
-    if (!attrsString) {
-      // 解析失败：降级为普通文本，避免把用户写错的语法静默吞掉
+    if (attrsString === null) {
       return {
-        node: createNode("text", { value: src.slice(index, close + 1) }),
+        node: createNode("text", close + 1 - index, src.slice(index, close + 1)),
         nextIndex: close + 1,
       };
     }
 
     return {
-      node: createNode(this.type, { attrs: attrsString }),
+      node: createNode(this.type, close + 1 - index, undefined, undefined, {
+        attrs: attrsString,
+      }),
       nextIndex: close + 1,
     };
   }
 
   /** @inheritdoc */
-  render() {
-    // 折叠后不应出现在最终 AST；若残留则输出空
+  render(node: MarkdownNode, ctx: RenderContext, prevHtmlObj: { html: any; }) {
+    const attrs = node.props?.attrs as string | undefined;
+    if (!attrs || !prevHtmlObj) return "";
+
+    // 将属性注入到前一个节点的 HTML
+    prevHtmlObj.html = injectAttrsToHtml(prevHtmlObj.html, attrs);
     return "";
   }
 }
