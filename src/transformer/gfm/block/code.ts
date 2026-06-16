@@ -8,6 +8,8 @@
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
+import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
+import { unescapeHref } from "@/transformer/utils/linkDestination.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
 
@@ -65,13 +67,14 @@ class CodeBlockParser extends BaseBlockParser {
     // GFM 规范：如果使用反引号作为围栏，info string 中不能包含反引号
     if (fenceChar === '`' && infoRaw.includes('`')) return null;
 
-    // 获取语言 (info string 的第一个单词)
+    // 获取语言 (info string 的第一个单词，支持反斜杠转义与实体引用)
     const info = infoRaw.trim();
-    let lang = "";
-    for (let char of info) {
-      if (char === ' ' || char === '\t') break;
-      lang += char;
+    let langRaw = "";
+    for (const char of info) {
+      if (char === " " || char === "\t") break;
+      langRaw += char;
     }
+    const lang = decodeHtmlEntities(unescapeHref(langRaw));
 
     // --- 解析内容与闭合行 (Content and End line) ---
     const contentLines: string[] = [];
