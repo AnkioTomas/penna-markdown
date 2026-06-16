@@ -61,6 +61,11 @@ export function isDelimiterWhitespace(ch: string): boolean {
   return !ch || ch === " " || ch === "\t" || ch === "\n" || ch === "\r";
 }
 
+/** Unicode 空白（含 NBSP，用于定界符 flanking） */
+export function isUnicodeWhitespace(ch: string): boolean {
+  return isDelimiterWhitespace(ch) || ch === "\u00A0";
+}
+
 /**
  * 规范化 reference link label（小写、合并连续空白）。
  */

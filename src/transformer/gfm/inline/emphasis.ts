@@ -1,18 +1,49 @@
 /**
- * @file 行内语法：斜体
+ * @file 行内语法：斜体 / 加粗定界符
  * @module transformer/gfm/inline/emphasis
  *
- * 斜体 *text* / _text_。
- * 预读扫描时通过 ctx.parseInlineAt(..., true) 跳过 code span 等强打断结构。
+ * 解析由 emphasisProcess 定界符栈完成；strong 仅注册渲染器。
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
-import { isDelimiterWhitespace } from "@/transformer/utils/normalize.js";
-import { canOpenDelimiter } from "@/transformer/utils/flanking.js";
-import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
+import { InlineParseContext } from "@/transformer/core/context/InlineParseContext.js";
+import { scanDelims } from "@/transformer/utils/flanking.js";
+import {
+  parseEmphasisAt,
+  type ScannedPart,
+} from "@/transformer/gfm/inline/emphasisProcess.js";
 
-const isAlphanumeric = (char: string) => /[A-Za-z0-9]/.test(char);
+function buildLexParts(src: string, ctx: InlineParseContext): ScannedPart[] {
+  const parts: ScannedPart[] = [];
+  let index = 0;
+
+  while (index < src.length) {
+    const skipped = ctx.parseInlineAt(src, index, true);
+    if (skipped) {
+      parts.push({
+        start: index,
+        end: skipped.nextIndex,
+        node: skipped.node,
+      });
+      index = skipped.nextIndex;
+      continue;
+    }
+
+    let end = index + 1;
+    while (end < src.length && !ctx.parseInlineAt(src, end, true)) {
+      end += 1;
+    }
+    parts.push({
+      start: index,
+      end,
+      node: createNode("text", end - index, src.slice(index, end)),
+    });
+    index = end;
+  }
+
+  return parts;
+}
 
 class EmphasisInlineParser extends BaseInlineParser {
   constructor() {
@@ -20,81 +51,26 @@ class EmphasisInlineParser extends BaseInlineParser {
   }
 
   /** @inheritdoc */
-  parse(src: string, index: number, ctx: InlineParseContext) {
+  canOpenAt(src: string, index: number): boolean {
     const marker = src[index];
-    if (marker !== "*" && marker !== "_") return null;
-    if (src[index + 1] === marker) return null;
+    if (marker !== "*" && marker !== "_") return false;
+    if (index > 0 && src[index - 1] === marker) return false;
 
-    const nextChar = src[index + 1] || "";
-    if (isDelimiterWhitespace(nextChar)) return null;
+    const scanned = scanDelims(src, index, marker);
+    return scanned?.canOpen ?? false;
+  }
 
-    if (!canOpenDelimiter(src, index, 1, marker)) return null;
-    if (marker === "_") {
-      const prevChar = index > 0 ? src[index - 1] : "";
-      if (isAlphanumeric(prevChar)) return null;
-    }
+  /** @inheritdoc */
+  parse(src: string, index: number, ctx: InlineParseContext) {
+    if (!this.canOpenAt(src, index, ctx)) return null;
 
-    const stack: number[] = [];
-    let j = index + 1;
-    let foundCloser = false;
-    let closerIndex = -1;
+    const parts = buildLexParts(src, ctx);
+    const matched = parseEmphasisAt(src, index, parts, (text) =>
+      ctx.parseInline(text),
+    );
+    if (!matched) return null;
 
-    while (j < src.length) {
-      if (src[j] === "\\" && j + 1 < src.length) {
-        j += 2;
-        continue;
-      }
-
-      const skipped = ctx.parseInlineAt(src, j, true);
-      if (skipped) {
-        j = skipped.nextIndex;
-        continue;
-      }
-
-      if (src[j] === marker && src[j + 1] === marker) {
-        j += 2;
-        continue;
-      }
-
-      if (src[j] === marker) {
-        const prevChar = src[j - 1] || "";
-        const charAfter = src[j + 1] || "";
-
-        let isValidCloser = !isDelimiterWhitespace(prevChar);
-        let isValidOpener = !isDelimiterWhitespace(charAfter);
-
-        if (marker === "_") {
-          if (isValidCloser && isAlphanumeric(charAfter)) isValidCloser = false;
-          if (isValidOpener && isAlphanumeric(prevChar)) isValidOpener = false;
-        }
-
-        if (isValidCloser) {
-          if (stack.length > 0) {
-            stack.pop();
-            j++;
-            continue;
-          }
-          foundCloser = true;
-          closerIndex = j;
-          break;
-        }
-        if (isValidOpener) {
-          stack.push(j);
-        }
-      }
-      j++;
-    }
-
-    if (!foundCloser) return null;
-
-    const innerText = src.slice(index + 1, closerIndex);
-    const children = ctx.parseInline(innerText);
-    const totalLength = closerIndex + 1 - index;
-
-    return {
-      node: createNode(this.type, totalLength, undefined, children),
-      nextIndex: index + totalLength,
-    };
+    return { node: matched.node, nextIndex: matched.nextIndex };
   }
 
   /** @inheritdoc */
