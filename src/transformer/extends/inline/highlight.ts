@@ -23,8 +23,7 @@ class HighlightInlineParser extends BaseInlineParser {
   }
 
   canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {
-    return !(src[index] !== "=" || src[index + 1] !== "=");
-
+    return src[index] === "=" && src[index + 1] === "=";
   }
 
   /** @inheritdoc */

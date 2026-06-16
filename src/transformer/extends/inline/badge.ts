@@ -9,9 +9,10 @@
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
-import { createNode } from "@/transformer/core/MarkdownNode.js";
-import { escapeHtml } from "@/transformer/utils/escape.js";
-import { isEscaped } from "@/transformer/gfm/inline/shared.js";
+import { createNode, MarkdownNode} from "@/transformer/core/MarkdownNode.js";
+import {escapeHtml} from "@/transformer/utils/escape.js";
+import {InlineParseContext} from "@/transformer/core/context/InlineParseContext.js";
+import {RenderContext} from "@/transformer/core/context/RenderContext";
 
 /** `[content]`，不含 `[[` 与链接后缀 */
 const BADGE_RE = /^\[([^\]\n]+)\]/;
@@ -23,32 +24,36 @@ const BADGE_RE = /^\[([^\]\n]+)\]/;
  */
 class BadgeInlineParser extends BaseInlineParser {
   constructor() {
-    super({ type: "badge", priority: 209 });
+    super("badge");
+  }
+
+  canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {
+    return src[index] === "[" && src[index + 1] !== "[";
   }
 
   /** @inheritdoc */
-  parse(src, index) {
-    if (src[index] !== "[" || src[index + 1] === "[") return null;
-    if (isEscaped(src, index)) return null;
-
+  parse(src: string, index: number, ctx: InlineParseContext) {
     const match = src.slice(index).match(BADGE_RE);
     if (!match) return null;
+
+    const content = match[1];
+    if (content.startsWith("^")) return null;
 
     const nextIndex = index + match[0].length;
     const next = src[nextIndex];
 
     // 不与链接、引用链接抢占
     if (next === "(" || next === "[") return null;
-    if (match[1].startsWith("^")) return null;
+
     return {
-      node: createNode(this.type, { text: match[1] }),
+      node: createNode(this.type, match[0].length, content,),
       nextIndex,
     };
   }
 
   /** @inheritdoc */
-  render(node) {
-    return `<span class="cherry-badge">${escapeHtml(node.text)}</span>`;
+  render(node: MarkdownNode, ctx: RenderContext) {
+    return `<span class="cherry-badge">${escapeHtml(node.value ?? "")}</span>`;
   }
 }
 
