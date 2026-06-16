@@ -6,7 +6,19 @@
  */
 
 import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
-import { skipInlineWhitespace } from "@/transformer/utils/normalize.js";
+import { skipInlineWhitespace, type SkipInlineWhitespaceOptions } from "@/transformer/utils/normalize.js";
+
+/** 行内链接 destination / title 之间的空白（可含单个换行）。 */
+const INLINE_LINK_WS: SkipInlineWhitespaceOptions = {
+  allowNewline: true,
+  maxNewlines: 1,
+};
+
+/** 行内链接闭合 `)` 前的空白（可含多个换行）。 */
+const INLINE_LINK_WS_BEFORE_CLOSE: SkipInlineWhitespaceOptions = {
+  allowNewline: true,
+  maxNewlines: Number.MAX_SAFE_INTEGER,
+};
 
 /** GFM destination / title 中可反斜杠转义的 ASCII 标点 */
 export function isAsciiPunct(ch: string): boolean {
@@ -211,7 +223,7 @@ function findAngleCloseRelaxed(src: string, openIndex: number): number {
 export function scanFailedAngleInlineLinkEnd(src: string, parenStart: number): number {
   if (src[parenStart] !== "(") return -1;
 
-  let j = skipInlineWhitespace(src, parenStart + 1);
+  let j = skipInlineWhitespace(src, parenStart + 1, INLINE_LINK_WS);
   if (j >= src.length || src[j] !== "<") return -1;
   if (!isAngleDestinationBrokenByNewline(src, j)) return -1;
 
@@ -219,7 +231,7 @@ export function scanFailedAngleInlineLinkEnd(src: string, parenStart: number): n
   if (close === -1) return -1;
   j = close + 1;
 
-  j = skipInlineWhitespace(src, j);
+  j = skipInlineWhitespace(src, j, INLINE_LINK_WS);
 
   const titleParsed = parseLinkTitle(src, j);
   if (titleParsed?.closed) {
@@ -228,7 +240,7 @@ export function scanFailedAngleInlineLinkEnd(src: string, parenStart: number): n
     return -1;
   }
 
-  j = skipInlineWhitespace(src, j);
+  j = skipInlineWhitespace(src, j, INLINE_LINK_WS_BEFORE_CLOSE);
   if (j >= src.length || src[j] !== ")") return -1;
   return j + 1;
 }
@@ -245,7 +257,7 @@ export function parseInlineLinkParen(
 ): ParsedInlineLink | null {
   if (src[start] !== "(") return null;
 
-  let j = skipInlineWhitespace(src, start + 1);
+  let j = skipInlineWhitespace(src, start + 1, INLINE_LINK_WS);
   if (j >= src.length) return null;
 
   let href = "";
@@ -260,7 +272,7 @@ export function parseInlineLinkParen(
     j = dest.next;
   }
 
-  j = skipInlineWhitespace(src, j);
+  j = skipInlineWhitespace(src, j, INLINE_LINK_WS);
 
   let title = "";
   const titleParsed = parseLinkTitle(src, j);
@@ -271,7 +283,7 @@ export function parseInlineLinkParen(
     return null;
   }
 
-  j = skipInlineWhitespace(src, j);
+  j = skipInlineWhitespace(src, j, INLINE_LINK_WS_BEFORE_CLOSE);
   if (j >= src.length || src[j] !== ")") return null;
 
   return {
