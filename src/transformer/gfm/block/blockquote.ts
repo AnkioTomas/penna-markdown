@@ -45,6 +45,12 @@ class BlockquoteBlockParser extends BaseBlockParser {
             const ln = lines[i];
             length += ln.length;
 
+            // 无 > 前缀的空行始终结束引用块（GFM #220、#226）
+            if (isBlankString(ln)) {
+                i += 1;
+                break;
+            }
+
             // --- 1. 当前行依然是引用块 ---
             if (BLOCKQUOTE_LINE.test(ln)) {
                 const stripped = stripBlockquoteMarker(ln);

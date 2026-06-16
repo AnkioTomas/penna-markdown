@@ -1,5 +1,6 @@
 import { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
+import { isIndentedCodeLine } from "@/transformer/utils/tabs.js";
 
 /**
  * 递归寻找 AST 树中最深且最右侧的节点 (Deepest Open Block)
@@ -38,7 +39,8 @@ export function canGenericLazyContinue(
   parseFn: (lines: string[]) => MarkdownNode[]
 ): boolean {
   if (currentLines.length === 0) return false;
-  if (ctx.isBlockStarter([nextLine], 0)) {
+  // 缩进代码行（4 空格）不算强块级起点，见 CommonMark §4.8 / GFM #216
+  if (ctx.isBlockStarter([nextLine], 0) && !isIndentedCodeLine(nextLine)) {
     return false;
   }
 
