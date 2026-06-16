@@ -216,8 +216,8 @@ export function parseInlineLinkParen(
   if (j >= src.length || src[j] !== ")") return null;
 
   return {
-    href: unescapeHref(href),
-    title: title ? unescapeHref(title) : "",
+    href: normalizeLinkDestination(href),
+    title: title ? normalizeLinkTitle(title) : "",
     next: j + 1,
   };
 }
