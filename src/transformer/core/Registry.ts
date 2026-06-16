@@ -20,9 +20,6 @@ export class Registry {
     for (const [pri, parser] of Object.entries(gfmBlockSyntax)) {
       this.registerBlockParser(parser, Number(pri));
     }
-
-    // TODO 拓展部分
-
   }
 
   registerInlineParser(parser: BaseInlineParser, priority: number): void {

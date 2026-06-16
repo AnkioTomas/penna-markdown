@@ -3,13 +3,16 @@ import {MarkdownNode} from "@/transformer/core/MarkdownNode";
 
 export interface BlockParseContext {
     readonly store: ParserStore;
-    isBlockStarter(lines: string[], index: number): boolean
+    /** @param strong 默认 true = 强打断块 */
+    canStrongBreak(lines: string[], index: number, strong?: boolean): boolean;
+    parseBlockAt(
+        lines: string[],
+        index: number,
+        strongBreak?: boolean,
+    ): { nextIndex: number; node: MarkdownNode | null };
     parseInline(text: string): MarkdownNode[];
     parseBlocks(lines: string[]): MarkdownNode[];
-    // 标记某行在容器内部
     markLineInContainer(lines:string[],index: number):void;
     markLinesInContainer(lines:string[]):void;
-    // 判断某行是否在容器内部
     inContainer(lines:string[],index:number):boolean;
-
 }

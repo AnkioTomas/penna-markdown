@@ -62,7 +62,7 @@ function canFollowLRDLine(lines: string[], index: number, ctx: BlockParseContext
   if (index <= 0) return true;
   if (isBlankString(lines[index - 1] ?? "")) return true;
   const prev = lines[index - 1] ?? "";
-  return ctx.isBlockStarter(lines, index - 1)
+  return ctx.canStrongBreak(lines, index - 1)
     || isLRDLineStart(prev)
     || isLRDContinuationLine(prev);
 }
@@ -197,7 +197,7 @@ export function parseLRDString(text: string): LRDResult | null {
 
 class LinkReferenceDefinitionParser extends BaseBlockParser {
   constructor() {
-    super("linkReferenceDef");
+    super("linkReferenceDef", false);
   }
 
   /** @inheritdoc */

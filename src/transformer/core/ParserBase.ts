@@ -56,9 +56,13 @@ export abstract class BaseInlineParser {
 /** 块级语法解析器基类 */
 export abstract class BaseBlockParser {
   readonly type: string;
+  /** 强打断：打断段落 / list 行收集等（默认 true） */
+  readonly strongBreak: boolean;
   private options: Record<string, any> = {};
-  protected constructor(type: string) {
+
+  protected constructor(type: string, strongBreak = true) {
     this.type = type;
+    this.strongBreak = strongBreak;
   }
   setOptions(options:Record<string, any>): void {
     this.options = options;

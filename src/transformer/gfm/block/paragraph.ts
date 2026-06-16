@@ -13,7 +13,7 @@ import { isIndentedCodeLine, stripVisualIndent } from "@/transformer/utils/tabs.
 
 class ParagraphBlockParser extends BaseBlockParser {
     constructor() {
-        super("paragraph");
+        super("paragraph", false);
     }
 
     /** @inheritdoc */
@@ -30,7 +30,7 @@ class ParagraphBlockParser extends BaseBlockParser {
             }
 
             // 2. 强块级起点打断（缩进代码块不能打断段落，见 CommonMark §4.8）
-            if (i > index && ctx.isBlockStarter(lines, i) && !isIndentedCodeLine(line)) {
+            if (i > index && ctx.canStrongBreak(lines, i) && !isIndentedCodeLine(line)) {
                 break;
             }
 

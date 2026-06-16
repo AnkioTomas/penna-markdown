@@ -40,7 +40,7 @@ export function canGenericLazyContinue(
 ): boolean {
   if (currentLines.length === 0) return false;
   // 缩进代码行（4 空格）不算强块级起点，见 CommonMark §4.8 / GFM #216
-  if (ctx.isBlockStarter([nextLine], 0) && !isIndentedCodeLine(nextLine)) {
+  if (ctx.canStrongBreak([nextLine], 0) && !isIndentedCodeLine(nextLine)) {
     return false;
   }
 

@@ -32,45 +32,32 @@ import strong from "@/transformer/gfm/inline/strong";
 import type { BaseBlockParser, BaseInlineParser } from "@/transformer/core/ParserBase.js";
 
 /** 默认行内语法 */
-export const gfmInlineSyntax: Record<number,BaseInlineParser> = {
-  // 900：字面/定界
+export const gfmInlineSyntax: Record<number, BaseInlineParser> = {
   900: strikethrough,
   890: codeSpan,
-  // 800：换行
   800: __break,
-  // 600：实体
   600: entity,
-  // 300：强调
   330: strong,
   320: emphasis,
-  // 200：链接与图片
   230: images,
   225: linkReferenceValue,
   220: links,
-  // 100：HTML / autolink
   120: rawhtmlInline,
   110: autolink,
-  // 0：兜底
   0: text,
 };
 
 /** 默认块级语法 */
-export const gfmBlockSyntax: Record<number,BaseBlockParser> = {
-  // 900：分隔线
+export const gfmBlockSyntax: Record<number, BaseBlockParser> = {
   900: hr,
-  // 800：表格
   800: table,
-  // 500：引用
   500: blockquote,
-  // 400：HTML / 围栏代码 / 缩进代码 / 链接定义
   430: rawhtmlBlock,
   420: code,
   410: indentedCode,
   400: linkRef,
-  // 300：标题 / 列表（列表须高于 setext，GFM Example 64/69）
   320: atxHeading,
   315: list,
   310: setextHeading,
-  // 0：兜底
   0: paragraph,
 };

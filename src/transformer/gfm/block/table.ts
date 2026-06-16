@@ -184,7 +184,7 @@ class TableBlockParser extends BaseBlockParser {
 
       // 2. 遇到强块级起点打断 (无缝接入引擎的统一调度！)
       // 这取代了你原代码中非常恶心的 isTableInterruptLine 枚举耦合
-      if (ctx.isBlockStarter(lines, i)) {
+      if (ctx.canStrongBreak(lines, i)) {
         break;
       }
 

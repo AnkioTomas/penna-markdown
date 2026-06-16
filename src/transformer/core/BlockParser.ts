@@ -4,7 +4,6 @@
  */
 
 import {createNode, MarkdownNode} from "@/transformer/core/MarkdownNode.js";
-import type {BlockParseResult} from "@/transformer/core/ParserBase.js";
 import type {Registry} from "@/transformer/core/Registry.js";
 import {ParserStore} from "@/transformer/core/ParserStore.js";
 import {BlockParseContext} from "@/transformer/core/context/BlockParseContext";
@@ -21,85 +20,95 @@ export class BlockParseEngine {
         this.__parseInline = parseInline;
         const that = this;
         this.ctx = new class implements BlockParseContext {
+            private containers = new Set<string>();
 
-
-            private containers = new Set<string>()
-
-            private calcHash(lines:string[]){
+            private calcHash(lines: string[]) {
               const text = lines.join('\n');
-
               let hash = 0;
               for (let i = 0; i < text.length; i++) {
                 hash = ((hash << 5) - hash) + text.charCodeAt(i);
-                hash |= 0; // 转为32位整数
+                hash |= 0;
               }
-
               return hash.toString(16);
             }
 
-            private hashNumber(lines:string[], index:number){
-              let hash = this.calcHash(lines);
-              return `${hash}:${index}`;
-            }
-          markLinesInContainer(lines: string[]): void {
-            let hash = this.calcHash(lines);
-
-            for (let i = 0; i < lines.length; i++) {
-              let h = `${hash}:${i}`;
-              this.containers.add(h);
+            private hashNumber(lines: string[], index: number) {
+              return `${this.calcHash(lines)}:${index}`;
             }
 
-          }
+            markLinesInContainer(lines: string[]): void {
+              const hash = this.calcHash(lines);
+              for (let i = 0; i < lines.length; i++) {
+                this.containers.add(`${hash}:${i}`);
+              }
+            }
+
             markLineInContainer(lines: string[], index: number): void {
-                let hash = this.hashNumber(lines, index);
-                this.containers.add(hash);
+              this.containers.add(this.hashNumber(lines, index));
             }
+
             inContainer(lines: string[], index: number): boolean {
-                let hash = this.hashNumber(lines, index);
-                return this.containers.has(hash);
+              return this.containers.has(this.hashNumber(lines, index));
             }
+
             readonly store: ParserStore = store;
 
             parseBlocks(lines: string[]): MarkdownNode[] {
-                return that.parseBlocks(lines)
+                return that.parseBlocks(lines);
             }
 
             parseInline(text: string): MarkdownNode[] {
                 return that.__parseInline(text);
             }
 
-            isBlockStarter(lines: string[], index: number): boolean {
-                for (const parser of that.registry.getBlockParsers()) {
-                    if (parser.type === 'paragraph') continue;
-                    if (parser.canOpenAt(lines, index, this)) {
-                        return true;
-                    }
-                }
-                return false;
+            canStrongBreak(lines: string[], index: number, strong = true): boolean {
+                return that.canStrongBreak(lines, index, strong);
             }
-        }
+
+            parseBlockAt(lines: string[], index: number, strongBreak?: boolean) {
+                return that.parseBlockAt(lines, index, strongBreak);
+            }
+        };
     }
 
+    canStrongBreak(lines: string[], index: number, strong = true): boolean {
+        for (const parser of this.registry.getBlockParsers()) {
+            if (parser.strongBreak !== strong) continue;
+            if (parser.type === "paragraph") continue;
+            if (parser.canOpenAt(lines, index, this.ctx)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    parseBlockAt(
+        lines: string[],
+        index: number,
+        strongBreak?: boolean,
+    ): { nextIndex: number; node: MarkdownNode | null } {
+        for (const parser of this.registry.getBlockParsers()) {
+            if (strongBreak !== undefined && parser.strongBreak !== strongBreak) continue;
+            if (parser.canOpenAt(lines, index, this.ctx)) {
+                const result = parser.parse(lines, index, this.ctx);
+                if (result) {
+                    return { nextIndex: result.nextIndex, node: result.node ?? null };
+                }
+            }
+        }
+        return { nextIndex: index + 1, node: null };
+    }
 
     parseBlocks(lines: string[]): MarkdownNode[] {
         const children: MarkdownNode[] = [];
         let index = 0;
 
         while (index < lines.length) {
-            let result: BlockParseResult | null = null;
-
-            for (const parser of this.registry.getBlockParsers()) {
-                if (parser.canOpenAt(lines,index,this.ctx)){
-                    result = parser.parse(lines, index, this.ctx);
-                    if (result) break;
-                }
+            const { nextIndex, node } = this.parseBlockAt(lines, index);
+            if (node) {
+                children.push(node);
             }
-
-
-            if (result?.node) {
-                children.push(result.node);
-            }
-            index = result?.nextIndex ?? index + 1;
+            index = nextIndex;
         }
 
         return children;

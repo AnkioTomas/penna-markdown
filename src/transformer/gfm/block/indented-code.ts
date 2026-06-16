@@ -27,7 +27,7 @@ class IndentedCodeBlockParser extends BaseBlockParser {
     if (!isIndentedCodeLine(line) || isBlankString(line)) return false;
 
     const prev = lines[index - 1] ?? "";
-    if (index > 0 && !isBlankString(prev) && !ctx.isBlockStarter(lines, index - 1)) {
+    if (index > 0 && !isBlankString(prev) && !ctx.canStrongBreak(lines, index - 1)) {
       return false;
     }
     return true;
