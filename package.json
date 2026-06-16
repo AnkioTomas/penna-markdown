@@ -41,10 +41,11 @@
     "src"
   ],
   "scripts": {
-    "build": "node scripts/build.js",
-    "demo": "vite --config demo/vite.config.js --host",
-    "fetch:gfm": "node scripts/fetch-gfm-spec.js",
-    "fetch:gfm:split": "node scripts/fetch-gfm-spec.js --split",
+    "build": "tsx scripts/build.ts",
+    "demo": "vite --config demo/vite.config.ts --host",
+    "fetch:gfm": "tsx scripts/fetch-gfm-spec.ts",
+    "fetch:gfm:split": "tsx scripts/fetch-gfm-spec.ts --split",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "clean": "rm -rf dist"
@@ -54,14 +55,19 @@
     "@codemirror/lang-markdown": "^6.3.4",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.38.6",
+    "dompurify": "^3.4.9",
     "entities": "^6.0.1",
     "esbuild": "^0.28.0",
     "yaml": "^2.9.0"
   },
   "devDependencies": {
+    "@types/jsdom": "^28.0.3",
+    "@types/node": "^25.9.3",
     "highlight.js": "^11.11.1",
     "jsdom": "^26.1.0",
     "sass": "^1.100.0",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
     "vite": "^6.3.5",
     "vitest": "^2.1.8"
   }

@@ -1,0 +1,29 @@
+/** 网易云音乐外链占位 */
+export const audio =
+  "http://music.163.com/song/media/outer/url?id=453003622.mp3";
+
+/** 视频外链占位 */
+export const video = "https://media.w3.org/2010/05/sintel/trailer.mp4";
+
+export interface PlaceholderImageStyle {
+  fg?: string;
+  bg?: string;
+}
+
+/**
+ * iph.href.lu 占位图
+ * @see http://iph.href.lu/
+ */
+export function img(
+  width: number,
+  height: number,
+  text: string,
+  style: PlaceholderImageStyle = {},
+): string {
+  const w = Math.min(2048, Math.max(1, Math.round(width)));
+  const h = Math.min(2048, Math.max(1, Math.round(height)));
+  const params = new URLSearchParams({ text });
+  if (style.fg) params.set("fg", style.fg.replace(/^#/, ""));
+  if (style.bg) params.set("bg", style.bg.replace(/^#/, ""));
+  return `http://iph.href.lu/${w}x${h}?${params}`;
+}

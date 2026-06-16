@@ -1,0 +1,37 @@
+import { TransformerEngine } from "@/transformer/TransformerEngine.js";
+import { hydrateCherryTheme } from "@/renderer/cherryTheme.js";
+import { requiredEl } from "../dom.js";
+import "../theme-watch.js";
+import example from "../test.md?raw";
+
+const transformer = new TransformerEngine();
+
+const markdownInput = requiredEl<HTMLTextAreaElement>("#markdown");
+const htmlOutput = requiredEl<HTMLElement>("#html-output");
+const preview = requiredEl<HTMLElement>("#preview");
+const resetBtn = requiredEl<HTMLButtonElement>("#reset-btn");
+
+markdownInput.value = example;
+
+function renderNow() {
+  const md = markdownInput.value;
+  const html = transformer.render(transformer.parse(md));
+  htmlOutput.textContent = html;
+  preview.innerHTML = html;
+  hydrateCherryTheme(preview);
+}
+
+let t = 0;
+markdownInput.addEventListener("input", () => {
+  window.clearTimeout(t);
+  t = window.setTimeout(renderNow, 60);
+});
+
+resetBtn.addEventListener("click", () => {
+  markdownInput.value = example;
+  renderNow();
+});
+
+renderNow();
+
+window.cherryConverterDemo = { transformer, renderNow };
