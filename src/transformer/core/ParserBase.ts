@@ -21,10 +21,13 @@ export interface BlockParseResult {
 /** 行内语法解析器基类 */
 export abstract class BaseInlineParser {
   readonly type: string;
+  /** 强打断：emphasis/strong 预读扫描时跳过（默认 true，如 code span） */
+  readonly strongBreak: boolean;
   private options: Record<string, any> = {};
 
-  protected constructor(type: string) {
+  protected constructor(type: string, strongBreak = true) {
     this.type = type;
+    this.strongBreak = strongBreak;
   }
 
   setOptions(options:Record<string, any>): void {

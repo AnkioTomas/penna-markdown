@@ -17,7 +17,7 @@ import {InlineParseContext} from "@/transformer/core/context/InlineParseContext"
  */
 class TextInlineParser extends BaseInlineParser {
   constructor() {
-    super("text");
+    super("text", false);
   }
 
   /** @inheritdoc */

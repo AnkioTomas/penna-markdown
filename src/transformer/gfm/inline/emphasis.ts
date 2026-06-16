@@ -3,82 +3,82 @@
  * @module transformer/gfm/inline/emphasis
  *
  * 斜体 *text* / _text_。
- * 作为兜底解析，遇到同符号双字符会自动跳过，避免误吞加粗标记。
+ * 预读扫描时通过 ctx.parseInlineAt(..., true) 跳过 code span 等强打断结构。
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { isDelimiterWhitespace } from "@/transformer/utils/normalize.js";
+import { canOpenDelimiter } from "@/transformer/utils/flanking.js";
+import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
 
 const isAlphanumeric = (char: string) => /[A-Za-z0-9]/.test(char);
 
 class EmphasisInlineParser extends BaseInlineParser {
   constructor() {
-    // 在 strong 之后执行；遇双字符定界符时跳过
-    super("emphasis");
+    super("emphasis", false);
   }
 
   /** @inheritdoc */
-  parse(src: string, index: number, ctx: any) {
+  parse(src: string, index: number, ctx: InlineParseContext) {
     const marker = src[index];
-    if (marker !== '*' && marker !== '_') return null;
-
-    // 如果连续两个符号，说明这是加粗漏下来的（或者是畸形的），斜体不处理头部双符号
+    if (marker !== "*" && marker !== "_") return null;
     if (src[index + 1] === marker) return null;
 
-    // 1. 校验起始符有效性
-    const nextChar = src[index + 1] || '';
+    const nextChar = src[index + 1] || "";
     if (isDelimiterWhitespace(nextChar)) return null;
 
-    // GFM 规范：下划线 `_` 不能在词语内部触发
-    if (marker === '_') {
-      const prevChar = index > 0 ? src[index - 1] : '';
+    if (!canOpenDelimiter(src, index, 1, marker)) return null;
+    if (marker === "_") {
+      const prevChar = index > 0 ? src[index - 1] : "";
       if (isAlphanumeric(prevChar)) return null;
     }
 
-    // 2. 堆栈预读寻找闭合符
     const stack: number[] = [];
     let j = index + 1;
     let foundCloser = false;
     let closerIndex = -1;
 
     while (j < src.length) {
-      if (src[j] === '\\' && j + 1 < src.length) {
+      if (src[j] === "\\" && j + 1 < src.length) {
         j += 2;
         continue;
       }
 
-      // 🌟 隔离逻辑：如果遇到连续两个当前 marker，直接跳过 2 个位移。
-      // 因为这是潜在的 Strong 节点，不应被拆开当作单标记处理。
+      const skipped = ctx.parseInlineAt(src, j, true);
+      if (skipped) {
+        j = skipped.nextIndex;
+        continue;
+      }
+
       if (src[j] === marker && src[j + 1] === marker) {
         j += 2;
         continue;
       }
 
       if (src[j] === marker) {
-        const prevChar = src[j - 1] || '';
-        const charAfter = src[j + 1] || '';
+        const prevChar = src[j - 1] || "";
+        const charAfter = src[j + 1] || "";
 
         let isValidCloser = !isDelimiterWhitespace(prevChar);
         let isValidOpener = !isDelimiterWhitespace(charAfter);
 
-        if (marker === '_') {
+        if (marker === "_") {
           if (isValidCloser && isAlphanumeric(charAfter)) isValidCloser = false;
           if (isValidOpener && isAlphanumeric(prevChar)) isValidOpener = false;
         }
 
-        // 🌟 堆栈匹配逻辑
         if (isValidCloser) {
           if (stack.length > 0) {
             stack.pop();
             j++;
             continue;
-          } else {
-            foundCloser = true;
-            closerIndex = j;
-            break;
           }
-        } else if (isValidOpener) {
+          foundCloser = true;
+          closerIndex = j;
+          break;
+        }
+        if (isValidOpener) {
           stack.push(j);
         }
       }
@@ -87,19 +87,18 @@ class EmphasisInlineParser extends BaseInlineParser {
 
     if (!foundCloser) return null;
 
-    // 3. 提取内容递归解析，打包返回
     const innerText = src.slice(index + 1, closerIndex);
     const children = ctx.parseInline(innerText);
-    const totalLength = (closerIndex + 1) - index;
+    const totalLength = closerIndex + 1 - index;
 
     return {
       node: createNode(this.type, totalLength, undefined, children),
-      nextIndex: index + totalLength
+      nextIndex: index + totalLength,
     };
   }
 
   /** @inheritdoc */
-  render(node: MarkdownNode, ctx: any) {
+  render(node: MarkdownNode, ctx: { renderInline(nodes?: MarkdownNode[]): string }) {
     return `<em>${ctx.renderInline(node.children)}</em>`;
   }
 }

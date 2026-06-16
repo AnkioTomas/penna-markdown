@@ -19,7 +19,7 @@ import {InlineParseContext} from "@/transformer/core/context/InlineParseContext"
  */
 class EntityInlineParser extends BaseInlineParser {
   constructor() {
-    super("entity");
+    super("entity", false);
   }
 
   canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {
