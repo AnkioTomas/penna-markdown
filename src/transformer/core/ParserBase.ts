@@ -3,91 +3,93 @@
  * @module transformer/core/ParserBase
  */
 
-import type { MarkdownNode } from "./MarkdownNode.js";
+import type {MarkdownNode} from "./MarkdownNode.js";
 import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
 import {RenderContext} from "@/transformer/core/context/RenderContext";
 import {BlockParseContext} from "@/transformer/core/context/BlockParseContext";
 
 export interface InlineParseResult {
-  node: MarkdownNode;
-  nextIndex: number;
+    node: MarkdownNode;
+    nextIndex: number;
 }
 
 export interface BlockParseResult {
-  node?: MarkdownNode | null;
-  nextIndex: number;
+    node?: MarkdownNode | null;
+    nextIndex: number;
 }
 
 /** 行内语法解析器基类 */
 export abstract class BaseInlineParser {
-  readonly type: string;
-  /** 强打断：emphasis/strong 预读扫描时跳过（默认 true，如 code span） */
-  readonly strongBreak: boolean;
-  private options: Record<string, any> = {};
+    readonly type: string;
+    /** 强打断：emphasis/strong 预读扫描时跳过（默认 true，如 code span） */
+    readonly strongBreak: boolean;
+    private options: Record<string, any> = {};
 
-  protected constructor(type: string, strongBreak = true) {
-    this.type = type;
-    this.strongBreak = strongBreak;
-  }
+    protected constructor(type: string, strongBreak = true) {
+        this.type = type;
+        this.strongBreak = strongBreak;
+    }
 
-  setOptions(options:Record<string, any>): void {
-    this.options = options;
-  }
+    setOptions(options: Record<string, any>): void {
+        this.options = options;
+    }
 
-  canOpenAt(
-      src: string,
-      index: number,
-      ctx: InlineParseContext,
-  ): boolean {
-    return true;
-  }
+    canOpenAt(
+        src: string,
+        index: number,
+        ctx: InlineParseContext,
+    ): boolean {
+        return true;
+    }
 
 
-  parse(
-    src: string,
-    index: number,
-    ctx: InlineParseContext,
-  ): InlineParseResult | null {
-    return null;
-  }
+    parse(
+        src: string,
+        index: number,
+        ctx: InlineParseContext,
+    ): InlineParseResult | null {
+        return null;
+    }
 
-  render(node: MarkdownNode, ctx: RenderContext): string {
-    return "";
-  }
+    render(node: MarkdownNode, ctx: RenderContext, html: Object = {html: ''}): string {
+        return "";
+    }
 }
 
 /** 块级语法解析器基类 */
 export abstract class BaseBlockParser {
-  readonly type: string;
-  /** 强打断：打断段落 / list 行收集等（默认 true） */
-  readonly strongBreak: boolean;
-  private options: Record<string, any> = {};
+    readonly type: string;
+    /** 强打断：打断段落 / list 行收集等（默认 true） */
+    readonly strongBreak: boolean;
+    private options: Record<string, any> = {};
 
-  protected constructor(type: string, strongBreak = true) {
-    this.type = type;
-    this.strongBreak = strongBreak;
-  }
-  setOptions(options:Record<string, any>): void {
-    this.options = options;
-  }
-  /** 轻量级预检：是否可在 index 行开启本语法（禁止写入 store） */
-  canOpenAt(
-    lines: string[],
-    index: number,
-    ctx: BlockParseContext,
-  ): boolean {
-    return true;
-  }
+    protected constructor(type: string, strongBreak = true) {
+        this.type = type;
+        this.strongBreak = strongBreak;
+    }
 
-  parse(
-      lines: string[],
-      index: number,
-      ctx: BlockParseContext,
-  ): BlockParseResult | null {
-    return null;
-  }
+    setOptions(options: Record<string, any>): void {
+        this.options = options;
+    }
 
-  render(node: MarkdownNode,ctx: RenderContext): string {
-    return "";
-  }
+    /** 轻量级预检：是否可在 index 行开启本语法（禁止写入 store） */
+    canOpenAt(
+        lines: string[],
+        index: number,
+        ctx: BlockParseContext,
+    ): boolean {
+        return true;
+    }
+
+    parse(
+        lines: string[],
+        index: number,
+        ctx: BlockParseContext,
+    ): BlockParseResult | null {
+        return null;
+    }
+
+    render(node: MarkdownNode, ctx: RenderContext): string {
+        return "";
+    }
 }
