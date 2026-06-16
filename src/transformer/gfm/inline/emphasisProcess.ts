@@ -262,13 +262,13 @@ function matchesActiveInSpan(
   });
 }
 
-function topLevelMatches(matches: EmphasisMatch[]): EmphasisMatch[] {
+function topLevelMatches(matches: readonly EmphasisMatch[]): EmphasisMatch[] {
   return matches.filter(
     (m) => !matches.some((other) => other !== m && contains(other, m)),
   );
 }
 
-function uniqueTopLevel(matches: EmphasisMatch[]): EmphasisMatch[] {
+function uniqueTopLevel(matches: readonly EmphasisMatch[]): EmphasisMatch[] {
   const tops = topLevelMatches(matches);
   const seen = new Set<string>();
   return tops.filter((m) => {
@@ -330,7 +330,7 @@ export function collectEmphasisMatches(
 }
 
 function topLevelAtConsumeStart(
-  matches: EmphasisMatch[],
+  matches: readonly EmphasisMatch[],
   openIndex: number,
 ): EmphasisMatch[] {
   return uniqueTopLevel(matchesActiveInSpan(matches, 0, Number.MAX_SAFE_INTEGER))
@@ -344,7 +344,7 @@ function topLevelAtConsumeStart(
 function buildInnerNodes(
   src: string,
   m: EmphasisMatch,
-  matches: EmphasisMatch[],
+  matches: readonly EmphasisMatch[],
   parts: ScannedPart[],
   consumed: [number, number][],
   parseInline: (text: string) => MarkdownNode[],
@@ -375,7 +375,8 @@ function buildInnerNodes(
   if (flattenOnly.length > 0) {
     let inner = src.slice(innerLo, innerHi);
     if (m.useDelims >= 2) {
-      inner = inner.replaceAll(src[m.openPos].repeat(m.useDelims), "");
+      const delim = src[m.openPos].repeat(m.useDelims);
+      inner = inner.split(delim).join("");
     }
     return parseInline(inner);
   }
@@ -417,7 +418,7 @@ function stitch(
   src: string,
   lo: number,
   hi: number,
-  matches: EmphasisMatch[],
+  matches: readonly EmphasisMatch[],
   parts: ScannedPart[],
   consumed: [number, number][],
   parseInline: (text: string) => MarkdownNode[],
