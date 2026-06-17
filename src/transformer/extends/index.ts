@@ -47,17 +47,19 @@ import { fieldGroupBlockParser } from "@/transformer/extends/block/field/fieldGr
 /** 全部扩展行内语法 */
 export const extendInlineSyntax: Record<number, BaseInlineParser> = {
   230: frontmatterVarInline,
- /* 209: badgeInline,
-  205: footnoteRefInline,
+  49: highlightInline,
+  31: htmlAttrsInline,
+  415: badgeInline,
+  48: emojiInline,
+  50: spoilerInline,
+/*  205: footnoteRefInline,
   203: mediaInline,
   202: mathInline,
   57: subInlineParser,
   56: supInlineParser,
   55: inlineComment,
-  50: spoilerInline,
-  49: highlightInline,
-  48: emojiInline,
-  31: htmlAttrsInline,*/
+  */
+
 };
 
 /** 全部扩展块级语法 */
