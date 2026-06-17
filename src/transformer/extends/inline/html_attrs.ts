@@ -202,7 +202,7 @@ function injectAttrsToHtml(html: string, attrs: string): string {
  */
 class HtmlAttrsInlineParser extends BaseInlineParser {
     constructor() {
-        super("html_attrs");
+        super("html_attrs",true);
     }
 
     canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {

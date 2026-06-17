@@ -7,7 +7,6 @@
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode} from "@/transformer/core/MarkdownNode.js";
-import {isEscaped} from "@/transformer/gfm/inline/shared.js";
 import emojiFull from "@/transformer/extends/inline/emoji/full.js";
 import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
 import {RenderContext} from "@/transformer/core/context/RenderContext";
@@ -38,7 +37,7 @@ class EmojiInlineParser extends BaseInlineParser {
   }
 
   canOpenAt(src: string, index: number, ctx: InlineParseContext) {
-    return !(src[index] !== ":" || isEscaped(src, index));
+    return src[index] === ":" ;
 
   }
 
