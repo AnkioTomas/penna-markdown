@@ -53,8 +53,8 @@ class ParagraphBlockParser extends BaseBlockParser {
 
         const node = createNode(
             this.type,
-            length, // 注意：如果你的 length 严格要求计算换行符，需补偿 (paragraphLines.length - 1)
-            content,
+            0, // 注意：如果你的 length 严格要求计算换行符，需补偿 (paragraphLines.length - 1)
+            undefined,
             ctx.parseInline(content) // 把合并后的多行完整文本扔给内联解析器
         );
 

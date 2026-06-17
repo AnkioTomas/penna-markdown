@@ -7,7 +7,8 @@
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
-import { BlockParseContext } from "@/transformer/core/context/BlockParseContext"; // 或对应的 InlineParseContext
+import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
+import {InlineParseContext} from "@/transformer/core/context/InlineParseContext"; // 或对应的 InlineParseContext
 
 /**
  * 删除线行内解析器。
@@ -17,6 +18,10 @@ import { BlockParseContext } from "@/transformer/core/context/BlockParseContext"
 class StrikethroughInlineParser extends BaseInlineParser {
   constructor() {
     super("strikethrough");
+  }
+
+  canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {
+    return src[index] === '~' && src[index+1] === '~';
   }
 
   /** @inheritdoc */

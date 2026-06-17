@@ -9,6 +9,7 @@
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
 
 // --- 纯字符判定辅助函数 (内联优化) ---
 
@@ -65,9 +66,12 @@ class AutolinksInlineParser extends BaseInlineParser {
     super("autolink");
   }
 
+  canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {
+    return src[index] === "<";
+  }
+
   /** @inheritdoc */
   parse(src: string, index: number, ctx: any) {
-    if (src[index] !== "<") return null;
 
     // 1. 预读寻找闭合尖括号 `>`
     let close = -1;

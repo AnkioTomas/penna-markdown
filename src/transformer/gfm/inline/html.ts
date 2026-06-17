@@ -10,6 +10,7 @@ import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { isEscaped } from "@/transformer/utils/escape.js";
 import { isInlineWhitespace, skipInlineWhitespace } from "@/transformer/utils/normalize.js";
+import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
 
 const isAlpha = (c: string) => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 const isDigit = (c: string) => (c >= '0' && c <= '9');
@@ -29,9 +30,12 @@ class HTMLInlineParser extends BaseInlineParser {
     super("html_inline");
   }
 
+  canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {
+    return src[index] === '<';
+  }
+
   /** @inheritdoc */
   parse(src: string, index: number, ctx: any) {
-    if (src[index] !== '<') return null;
 
     if (isEscaped(src, index)) return null;
 
