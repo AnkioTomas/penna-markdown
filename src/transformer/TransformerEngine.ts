@@ -79,10 +79,21 @@ export class TransformerEngine {
     }
 
     _renderInline(nodes: MarkdownNode[], ctx: RenderContext): string {
-        return nodes.map((node) =>
-            this.registry.getInlineParser(node.type)?.render(node, ctx) ?? ""
-        ).join("");
+        const results: string[] = [];
+
+        for (let i = 0; i < nodes.length; i++) {
+            let node = nodes[i];
+            let prevHtml = results.pop() ?? ''
+            let prevHtmlObj = {html: prevHtml};
+            const html = this.registry.getInlineParser(node.type)?.render(node, ctx, prevHtmlObj) ?? "";
+            results.push(prevHtmlObj.html);
+            results.push(html);
+        }
+
+
+        return results.join("");
     }
+
 
     _renderBlocks(blocks: MarkdownNode[], ctx: RenderContext): string {
         return blocks.map((node) =>
