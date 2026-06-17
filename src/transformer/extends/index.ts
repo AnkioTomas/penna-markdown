@@ -52,14 +52,13 @@ export const extendInlineSyntax: Record<number, BaseInlineParser> = {
   415: badgeInline,
   48: emojiInline,
   50: spoilerInline,
+  55: inlineComment,
 /*  205: footnoteRefInline,
   203: mediaInline,
   202: mathInline,
   57: subInlineParser,
   56: supInlineParser,
-  55: inlineComment,
   */
-
 };
 
 /** 全部扩展块级语法 */
