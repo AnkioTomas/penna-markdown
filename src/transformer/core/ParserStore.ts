@@ -3,24 +3,60 @@
  * @module transformer/core/ParserStore
  */
 
-export type InlineFrame = Record<string, unknown>;
+import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
+
+export type ParseFinalizer = (
+  root: MarkdownNode,
+  ctx: BlockParseContext,
+) => MarkdownNode | void;
+
+export type RenderFinalizer = (
+  html: string,
+  ctx: RenderContext,
+) => string;
 
 export class ParserStore {
   lines: string[];
   private store: Record<string, unknown>;
+  private finalizers: Record<string, ParseFinalizer>;
+  private renderFinalizers: Record<string, RenderFinalizer>;
 
   constructor(lines: string[]) {
     this.lines = lines;
     this.store = {};
+    this.finalizers = {};
+    this.renderFinalizers = {};
+  }
+
+  registerFinalizer(name: string, fn: ParseFinalizer): void {
+    this.finalizers[name] = fn;
+  }
+
+  registerRenderFinalizer(name: string, fn: RenderFinalizer): void {
+    this.renderFinalizers[name] = fn;
   }
 
   /**
-   * 获取指定索引的行数据
-   * @param index 数组索引
-   * @returns 对应行的字符串，超出索引时返回 null
+   * 解析结束后依次执行已注册的 finalizer。
    */
-  getLine(index: number): string | null {
-    return this.lines[index] ?? null;
+  finalize(root: MarkdownNode, ctx: BlockParseContext): MarkdownNode {
+    let result = root;
+
+    for (const fn of Object.values(this.finalizers)) {
+      const next = fn(result, ctx);
+      if (next) result = next;
+    }
+    return result;
+  }
+
+  renderFinalize(html: string, ctx: RenderContext): string {
+    let result = html;
+    for (const fn of Object.values(this.renderFinalizers)) {
+      result = fn(result, ctx);
+    }
+    return result;
   }
 
   /**
@@ -69,7 +105,7 @@ export class ParserStore {
     this.store = {};
   }
 
-  getAll():Record<string, unknown>{
+  getAll(): Record<string, unknown> {
     return this.store;
   }
 }

@@ -115,6 +115,7 @@ export class BlockParseEngine {
     }
 
     parse(lines: string[]): MarkdownNode {
-        return createNode('root', 0, undefined, this.parseBlocks(lines), {store: null});
+        const root = createNode('root', 0, undefined, this.parseBlocks(lines), {store: null});
+        return this.store.finalize(root, this.ctx);
     }
 }
