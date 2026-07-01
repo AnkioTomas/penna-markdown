@@ -14,8 +14,8 @@
 import {BaseInlineParser} from "@/transformer/core/ParserBase.js";
 import {createNode, MarkdownNode} from "@/transformer/core/MarkdownNode.js";
 import {escapeHtml, isEscaped} from "@/transformer/utils/escape.js";
-import {RenderContext} from "@/transformer/core/context/RenderContext";
-import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
+import type {RenderContext} from "@/transformer/core/context/RenderContext";
+import type {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
 
 /**
  * 跳过 index 起的连续空白字符。
@@ -160,40 +160,6 @@ export function findAttr(src: string, _index: number) {
     }
 }
 
-/**
- * HTML 开标签属性注入辅助函数
- */
-function injectAttrsToHtml(html: string, attrs: string): string {
-    if (!html || !attrs || !html.startsWith("<")) return html;
-
-    const gt = html.indexOf(">");
-    if (gt === -1) return html;
-
-    const before = html.slice(0, gt);
-    const rest = html.slice(gt + 1);
-    const beforeTrimmed = before.replace(/\s*$/, "");
-
-    const appendAttrs = (tag: string, extraAttrs: string): string => {
-        if (!extraAttrs) return `${tag}>${rest}`;
-        if (tag.endsWith("/")) {
-            const base = tag.slice(0, -1).replace(/\s*$/, "");
-            return `${base} ${extraAttrs} />${rest}`;
-        }
-        return `${tag} ${extraAttrs}>${rest}`;
-    };
-
-    const existingClassMatch = beforeTrimmed.match(/\bclass="([^"]*)"/);
-    const injectedClassMatch = attrs.match(/\bclass="([^"]*)"/);
-
-    if (existingClassMatch && injectedClassMatch) {
-        const mergedClass = `${existingClassMatch[1]} ${injectedClassMatch[1]}`.trim();
-        const tagWithClass = beforeTrimmed.replace(/\bclass="[^"]*"/, `class="${mergedClass}"`);
-        const otherAttrs = attrs.replace(/\bclass="[^"]*"\s*/, "").trim();
-        return appendAttrs(tagWithClass, otherAttrs);
-    }
-
-    return appendAttrs(beforeTrimmed, attrs);
-}
 
 /**
  * HTML 属性片段行内解析器。
@@ -246,13 +212,36 @@ class HtmlAttrsInlineParser extends BaseInlineParser {
     }
 
     /** @inheritdoc */
-    render(node: MarkdownNode, ctx: RenderContext, prevHtmlObj: { html: any; }) {
-        const attrs = node.props?.attrs as string | undefined;
-        if (!attrs || !prevHtmlObj) return "";
-
-        // 将属性注入到前一个节点的 HTML
-        prevHtmlObj.html = injectAttrsToHtml(prevHtmlObj.html, attrs);
+    render(node: MarkdownNode, ctx: RenderContext, prev: { html: string } = { html: "" }): string {
+        prev.html = this.transformPrev(prev.html, node, ctx);
         return "";
+    }
+
+    transformPrev(prevHtml: string, node: MarkdownNode, _ctx: RenderContext): string {
+        const attrs = node.props?.attrs as string | undefined;
+        if (!attrs || !prevHtml || !prevHtml.startsWith("<")) return prevHtml;
+
+        const gt = prevHtml.indexOf(">");
+        if (gt === -1) return prevHtml;
+
+        const before = prevHtml.slice(0, gt).replace(/\s*$/, "");
+        const rest = prevHtml.slice(gt + 1);
+
+        const existingClass = before.match(/\bclass="([^"]*)"/);
+        const injectedClass = attrs.match(/\bclass="([^"]*)"/);
+
+        if (existingClass && injectedClass) {
+            const merged = `${existingClass[1]} ${injectedClass[1]}`.trim();
+            const tag = before.replace(/\bclass="[^"]*"/, `class="${merged}"`);
+            const other = attrs.replace(/\bclass="[^"]*"\s*/, "").trim();
+            return other ? `${tag} ${other}>${rest}` : `${tag}>${rest}`;
+        }
+
+        if (before.endsWith("/")) {
+            const base = before.slice(0, -1).replace(/\s*$/, "");
+            return `${base} ${attrs} />${rest}`;
+        }
+        return `${before} ${attrs}>${rest}`;
     }
 }
 
