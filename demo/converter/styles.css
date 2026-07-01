@@ -1,5 +1,25 @@
 @import "../split-page.css";
 
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.timing {
+  margin-left: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: #0369a1;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  border-radius: 999px;
+  padding: 5px 14px;
+  white-space: nowrap;
+}
+
 .textarea {
   width: 100%;
   flex: 1;
@@ -9,28 +29,6 @@
   outline: none;
   font-size: 13px;
   resize: none;
-}
-
-.split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  flex: 1;
-  min-height: 0;
-}
-
-.code {
-  margin: 0;
-  padding: 14px;
-  overflow: auto;
-  border-right: 1px solid #f3f4f6;
-  white-space: pre-wrap;
-  word-break: break-word;
-  background: #f9fafb;
-  font-size: 12px;
-  line-height: 1.5;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-    monospace;
 }
 
 .btn {
@@ -47,13 +45,8 @@
   background: #1d4ed8;
 }
 
-@media (max-width: 900px) {
-  .split {
-    grid-template-columns: 1fr;
-  }
-
-  .code {
-    border-right: none;
-    border-bottom: 1px solid #f3f4f6;
-  }
+.converter-error {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 13px;
 }
