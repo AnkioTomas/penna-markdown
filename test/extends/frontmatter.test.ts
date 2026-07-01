@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
+import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
 
 const MD = `---
 title: Hello World
@@ -21,7 +20,7 @@ Unknown: [[missing]]
 `;
 
 describe("extends/frontmatter", () => {
-  const engine = () => createTransformerWithExtensions(["frontmatter"]);
+  const engine = () => createEngineWithExtensions(["frontmatter"]);
   const base = () => createEngine();
 
   it("strips YAML frontmatter from HTML output", () => {

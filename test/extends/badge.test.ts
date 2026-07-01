@@ -1,11 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
+import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
 
 describe("extends/badge", () => {
-  const engine = () => createTransformerWithExtensions(["badge", "html_attrs"]);
+  const engine = () => createEngineWithExtensions(["badge", "html_attrs"]);
   const both = () =>
-    createTransformerWithExtensions(["badge", "html_attrs", "frontmatter"]);
+    createEngineWithExtensions(["badge", "html_attrs", "frontmatter"]);
 
   it("renders badge with variant and position via html_attrs", () => {
     const html = renderMarkdown(engine(), "核心库 [必须]{.important .top}");
@@ -14,9 +13,9 @@ describe("extends/badge", () => {
     );
   });
 
-  it("renders plain badge with default middle styling", () => {
+  it("does not treat bare brackets as badge (yields to GFM link refs)", () => {
     const html = renderMarkdown(engine(), "状态 [进行中]");
-    expect(html).toBe('<p>状态 <span class="cherry-badge">进行中</span></p>\n');
+    expect(html).toBe("<p>状态 [进行中]</p>\n");
   });
 
   it("renders warning badge", () => {

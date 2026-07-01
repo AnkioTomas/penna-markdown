@@ -1,23 +1,23 @@
 import { describe, expect, it } from "vitest";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
 
 const STATE_CLASS = { in_progress: "progress" };
 
-function taskClass(state) {
-  const cls = STATE_CLASS[state] ?? state;
+function taskClass(state: string) {
+  const cls = STATE_CLASS[state as keyof typeof STATE_CLASS] ?? state;
   return `task-item ${cls}`;
 }
 
-function taskMarker(label) {
+function taskMarker(label: string) {
   return `<span class="marker" role="img" aria-label="${label}"></span>`;
 }
 
 describe("tasklist extension", () => {
+  const engine = createEngine();
+
   it("renders basic todo and done items", () => {
-    const t = createTransformerWithExtensions(["tasklist"]);
     const md = "- [ ] foo\n- [x] bar\n";
-    expect(renderMarkdown(t, md)).toBe(
+    expect(renderMarkdown(engine, md)).toBe(
       `<ul class="task-list">
 <li class="${taskClass("todo")}" data-state="todo">${taskMarker("To-do")} foo</li>
 <li class="${taskClass("done")}" data-state="done">${taskMarker("Done")} bar</li>
@@ -27,9 +27,8 @@ describe("tasklist extension", () => {
   });
 
   it("renders nested task lists", () => {
-    const t = createTransformerWithExtensions(["tasklist"]);
     const md = "- [x] foo\n  - [ ] bar\n  - [x] baz\n- [ ] bim\n";
-    expect(renderMarkdown(t, md)).toBe(
+    expect(renderMarkdown(engine, md)).toBe(
       `<ul class="task-list">
 <li class="${taskClass("done")}" data-state="done">${taskMarker("Done")} foo
 <ul class="task-list">
@@ -53,8 +52,7 @@ describe("tasklist extension", () => {
 `;
 
   it("renders all extended task states", () => {
-    const t = createTransformerWithExtensions(["tasklist"]);
-    expect(renderMarkdown(t, md)).toBe(
+    expect(renderMarkdown(engine, md)).toBe(
       `<ul class="task-list">
 <li class="${taskClass("todo")}" data-state="todo">${taskMarker("To-do")} 待办事项</li>
 <li class="${taskClass("done")}" data-state="done">${taskMarker("Done")} 已完成</li>
@@ -68,9 +66,9 @@ describe("tasklist extension", () => {
     );
   });
 
-  it("does not affect lists without extension", () => {
-    const t = createEngine();
-    expect(renderMarkdown(t, "- [ ] foo\n")).toBe("<ul>\n<li>[ ] foo</li>\n</ul>\n");
-    expect(renderMarkdown(t, "- [/] 进行中\n")).toBe("<ul>\n<li>[/] 进行中</li>\n</ul>\n");
+  it("does not affect regular unordered lists", () => {
+    expect(renderMarkdown(engine, "- plain item\n")).toBe(
+      "<ul>\n<li>plain item</li>\n</ul>\n",
+    );
   });
 });

@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
 
 describe("extends/inline_comment", () => {
-  const engine = () => createTransformerWithExtensions(["inline_comment"]);
-  const base = () => createEngine();
+  const engine = () => createEngine();
 
   it("removes %% comment %% from rendered HTML", () => {
     const html = renderMarkdown(engine(), 
@@ -32,10 +30,5 @@ describe("extends/inline_comment", () => {
     const md = "```\n%% secret %%\n```";
     const html = renderMarkdown(engine(), md);
     expect(html).toBe("<pre><code>%% secret %%\n</code></pre>\n");
-  });
-
-  it("leaves syntax unchanged when extension disabled", () => {
-    const html = renderMarkdown(base(), "a %% hidden %% b");
-    expect(html).toBe("<p>a %% hidden %% b</p>\n");
   });
 });

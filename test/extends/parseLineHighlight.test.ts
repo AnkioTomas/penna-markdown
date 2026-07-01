@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   mergeLineHighlightSpecs,
+  parseFenceMeta,
   parseHighlightLinesAttr,
   parseLineHighlightSpec,
-} from "@/transformer/extends/utils/parseLineHighlight.js";
-import { parseFenceMeta } from "@/transformer/extends/utils/parseFenceMeta.js";
+} from "@/transformer/extends/block/enhancedCode.js";
 
 describe("extends/parseLineHighlight", () => {
   it("parses single lines", () => {

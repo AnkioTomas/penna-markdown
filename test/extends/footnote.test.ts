@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
 
 const FOOTNOTES_TAIL = `<div class="cherry-footnotes">
 <hr class="cherry-footnotes__sep">
@@ -12,8 +11,7 @@ const FOOTNOTES_TAIL = `<div class="cherry-footnotes">
 </div>`;
 
 describe("extends/footnote", () => {
-  const engine = () => createTransformerWithExtensions(["footnote"]);
-  const base = () => createEngine();
+  const engine = () => createEngine();
 
   it("renders footnote ref with hr section and backref", () => {
     const md = `这是一个需要解释的专业词汇[^1]。
@@ -66,10 +64,5 @@ describe("extends/footnote", () => {
     const md = `[^1]: only definition`;
     const html = renderMarkdown(engine(), md);
     expect(html).toBe("");
-  });
-
-  it("is disabled without extension", () => {
-    const html = renderMarkdown(base(), "text[^1] only.");
-    expect(html).toBe("<p>text[^1] only.</p>\n");
   });
 });

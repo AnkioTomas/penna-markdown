@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
+import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
 
 describe("extends/spoiler", () => {
-  const engine = () => createTransformerWithExtensions(["spoiler"]);
+  const engine = () => createEngineWithExtensions(["spoiler"]);
 
   it("renders !! text !! as spoiler", () => {
     const html = renderMarkdown(engine(), "这是 !! 剧透内容 !! 正常文字\n");
@@ -40,7 +39,7 @@ describe("extends/spoiler", () => {
   });
 
   it("renders {click} as checkbox spoiler", () => {
-    const html = renderMarkdown(createTransformerWithExtensions(["spoiler", "html_attrs"]),
+    const html = renderMarkdown(createEngineWithExtensions(["spoiler", "html_attrs"]),
       "!! 点击显示 !! {click}\n",
     );
     expect(html).toBe(
@@ -49,7 +48,7 @@ describe("extends/spoiler", () => {
   });
 
   it("renders {.click} as checkbox spoiler", () => {
-    const html = renderMarkdown(createTransformerWithExtensions(["spoiler", "html_attrs"]),
+    const html = renderMarkdown(createEngineWithExtensions(["spoiler", "html_attrs"]),
       "!! 点击显示 !! {.click}\n",
     );
     expect(html).toBe(

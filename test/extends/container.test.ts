@@ -1,20 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
 
-function panelHtml(type, title, body) {
+function panelHtml(type: string, title: string, body: string) {
   const titleHtml = title ? `<p class="cherry-alert__title">${title}</p>\n` : "";
   return `<div class="cherry-alert cherry-alert--${type}">\n${titleHtml}${body}\n</div>\n`;
 }
 
-function alignHtml(type, body, title = "") {
+function alignHtml(type: string, body: string, title = "") {
   const titleHtml = title ? `<p class="cherry-align__title">${title}</p>\n` : "";
   return `<div class="cherry-align cherry-align--${type}">\n${titleHtml}${body}\n</div>\n`;
 }
 
 describe("extends/container", () => {
-  const engine = () => createTransformerWithExtensions(["container"]);
-  const base = () => createEngine();
+  const engine = () => createEngine();
 
   it("renders tip container with title emoji", () => {
     const md = `::: tip 💡 这是一个小提示
@@ -51,15 +49,6 @@ describe("extends/container", () => {
 :::`;
     expect(renderMarkdown(engine(), md)).toBe(
       panelHtml("warning", "注意", "<p>第一段</p>\n<p>第二段</p>"),
-    );
-  });
-
-  it("leaves syntax unchanged when extension disabled", () => {
-    const md = `::: tip 标题
-内容
-:::`;
-    expect(renderMarkdown(base(), md)).toBe(
-      "<p>::: tip 标题\n内容\n:::</p>\n",
     );
   });
 
@@ -113,5 +102,25 @@ describe("extends/container", () => {
     expect(renderMarkdown(engine(), md)).toBe(
       alignHtml("center", "<p>正文</p>", "标题"),
     );
+  });
+
+  it("supports nested containers", () => {
+    const md = `::: tip 外层
+::: info 内层
+嵌套正文
+:::
+:::`;
+    const html = renderMarkdown(engine(), md);
+    expect(html).toContain('<div class="cherry-alert cherry-alert--tip">');
+    expect(html).toContain('<div class="cherry-alert cherry-alert--info">');
+    expect(html).toContain("<p>嵌套正文</p>");
+  });
+
+  it("supports inline markdown in title", () => {
+    const md = `::: note **粗体**标题
+正文
+:::`;
+    const html = renderMarkdown(engine(), md);
+    expect(html).toContain("<strong>粗体</strong>标题");
   });
 });

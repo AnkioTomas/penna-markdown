@@ -1,10 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
+import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
 
 describe("extends/field", () => {
   const engine = () =>
-    createTransformerWithExtensions(["field", "badge", "html_attrs"]);
+    createEngineWithExtensions(["field", "badge", "html_attrs"]);
 
   const sample = `:::: field-group
 ::: field theme

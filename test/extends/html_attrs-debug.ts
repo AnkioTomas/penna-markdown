@@ -1,7 +1,7 @@
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
+import { createEngineWithExtensions } from "../helpers/engine.js";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
 
-const transformer = createTransformerWithExtensions(["html_attrs"]);
+const transformer = createEngineWithExtensions(["html_attrs"]);
 
 console.log("Testing: **bold**{highlight}");
 const html = renderMarkdown(transformer, '**bold**{highlight}');

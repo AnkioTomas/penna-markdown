@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
+import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
 
 describe("extends/collapse", () => {
-  const engine = () => createTransformerWithExtensions(["collapse"]);
+  const engine = () => createEngineWithExtensions(["collapse"]);
 
   const sample = `::: collapse
 - 标题 1

@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
 
 describe("extends/supsub", () => {
-  const engine = () => createTransformerWithExtensions(["supsub"]);
+  const engine = () => createEngine();
 
   it("renders superscript with ^text^", () => {
     const html = renderMarkdown(engine(), "E=mc^2^");
@@ -35,10 +34,5 @@ describe("extends/supsub", () => {
   it("does not conflict with footnote refs", () => {
     const html = renderMarkdown(engine(), "text[^1] end");
     expect(html).toBe("<p>text[^1] end</p>\n");
-  });
-
-  it("is disabled without extension", () => {
-    const html = renderMarkdown(createEngine(), "H~2~O");
-    expect(html).toBe("<p>H~2~O</p>\n");
   });
 });

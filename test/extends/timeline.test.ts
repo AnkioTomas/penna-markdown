@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
+import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
 
 describe("extends/timeline", () => {
-  const engine = () => createTransformerWithExtensions(["timeline"]);
+  const engine = () => createEngineWithExtensions(["timeline"]);
 
   const sample = `::: timeline
 - 节点一

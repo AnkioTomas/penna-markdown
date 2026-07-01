@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
-import { buildMathImageSrc } from "@/transformer/extends/utils/cherryApi.js";
+import { buildMathImageSrc } from "@/transformer/extends/block/mathBlock.js";
 
 const MATH_BLOCK =
   '<div class="cherry-math cherry-math-block" data-type="mathBlock"><img class="cherry-math-latex" data-latex="E=mc^2" data-inline="false" alt="E=mc^2" src="https://math-api-delta.vercel.app/?from=E%3Dmc%5E2" loading="lazy" /></div>';
@@ -13,7 +12,7 @@ const MATH_INLINE_R2 =
   '<span class="cherry-math cherry-math-inline" data-type="mathInline"><img class="cherry-math-latex" data-latex="\\mathbb{R}^2" data-inline="true" alt="\\mathbb{R}^2" src="https://math-api-delta.vercel.app/?inline=%5Cmathbb%7BR%7D%5E2" loading="lazy" /></span>';
 
 describe("extends/math", () => {
-  const engine = () => createTransformerWithExtensions(["cherry_syntax"]);
+  const engine = () => createEngine();
 
   it("buildMathImageSrc omits color by default and supports dark theme", () => {
     expect(buildMathImageSrc("x^2", { inline: true })).toBe(
@@ -60,12 +59,5 @@ $$`;
   it("does not treat $$ as inline math", () => {
     const html = renderMarkdown(engine(), "$$E=mc^2$$\n");
     expect(html).not.toContain("mathInline");
-  });
-
-  it("is disabled without extension", () => {
-    const md = "Euler $e^{i\\pi}+1=0$ and $$\nE=mc^2\n$$\n";
-    const html = renderMarkdown(createEngine(), md);
-    expect(html).not.toContain("cherry-math");
-    expect(html).toContain("$e^{i\\pi}+1=0$");
   });
 });

@@ -1,14 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
 import {
   analyzeCollapsedCode,
   isCollapseMarkerLine,
-} from "@/transformer/extends/utils/collapsedCode.js";
-import { parseFenceMeta } from "@/transformer/extends/utils/parseFenceMeta.js";
+  parseFenceMeta,
+} from "@/transformer/extends/block/enhancedCode.js";
 
 describe("extends/collapsedCode", () => {
-  const engine = () => createTransformerWithExtensions(["code_block"]);
+  const engine = () => createEngine();
 
   it("detects collapse marker lines", () => {
     expect(isCollapseMarkerLine("... more code")).toBe(true);

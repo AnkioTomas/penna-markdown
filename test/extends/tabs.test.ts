@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
+import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
 
 describe("extends/tabs", () => {
-  const engine = () => createTransformerWithExtensions(["tabs"]);
+  const engine = () => createEngineWithExtensions(["tabs"]);
 
   const sample = `::: tabs
 
@@ -81,7 +80,7 @@ console.log(1)
 @tab 其他
 正文
 :::`;
-    const html = renderMarkdown(createTransformerWithExtensions(["tabs", "container"]), md);
+    const html = renderMarkdown(createEngineWithExtensions(["tabs", "container"]), md);
     expect(html).toContain('<div class="cherry-alert cherry-alert--tip">');
     expect(html).toContain("<p>嵌套内容</p>");
     expect(html).toContain("<p>正文</p>");

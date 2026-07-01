@@ -25,7 +25,7 @@ describe("inline/links", () => {
   it("Example 525: Inline image", () => {
     const markdown = "![alt](moon.jpg)";
     const html = renderMarkdown(transformer, markdown);
-    expect(html.trim()).toBe('<p><img src="moon.jpg" alt="alt" /></p>');
+    expect(html.trim()).toBe('<p><img src="moon.jpg" alt="alt" loading="lazy" /></p>');
   });
 
   it("Example 535: Reference link", () => {
@@ -139,7 +139,7 @@ describe("inline/links", () => {
   it("Example 525: image inside link label", () => {
     const markdown = "[![moon](moon.jpg)](/uri)\n";
     const html = renderMarkdown(transformer, markdown);
-    expect(html).toBe('<p><a href="/uri"><img src="moon.jpg" alt="moon" /></a></p>\n');
+    expect(html).toBe('<p><a href="/uri"><img src="moon.jpg" alt="moon" loading="lazy" /></a></p>\n');
   });
 
   it("Example 531: emphasis closes before unclosed bracket label", () => {
@@ -151,7 +151,7 @@ describe("inline/links", () => {
   it("Example 539: image inside reference link label", () => {
     const markdown = "[![moon](moon.jpg)][ref]\n\n[ref]: /uri\n";
     const html = renderMarkdown(transformer, markdown);
-    expect(html).toBe('<p><a href="/uri"><img src="moon.jpg" alt="moon" /></a></p>\n');
+    expect(html).toBe('<p><a href="/uri"><img src="moon.jpg" alt="moon" loading="lazy" /></a></p>\n');
   });
 
   it("Example 553: escaped punctuation in reference label does not match", () => {

@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
 
 describe("html_attrs extension", () => {
-  const transformer = createTransformerWithExtensions(["html_attrs"]);
+  const transformer = createEngine();
 
   it("injects attrs into previous inline tag", () => {
     const html = renderMarkdown(transformer, '**bold**{class="x"}');

@@ -1,16 +1,13 @@
 import { describe, expect, it } from "vitest";
+import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
-import {
-  buildEchartsImageSrc,
-} from "@/transformer/extends/utils/cherryApi.js";
+import type { HljsLike } from "@/transformer/extends/block/enhancedCode.js";
+import { buildEchartsImageSrc } from "@/transformer/extends/block/specialCode.js";
 
 const ECHARTS_OPTIONS = '{"series":[{"type":"bar"}]}';
 
 describe("extends/code_block", () => {
-  const engine = () => createTransformerWithExtensions(["code_block"]);
-  const both = () => createTransformerWithExtensions(["cherry_syntax", "code_block"]);
-  const base = () => createEngine();
+  const engine = () => createEngine();
 
   it("renders header with lang left, title after lang, copy right", () => {
     const md = '```json title="package.json"\n{"name":"plume"}\n```';
@@ -35,11 +32,28 @@ describe("extends/code_block", () => {
     expect(html).toContain("const a = 1;");
   });
 
-  it("renders copy button without language label when lang is empty", () => {
+  it("falls back to plain GFM code when lang is empty", () => {
     const html = renderMarkdown(engine(), "```\nplain\n```");
-    expect(html).toContain('class="cherry-copy-code-button"');
-    expect(html).not.toContain("cherry-code-block__lang");
-    expect(html).toContain("plain");
+    expect(html).toBe("<pre><code>plain\n</code></pre>\n");
+    expect(html).not.toContain("cherry-code-block");
+  });
+
+  it("syntax-highlights at render when syntaxOptions.code.hljs is set", () => {
+    const mockHljs: HljsLike = {
+      getLanguage: (lang) => (lang === "js" ? {} : undefined),
+      highlight: (code, { language }) => ({
+        value: `<span class="hljs-keyword">${language}</span>${code}`,
+      }),
+      highlightAuto: (code) => ({ value: code }),
+    };
+    const hlEngine = new TransformerEngine({
+      syntaxOptions: { code: { hljs: mockHljs } },
+    });
+    const html = renderMarkdown(hlEngine, "```js\nconst a = 1;\n```");
+    expect(html).toContain("cherry-code-block__highlighted");
+    expect(html).toContain('data-cherry-highlighted="1"');
+    expect(html).toContain("hljs-keyword");
+    expect(html).not.toContain("&lt;span"); // 不应二次 escape
   });
 
   it("parses single-quoted and unquoted title", () => {
@@ -51,22 +65,17 @@ describe("extends/code_block", () => {
     expect(bare).toContain('data-title="Makefile"');
   });
 
-  it("falls back to plain GFM code when extension disabled", () => {
-    const html = renderMarkdown(base(), "```js\nconst a = 1;\n```");
-    expect(html).toBe('<pre><code class="language-js">const a = 1;\n</code></pre>\n');
-  });
-
-  it("still renders echarts via cherry_syntax when both enabled", () => {
+  it("still renders echarts via specialCode when enhanced code enabled", () => {
     const md = "```echarts\n{\"series\":[{\"type\":\"bar\"}]}\n```";
-    const html = renderMarkdown(both(), md);
+    const html = renderMarkdown(engine(), md);
     expect(html).toContain('<div data-type="echarts"');
     expect(html).toContain(buildEchartsImageSrc(ECHARTS_OPTIONS));
     expect(html).not.toContain("cherry-code-block");
   });
 
-  it("still renders mermaid via cherry_syntax when both enabled", () => {
+  it("still renders mermaid via specialCode when enhanced code enabled", () => {
     const md = "```mermaid\nflowchart TD\n    A --> B\n```";
-    const html = renderMarkdown(both(), md);
+    const html = renderMarkdown(engine(), md);
     expect(html).toContain('<figure data-type="mermaid"');
     expect(html).not.toContain("cherry-code-block");
   });

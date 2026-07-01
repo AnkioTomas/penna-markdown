@@ -1,17 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
+import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
 import {
   buildEchartsImageSrc,
   buildMermaidImageSrc,
-} from "@/transformer/extends/utils/cherryApi.js";
+} from "@/transformer/extends/block/specialCode.js";
 
 const MATH_IMG =
   '<div class="cherry-math cherry-math-block" data-type="mathBlock"><img class="cherry-math-latex" data-latex="E=mc^2" data-inline="false" alt="E=mc^2" src="https://math-api-delta.vercel.app/?from=E%3Dmc%5E2" loading="lazy" /></div>';
 const ECHARTS_OPTIONS = '{"series":[{"type":"bar"}]}';
 
 describe("extends/cherry_syntax", () => {
-  const engine = () => createTransformerWithExtensions(["cherry_syntax"]);
+  const engine = () => createEngineWithExtensions(["cherry_syntax"]);
   const base = () => createEngine();
 
   it("renders block math with $$ via math API", () => {

@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
 
 describe("extends/iframe", () => {
-  const engine = () => createTransformerWithExtensions(["iframe"]);
+  const engine = () => createEngine();
 
   it("renders !iframe[title](url) as styled embed", () => {
     const html = renderMarkdown(engine(), "!iframe[演示](https://example.com)\n");
@@ -43,13 +42,5 @@ describe("extends/iframe", () => {
   it("rejects non-http schemes", () => {
     const html = renderMarkdown(engine(), "!iframe[x](javascript:alert(1))\n");
     expect(html).not.toContain("<iframe");
-  });
-
-  it("is disabled without extension", () => {
-    const html = renderMarkdown(createEngine(),
-      "!iframe[演示](https://example.com)\n",
-    );
-    expect(html).not.toContain("<iframe");
-    expect(html).toContain("!iframe");
   });
 });

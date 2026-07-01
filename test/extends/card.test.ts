@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
+import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
 
 function cardHtml(title, body, { link = "" } = {}) {
   const titleHtml = title ? `<p class="cherry-card__title">${title}</p>\n` : "";
@@ -11,7 +10,7 @@ function cardHtml(title, body, { link = "" } = {}) {
 }
 
 describe("extends/card", () => {
-  const engine = () => createTransformerWithExtensions(["card"]);
+  const engine = () => createEngineWithExtensions(["card"]);
 
   it("renders single card with title attribute", () => {
     const md = `::: card 标题

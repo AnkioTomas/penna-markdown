@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import { createTransformerWithExtensions } from "@/transformer/extends/extends.js";
 
 describe("extends/media", () => {
-  const engine = () => createTransformerWithExtensions(["media"]);
+  const engine = () => createEngine();
 
   it("renders !video[alt](url) as styled figure", () => {
     const html = renderMarkdown(engine(),
@@ -37,7 +36,7 @@ describe("extends/media", () => {
     );
     expect(html).toContain('class="cherry-audio-player__cover cherry-audio-player__cover--image"');
     expect(html).toContain(
-      '<img class="cherry-audio-player__cover-img" src="https://example.com/cover.png" alt="" />',
+      '<img class="cherry-audio-player__cover-img" src="https://example.com/cover.png" alt="" loading="lazy" />',
     );
   });
 
@@ -53,16 +52,7 @@ describe("extends/media", () => {
       "![img](https://example.com/a.png)\n",
     );
     expect(html).toBe(
-      '<p><img src="https://example.com/a.png" alt="img" /></p>\n',
-    );
-  });
-
-  it("is disabled without extension", () => {
-    const html = renderMarkdown(createEngine(),
-      "!video[演示](https://example.com/demo.mp4)\n",
-    );
-    expect(html).toBe(
-      '<p>!video<a href="https://example.com/demo.mp4">演示</a></p>\n',
+      '<p><img src="https://example.com/a.png" alt="img" loading="lazy" /></p>\n',
     );
   });
 });
