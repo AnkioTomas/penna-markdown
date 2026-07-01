@@ -3,6 +3,7 @@
  * @module transformer/extends/inline/badge
  *
  * 语法：`[文本]{.variant .top}`，花括号属性由 `html_attrs` 扩展解析并折叠。
+ * 必须带 `{...}` 后缀才成立；裸 `[文本]` 交还给 GFM 链接/引用，避免抢占。
  *
  * 变体类名与 alert 语义一致（warning、tip、important 等）；
  * 位置类名：`top` / `bottom`，默认 middle。
@@ -40,10 +41,9 @@ class BadgeInlineParser extends BaseInlineParser {
     if (content.startsWith("^")) return null;
 
     const nextIndex = index + match[0].length;
-    const next = src[nextIndex];
 
-    // 不与链接、引用链接抢占
-    if (next === "(" || next === "[") return null;
+    // badge 必须带 `{...}` 属性后缀；裸 `[text]` 交还给 GFM 链接/引用
+    if (src[nextIndex] !== "{") return null;
 
     return {
       node: createNode(this.type, match[0].length, content,),
