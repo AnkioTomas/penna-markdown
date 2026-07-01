@@ -13,9 +13,11 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
+import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 
 /** 容器开标记行：`::: type 标题` */
 const OPEN_RE = /^ {0,3}:::(?!:)(.+)$/;
@@ -23,8 +25,11 @@ const OPEN_RE = /^ {0,3}:::(?!:)(.+)$/;
 /** 容器闭标记行：`:::` */
 const CLOSE_RE = /^ {0,3}:::\s*$/;
 
+/** 嵌套三冒号容器开标记（排除四冒号块） */
+const NESTED_OPEN_RE = /^ {0,3}:::(?!:)\s+\S/;
+
 /** 容器类型缩写 → 完整类型名 */
-const TYPE_ALIASES = {
+const TYPE_ALIASES: Record<string, string> = {
   im: "important",
   i: "info",
   w: "warning",
@@ -51,13 +56,7 @@ const THEME_TYPES = new Set([
   "info",
 ]);
 
-/**
- * 解析开标记行中的类型与标题。
- *
- * @param {string} raw - 开标记 `:::` 后的原始文本
- * @returns {{ containerType: string, title: string } | null}
- */
-function parseOpenInfo(raw) {
+function parseOpenInfo(raw: string): { containerType: string; title: string } | null {
   const trimmed = raw.trim();
   if (!trimmed) return null;
 
@@ -71,18 +70,44 @@ function parseOpenInfo(raw) {
   return { containerType, title };
 }
 
-/**
- * Cherry 容器面板块解析器。
- *
- * @extends {BaseBlockParser}
- */
-class ContainerBlockParser extends BaseBlockParser {
-  constructor() {
-    super({ type: "container", priority: 86 });
+function readContainerInnerLines(
+  lines: string[],
+  start: number,
+): { innerLines: string[]; nextIndex: number } | null {
+  const innerLines: string[] = [];
+  let depth = 0;
+  let i = start;
+
+  while (i < lines.length) {
+    const line = lines[i] ?? "";
+
+    if (CLOSE_RE.test(line)) {
+      if (depth === 0) {
+        return { innerLines, nextIndex: i + 1 };
+      }
+      depth -= 1;
+      innerLines.push(line);
+      i += 1;
+      continue;
+    }
+
+    if (NESTED_OPEN_RE.test(line)) {
+      depth += 1;
+    }
+
+    innerLines.push(line);
+    i += 1;
   }
 
-  /** @inheritdoc */
-  parse(lines, index, ctx) {
+  return null;
+}
+
+class ContainerBlockParser extends BaseBlockParser {
+  constructor() {
+    super("container");
+  }
+
+  parse(lines: string[], index: number, ctx: BlockParseContext) {
     const line = lines[index] ?? "";
     const open = line.match(OPEN_RE);
     if (!open) return null;
@@ -90,31 +115,37 @@ class ContainerBlockParser extends BaseBlockParser {
     const info = parseOpenInfo(open[1]);
     if (!info) return null;
 
-    const innerLines = [];
-    let i = index + 1;
+    const block = readContainerInnerLines(lines, index + 1);
+    if (!block) return null;
 
-    while (i < lines.length) {
-      if (CLOSE_RE.test(lines[i] ?? "")) {
-        const innerChildren = ctx.parseBlocks(normalizeInnerLines(innerLines));
-        const node = createNode(this.type, {
-          containerType: info.containerType,
-          title: info.title,
-          titleNodes: info.title ? ctx.parseInline(info.title) : [],
-          children: innerChildren,
-        });
-        return { node, nextIndex: i + 1 };
-      }
-      innerLines.push(lines[i]);
-      i += 1;
+    let length = line.length;
+    for (let i = index + 1; i < block.nextIndex; i++) {
+      length += lines[i]?.length ?? 0;
     }
 
-    return null;
+    const innerChildren = ctx.parseBlocks(normalizeInnerLines(block.innerLines));
+    const titleNodes = info.title ? ctx.parseInline(info.title) : [];
+
+    const node = createNode(
+      this.type,
+      length,
+      undefined,
+      innerChildren,
+      {
+        containerType: info.containerType,
+        title: info.title,
+        titleNodes,
+      },
+    );
+
+    return { node, nextIndex: block.nextIndex };
   }
 
-  /** @inheritdoc */
-  render(node, ctx) {
-    const { containerType, title, titleNodes, children } = node;
-    const body = ctx.renderBlock(children);
+  render(node: MarkdownNode, ctx: RenderContext) {
+    const containerType = String(node.props?.containerType ?? "note");
+    const title = String(node.props?.title ?? "");
+    const titleNodes = (node.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
+    const body = ctx.renderBlock(node.children ?? []);
 
     if (ALIGN_TYPES.has(containerType)) {
       const parts = [
