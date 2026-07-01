@@ -107,6 +107,10 @@ class ContainerBlockParser extends BaseBlockParser {
     super("container");
   }
 
+  canOpenAt(lines: string[], index: number, _ctx: BlockParseContext): boolean {
+    return OPEN_RE.test(lines[index] ?? "");
+  }
+
   parse(lines: string[], index: number, ctx: BlockParseContext) {
     const line = lines[index] ?? "";
     const open = line.match(OPEN_RE);
