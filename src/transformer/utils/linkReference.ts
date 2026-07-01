@@ -5,7 +5,8 @@
 
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext";
-import { escapeHtml, htmlAttr } from "@/transformer/utils/escape.js";
+import { escapeHtml } from "@/transformer/utils/escape.js";
+import { renderSafeAnchor, renderSafeImage } from "@/transformer/utils/safeUrl.js";
 import { unescapeHref } from "@/transformer/utils/linkDestination.js";
 import { findLinkLabelEnd, findLinkTextEnd } from "@/transformer/utils/linkLabel.js";
 import { normalizeLinkRefLabel } from "@/transformer/utils/normalize.js";
@@ -76,7 +77,7 @@ export function renderReferenceLinkSpan(
     if (!def) continue;
     const inner = ctx.renderInline(c.children);
     const title = def.title || "";
-    const link = `<a href="${escapeHtml(def.href)}"${htmlAttr("title", title)}>${inner}</a>`;
+    const link = renderSafeAnchor(def.href, inner, title);
     let out = window.slice(0, c.offset) + link;
     const tail = window.slice(c.end);
     out += renderShortcutReferenceTail(tail, ctx);
@@ -107,7 +108,7 @@ export function renderReferenceImage(
   if (!def) return `![${inner}]`;
   const alt = flattenImageAlt(children);
   const title = def.title || "";
-  return `<img src="${escapeHtml(def.href)}" alt="${escapeHtml(alt)}"${htmlAttr("title", title)} />`;
+  return renderSafeImage(def.href, alt, title);
 }
 
 /** window 尾部残留的 `[label]` shortcut（render 阶段解析）。 */
@@ -125,5 +126,5 @@ function renderShortcutReferenceTail(tail: string, ctx: RenderContext): string {
   );
   if (!def) return unescapeHref(tail);
   const title = def.title || "";
-  return `<a href="${escapeHtml(def.href)}"${htmlAttr("title", title)}>${escapeHtml(labelText)}</a>`;
+  return renderSafeAnchor(def.href, escapeHtml(labelText), title);
 }

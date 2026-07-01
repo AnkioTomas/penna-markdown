@@ -38,8 +38,12 @@ interface MediaProps {
   poster: string;
 }
 
-function isAllowedIframeUrl(url: string): boolean {
+function isAllowedMediaUrl(url: string): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
+}
+
+function isAllowedIframeUrl(url: string): boolean {
+  return isAllowedMediaUrl(url);
 }
 
 function readPoster(src: string, start: number): { poster: string; nextIndex: number } {
@@ -87,6 +91,10 @@ function parseMediaTag(
 
   const posterParsed = readPoster(src, link.next);
   if (mediaType === "iframe" && !isAllowedIframeUrl(link.href)) return null;
+  if (mediaType !== "iframe" && !isAllowedMediaUrl(link.href)) return null;
+  if (posterParsed.poster && !isAllowedMediaUrl(posterParsed.poster)) {
+    posterParsed.poster = "";
+  }
 
   const children = ctx.parseInline(altText);
   const nextIndex = posterParsed.nextIndex;

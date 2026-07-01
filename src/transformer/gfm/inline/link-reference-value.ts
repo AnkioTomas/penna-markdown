@@ -2,7 +2,8 @@ import { BaseInlineParser, InlineParseResult } from "@/transformer/core/ParserBa
 import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode";
 import { RenderContext } from "@/transformer/core/context/RenderContext";
-import { escapeHtml, htmlAttr, isEscaped } from "@/transformer/utils/escape";
+import { isEscaped } from "@/transformer/utils/escape";
+import { renderSafeAnchor } from "@/transformer/utils/safeUrl.js";
 import { parseInlineLinkParen, scanFailedAngleInlineLinkEnd } from "@/transformer/utils/linkDestination";
 import { findLinkTextEnd } from "@/transformer/utils/linkLabel";
 import { normalizeLinkRefLabel } from "@/transformer/utils/normalize";
@@ -53,7 +54,7 @@ class LinkReferenceValueParser extends BaseInlineParser {
     if (!result) return `[${inner}]`;
 
     const title = result.title || "";
-    return `<a href="${escapeHtml(result.href)}"${htmlAttr("title", title)}>${inner}</a>`;
+    return renderSafeAnchor(result.href, inner, title);
   }
 }
 

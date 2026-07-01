@@ -13,7 +13,8 @@
 
 import {BaseInlineParser} from "@/transformer/core/ParserBase.js";
 import {createNode, MarkdownNode} from "@/transformer/core/MarkdownNode.js";
-import {escapeHtml, isEscaped} from "@/transformer/utils/escape.js";
+import { escapeHtml, isEscaped } from "@/transformer/utils/escape.js";
+import { isSafeUrl } from "@/transformer/utils/safeUrl.js";
 import type {RenderContext} from "@/transformer/core/context/RenderContext";
 import type {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
 
@@ -23,6 +24,45 @@ import type {InlineParseContext} from "@/transformer/core/context/InlineParseCon
 function skipSpaces(str: string, i: number): number {
     while (i < str.length && /\s/.test(str[i])) i += 1;
     return i;
+}
+
+function isAllowedAttrName(key: string): boolean {
+    const lower = key.toLowerCase();
+    if (lower.startsWith("on")) return false;
+    return true;
+}
+
+function skipAttrValue(str: string, i: number): number {
+  i = skipSpaces(str, i);
+  if (i >= str.length || str[i] !== "=") return i;
+  i += 1;
+  i = skipSpaces(str, i);
+  if (i >= str.length) return i;
+
+  const quote = str[i] === '"' || str[i] === "'" ? str[i] : "";
+  if (quote) {
+    i += 1;
+    while (i < str.length) {
+      if (str[i] === quote) {
+        i += 1;
+        break;
+      }
+      if (str[i] === "\\" && i + 1 < str.length) i += 2;
+      else i += 1;
+    }
+    return i;
+  }
+
+  while (i < str.length && !/\s/.test(str[i])) i += 1;
+  return i;
+}
+
+function isAllowedAttrValue(key: string, value: string): boolean {
+    const lower = key.toLowerCase();
+    if (lower === "href" || lower === "src" || lower === "poster" || lower === "xlink:href") {
+        return isSafeUrl(value);
+    }
+    return true;
 }
 
 /**
@@ -78,6 +118,10 @@ function parseAttrsString(inner: string): string | null {
         i += 1;
         while (i < str.length && isNameChar(str[i])) i += 1;
         const key = str.slice(keyStart, i);
+        if (!isAllowedAttrName(key)) {
+            i = skipAttrValue(str, i);
+            continue;
+        }
 
         i = skipSpaces(str, i);
 
@@ -120,6 +164,7 @@ function parseAttrsString(inner: string): string | null {
         if (key === "class") {
             classes.push(...value.split(/\s+/).filter(Boolean));
         } else {
+            if (!isAllowedAttrValue(key, value)) continue;
             out.push(`${key}="${escapeHtml(value)}"`);
         }
     }
@@ -128,7 +173,7 @@ function parseAttrsString(inner: string): string | null {
         out.push(`class="${escapeHtml(classes.join(" "))}"`);
     }
 
-    return out.length > 0 ? out.join(" ") : null;
+    return out.join(" ");
 }
 
 

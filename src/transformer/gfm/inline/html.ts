@@ -9,6 +9,7 @@
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { isEscaped } from "@/transformer/utils/escape.js";
+import { sanitizeRawHtml } from "@/transformer/utils/safeHtml.js";
 import { isInlineWhitespace, skipInlineWhitespace } from "@/transformer/utils/normalize.js";
 import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
 
@@ -174,7 +175,7 @@ class HTMLInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode) {
-    return node.value || "";
+    return sanitizeRawHtml(node.value || "");
   }
 }
 

@@ -10,6 +10,7 @@ import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
 import { isBlankString } from "@/transformer/utils/normalize";
+import { sanitizeRawHtml } from "@/transformer/utils/safeHtml.js";
 
 // --- 预编译正则：剥离了前导空格检测，只用来精确匹配 HTML 语法 ---
 const tagname = '[A-Za-z][A-Za-z0-9-]*';
@@ -142,7 +143,7 @@ class HTMLBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode) {
-    return (node.props?.value as string) || "";
+    return sanitizeRawHtml((node.props?.value as string) || "");
   }
 }
 

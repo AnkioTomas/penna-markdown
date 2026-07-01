@@ -7,7 +7,8 @@
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
-import { escapeHtml, htmlAttr, isEscaped } from "@/transformer/utils/escape.js";
+import { isEscaped } from "@/transformer/utils/escape.js";
+import { renderSafeImage } from "@/transformer/utils/safeUrl.js";
 import { parseInlineLinkParen } from "@/transformer/utils/linkDestination.js";
 import { findLinkLabelEnd, findLinkTextEnd } from "@/transformer/utils/linkLabel.js";
 import { flattenImageAlt, renderReferenceImage } from "@/transformer/utils/linkReference.js";
@@ -93,7 +94,7 @@ class ImageInlineParser extends BaseInlineParser {
     const alt = flattenImageAlt(node.children || []);
     const href = (node.props?.href as string) || "";
     const title = (node.props?.title as string) || "";
-    return `<img src="${escapeHtml(href)}" alt="${escapeHtml(alt)}"${htmlAttr("title", title)} />`;
+    return renderSafeImage(href, alt, title);
   }
 }
 

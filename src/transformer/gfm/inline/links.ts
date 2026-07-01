@@ -7,7 +7,7 @@
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
-import { escapeHtml, htmlAttr } from "@/transformer/utils/escape.js";
+import { renderSafeAnchor } from "@/transformer/utils/safeUrl.js";
 import { parseInlineLinkParen, scanFailedAngleInlineLinkEnd } from "@/transformer/utils/linkDestination.js";
 import {
   containsNestedLink,
@@ -115,7 +115,7 @@ class LinkInlineParser extends BaseInlineParser {
     const inner = ctx.renderInline(node.children);
     const href = (node.props?.href as string) || "";
     const title = (node.props?.title as string) || "";
-    return `<a href="${escapeHtml(href)}"${htmlAttr("title", title)}>${inner}</a>`;
+    return renderSafeAnchor(href, inner, title);
   }
 }
 

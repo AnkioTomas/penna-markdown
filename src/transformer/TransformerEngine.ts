@@ -75,7 +75,7 @@ export class TransformerEngine {
             }
 
         }
-        return this._withTrailingNewline(this._renderBlocks(ast.children ?? [], ctx));
+        return  this._withTrailingNewline(this._renderBlocks(ast.children ?? [], ctx));
     }
 
     _renderInline(nodes: MarkdownNode[], ctx: RenderContext): string {

@@ -8,6 +8,7 @@
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
+import { renderSafeAnchor } from "@/transformer/utils/safeUrl.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
 
@@ -224,7 +225,7 @@ class AutolinksInlineParser extends BaseInlineParser {
   render(node: MarkdownNode) {
     const url = (node.props?.url as string) || "";
     const label = (node.props?.label as string) || "";
-    return `<a href="${escapeHtml(url)}">${escapeHtml(label)}</a>`;
+    return renderSafeAnchor(url, escapeHtml(label));
   }
 }
 
