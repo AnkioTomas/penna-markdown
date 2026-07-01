@@ -3,12 +3,6 @@
  * @module transformer/extends/block/field/shared
  */
 
-/** 单字段块解析优先级（须高于 container） */
-export const FIELD_BLOCK_PRIORITY = 90;
-
-/** 字段组块解析优先级 */
-export const FIELD_GROUP_PRIORITY = 91;
-
 /**
  * @param {string[]} lines
  * @returns {{
@@ -26,7 +20,7 @@ export function parseFieldDirectives(lines) {
   let optional = false;
   let deprecated = false;
   let defaultValue = "";
-  const bodyLines = [];
+  const bodyLines: string[] = [];
 
   for (const line of lines) {
     const trimmed = line.trim();

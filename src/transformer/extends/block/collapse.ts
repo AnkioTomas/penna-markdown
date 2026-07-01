@@ -1,53 +1,27 @@
 /**
  * @file 块级语法拓展：折叠面板
  * @module transformer/extends/block/collapse
- *
- * ```
- * ::: collapse accordion expand
- * - 标题 1
- *
- *   正文内容
- *
- * - :+ 标题 2
- *
- *   正文内容
- * :::
- * ```
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
+import { blockLength } from "./card/shared.js";
 
-/** 折叠面板开标记行：`::: collapse` + 容器配置 */
 const OPEN_RE = /^ {0,3}:::(?!:)\s+collapse(?:\s+(.*))?$/;
-
-/** 折叠面板闭标记行：`:::` */
 const CLOSE_RE = /^ {0,3}:::\s*$/;
-
-/** 嵌套三冒号容器开标记（排除四冒号块） */
 const NESTED_OPEN_RE = /^ {0,3}:::(?!:)\s+\S/;
-
-/** 列表项标题行：`- 标题` / `- :+ 标题` / `- :- 标题` */
 const ITEM_HEAD_RE = /^ {0,3}-\s+(?::([+-])\s+)?(.+)$/;
 
-/** 全局折叠组序号，用于手风琴 `details name` */
 let collapseGroupSeq = 0;
 
-/**
- * @param {string} raw
- * @param {string} name
- * @returns {boolean}
- */
-function hasCollapseFlag(raw, name) {
+function hasCollapseFlag(raw: string, name: string): boolean {
   return new RegExp(`\\b${name}\\b`).test(String(raw ?? ""));
 }
 
-/**
- * @param {string} raw
- * @returns {{ accordion: boolean, expand: boolean }}
- */
-function parseCollapseContainer(raw) {
+function parseCollapseContainer(raw: string) {
   const attrs = String(raw ?? "").trim();
   const accordion = hasCollapseFlag(attrs, "accordion");
 
@@ -57,12 +31,10 @@ function parseCollapseContainer(raw) {
   };
 }
 
-/**
- * @param {{ accordion: boolean, expand: boolean }} container
- * @param {string} marker
- * @returns {boolean}
- */
-function resolveItemOpen(container, marker) {
+function resolveItemOpen(
+  container: { accordion: boolean; expand: boolean },
+  marker: string,
+): boolean {
   if (container.accordion) {
     return marker === "+";
   }
@@ -72,13 +44,11 @@ function resolveItemOpen(container, marker) {
   return marker === "+";
 }
 
-/**
- * @param {string[]} lines
- * @param {number} start
- * @returns {{ innerLines: string[], nextIndex: number } | null}
- */
-function readCollapseInnerLines(lines, start) {
-  const innerLines = [];
+function readCollapseInnerLines(
+  lines: string[],
+  start: number,
+): { innerLines: string[]; nextIndex: number } | null {
+  const innerLines: string[] = [];
   let depth = 0;
   let i = start;
 
@@ -106,13 +76,8 @@ function readCollapseInnerLines(lines, start) {
   return null;
 }
 
-/**
- * @param {string[]} lines
- * @returns {Array<{ marker: string, title: string, contentLines: string[] }>}
- */
-function parseCollapseSections(lines) {
-  /** @type {Array<{ marker: string, title: string, contentLines: string[] }>} */
-  const sections = [];
+function parseCollapseSections(lines: string[]) {
+  const sections: Array<{ marker: string; title: string; contentLines: string[] }> = [];
   let i = 0;
 
   while (i < lines.length) {
@@ -138,7 +103,7 @@ function parseCollapseSections(lines) {
       i += 1;
     }
 
-    const contentLines = [];
+    const contentLines: string[] = [];
     while (i < lines.length) {
       const line = lines[i] ?? "";
       if (ITEM_HEAD_RE.test(line)) break;
@@ -156,29 +121,22 @@ function parseCollapseSections(lines) {
   return sections;
 }
 
-/**
- * @param {import('@/transformer/core/MarkdownNode.js').MarkdownNode[][]} titleLineNodes
- * @param {import('@/transformer/core/ParserContext.js').RenderContext} ctx
- * @returns {string}
- */
-function renderCollapseTitle(titleLineNodes, ctx) {
+function renderCollapseTitle(titleLineNodes: MarkdownNode[][], ctx: RenderContext): string {
   const lines = titleLineNodes ?? [];
   if (lines.length === 0) return "";
   return lines.map((nodes) => ctx.renderInline(nodes)).join("<br>");
 }
 
-/**
- * 折叠面板块解析器。
- *
- * @extends {BaseBlockParser}
- */
 class CollapseBlockParser extends BaseBlockParser {
   constructor() {
-    super({ type: "collapse", priority: 88 });
+    super("collapse");
   }
 
-  /** @inheritdoc */
-  parse(lines, index, ctx) {
+  canOpenAt(lines: string[], index: number, _ctx: BlockParseContext): boolean {
+    return OPEN_RE.test(lines[index] ?? "");
+  }
+
+  parse(lines: string[], index: number, ctx: BlockParseContext) {
     const line = lines[index] ?? "";
     const open = line.match(OPEN_RE);
     if (!open) return null;
@@ -196,44 +154,56 @@ class CollapseBlockParser extends BaseBlockParser {
         .map((item) => item.trim())
         .filter(Boolean);
 
-      return createNode("collapse_item", {
-        open: resolveItemOpen(container, section.marker),
-        title: section.title,
-        titleLineNodes: titleLines.map((item) => ctx.parseInline(item)),
-        children: ctx.parseBlocks(normalizeInnerLines(section.contentLines)),
-      });
+      return createNode(
+        "collapse_item",
+        0,
+        undefined,
+        ctx.parseBlocks(normalizeInnerLines(section.contentLines)),
+        {
+          open: resolveItemOpen(container, section.marker),
+          title: section.title,
+          titleLineNodes: titleLines.map((item) => ctx.parseInline(item)),
+        },
+      );
     });
 
     return {
-      node: createNode(this.type, {
-        accordion: container.accordion,
-        expand: container.expand,
-        children: items,
-      }),
+      node: createNode(
+        this.type,
+        blockLength(lines, index, block.nextIndex),
+        undefined,
+        items,
+        {
+          accordion: container.accordion,
+          expand: container.expand,
+        },
+      ),
       nextIndex: block.nextIndex,
     };
   }
 
-  /** @inheritdoc */
-  render(node, ctx) {
+  render(node: MarkdownNode, ctx: RenderContext) {
     const items = node.children ?? [];
     if (items.length === 0) return "";
 
-    const accordion = Boolean(node.accordion);
+    const accordion = Boolean(node.props?.accordion);
+    const expand = Boolean(node.props?.expand);
     const groupName = accordion ? `cherry-collapse-${++collapseGroupSeq}` : "";
     const containerClasses = [
       "cherry-collapse",
       accordion ? "cherry-collapse--accordion" : "",
-      node.expand ? "cherry-collapse--expand" : "",
+      expand ? "cherry-collapse--expand" : "",
     ]
       .filter(Boolean)
       .join(" ");
 
     const parts = items.map((item) => {
-      const openAttr = item.open ? " open" : "";
+      const open = Boolean(item.props?.open);
+      const titleLineNodes = (item.props?.titleLineNodes as MarkdownNode[][] | undefined) ?? [];
+      const openAttr = open ? " open" : "";
       const nameAttr = groupName ? ` name="${groupName}"` : "";
-      const summary = renderCollapseTitle(item.titleLineNodes, ctx);
-      const body = ctx.renderBlock(item.children);
+      const summary = renderCollapseTitle(titleLineNodes, ctx);
+      const body = ctx.renderBlock(item.children ?? []);
 
       return [
         `<details${openAttr}${nameAttr}>`,

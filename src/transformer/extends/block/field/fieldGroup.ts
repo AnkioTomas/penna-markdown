@@ -1,33 +1,27 @@
 /**
  * @file 块级语法拓展：字段组
  * @module transformer/extends/block/field/fieldGroup
- *
- * ```
- * :::: field-group
- * ::: field theme
- * @type ThemeConfig
- * @required
- * 主题配置
- * :::
- * ::::
- * ```
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
-import { readQuadColonBlock } from "../card/shared.js";
-import { FIELD_GROUP_PRIORITY } from "./shared.js";
+import { blockLength, readQuadColonBlock } from "../card/shared.js";
 
 const OPEN_RE = /^ {0,3}::::(?!:)\s+field-group\s*$/;
 
 class FieldGroupBlockParser extends BaseBlockParser {
   constructor() {
-    super({ type: "field_group", priority: FIELD_GROUP_PRIORITY });
+    super("field_group");
   }
 
-  /** @inheritdoc */
-  parse(lines, index, ctx) {
+  canOpenAt(lines: string[], index: number, _ctx: BlockParseContext): boolean {
+    return OPEN_RE.test(lines[index] ?? "");
+  }
+
+  parse(lines: string[], index: number, ctx: BlockParseContext) {
     const block = readQuadColonBlock(lines, index, OPEN_RE);
     if (!block) return null;
 
@@ -36,13 +30,17 @@ class FieldGroupBlockParser extends BaseBlockParser {
     if (fields.length === 0) return null;
 
     return {
-      node: createNode(this.type, { children: fields }),
+      node: createNode(
+        this.type,
+        blockLength(lines, index, block.nextIndex),
+        undefined,
+        fields,
+      ),
       nextIndex: block.nextIndex,
     };
   }
 
-  /** @inheritdoc */
-  render(node, ctx) {
+  render(node: MarkdownNode, ctx: RenderContext) {
     const items = (node.children ?? [])
       .map((child) => ctx.renderBlock([child]))
       .join("");
