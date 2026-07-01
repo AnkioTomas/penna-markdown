@@ -2,41 +2,61 @@
  * @file 块级语法拓展：块级数学公式
  * @module transformer/extends/block/mathBlock
  *
- * 语法示例：
- * ```
- * $$
- * E = mc^2
- * $$
- * ```
- *
- * Cherry 扩展语法，使用 `$$` 围栏。
+ * 语法：`$$ ... $$`
+ * 远程渲染：https://math-api-delta.vercel.app
+ * 配置：`syntaxOptions.math_block`
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
-import { renderMathBlock } from "@/transformer/extends/utils/cherryApi.js";
+import { escapeHtml } from "@/transformer/utils/escape.js";
+
+/** 数学公式渲染 API 基址。 */
+export const MATH_API_HOST = "https://math-api-delta.vercel.app";
+
+/** `syntaxOptions.math_block` 可配置项 */
+export interface MathBlockOptions {
+  apiHost?: string;
+}
+
+export interface MathImageOptions {
+  apiHost?: string;
+  inline?: boolean;
+  color?: string;
+}
 
 /** 块级数学开标记行：`$$`（非 `$$$`） */
 const MATH_OPEN_RE = /^( {0,3})\$\$(?!\$)\s*(.*)$/;
 
-/**
- * 从行尾提取 `$$` 闭标记前的内容；无闭标记则返回 null。
- */
+function mathImgAttrs(latex: string, inline: boolean): string {
+  const alt = escapeHtml(latex);
+  const inlineAttr = inline ? ' data-inline="true"' : ' data-inline="false"';
+  return `class="cherry-math-latex" data-latex="${alt}"${inlineAttr} alt="${alt}"`;
+}
+
 function stripClosingMath(line: string): string | null {
   const match = line.match(/^(.*?)\s*\$\$\s*$/);
   if (!match || !line.includes("$$")) return null;
   return match[1];
 }
 
-/**
- * 块级数学公式解析器。
- *
- * @extends {BaseBlockParser}
- */
 class MathBlockParser extends BaseBlockParser {
   constructor() {
     super("math_block");
+  }
+
+  buildMathImageSrc(
+    content: string,
+    { apiHost, inline = false, color }: MathImageOptions = {},
+  ): string {
+    const latex = content.trim();
+    if (!latex) return "";
+    const host = apiHost ?? (this.getOptions() as MathBlockOptions).apiHost ?? MATH_API_HOST;
+    const param = inline ? "inline" : "from";
+    let url = `${host}/?${param}=${encodeURIComponent(latex)}`;
+    if (color) url += `&color=${encodeURIComponent(color)}`;
+    return url;
   }
 
   canOpenAt(lines: string[], index: number, _ctx: BlockParseContext): boolean {
@@ -89,9 +109,21 @@ class MathBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode) {
-    return renderMathBlock(node.value ?? "");
+    const latex = (node.value ?? "").trim();
+    const src = this.buildMathImageSrc(latex);
+    if (!src) return "";
+    return `<div class="cherry-math cherry-math-block" data-type="mathBlock"><img ${mathImgAttrs(latex, false)} src="${src}" loading="lazy" /></div>`;
   }
 }
 
-export default new MathBlockParser();
-export { renderMathBlock };
+const mathBlockParser = new MathBlockParser();
+
+export default mathBlockParser;
+
+/** 供 cherryTheme 等读取 `math_block` options 构建 URL。 */
+export function buildMathImageSrc(
+  content: string,
+  options: MathImageOptions = {},
+): string {
+  return mathBlockParser.buildMathImageSrc(content, options);
+}
