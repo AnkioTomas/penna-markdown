@@ -15,6 +15,16 @@ import { stripBlockquoteMarker } from "@/transformer/utils/tabs.js";
 
 const BLOCKQUOTE_LINE = /^( {0,3})>/;
 
+/** 在 blockquote 容器上下文中执行 fn（供 alert 等嵌套引用场景复用） */
+export function withBlockquoteFrame<T>(ctx: BlockParseContext, fn: () => T): T {
+    ctx.enterContainer();
+    try {
+        return fn();
+    } finally {
+        ctx.exitContainer();
+    }
+}
+
 /**
  * 引用块解析器。
  * * 采用游标遍历，移除正则，合并 marker 剥离操作以提升解析性能。
@@ -35,66 +45,58 @@ class BlockquoteBlockParser extends BaseBlockParser {
     parse(lines: string[], index: number, ctx: BlockParseContext) {
         const line = lines[index] ?? "";
         if (!BLOCKQUOTE_LINE.test(line)) return null;
-        let innerLines: string[] = [];
 
-        let length = 0;
+        return withBlockquoteFrame(ctx, () => {
+            let innerLines: string[] = [];
+            let length = 0;
+            let i = index;
 
-        let i = index;
+            while (i < lines.length) {
+                const ln = lines[i];
+                length += ln.length;
 
-        while (i < lines.length) {
-            const ln = lines[i];
-            length += ln.length;
-
-            // 无 > 前缀的空行始终结束引用块（GFM #220、#226）
-            if (isBlankString(ln)) {
-                i += 1;
-                break;
-            }
-
-            // --- 1. 当前行依然是引用块 ---
-            if (BLOCKQUOTE_LINE.test(ln)) {
-                const stripped = stripBlockquoteMarker(ln);
-
-                if (isBlankString(stripped)) {
-                    const next = lines[i + 1] ?? "";
-                    if (BLOCKQUOTE_LINE.test(next)) {
-                        innerLines.push("");
-                        i += 1;
-                        continue;
-                    }
+                if (isBlankString(ln)) {
                     i += 1;
                     break;
                 }
 
-                innerLines.push(stripped);
-                i += 1;
-                continue;
+                if (BLOCKQUOTE_LINE.test(ln)) {
+                    const stripped = stripBlockquoteMarker(ln);
+
+                    if (isBlankString(stripped)) {
+                        const next = lines[i + 1] ?? "";
+                        if (BLOCKQUOTE_LINE.test(next)) {
+                            innerLines.push("");
+                            i += 1;
+                            continue;
+                        }
+                        i += 1;
+                        break;
+                    }
+
+                    innerLines.push(stripped);
+                    i += 1;
+                    continue;
+                }
+
+                if (canGenericLazyContinue(
+                    ctx,
+                    normalizeInnerLines(innerLines),
+                    ln,
+                    (probeLines) => ctx.parseBlocks(probeLines)
+                )) {
+                    length += ln.length;
+                    innerLines.push(ln);
+                    i += 1;
+                    continue;
+                }
+
+                break;
             }
 
-            // --- 2. 遇阻时，调用通用惰性延续探针 ---
-            if (canGenericLazyContinue(
-                ctx,
-                normalizeInnerLines(innerLines),
-                ln,
-                // 传入当前上下文的解析能力
-                (probeLines) => ctx.parseBlocks(probeLines)
-            )) {
-                length += ln.length;
-                // 把未做任何剥离的原始行塞进去，供内层继续探测
-                innerLines.push(ln);
-                i += 1;
-                continue;
-            }
-
-            break;
-        }
-
-
-        ctx.markLinesInContainer(innerLines);
-
-        const node = createNode("blockquote", length, undefined, ctx.parseBlocks(innerLines));
-
-        return {node, nextIndex: i};
+            const node = createNode("blockquote", length, undefined, ctx.parseBlocks(innerLines));
+            return {node, nextIndex: i};
+        });
     }
 
     /** @inheritdoc */

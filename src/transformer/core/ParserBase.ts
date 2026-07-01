@@ -39,7 +39,7 @@ export abstract class BaseInlineParser {
         index: number,
         ctx: InlineParseContext,
     ): boolean {
-        return true;
+        return false;
     }
 
 

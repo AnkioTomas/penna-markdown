@@ -30,7 +30,7 @@ class SetextHeadingBlockParser extends BaseBlockParser {
   canOpenAt(lines: string[], index: number, ctx: BlockParseContext): boolean {
     let line = lines[index];
     if (isBlankString(line)) return false;
-    if (ctx.inContainer(lines, index)) return false;
+    if (ctx.inContainer()) return false;
 
     // 2. 抛出预读探针，往下扫！
     let i = index + 1;

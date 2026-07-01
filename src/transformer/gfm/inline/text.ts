@@ -27,14 +27,7 @@ class TextInlineParser extends BaseInlineParser {
         const chars: string[] = [];
         let i = index;
         for (; i < src.length;) {
-            const escaped = parseBackslash(src, i);
-            if (escaped) {
-                chars.push(escaped.value);
-                i = escaped.nextIndex;
-                continue;
-            }
-
-            if (ctx.canStrongBreak(src, i)) {
+            if (ctx.canOpenInlineAt(src, i)) {
                 // 高优先级解析器已失败：把当前定界符当字面量吃掉，继续批量收集
                 if (i === index) {
                     chars.push(src[i]);
@@ -43,6 +36,14 @@ class TextInlineParser extends BaseInlineParser {
                 }
                 break;
             }
+
+            const escaped = parseBackslash(src, i);
+            if (escaped) {
+                chars.push(escaped.value);
+                i = escaped.nextIndex;
+                continue;
+            }
+
             chars.push(src[i]);
             i++;
         }

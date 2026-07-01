@@ -11,6 +11,11 @@ class StrongInlineParser extends BaseInlineParser {
     super("strong", false);
   }
 
+  /** parse 由 emphasis 产出 strong 节点；不参与 canOpen 探测 */
+  canOpenAt(): boolean {
+    return false;
+  }
+
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: { renderInline(nodes?: MarkdownNode[]): string }) {
     return `<strong>${ctx.renderInline(node.children)}</strong>`;

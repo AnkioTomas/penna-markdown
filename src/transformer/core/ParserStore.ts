@@ -5,37 +5,25 @@
 
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
-import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 
 export type ParseFinalizer = (
   root: MarkdownNode,
   ctx: BlockParseContext,
 ) => MarkdownNode | void;
 
-export type RenderFinalizer = (
-  html: string,
-  ctx: RenderContext,
-) => string;
-
 export class ParserStore {
   lines: string[];
   private store: Record<string, unknown>;
   private finalizers: Record<string, ParseFinalizer>;
-  private renderFinalizers: Record<string, RenderFinalizer>;
 
   constructor(lines: string[]) {
     this.lines = lines;
     this.store = {};
     this.finalizers = {};
-    this.renderFinalizers = {};
   }
 
   registerFinalizer(name: string, fn: ParseFinalizer): void {
     this.finalizers[name] = fn;
-  }
-
-  registerRenderFinalizer(name: string, fn: RenderFinalizer): void {
-    this.renderFinalizers[name] = fn;
   }
 
   /**
@@ -47,14 +35,6 @@ export class ParserStore {
     for (const fn of Object.values(this.finalizers)) {
       const next = fn(result, ctx);
       if (next) result = next;
-    }
-    return result;
-  }
-
-  renderFinalize(html: string, ctx: RenderContext): string {
-    let result = html;
-    for (const fn of Object.values(this.renderFinalizers)) {
-      result = fn(result, ctx);
     }
     return result;
   }

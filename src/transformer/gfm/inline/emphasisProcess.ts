@@ -5,11 +5,59 @@
 
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { scanDelims } from "@/transformer/utils/flanking.js";
+import { parseBackslash } from "@/transformer/utils/escape.js";
+import type { InlineParseContext } from "@/transformer/core/context/InlineParseContext.js";
 
 export interface ScannedPart {
   start: number;
   end: number;
   node: MarkdownNode;
+}
+
+/** 将 src 拆分为 text / 强打断行内节点，供 emphasis 定界符匹配使用 */
+export function buildEmphasisLexParts(
+  src: string,
+  ctx: InlineParseContext,
+): ScannedPart[] {
+  const parts: ScannedPart[] = [];
+  let index = 0;
+
+  while (index < src.length) {
+    const skipped = ctx.parseInlineAt(src, index, true);
+    if (skipped) {
+      parts.push({
+        start: index,
+        end: skipped.nextIndex,
+        node: skipped.node,
+      });
+      index = skipped.nextIndex;
+      continue;
+    }
+
+    const escaped = parseBackslash(src, index);
+    if (escaped) {
+      parts.push({
+        start: index,
+        end: escaped.nextIndex,
+        node: createNode("text", escaped.nextIndex - index, escaped.value),
+      });
+      index = escaped.nextIndex;
+      continue;
+    }
+
+    let end = index + 1;
+    while (end < src.length && !ctx.parseInlineAt(src, end, true)) {
+      end += 1;
+    }
+    parts.push({
+      start: index,
+      end,
+      node: createNode("text", end - index, src.slice(index, end)),
+    });
+    index = end;
+  }
+
+  return parts;
 }
 
 interface Delimiter {

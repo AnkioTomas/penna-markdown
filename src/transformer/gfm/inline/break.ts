@@ -20,6 +20,20 @@ class BreakParser extends BaseInlineParser {
   }
 
   /** @inheritdoc */
+  canOpenAt(src: string, index: number): boolean {
+    if (src[index] === "\\" && src[index + 1] === "\n") return true;
+    if (src[index] === "\n") return true;
+    if (src[index] === " " || src[index] === "\t") {
+      let i = index;
+      while (i < src.length && (src[i] === " " || src[i] === "\t")) {
+        i += 1;
+      }
+      return i < src.length && src[i] === "\n";
+    }
+    return false;
+  }
+
+  /** @inheritdoc */
   parse(src: string, index: number, _ctx: any) {
     let i = index;
     let isHard = false;

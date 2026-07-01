@@ -8,7 +8,6 @@
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { InlineParseContext } from "@/transformer/core/context/InlineParseContext.js";
-import { parseBackslash } from "@/transformer/utils/escape.js";
 import { scanDelims } from "@/transformer/utils/flanking.js";
 import {
   collectEmphasisMatches,
@@ -18,48 +17,6 @@ import {
   parseEmphasisAt,
   type ScannedPart,
 } from "@/transformer/gfm/inline/emphasisProcess.js";
-
-function buildLexParts(src: string, ctx: InlineParseContext): ScannedPart[] {
-  const parts: ScannedPart[] = [];
-  let index = 0;
-
-  while (index < src.length) {
-    const skipped = ctx.parseInlineAt(src, index, true);
-    if (skipped) {
-      parts.push({
-        start: index,
-        end: skipped.nextIndex,
-        node: skipped.node,
-      });
-      index = skipped.nextIndex;
-      continue;
-    }
-
-    const escaped = parseBackslash(src, index);
-    if (escaped) {
-      parts.push({
-        start: index,
-        end: escaped.nextIndex,
-        node: createNode("text", escaped.nextIndex - index, escaped.value),
-      });
-      index = escaped.nextIndex;
-      continue;
-    }
-
-    let end = index + 1;
-    while (end < src.length && !ctx.parseInlineAt(src, end, true)) {
-      end += 1;
-    }
-    parts.push({
-      start: index,
-      end,
-      node: createNode("text", end - index, src.slice(index, end)),
-    });
-    index = end;
-  }
-
-  return parts;
-}
 
 function canOpenEmphasis(
   src: string,
@@ -86,13 +43,16 @@ class EmphasisInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {
-    const parts = buildLexParts(src, ctx);
+    const marker = src[index];
+    if (marker !== "*" && marker !== "_") return false;
+
+    const parts = ctx.getEmphasisLexParts(src);
     return canOpenEmphasis(src, index, parts);
   }
 
   /** @inheritdoc */
   parse(src: string, index: number, ctx: InlineParseContext) {
-    const parts = buildLexParts(src, ctx);
+    const parts = ctx.getEmphasisLexParts(src);
 
     const prefixLen = literalOpenerPrefixLen(src, index, parts);
     if (prefixLen > 0) {

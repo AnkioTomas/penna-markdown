@@ -8,11 +8,16 @@ import type { Registry } from "@/transformer/core/Registry.js";
 import { ParserStore } from "@/transformer/core/ParserStore.js";
 import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
 import type { InlineParseResult } from "@/transformer/core/ParserBase.js";
+import {
+  buildEmphasisLexParts,
+  type ScannedPart,
+} from "@/transformer/gfm/inline/emphasisProcess.js";
 
 export class InlineParseEngine {
   readonly registry: Registry;
   readonly store: ParserStore;
   readonly ctx: InlineParseContext;
+  private readonly emphasisLexCache = new Map<string, ScannedPart[]>();
 
   constructor(registry: Registry, store: ParserStore) {
     this.registry = registry;
@@ -29,6 +34,10 @@ export class InlineParseEngine {
         return that.canStrongBreak(src, index, strong);
       }
 
+      canOpenInlineAt(src: string, index: number): boolean {
+        return that.canOpenInlineAt(src, index);
+      }
+
       parseInlineAt(
         src: string,
         index: number,
@@ -36,12 +45,31 @@ export class InlineParseEngine {
       ): InlineParseResult | null {
         return that.parseInlineAt(src, index, strongBreak);
       }
+
+      getEmphasisLexParts(src: string): ScannedPart[] {
+        let cached = that.emphasisLexCache.get(src);
+        if (!cached) {
+          cached = buildEmphasisLexParts(src, that.ctx);
+          that.emphasisLexCache.set(src, cached);
+        }
+        return cached;
+      }
     })();
   }
 
   canStrongBreak(src: string, index: number, strong = true): boolean {
     for (const parser of this.registry.getInlineParsers()) {
       if (parser.strongBreak !== strong) continue;
+      if (parser.type === "text") continue;
+      if (parser.canOpenAt(src, index, this.ctx)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  canOpenInlineAt(src: string, index: number): boolean {
+    for (const parser of this.registry.getInlineParsers()) {
       if (parser.type === "text") continue;
       if (parser.canOpenAt(src, index, this.ctx)) {
         return true;
@@ -68,7 +96,10 @@ export class InlineParseEngine {
   }
 
   parse(src: string): MarkdownNode[] {
+    this.emphasisLexCache.clear();
+
     const parsers = this.registry.getInlineParsers();
+    const textParser = this.registry.getInlineParser("text");
     const nodes: MarkdownNode[] = [];
     let index = 0;
 
@@ -85,9 +116,12 @@ export class InlineParseEngine {
         break;
       }
 
-      if (!matched) {
-        index += 1;
-      }
+      if (matched) continue;
+
+      const fallback = textParser?.parse(src, index, this.ctx);
+      if (!fallback) break;
+      nodes.push(fallback.node);
+      index = fallback.nextIndex;
     }
 
     return nodes;
