@@ -9,14 +9,9 @@ import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
 import { RenderContext } from "@/transformer/core/context/RenderContext";
-import { isEscaped } from "@/transformer/utils/escape.js";
-import { renderMathInline } from "@/transformer/extends/utils/cherryApi.js";
+import { escapeHtml, isEscaped } from "@/transformer/utils/escape.js";
+import mathBlockParser from "@/transformer/extends/block/mathBlock.js";
 
-/**
- * 行内数学公式解析器。
- *
- * @extends {BaseInlineParser}
- */
 class MathInlineParser extends BaseInlineParser {
   constructor() {
     super("math_inline");
@@ -61,7 +56,12 @@ class MathInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode, _ctx: RenderContext) {
-    return renderMathInline(node.value ?? "");
+    const latex = (node.value ?? "").trim();
+    const src = mathBlockParser.buildMathImageSrc(latex, { inline: true });
+    if (!src) return "";
+    const alt = escapeHtml(latex);
+    const attrs = `class="cherry-math-latex" data-latex="${alt}" data-inline="true" alt="${alt}"`;
+    return `<span class="cherry-math cherry-math-inline" data-type="mathInline"><img ${attrs} src="${src}" loading="lazy" /></span>`;
   }
 }
 

@@ -159,7 +159,7 @@ function renderMediaHtml(
     ? "cherry-audio-player__cover cherry-audio-player__cover--image"
     : "cherry-audio-player__cover";
   const coverHtml = poster
-    ? `<img class="cherry-audio-player__cover-img" src="${escapeHtml(poster)}" alt="" />`
+    ? `<img class="cherry-audio-player__cover-img" src="${escapeHtml(poster)}" alt="" loading="lazy" />`
     : "";
 
   return [
