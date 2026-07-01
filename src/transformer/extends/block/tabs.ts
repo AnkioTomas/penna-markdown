@@ -161,20 +161,18 @@ class TabsBlockParser extends BaseBlockParser {
     if (tabs.length === 0) return "";
 
     const groupId = nextGroupId();
-    const inputs: string[] = [];
     const labels: string[] = [];
     const panels: string[] = [];
 
     tabs.forEach((tab, index) => {
-      const inputId = `${groupId}-${index}`;
       const active = Boolean(tab.props?.active);
       const titleNodes = (tab.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
       const checked = active ? " checked" : "";
-      inputs.push(
-        `<input type="radio" class="cherry-tabs__radio" name="${groupId}" id="${inputId}"${checked}>`,
-      );
       labels.push(
-        `<label class="cherry-tabs__label" for="${inputId}">${ctx.renderInline(titleNodes)}</label>`,
+        `<label class="cherry-tabs__label">` +
+          `<input type="radio" class="cherry-tabs__radio" name="${groupId}"${checked}>` +
+          `${ctx.renderInline(titleNodes)}` +
+          `</label>`,
       );
       panels.push(
         `<div class="cherry-tabs__panel">${ctx.renderBlock(tab.children ?? [])}</div>`,
@@ -183,7 +181,6 @@ class TabsBlockParser extends BaseBlockParser {
 
     return [
       `<div class="cherry-tabs">`,
-      inputs.join(""),
       `<div class="cherry-tabs__nav">${labels.join("")}</div>`,
       `<div class="cherry-tabs__panels">${panels.join("")}</div>`,
       "</div>",

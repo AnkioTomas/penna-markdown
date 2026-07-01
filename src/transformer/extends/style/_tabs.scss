@@ -9,6 +9,7 @@
     border-radius: rem(8);
     background: var(--cherry-c-bg-elevated);
     overflow: hidden;
+    overflow-anchor: none;
 
     &__radio {
       position: absolute;
@@ -33,6 +34,7 @@
     }
 
     &__label {
+      position: relative;
       flex: 0 0 auto;
       margin: 0;
       padding: rem(11) rem(14);
@@ -73,7 +75,7 @@
     }
 
     @for $i from 1 through $max-tabs {
-      &:has(.cherry-tabs__radio:nth-of-type(#{$i}):checked) {
+      &:has(> .cherry-tabs__nav > .cherry-tabs__label:nth-child(#{$i}) > .cherry-tabs__radio:checked) {
         .cherry-tabs__panels > .cherry-tabs__panel:nth-child(#{$i}) {
           display: block;
         }

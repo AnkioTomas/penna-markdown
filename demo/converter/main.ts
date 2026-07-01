@@ -1,4 +1,5 @@
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
+import { escapeHtml } from "@/transformer/utils/escape.js";
 import { requiredEl } from "../dom.js";
 import example from "../test.md?raw";
 
@@ -14,6 +15,18 @@ markdownInput.value = example;
 type ScrollLock = "markdown" | "preview" | null;
 
 let scrollLock: ScrollLock = null;
+let suppressScrollSync = 0;
+
+function isInsideTabs(target: EventTarget | null): boolean {
+  return target instanceof Element && target.closest(".cherry-tabs") !== null;
+}
+
+function pauseScrollSync(): void {
+  suppressScrollSync += 1;
+  window.setTimeout(() => {
+    suppressScrollSync -= 1;
+  }, 100);
+}
 
 function applyScrollRatio(from: HTMLElement, to: HTMLElement): void {
   const fromMax = from.scrollHeight - from.clientHeight;
@@ -23,18 +36,32 @@ function applyScrollRatio(from: HTMLElement, to: HTMLElement): void {
 }
 
 function syncPreviewFromInput(): void {
-  if (scrollLock === "preview") return;
+  if (scrollLock === "preview" || suppressScrollSync > 0) return;
   scrollLock = "markdown";
   applyScrollRatio(markdownInput, preview);
   scrollLock = null;
 }
 
 function syncInputFromPreview(): void {
-  if (scrollLock === "markdown") return;
+  if (scrollLock === "markdown" || suppressScrollSync > 0) return;
   scrollLock = "preview";
   applyScrollRatio(preview, markdownInput);
   scrollLock = null;
 }
+
+preview.addEventListener("mousedown", (e) => {
+  if (!isInsideTabs(e.target)) return;
+
+  const label = (e.target as Element).closest(".cherry-tabs__label");
+  if (!label) return;
+
+  // 阻止 radio focus 触发的 scrollIntoView，避免预览区跳动
+  e.preventDefault();
+  pauseScrollSync();
+
+  const radio = label.querySelector<HTMLInputElement>(".cherry-tabs__radio");
+  if (radio) radio.checked = true;
+});
 
 markdownInput.addEventListener("scroll", syncPreviewFromInput);
 preview.addEventListener("scroll", syncInputFromPreview);
