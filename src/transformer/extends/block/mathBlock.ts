@@ -13,7 +13,8 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { renderMathBlock } from "@/transformer/extends/utils/cherryApi.js";
 
 /** 块级数学开标记行：`$$`（非 `$$$`） */
@@ -21,11 +22,8 @@ const MATH_OPEN_RE = /^( {0,3})\$\$(?!\$)\s*(.*)$/;
 
 /**
  * 从行尾提取 `$$` 闭标记前的内容；无闭标记则返回 null。
- *
- * @param {string} line
- * @returns {string | null}
  */
-function stripClosingMath(line) {
+function stripClosingMath(line: string): string | null {
   const match = line.match(/^(.*?)\s*\$\$\s*$/);
   if (!match || !line.includes("$$")) return null;
   return match[1];
@@ -38,11 +36,15 @@ function stripClosingMath(line) {
  */
 class MathBlockParser extends BaseBlockParser {
   constructor() {
-    super({ type: "math_block", priority: 105 });
+    super("math_block");
+  }
+
+  canOpenAt(lines: string[], index: number, _ctx: BlockParseContext): boolean {
+    return MATH_OPEN_RE.test(lines[index] ?? "");
   }
 
   /** @inheritdoc */
-  parse(lines, index) {
+  parse(lines: string[], index: number, _ctx: BlockParseContext) {
     const line = lines[index] ?? "";
     const open = line.match(MATH_OPEN_RE);
     if (!open) return null;
@@ -51,31 +53,31 @@ class MathBlockParser extends BaseBlockParser {
     const sameLine = stripClosingMath(tail);
     if (sameLine !== null) {
       return {
-        node: createNode(this.type, { content: sameLine }),
+        node: createNode(this.type, 1, sameLine),
         nextIndex: index + 1,
       };
     }
 
-    const contentLines = [];
+    const contentLines: string[] = [];
     if (tail.trim()) contentLines.push(tail);
 
     let i = index + 1;
     while (i < lines.length) {
       const ln = lines[i];
       if (/^\s*\$\$\s*$/.test(ln)) {
-        const node = createNode(this.type, {
-          content: contentLines.join("\n"),
-        });
-        return { node, nextIndex: i + 1 };
+        return {
+          node: createNode(this.type, i + 1 - index, contentLines.join("\n")),
+          nextIndex: i + 1,
+        };
       }
 
       const partial = stripClosingMath(ln);
       if (partial !== null) {
         if (partial) contentLines.push(partial);
-        const node = createNode(this.type, {
-          content: contentLines.join("\n"),
-        });
-        return { node, nextIndex: i + 1 };
+        return {
+          node: createNode(this.type, i + 1 - index, contentLines.join("\n")),
+          nextIndex: i + 1,
+        };
       }
 
       contentLines.push(ln);
@@ -86,8 +88,8 @@ class MathBlockParser extends BaseBlockParser {
   }
 
   /** @inheritdoc */
-  render(node) {
-    return renderMathBlock(node.content ?? "");
+  render(node: MarkdownNode) {
+    return renderMathBlock(node.value ?? "");
   }
 }
 
