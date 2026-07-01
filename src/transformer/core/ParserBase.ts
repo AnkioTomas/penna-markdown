@@ -34,6 +34,10 @@ export abstract class BaseInlineParser {
         this.options = options;
     }
 
+    getOptions(): Record<string, any> {
+        return this.options;
+    }
+
     canOpenAt(
         src: string,
         index: number,
@@ -70,6 +74,10 @@ export abstract class BaseBlockParser {
 
     setOptions(options: Record<string, any>): void {
         this.options = options;
+    }
+
+    getOptions(): Record<string, any> {
+        return this.options;
     }
 
     /** 轻量级预检：是否可在 index 行开启本语法（禁止写入 store） */
