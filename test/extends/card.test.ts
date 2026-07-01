@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
+import { createEngine, renderMarkdown } from "../helpers/engine.js";
 
 function cardHtml(title, body, { link = "" } = {}) {
   const titleHtml = title ? `<p class="cherry-card__title">${title}</p>\n` : "";
@@ -10,7 +10,7 @@ function cardHtml(title, body, { link = "" } = {}) {
 }
 
 describe("extends/card", () => {
-  const engine = () => createEngineWithExtensions(["card"]);
+  const engine = () => createEngine();
 
   it("renders single card with title attribute", () => {
     const md = `::: card 标题
@@ -234,12 +234,12 @@ Official plugins and themes for VuePress2
     expect(html).toContain('<p class="cherry-card__title">卡片3</p>');
   });
 
-  it("is disabled without extension", () => {
+  it("renders image-card with title attribute syntax", () => {
     const md = `::: image-card title="标题"
 内容
 :::`;
-    const html = renderMarkdown(createEngine(), md);
-    expect(html).not.toContain('class="cherry-image-card"');
-    expect(html).toContain("::: image-card");
+    const html = renderMarkdown(engine(), md);
+    expect(html).toContain('class="cherry-image-card"');
+    expect(html).toContain("标题");
   });
 });

@@ -235,12 +235,9 @@
 
     &__line--highlighted {
       --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 14%, transparent);
-      --cb-line-border: color-mix(in srgb, var(--cherry-c-brand-1) 65%, transparent);
-
       margin: 0 rem(-16);
       padding: 0 rem(16);
       background: var(--cb-line-highlight);
-      border-left: rem(3) solid var(--cb-line-border);
     }
 
     [data-theme="dark"] & {

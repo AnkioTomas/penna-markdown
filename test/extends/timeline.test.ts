@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
+import { createEngine, renderMarkdown } from "../helpers/engine.js";
 
 describe("extends/timeline", () => {
-  const engine = () => createEngineWithExtensions(["timeline"]);
+  const engine = () => createEngine();
 
   const sample = `::: timeline
 - 节点一
@@ -107,12 +107,6 @@ describe("extends/timeline", () => {
 
   it("does not render as generic container", () => {
     const html = renderMarkdown(engine(), sample);
-    expect(html).not.toContain('cherry-alert--note');
-  });
-
-  it("is disabled without extension", () => {
-    const html = renderMarkdown(createEngine(), sample);
-    expect(html).not.toContain("cherry-timeline");
-    expect(html).toContain("节点一");
+    expect(html).not.toContain("cherry-alert--note");
   });
 });

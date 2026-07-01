@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
+import { createEngine, renderMarkdown } from "../helpers/engine.js";
 
 describe("extends/tabs", () => {
-  const engine = () => createEngineWithExtensions(["tabs"]);
+  const engine = () => createEngine();
 
   const sample = `::: tabs
 
@@ -80,18 +80,9 @@ console.log(1)
 @tab 其他
 正文
 :::`;
-    const html = renderMarkdown(createEngineWithExtensions(["tabs", "container"]), md);
+    const html = renderMarkdown(engine(), md);
     expect(html).toContain('<div class="cherry-alert cherry-alert--tip">');
     expect(html).toContain("<p>嵌套内容</p>");
     expect(html).toContain("<p>正文</p>");
-  });
-
-  it("is disabled without extension", () => {
-    const html = renderMarkdown(createEngine(), `::: tabs
-@tab A
-内容
-:::`);
-    expect(html).not.toContain("cherry-tabs");
-    expect(html).toContain("@tab A");
   });
 });

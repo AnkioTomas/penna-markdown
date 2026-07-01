@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
+import { createEngine, renderMarkdown } from "../helpers/engine.js";
 
 describe("extends/collapse", () => {
-  const engine = () => createEngineWithExtensions(["collapse"]);
+  const engine = () => createEngine();
 
   const sample = `::: collapse
 - 标题 1
@@ -122,12 +122,6 @@ describe("extends/collapse", () => {
 
   it("does not render as generic container", () => {
     const html = renderMarkdown(engine(), sample);
-    expect(html).not.toContain('cherry-alert--note');
-  });
-
-  it("is disabled without extension", () => {
-    const html = renderMarkdown(createEngine(), sample);
-    expect(html).not.toContain("cherry-collapse");
-    expect(html).toContain("标题 1");
+    expect(html).not.toContain("cherry-alert--note");
   });
 });

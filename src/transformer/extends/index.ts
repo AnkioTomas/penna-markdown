@@ -15,7 +15,10 @@ import spoilerInline from "@/transformer/extends/inline/spoiler.js";
 import mathInline from "@/transformer/extends/inline/math.js";
 import frontmatterVarInline from "@/transformer/extends/inline/frontmatterVar.js";
 import footnoteRefInline from "@/transformer/extends/inline/footnoteRef.js";
-import mediaInline from "@/transformer/extends/inline/media.js";
+import mediaInline, {
+  iframeBlockParser,
+  mediaBlockParser,
+} from "@/transformer/extends/inline/media.js";
 import inlineComment from "@/transformer/extends/inline/comment.js";
 import badgeInline from "@/transformer/extends/inline/badge.js";
 import { subInlineParser, supInlineParser } from "@/transformer/extends/inline/supsub.js";
@@ -25,15 +28,14 @@ import taskListParser from "@/transformer/extends/block/taskList.js";
 import mathBlockParser from "@/transformer/extends/block/mathBlock.js";
 import specialCodeParser from "@/transformer/extends/block/specialCode.js";
 import frontmatterBlock from "@/transformer/extends/block/frontmatter.js";
-import footnoteDefBlock from "@/transformer/extends/block/footnoteDef.js";
-import footnotesSection from "@/transformer/extends/block/footnotes.js";
+import footnoteDefBlock, {
+  footnotesSectionBlockParser,
+} from "@/transformer/extends/block/footnoteDef.js";
 import containerBlock from "@/transformer/extends/block/container.js";
 import tabsBlock from "@/transformer/extends/block/tabs.js";
 import stepsBlock from "@/transformer/extends/block/steps.js";
 import timelineBlock from "@/transformer/extends/block/timeline.js";
 import collapseBlock from "@/transformer/extends/block/collapse.js";
-import iframeBlock from "@/transformer/extends/block/iframe.js";
-import mediaBlock from "@/transformer/extends/block/media.js";
 import enhancedCodeParser from "@/transformer/extends/block/enhancedCode.js";
 import cardBlockParser from "@/transformer/extends/block/card/card.js";
 import { linkCardBlockParser } from "@/transformer/extends/block/card/linkCard.js";
@@ -47,6 +49,7 @@ import { fieldGroupBlockParser } from "@/transformer/extends/block/field/fieldGr
 /** 全部扩展行内语法 */
 export const extendInlineSyntax: Record<number, BaseInlineParser> = {
   230: frontmatterVarInline,
+  906: mathInline,
   905: subInlineParser,
   904: supInlineParser,
   49: highlightInline,
@@ -55,36 +58,34 @@ export const extendInlineSyntax: Record<number, BaseInlineParser> = {
   48: emojiInline,
   50: spoilerInline,
   55: inlineComment,
-/*  205: footnoteRefInline,
-  203: mediaInline,
-  202: mathInline,
-  */
+  235: footnoteRefInline,
+  231: mediaInline,
 };
 
 /** 全部扩展块级语法 */
 export const extendBlockSyntax: Record<number, BaseBlockParser> = {
   910: frontmatterBlock,
-/*  198: footnoteDefBlock,
-  197: footnotesSection,
+  905: mathBlockParser,
+  405: footnoteDefBlock,
+  1: footnotesSectionBlockParser,
+  84: iframeBlockParser,
+  83: mediaBlockParser,
+  510: alertBlock,
+  316: taskListParser,
   110: enhancedCodeParser,
   109: specialCodeParser,
-  108: mathBlockParser,
-  107: taskListParser,
+  87: containerBlock,
   96: cardMasonryBlockParser,
+  97: timelineBlock,
+  98: collapseBlock,
   95: cardGridBlockParser,
   94: repoCardBlockParser,
   93: imageCardBlockParser,
   92: linkCardBlockParser,
   91: cardBlockParser,
-  90: timelineBlock,
+  90: fieldBlockParser,
   89: stepsBlock,
   88: tabsBlock,
-  87: containerBlock,
-  86: alertBlock,
-  85: collapseBlock,
-  84: iframeBlock,
-  83: mediaBlock,
   82: fieldGroupBlockParser,
-  81: fieldBlockParser,*/
 };
 

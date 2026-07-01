@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
+import { createEngine, renderMarkdown } from "../helpers/engine.js";
 
 describe("extends/steps", () => {
-  const engine = () => createEngineWithExtensions(["steps", "container"]);
+  const engine = () => createEngine();
 
   const sample = `::: steps
 
@@ -39,7 +39,7 @@ console.log('Hello World!')
 
   it("renders markdown content inside each step", () => {
     const html = renderMarkdown(engine(), sample);
-    expect(html).toContain("<pre><code");
+    expect(html).toContain("cherry-code-block");
     expect(html).toContain("console.log('Hello World!')");
     expect(html).toContain("<p>这里是步骤 2 的相关内容</p>");
     expect(html).toContain('<div class="cherry-alert cherry-alert--tip">');
@@ -54,20 +54,8 @@ console.log('Hello World!')
 内容
 
 :::`);
-    expect(html).not.toContain('cherry-alert--note');
+    expect(html).not.toContain("cherry-alert--note");
     expect(html).toContain("cherry-steps");
-  });
-
-  it("is disabled without extension", () => {
-    const html = renderMarkdown(createEngine(), `::: steps
-
-1. 第一步
-
-内容
-
-:::`);
-    expect(html).not.toContain("cherry-steps");
-    expect(html).toContain("第一步");
   });
 
   it("returns null for empty steps block", () => {

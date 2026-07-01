@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
+import { createEngine, renderMarkdown } from "../helpers/engine.js";
 
 describe("extends/field", () => {
-  const engine = () =>
-    createEngineWithExtensions(["field", "badge", "html_attrs"]);
+  const engine = () => createEngine();
 
   const sample = `:::: field-group
 ::: field theme
@@ -73,12 +72,6 @@ describe("extends/field", () => {
 
   it("does not render as generic container", () => {
     const html = renderMarkdown(engine(), sample);
-    expect(html).not.toContain('cherry-alert--note');
-  });
-
-  it("is disabled without extension", () => {
-    const html = renderMarkdown(createEngine(), sample);
-    expect(html).not.toContain("cherry-field-group");
-    expect(html).toContain("@type ThemeConfig");
+    expect(html).not.toContain("cherry-alert--note");
   });
 });

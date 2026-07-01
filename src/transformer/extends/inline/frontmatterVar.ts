@@ -78,7 +78,8 @@ class FrontmatterVarInlineParser extends BaseInlineParser {
     const value = resolveFrontmatterVar(vars, varName);
     const formatted = formatFrontmatterValue(value);
 
-    return escapeHtml(formatted ?? (node.value ?? ""));
+    // 变量未定义：保留原始字面量 `[[name]]`，不要吞掉文本
+    return escapeHtml(formatted ?? (node.props?.raw as string) ?? node.value ?? "");
   }
 }
 
