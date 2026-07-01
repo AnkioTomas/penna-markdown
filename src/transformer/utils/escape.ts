@@ -60,6 +60,8 @@ export function parseBackslash(
   if (next === undefined) {
     return { value: "\\", nextIndex: index + 1 };
   }
+  // `\` + 换行 = hard line break，不是转义
+  if (next === "\n") return null;
   if (isEscapable(next)) {
     return { value: next, nextIndex: index + 2 };
   }
