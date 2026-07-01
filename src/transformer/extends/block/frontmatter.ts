@@ -68,7 +68,9 @@ class FrontmatterBlockParser extends BaseBlockParser {
 
     while (i < lines.length) {
       if (isFenceLine(lines[i])) {
-        ctx.store.set("frontMatter", parseFrontmatterYaml(contentLines.join("\n")));
+        const data = parseFrontmatterYaml(contentLines.join("\n"));
+        if (Object.keys(data).length === 0) return null;
+        ctx.store.set("frontMatter", data);
         return { nextIndex: i + 1 };
       }
       contentLines.push(lines[i]);
