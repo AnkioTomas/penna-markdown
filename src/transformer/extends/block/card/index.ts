@@ -9,16 +9,21 @@ import { imageCardBlockParser } from "./imageCard.js";
 import { repoCardBlockParser } from "./repoCard.js";
 import { cardGridBlockParser } from "./cardGrid.js";
 import { cardMasonryBlockParser } from "./cardMasonry.js";
+import type { BaseBlockParser } from "@/transformer/core/ParserBase.js";
+import type { SyntaxMap } from "@/transformer/utils/syntaxMap.js";
 
-/** 卡片扩展注册的全部块解析器（按优先级降序） */
-export const cardBlockParsers = [
-  cardMasonryBlockParser,
-  cardGridBlockParser,
-  repoCardBlockParser,
-  imageCardBlockParser,
-  linkCardBlockParser,
-  cardBlockParser,
-];
+/** 卡片扩展块级语法（priority 在表内定义） */
+export const cardBlockSyntax: SyntaxMap<BaseBlockParser> = {
+  96: cardMasonryBlockParser,
+  95: cardGridBlockParser,
+  94: repoCardBlockParser,
+  93: imageCardBlockParser,
+  92: linkCardBlockParser,
+  91: cardBlockParser,
+};
+
+/** @deprecated 使用 cardBlockSyntax */
+export const cardBlockParsers = Object.values(cardBlockSyntax);
 
 export {
   cardBlockParser,

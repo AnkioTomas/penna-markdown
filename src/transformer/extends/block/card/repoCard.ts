@@ -1,68 +1,54 @@
 /**
  * @file 块级语法拓展：仓库卡片
  * @module transformer/extends/block/card/repoCard
- *
- * ```
- * ::: repo-card vuepress/ecosystem
- * Official plugins and themes for VuePress2
- * :::
- * ```
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 import {
-  CARD_BLOCK_PRIORITY,
+  blockLength,
   parseRepoCardOpen,
   readTripleColonBlock,
 } from "./shared.js";
 
 const OPEN_RE = /^ {0,3}:::(?!:)\s+repo-card(?:\s+(.*))?\s*$/;
 
-/** shields.io 路径与链接配置（配色全部使用 shields 原生默认值） */
 const SHIELD_METRICS = {
   language: {
     path: "languages/top",
     label: "Primary language",
-    link: (repoBase) => `${repoBase}/graphs/languages`,
+    link: (repoBase: string) => `${repoBase}/graphs/languages`,
   },
   stars: {
     path: "stars",
     label: "Stars",
-    link: (repoBase) => `${repoBase}/stargazers`,
+    link: (repoBase: string) => `${repoBase}/stargazers`,
   },
   forks: {
     path: "forks",
     label: "Forks",
-    link: (repoBase) => `${repoBase}/forks`,
+    link: (repoBase: string) => `${repoBase}/forks`,
   },
   license: {
     path: "license",
     label: "License",
-    link: (repoBase) => `${repoBase}#readme`,
+    link: (repoBase: string) => `${repoBase}#readme`,
   },
-};
+} as const;
 
-/**
- * @param {string} repo
- * @param {keyof typeof SHIELD_METRICS} metric
- * @returns {string}
- */
-function shieldsRepoBadge(repo, metric) {
+type ShieldMetric = keyof typeof SHIELD_METRICS;
+
+function shieldsRepoBadge(repo: string, metric: ShieldMetric): string {
   const config = SHIELD_METRICS[metric];
   const slug = encodeURIComponent(repo);
   return `https://img.shields.io/github/${config.path}/${slug}?style=flat`;
 }
 
-/**
- * @param {string} repo
- * @param {keyof typeof SHIELD_METRICS} metric
- * @param {string} repoBase
- * @returns {string}
- */
-function renderRepoShield(repo, metric, repoBase) {
+function renderRepoShield(repo: string, metric: ShieldMetric, repoBase: string): string {
   const config = SHIELD_METRICS[metric];
   const src = shieldsRepoBadge(repo, metric);
   const alt = escapeHtml(config.label);
@@ -76,35 +62,40 @@ function renderRepoShield(repo, metric, repoBase) {
 
 class RepoCardBlockParser extends BaseBlockParser {
   constructor() {
-    super({ type: "repo_card", priority: CARD_BLOCK_PRIORITY });
+    super("repo_card");
   }
 
-  /** @inheritdoc */
-  parse(lines, index, ctx) {
+  canOpenAt(lines: string[], index: number, _ctx: BlockParseContext): boolean {
+    return OPEN_RE.test(lines[index] ?? "");
+  }
+
+  parse(lines: string[], index: number, ctx: BlockParseContext) {
     const block = readTripleColonBlock(lines, index, OPEN_RE);
     if (!block) return null;
 
     const { repo, link, visibility } = parseRepoCardOpen(block.attrs);
     if (!repo) return null;
 
+    const children = ctx.parseBlocks(normalizeInnerLines(block.innerLines));
+
     return {
-      node: createNode(this.type, {
-        repo,
-        link,
-        visibility,
-        children: ctx.parseBlocks(normalizeInnerLines(block.innerLines)),
-      }),
+      node: createNode(
+        this.type,
+        blockLength(lines, index, block.nextIndex),
+        undefined,
+        children,
+        { repo, link, visibility },
+      ),
       nextIndex: block.nextIndex,
     };
   }
 
-  /** @inheritdoc */
-  render(node, ctx) {
-    const repo = String(node.repo ?? "");
+  render(node: MarkdownNode, ctx: RenderContext) {
+    const repo = String(node.props?.repo ?? "");
     const href =
-      String(node.link ?? "") || (repo ? `https://github.com/${repo}` : "");
+      String(node.props?.link ?? "") || (repo ? `https://github.com/${repo}` : "");
     const repoBase = repo ? `https://github.com/${repo}` : "";
-    const visibility = String(node.visibility ?? "Public");
+    const visibility = String(node.props?.visibility ?? "Public");
     const bodyHtml = ctx.renderBlock(node.children ?? []);
 
     const descHtml = bodyHtml.trim()

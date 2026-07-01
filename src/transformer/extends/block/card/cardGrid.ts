@@ -1,18 +1,15 @@
 /**
  * @file 块级语法拓展：卡片网格
  * @module transformer/extends/block/card/cardGrid
- *
- * ```
- * :::: card-grid cols="2"
- * :::: card-grid cols="{ sm: 1, md: 2, lg: 3 }"
- * ```
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 import {
-  CARD_GRID_PRIORITY,
+  blockLength,
   pickAttr,
   readQuadColonBlock,
 } from "./shared.js";
@@ -22,22 +19,19 @@ const OPEN_RE = /^ {0,3}::::(?!:)\s+card-grid(?:\s+(.*))?\s*$/;
 const DEFAULT_GRID_COLS = { sm: 1, md: 2, lg: 2 };
 const MAX_GRID_COLS = 3;
 
-/**
- * @param {number | string} value
- * @param {number} fallback
- * @returns {number}
- */
-function clampGridCols(value, fallback) {
+interface GridCols {
+  sm: number;
+  md: number;
+  lg: number;
+}
+
+function clampGridCols(value: number | string, fallback: number): number {
   const n = Number.parseInt(String(value), 10);
   if (!Number.isFinite(n) || n < 1) return fallback;
   return Math.min(n, MAX_GRID_COLS);
 }
 
-/**
- * @param {string} raw
- * @returns {{ sm: number, md: number, lg: number }}
- */
-function parseGridCols(raw) {
+function parseGridCols(raw: string): GridCols {
   const trimmed = String(raw ?? "").trim();
   if (!trimmed) return { ...DEFAULT_GRID_COLS };
 
@@ -51,7 +45,7 @@ function parseGridCols(raw) {
       const json = trimmed
         .replace(/([{,]\s*)([A-Za-z_]\w*)\s*:/g, '$1"$2":')
         .replace(/'/g, '"');
-      const obj = JSON.parse(json);
+      const obj = JSON.parse(json) as Record<string, number>;
       return {
         sm: clampGridCols(obj.sm, DEFAULT_GRID_COLS.sm),
         md: clampGridCols(obj.md, DEFAULT_GRID_COLS.md),
@@ -65,21 +59,20 @@ function parseGridCols(raw) {
   return { ...DEFAULT_GRID_COLS };
 }
 
-/**
- * @param {{ sm: number, md: number, lg: number }} cols
- * @returns {string}
- */
-function renderGridStyle(cols) {
+function renderGridStyle(cols: GridCols): string {
   return ` style="--card-grid-cols-sm: ${cols.sm}; --card-grid-cols-md: ${cols.md}; --card-grid-cols-lg: ${cols.lg};"`;
 }
 
 class CardGridBlockParser extends BaseBlockParser {
   constructor() {
-    super({ type: "card_grid", priority: CARD_GRID_PRIORITY });
+    super("card_grid");
   }
 
-  /** @inheritdoc */
-  parse(lines, index, ctx) {
+  canOpenAt(lines: string[], index: number, _ctx: BlockParseContext): boolean {
+    return OPEN_RE.test(lines[index] ?? "");
+  }
+
+  parse(lines: string[], index: number, ctx: BlockParseContext) {
     const block = readQuadColonBlock(lines, index, OPEN_RE);
     if (!block) return null;
 
@@ -87,17 +80,19 @@ class CardGridBlockParser extends BaseBlockParser {
     if (children.length === 0) return null;
 
     return {
-      node: createNode(this.type, {
-        cols: parseGridCols(pickAttr(block.attrs, "cols")),
+      node: createNode(
+        this.type,
+        blockLength(lines, index, block.nextIndex),
+        undefined,
         children,
-      }),
+        { cols: parseGridCols(pickAttr(block.attrs, "cols")) },
+      ),
       nextIndex: block.nextIndex,
     };
   }
 
-  /** @inheritdoc */
-  render(node, ctx) {
-    const cols = node.cols ?? DEFAULT_GRID_COLS;
+  render(node: MarkdownNode, ctx: RenderContext) {
+    const cols = (node.props?.cols as GridCols | undefined) ?? DEFAULT_GRID_COLS;
     const items = (node.children ?? [])
       .map((child) => ctx.renderBlock([child]))
       .join("\n");

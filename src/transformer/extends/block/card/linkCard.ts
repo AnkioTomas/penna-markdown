@@ -1,21 +1,16 @@
 /**
  * @file 块级语法拓展：链接卡片
  * @module transformer/extends/block/card/linkCard
- *
- * ```
- * ::: link-card 文档 link="https://example.com"
- * ::: link-card 文档 link="https://example.com" icon="https://example.com/icon.png"
- * 内容
- * :::
- * ```
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 import {
-  CARD_BLOCK_PRIORITY,
+  blockLength,
   parseLinkCardOpen,
   readTripleColonBlock,
 } from "./shared.js";
@@ -24,32 +19,37 @@ const OPEN_RE = /^ {0,3}:::(?!:)\s+link-card(?:\s+(.*))?\s*$/;
 
 class LinkCardBlockParser extends BaseBlockParser {
   constructor() {
-    super({ type: "link_card", priority: CARD_BLOCK_PRIORITY });
+    super("link_card");
   }
 
-  /** @inheritdoc */
-  parse(lines, index, ctx) {
+  canOpenAt(lines: string[], index: number, _ctx: BlockParseContext): boolean {
+    return OPEN_RE.test(lines[index] ?? "");
+  }
+
+  parse(lines: string[], index: number, ctx: BlockParseContext) {
     const block = readTripleColonBlock(lines, index, OPEN_RE);
     if (!block) return null;
 
     const { title, titleNodes, link, icon } = parseLinkCardOpen(block.attrs, ctx);
+    const children = ctx.parseBlocks(normalizeInnerLines(block.innerLines));
 
     return {
-      node: createNode(this.type, {
-        title,
-        titleNodes,
-        link,
-        icon,
-        children: ctx.parseBlocks(normalizeInnerLines(block.innerLines)),
-      }),
+      node: createNode(
+        this.type,
+        blockLength(lines, index, block.nextIndex),
+        undefined,
+        children,
+        { title, titleNodes, link, icon },
+      ),
       nextIndex: block.nextIndex,
     };
   }
 
-  /** @inheritdoc */
-  render(node, ctx) {
-    const link = String(node.link ?? "");
-    const icon = String(node.icon ?? "");
+  render(node: MarkdownNode, ctx: RenderContext) {
+    const link = String(node.props?.link ?? "");
+    const icon = String(node.props?.icon ?? "");
+    const title = String(node.props?.title ?? "");
+    const titleNodes = (node.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
     const body = ctx.renderBlock(node.children ?? []);
     const href = link
       ? ` href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer"`
@@ -72,9 +72,9 @@ class LinkCardBlockParser extends BaseBlockParser {
       );
     }
 
-    if (node.title) {
+    if (title) {
       parts.push(
-        `<p class="cherry-card__title">${ctx.renderInline(node.titleNodes)}</p>`,
+        `<p class="cherry-card__title">${ctx.renderInline(titleNodes)}</p>`,
       );
     }
     if (body) {
