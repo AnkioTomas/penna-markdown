@@ -16,7 +16,9 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 
 /** 选项卡开标记行：`::: tabs` */
@@ -34,15 +36,19 @@ const TAB_HEAD_RE = /^@tab(:active)?(?:\s+(.*))?$/;
 /** 全局选项卡组序号，用于生成唯一 radio name / id */
 let tabGroupSeq = 0;
 
-/**
- * 读取选项卡块内部行，正确处理嵌套 `:::` 容器。
- *
- * @param {string[]} lines
- * @param {number} start
- * @returns {{ innerLines: string[], nextIndex: number } | null}
- */
-function readTabsInnerLines(lines, start) {
-  const innerLines = [];
+function blockLength(lines: string[], start: number, end: number): number {
+  let length = 0;
+  for (let i = start; i < end; i++) {
+    length += lines[i]?.length ?? 0;
+  }
+  return length;
+}
+
+function readTabsInnerLines(
+  lines: string[],
+  start: number,
+): { innerLines: string[]; nextIndex: number } | null {
+  const innerLines: string[] = [];
   let depth = 0;
   let i = start;
 
@@ -70,15 +76,9 @@ function readTabsInnerLines(lines, start) {
   return null;
 }
 
-/**
- * 将内部行拆分为多个选项卡段。
- *
- * @param {string[]} lines
- * @returns {Array<{ active: boolean, title: string, contentLines: string[] }>}
- */
-function parseTabSections(lines) {
-  const sections = [];
-  let current = null;
+function parseTabSections(lines: string[]) {
+  const sections: Array<{ active: boolean; title: string; contentLines: string[] }> = [];
+  let current: { active: boolean; title: string; contentLines: string[] } | null = null;
 
   for (const line of lines) {
     const trimmed = line.trim();
@@ -99,39 +99,26 @@ function parseTabSections(lines) {
   return sections;
 }
 
-/**
- * 确定默认激活的选项卡索引。
- *
- * @param {Array<{ active: boolean }>} tabs
- * @returns {number}
- */
-function resolveActiveIndex(tabs) {
+function resolveActiveIndex(tabs: Array<{ active: boolean }>): number {
   const marked = tabs.findIndex((tab) => tab.active);
   return marked === -1 ? 0 : marked;
 }
 
-/**
- * 生成下一个选项卡组 id 前缀。
- *
- * @returns {string}
- */
-function nextGroupId() {
+function nextGroupId(): string {
   tabGroupSeq += 1;
   return `cherry-tabs-${tabGroupSeq}`;
 }
 
-/**
- * 选项卡块解析器。
- *
- * @extends {BaseBlockParser}
- */
 class TabsBlockParser extends BaseBlockParser {
   constructor() {
-    super({ type: "tabs", priority: 87 });
+    super("tabs");
   }
 
-  /** @inheritdoc */
-  parse(lines, index, ctx) {
+  canOpenAt(lines: string[], index: number, _ctx: BlockParseContext): boolean {
+    return OPEN_RE.test(lines[index] ?? "");
+  }
+
+  parse(lines: string[], index: number, ctx: BlockParseContext) {
     const line = lines[index] ?? "";
     if (!OPEN_RE.test(line)) return null;
 
@@ -144,43 +131,53 @@ class TabsBlockParser extends BaseBlockParser {
     const activeIndex = resolveActiveIndex(sections);
     const tabs = sections.map((section, tabIndex) => {
       const innerChildren = ctx.parseBlocks(normalizeInnerLines(section.contentLines));
-      return createNode("tab_item", {
-        active: tabIndex === activeIndex,
-        title: section.title,
-        titleNodes: section.title
-          ? ctx.parseInline(section.title)
-          : [],
-        children: innerChildren,
-      });
+      const titleNodes = section.title ? ctx.parseInline(section.title) : [];
+      return createNode(
+        "tab_item",
+        0,
+        undefined,
+        innerChildren,
+        {
+          active: tabIndex === activeIndex,
+          title: section.title,
+          titleNodes,
+        },
+      );
     });
 
     return {
-      node: createNode(this.type, { children: tabs }),
+      node: createNode(
+        this.type,
+        blockLength(lines, index, block.nextIndex),
+        undefined,
+        tabs,
+      ),
       nextIndex: block.nextIndex,
     };
   }
 
-  /** @inheritdoc */
-  render(node, ctx) {
+  render(node: MarkdownNode, ctx: RenderContext) {
     const tabs = node.children ?? [];
     if (tabs.length === 0) return "";
 
     const groupId = nextGroupId();
-    const inputs = [];
-    const labels = [];
-    const panels = [];
+    const inputs: string[] = [];
+    const labels: string[] = [];
+    const panels: string[] = [];
 
     tabs.forEach((tab, index) => {
       const inputId = `${groupId}-${index}`;
-      const checked = tab.active ? " checked" : "";
+      const active = Boolean(tab.props?.active);
+      const titleNodes = (tab.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
+      const checked = active ? " checked" : "";
       inputs.push(
         `<input type="radio" class="cherry-tabs__radio" name="${groupId}" id="${inputId}"${checked}>`,
       );
       labels.push(
-        `<label class="cherry-tabs__label" for="${inputId}">${ctx.renderInline(tab.titleNodes)}</label>`,
+        `<label class="cherry-tabs__label" for="${inputId}">${ctx.renderInline(titleNodes)}</label>`,
       );
       panels.push(
-        `<div class="cherry-tabs__panel">${ctx.renderBlock(tab.children)}</div>`,
+        `<div class="cherry-tabs__panel">${ctx.renderBlock(tab.children ?? [])}</div>`,
       );
     });
 
