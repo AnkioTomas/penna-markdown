@@ -34,16 +34,10 @@
 @use "../extends/style/footnote";
 @use "../extends/style/code-block";
 
-// 主题类与 .cherry 同级：作为直接包裹层，token 只注入 .cherry 及其子树
-.cherry-theme-default .cherry {
+// 默认主题：日间 .cherry-theme-default .cherry-render
+.cherry-theme-default .cherry-render {
   @include tokens.theme-default;
-}
 
-.cherry-dark .cherry {
-  @include tokens.theme-dark;
-}
-
-.cherry {
   @include base.styles;
   @include heading.styles;
   @include paragraph.styles;
@@ -76,4 +70,9 @@
   @include math.styles;
   @include footnote.styles;
   @include code-block.styles;
+}
+
+// 夜间模式：.cherry-dark .cherry-theme-default .cherry-render
+.cherry-dark .cherry-theme-default .cherry-render {
+  @include tokens.theme-dark;
 }
