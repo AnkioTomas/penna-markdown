@@ -1,0 +1,166 @@
+@use "../../../transformer/style/rem" as *;
+
+// Claude 排版差异：在 transformer 默认结构之上做最小覆盖
+@mixin styles {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    padding-bottom: 0;
+    border-bottom: 0;
+    font-weight: 700;
+  }
+
+  h1 {
+    font-size: rem(22);
+    line-height: rem(26.4);
+    margin: rem(12) 0 rem(-4);
+  }
+
+  h2 {
+    font-size: rem(18);
+    line-height: rem(26.4);
+    margin: rem(12) 0 rem(-4);
+  }
+
+  h3,
+  h4 {
+    font-size: rem(16);
+    line-height: rem(24);
+    margin: rem(8) 0 rem(-4);
+  }
+
+  h5,
+  h6 {
+    font-size: rem(14);
+    line-height: rem(20);
+    margin: rem(8) 0 rem(-4);
+    font-weight: 600;
+  }
+
+  strong {
+    font-weight: 700;
+  }
+
+  a {
+    color: var(--cherry-c-text-1);
+    text-decoration-color: var(--cherry-c-text-1);
+    text-underline-offset: rem(2);
+
+    &:hover {
+      color: var(--cherry-c-brand-1);
+      text-decoration-color: var(--cherry-c-brand-1);
+    }
+  }
+
+  blockquote {
+    margin-left: rem(8);
+    padding-left: rem(8);
+    color: var(--cherry-c-text-2);
+    border-left-color: var(--cherry-c-blockquote-border);
+  }
+
+  hr {
+    border: 0;
+    border-top: rem(1) solid var(--cherry-c-hr-color);
+    margin: rem(12) rem(6);
+  }
+
+  :not(pre) > code {
+    font-family: var(--claude-font-mono);
+    color: var(--cherry-c-code-inline-fg);
+    background: var(--cherry-c-code-inline-bg);
+    border-color: var(--cherry-c-code-inline-border);
+    border-radius: rem(6.4);
+    font-size: rem(14.4);
+  }
+
+  pre {
+    background: color-mix(in srgb, var(--cherry-c-bg) 50%, var(--cherry-c-contrast-light));
+    border-color: var(--cherry-c-code-inline-border);
+    border-radius: rem(8);
+  }
+
+  table {
+    th,
+    td {
+      border-left: 0;
+      border-right: 0;
+      border-top: 0;
+      border-bottom: rem(0.5) solid var(--cherry-c-table-td-border);
+      padding: rem(8) rem(16) rem(8) rem(1);
+      font-size: rem(14);
+      line-height: 1.7;
+    }
+
+    th {
+      border-bottom-color: var(--cherry-c-table-th-border);
+      font-weight: 700;
+    }
+
+    thead {
+      border-bottom: rem(0.5) solid var(--cherry-c-table-th-border);
+    }
+  }
+
+  .cherry-mark {
+    background-color: transparent;
+    background-image: none;
+    text-decoration: underline wavy var(--cherry-c-brand-mark);
+    text-underline-offset: rem(3);
+  }
+
+  .cherry-alert {
+    border-left-width: rem(3);
+    box-shadow: 0 rem(12) rem(28) -26px color-mix(in srgb, var(--cherry-c-text-1) 12%, transparent);
+    background:
+      linear-gradient(180deg, var(--alert-bg), color-mix(in srgb, var(--alert-bg) 40%, transparent)),
+      linear-gradient(90deg, color-mix(in srgb, var(--alert-text) 10%, transparent), transparent 32%);
+  }
+
+  .cherry-code-block {
+    --cb-lang-fg: var(--cherry-c-text-3);
+    --cb-lang-bg: transparent;
+    --cb-radius: #{rem(8)};
+
+    &__lang {
+      text-transform: lowercase;
+      letter-spacing: 0;
+      font-family: var(--claude-font-sans);
+      font-weight: 430;
+      font-size: rem(12);
+      border-radius: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+    &__header {
+      min-height: rem(44);
+      padding-top: rem(14);
+    }
+
+    &__pre,
+    &__panel > pre {
+      font-family: var(--claude-font-mono);
+    }
+  }
+
+  sup.cherry-footnote-ref {
+    font-family: var(--claude-font-sans);
+    font-size: 0.52em;
+    font-weight: 500;
+    top: -1.2em;
+    position: relative;
+
+    a {
+      color: var(--cherry-c-brand-1);
+
+      &:hover {
+        text-decoration: none;
+        opacity: 0.85;
+      }
+    }
+  }
+}
