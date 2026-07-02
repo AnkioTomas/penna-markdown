@@ -1,5 +1,5 @@
 @charset "UTF-8";
-/** Claude 主题渲染样式（结构对齐 src/transformer/style/style.scss） */
+/** Claude 主题渲染样式（结构对齐 src/theme/themes/default/render.scss） */
 .cherry-theme-claude .cherry-render {
   --cherry-c-brand-1: #d97757;
   --cherry-c-brand-2: #e6987d;

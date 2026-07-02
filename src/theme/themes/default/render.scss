@@ -1,6 +1,5 @@
-/** Claude 主题渲染样式（结构对齐 src/theme/themes/default/render.scss） */
-@use "tokens";
-@use "overrides";
+/** default 主题渲染样式 */
+@use "../../../transformer/style/tokens";
 
 @use "../../../transformer/gfm/style/base";
 @use "../../../transformer/gfm/style/heading";
@@ -35,9 +34,9 @@
 @use "../../../transformer/extends/style/footnote";
 @use "../../../transformer/extends/style/code-block";
 
-// 日间：.cherry-theme-claude .cherry-render
-.cherry-theme-claude .cherry-render {
-  @include tokens.theme-light;
+// 默认主题：日间 .cherry-theme-default .cherry-render
+.cherry-theme-default .cherry-render {
+  @include tokens.theme-default;
 
   @include base.styles;
   @include heading.styles;
@@ -71,11 +70,9 @@
   @include math.styles;
   @include footnote.styles;
   @include code-block.styles;
-
-  @include overrides.styles;
 }
 
-// 夜间：.cherry-dark .cherry-theme-claude .cherry-render
-.cherry-dark .cherry-theme-claude .cherry-render {
+// 夜间模式：.cherry-dark .cherry-theme-default .cherry-render
+.cherry-dark .cherry-theme-default .cherry-render {
   @include tokens.theme-dark;
 }
