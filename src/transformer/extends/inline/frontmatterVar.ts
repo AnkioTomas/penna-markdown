@@ -37,12 +37,21 @@ function resolveFrontmatterVar(
 }
 
 /**
- * 将 frontmatter 变量值格式化为可插入 Markdown 的字符串。
+ * 将 frontmatter 变量值格式化为可插入 HTML 的字符串。
+ *
+ * - 字符串数组 → 逗号分隔（如 tags）
+ * - 纯对象 → JSON（仅用于调试，路径应写到具体字段）
  */
 function formatFrontmatterValue(value: unknown): string | null {
   if (value === null || value === undefined) return null;
   if (typeof value === "string") return value;
   if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (Array.isArray(value)) {
+    const items = value
+      .map((item) => formatFrontmatterValue(item))
+      .filter((item): item is string => item !== null && item !== "");
+    return items.length > 0 ? items.join(", ") : "";
+  }
   if (typeof value === "object") return JSON.stringify(value);
   return String(value);
 }
