@@ -7,6 +7,7 @@
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import codeParser from "@/transformer/gfm/block/code.js";
 import specialCodeParser from "@/transformer/extends/block/specialCode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
@@ -466,11 +467,11 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
     return `<div class="cherry-code-block"${titleAttr}${langData}>${panel}</div>`;
   }
 
-  render(node: MarkdownNode) {
+  render(node: MarkdownNode, ctx: RenderContext) {
     const lang = String(node.props?.lang ?? "").trim().toLowerCase();
     if (!lang) return codeParser.render(node);
     if (SPECIAL_LANGS.has(lang)) {
-      return specialCodeParser.render(node);
+      return specialCodeParser.render(node, ctx);
     }
     return this.renderEnhancedHtml(node);
   }
