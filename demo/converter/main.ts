@@ -3,7 +3,9 @@ import { requiredEl } from "../dom.js";
 // @ts-ignore
 import example from "../test.md?raw";
 
-let dark = localStorage.getItem("cherry-converter-theme") === "dark";
+const THEME_KEY = "cherry-converter-theme";
+
+let dark = localStorage.getItem(THEME_KEY) === "dark";
 const transformer = new TransformerEngine({ isDark: dark });
 
 const markdownInput = requiredEl<HTMLTextAreaElement>("#markdown");
@@ -13,35 +15,38 @@ const resetBtn = requiredEl<HTMLButtonElement>("#reset-btn");
 const themeBtn = requiredEl<HTMLButtonElement>("#theme-btn");
 const timing = requiredEl<HTMLElement>("#timing");
 
-const THEME_KEY = "cherry-converter-theme";
-
 markdownInput.value = example;
 
-function syncThemeButton(): void {
-  themeBtn.textContent = dark ? "白天模式" : "夜间模式";
-  themeBtn.setAttribute("aria-pressed", dark ? "true" : "false");
-}
-
-function applyTheme(nextDark: boolean): void {
+function setTheme(nextDark: boolean): void {
   dark = nextDark;
   transformer.isDark = dark;
   previewWrap.classList.toggle("cherry-dark", dark);
-  previewWrap.classList.toggle("cherry-theme-default", !dark);
   document.body.classList.toggle("demo-dark", dark);
   localStorage.setItem(THEME_KEY, dark ? "dark" : "light");
-  syncThemeButton();
-  renderNow();
+  themeBtn.textContent = dark ? "白天模式" : "夜间模式";
+  themeBtn.setAttribute("aria-pressed", String(dark));
 }
 
-function initTheme(): void {
-  applyTheme(dark);
+function renderNow(): void {
+  const md = markdownInput.value;
+  const start = performance.now();
+
+  try {
+    preview.innerHTML = transformer.render(transformer.parse(md));
+    timing.textContent = `${(performance.now() - start).toFixed(2)} ms`;
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    preview.innerHTML = `<p class="converter-error">解析错误：${message}</p>`;
+    timing.textContent = "— ms";
+  }
+
+  syncPreviewFromInput();
 }
 
 themeBtn.addEventListener("click", () => {
-  applyTheme(!dark);
+  setTheme(!dark);
+  renderNow();
 });
-
-initTheme();
 
 type ScrollLock = "markdown" | "preview" | null;
 
@@ -96,22 +101,6 @@ preview.addEventListener("mousedown", (e) => {
 markdownInput.addEventListener("scroll", syncPreviewFromInput);
 previewWrap.addEventListener("scroll", syncInputFromPreview);
 
-function renderNow(): void {
-  const md = markdownInput.value;
-  const start = performance.now();
-
-  try {
-    preview.innerHTML = transformer.render(transformer.parse(md));
-    timing.textContent = `${(performance.now() - start).toFixed(2)} ms`;
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
-    preview.innerHTML = `<p class="converter-error">解析错误：${message}</p>`;
-    timing.textContent = "— ms";
-  }
-
-  syncPreviewFromInput();
-}
-
 let t = 0;
 markdownInput.addEventListener("input", () => {
   window.clearTimeout(t);
@@ -123,4 +112,5 @@ resetBtn.addEventListener("click", () => {
   renderNow();
 });
 
+setTheme(dark);
 renderNow();
