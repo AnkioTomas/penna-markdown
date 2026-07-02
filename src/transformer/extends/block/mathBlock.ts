@@ -121,11 +121,3 @@ class MathBlockParser extends BaseBlockParser {
 const mathBlockParser = new MathBlockParser();
 
 export default mathBlockParser;
-
-/** 供 cherryTheme 等读取 `math_block` options 构建 URL。 */
-export function buildMathImageSrc(
-  content: string,
-  options: MathImageOptions = {},
-): string {
-  return mathBlockParser.buildMathImageSrc(content, options);
-}

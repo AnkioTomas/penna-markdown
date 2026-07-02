@@ -2,8 +2,9 @@
  * @file 块级语法拓展：增强围栏代码块
  * @module transformer/extends/block/enhancedCode
  *
- * 解析 info string、行高亮、折叠、逐行 HTML 与顶栏渲染，均在本模块内完成。
- * 语法高亮由 renderer hydrate 后处理，本模块只输出纯文本行结构。
+ * 解析 info string、行高亮、折叠与顶栏渲染。
+ * 代码体保持完整 `<code>` 文本；行号用旁路 gutter，行高亮用 CSS 渐变。
+ * 语法高亮由 renderer hydrate 后处理。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
@@ -14,6 +15,7 @@ import specialCodeParser from "@/transformer/extends/block/specialCode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { unescapeHref } from "@/transformer/utils/linkDestination.js";
 import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
+import { encodeBase64Utf8 } from "@/transformer/utils/base64.js";
 
 const SPECIAL_LANGS = new Set(["echarts", "mermaid", "graph"]);
 
@@ -70,6 +72,48 @@ export function formatHighlightLinesAttr(lines: number[]): string {
   return lines.join(",");
 }
 
+export function buildLineHighlightRanges(
+  lines: number[],
+): Array<{ start: number; end: number }> {
+  if (lines.length === 0) return [];
+  const sorted = [...lines].sort((a, b) => a - b);
+  const ranges: Array<{ start: number; end: number }> = [];
+  let start = sorted[0]!;
+  let end = sorted[0]!;
+  for (let i = 1; i < sorted.length; i += 1) {
+    const line = sorted[i]!;
+    if (line === end + 1) {
+      end = line;
+    } else {
+      ranges.push({ start, end });
+      start = line;
+      end = line;
+    }
+  }
+  ranges.push({ start, end });
+  return ranges;
+}
+
+/** 生成行高亮背景渐变（配合 `--cb-line-step` / `--cb-body-pad-y` 使用） */
+export function buildLineHighlightGradient(highlightLines: number[]): string {
+  const ranges = buildLineHighlightRanges(highlightLines);
+  if (ranges.length === 0) return "";
+
+  const step = "var(--cb-line-step)";
+  const offset = "var(--cb-body-pad-y, 0px)";
+  const color = "var(--cb-line-highlight)";
+  const stops = [`transparent ${offset}`];
+
+  for (const { start, end } of ranges) {
+    stops.push(`transparent calc(${offset} + (${start} - 1) * ${step})`);
+    stops.push(`${color} calc(${offset} + (${start} - 1) * ${step})`);
+    stops.push(`${color} calc(${offset} + ${end} * ${step})`);
+    stops.push(`transparent calc(${offset} + ${end} * ${step})`);
+  }
+
+  return `linear-gradient(to bottom,${stops.join(",")})`;
+}
+
 // --- 折叠分析 ---
 
 export function isCollapseMarkerLine(line: string): boolean {
@@ -115,13 +159,59 @@ export function analyzeCollapsedCode(
   };
 }
 
-export function isFoldedCodeLine(analysis: CollapsedCodeAnalysis, lineNumber: number): boolean {
-  if (!analysis.enabled || !analysis.hasMore) return false;
-  return lineNumber > analysis.visibleCount;
+/** 折叠标记行替换为空行，保持行号与行高亮对齐 */
+export function normalizeCodeLines(content: string): string[] {
+  return content.split("\n").map((line) => (isCollapseMarkerLine(line) ? "" : line));
 }
 
-export function shouldSkipCollapsedLine(analysis: CollapsedCodeAnalysis, lineNumber: number): boolean {
-  return analysis.markerLine !== null && lineNumber === analysis.markerLine;
+export function buildGutterText(lineCount: number): string {
+  return Array.from({ length: lineCount }, (_, index) => String(index + 1)).join("\n");
+}
+
+export function encodeCherryCodeSource(text: string): string {
+  return encodeBase64Utf8(text);
+}
+
+export function buildCodeBodyStyle(
+  highlightLines: number[],
+  collapse: CollapsedCodeAnalysis | null,
+  lineCount: number,
+): string {
+  const parts: string[] = [`--cherry-line-count:${lineCount}`];
+  const gradient = buildLineHighlightGradient(highlightLines);
+  if (gradient) {
+    parts.push(`--cherry-line-highlight-bg:${gradient}`);
+  }
+  if (collapse?.enabled && collapse.hasMore) {
+    parts.push(`--cherry-collapsed-visible:${collapse.visibleCount}`);
+  }
+  return parts.length > 0 ? ` style="${parts.join(";")}"` : "";
+}
+
+export function renderCodeBlockBodyHtml(
+  content: string,
+  langClass: string,
+  highlightLines: number[] = [],
+  collapse: CollapsedCodeAnalysis | null = null,
+): { html: string; collapse: CollapsedCodeAnalysis; lineCount: number } {
+  const analysis = collapse ?? analyzeCollapsedCode(content, {});
+  const lines = normalizeCodeLines(content);
+  const lineCount = lines.length;
+  const gutter = escapeHtml(buildGutterText(lineCount));
+  const codeText = lines.map((line) => escapeHtml(line)).join("\n");
+  const bodyStyle = buildCodeBodyStyle(
+    highlightLines,
+    collapse?.enabled ? analysis : null,
+    lineCount,
+  );
+
+  const html =
+    `<div class="cherry-code-block__body"${bodyStyle}>` +
+    `<div class="cherry-code-block__gutter" aria-hidden="true">${gutter}</div>` +
+    `<pre class="cherry-code-block__pre"><code class="language-${langClass}" data-cherry-code>${codeText}</code></pre>` +
+    `</div>`;
+
+  return { html, collapse: analysis, lineCount };
 }
 
 // --- 围栏 meta ---
@@ -217,83 +307,6 @@ export function parseFenceMeta(line: string): {
   };
 }
 
-// --- 逐行 HTML（renderer hydrate 复用） ---
-
-export function wrapCodeLineHtml(
-  lineHtml: string,
-  lineNumber: number,
-  highlightSet: Set<number>,
-  folded = false,
-): string {
-  const classes = ["line"];
-  if (highlightSet.has(lineNumber)) {
-    classes.push("cherry-code-block__line--highlighted");
-  }
-  if (folded) {
-    classes.push("cherry-code-block__line--folded");
-  }
-  const body = lineHtml === "" ? " " : lineHtml;
-  return `<span class="${classes.join(" ")}" data-line="${lineNumber}"><span class="cherry-code-block__ln" aria-hidden="true">${lineNumber}</span><span class="cherry-code-block__code">${body}</span></span>`;
-}
-
-export function readCodeLinesText(codeEl: ParentNode): string {
-  const lines = codeEl.querySelectorAll(".line");
-  if (lines.length === 0) return codeEl.textContent ?? "";
-
-  return [...lines]
-    .map(
-      (line) =>
-        line.querySelector(".cherry-code-block__code")?.textContent ?? line.textContent ?? "",
-    )
-    .join("\n");
-}
-
-/** 将逐行内容包裹为带行号 / 行高亮 / 折叠标记的 HTML */
-export function buildCodeLinesHtml(
-  lineContents: string[],
-  highlightLines: number[] = [],
-  collapse: CollapsedCodeAnalysis | null = null,
-): string {
-  const highlightSet = new Set(highlightLines);
-
-  return lineContents
-    .map((inner, index) => {
-      const lineNumber = index + 1;
-      if (collapse && shouldSkipCollapsedLine(collapse, lineNumber)) return "";
-      const folded = collapse ? isFoldedCodeLine(collapse, lineNumber) : false;
-      return wrapCodeLineHtml(inner, lineNumber, highlightSet, folded);
-    })
-    .filter(Boolean)
-    .join("");
-}
-
-/** 纯文本 → 逐行 HTML（无语法高亮） */
-export function renderCodeLinesHtml(
-  content: string,
-  highlightLines: number[] = [],
-  collapse: CollapsedCodeAnalysis | null = null,
-): string {
-  return buildCodeLinesHtml(
-    content.split("\n").map((line) => escapeHtml(line)),
-    highlightLines,
-    collapse,
-  );
-}
-
-function renderPlainCodeLinesHtml(
-  content: string,
-  highlightLines: number[] = [],
-  collapse: { enabled?: boolean; maxLines?: number } | null = null,
-) {
-  const analysis = analyzeCollapsedCode(content, collapse ?? {});
-  const collapseForRender = collapse?.enabled ? analysis : null;
-
-  return {
-    html: renderCodeLinesHtml(content, highlightLines, collapseForRender),
-    collapse: analysis,
-  };
-}
-
 class EnhancedCodeBlockParser extends BaseBlockParser {
   constructor() {
     super("code");
@@ -348,14 +361,17 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
       typeof props.collapsedMaxLines === "number" ? props.collapsedMaxLines : undefined;
 
     const collapseOpts = collapsedLines ? { enabled: true, maxLines: collapsedMaxLines } : null;
-    const { html: codeBody, collapse: collapseAnalysis } = renderPlainCodeLinesHtml(
+    const collapseForRender = collapseOpts
+      ? analyzeCollapsedCode(content, collapseOpts)
+      : null;
+    const langClass = escapeHtml(lang);
+    const { html: codeBody, collapse: collapseAnalysis } = renderCodeBlockBodyHtml(
       content,
+      langClass,
       highlightLines,
-      collapseOpts,
+      collapseForRender,
     );
 
-    const langClass = escapeHtml(lang);
-    const codeHtml = `<pre class="cherry-code-block__pre cherry-code-block__pre--lines"><code class="language-${langClass}" data-cherry-code>${codeBody}</code></pre>`;
     const copyBtn =
       '<button type="button" class="cherry-copy-code-button" aria-label="复制代码" data-copied="已复制"></button>';
     const langLabel = `<span class="cherry-code-block__lang">${langClass}</span>`;
@@ -385,7 +401,7 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
             : ""
         }`
       : "";
-    const panel = `<div class="cherry-code-block__panel${panelLangClass}${collapsedPanelClass}"${extAttr}${linesAttr}${collapseAttr}>${header}${codeHtml}${expandBtn}</div>`;
+    const panel = `<div class="cherry-code-block__panel${panelLangClass}${collapsedPanelClass}"${extAttr}${linesAttr}${collapseAttr}>${header}${codeBody}${expandBtn}</div>`;
     const titleAttr = title ? ` data-title="${escapeHtml(title)}"` : "";
     const langData = ` data-lang="${langClass}"`;
 

@@ -93,17 +93,62 @@
     }
 
     --cb-line-height: 1.35;
+    --cb-line-step: calc(var(--cb-line-height) * 1em);
+    --cb-body-pad-y: #{rem(12)};
+    --cb-body-pad-x: #{rem(16)};
 
-    &__pre,
-    &__panel > pre {
-      margin: 0;
-      padding: rem(12) rem(16);
+    &__body {
+      display: flex;
+      align-items: stretch;
       overflow: auto;
+      padding: var(--cb-body-pad-y) var(--cb-body-pad-x);
       font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
         monospace;
       font-size: rem(13);
       line-height: var(--cb-line-height);
       color: var(--cherry-c-text-1);
+      background-image: var(--cherry-line-highlight-bg, none);
+      background-repeat: no-repeat;
+      background-size: 100%
+        calc(var(--cb-body-pad-y) * 2 + var(--cherry-line-count, 1) * var(--cb-line-step));
+    }
+
+    &__panel--collapsed &__body {
+      max-height: calc(
+        var(--cb-body-pad-y) * 2 + var(--cherry-collapsed-visible, 10) * var(--cb-line-step)
+      );
+      overflow: hidden;
+    }
+
+    &__panel--collapsible:not(&__panel--collapsed) &__body {
+      max-height: none;
+      overflow: auto;
+    }
+
+    &__gutter {
+      flex: 0 0 rem(36);
+      margin: 0;
+      padding: 0 rem(12) 0 0;
+      font: inherit;
+      font-variant-numeric: tabular-nums;
+      line-height: var(--cb-line-height);
+      color: var(--cherry-c-text-3);
+      text-align: right;
+      white-space: pre;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    &__pre,
+    &__panel > pre {
+      flex: 1 1 auto;
+      min-width: 0;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+      font: inherit;
+      line-height: var(--cb-line-height);
+      color: inherit;
       tab-size: 2;
       background: transparent;
       border: 0;
@@ -112,19 +157,20 @@
       code {
         display: block;
         padding: 0;
-        font-size: inherit;
-        font-family: inherit;
+        font: inherit;
         line-height: inherit;
         color: inherit;
-        white-space: normal;
+        white-space: pre;
         background: transparent;
         border: 0;
         border-radius: 0;
       }
-    }
 
-    &__pre--lines code {
-      white-space: normal;
+      code.hljs {
+        font: inherit;
+        line-height: inherit;
+        background: transparent;
+      }
     }
 
     // Shiki 布局（token 颜色由外部高亮库负责）
@@ -133,43 +179,6 @@
       display: block;
       width: 100%;
       background: transparent !important;
-    }
-
-    .line {
-      display: flex;
-      align-items: flex-start;
-      min-height: 0;
-      margin: 0;
-      padding: 0;
-      line-height: var(--cb-line-height);
-    }
-
-    &__ln {
-      flex: 0 0 rem(36);
-      padding-right: rem(12);
-      font-size: rem(12);
-      font-variant-numeric: tabular-nums;
-      line-height: var(--cb-line-height);
-      color: var(--cherry-c-text-3);
-      text-align: right;
-      user-select: none;
-      pointer-events: none;
-    }
-
-    &__code {
-      flex: 1 1 auto;
-      min-width: 0;
-      white-space: pre;
-    }
-
-    &__line--highlighted {
-      margin: 0 rem(-16);
-      padding: 0 rem(16);
-      background: var(--cb-line-highlight);
-    }
-
-    &__panel--collapsed .cherry-code-block__line--folded {
-      display: none;
     }
 
     &__expand {
