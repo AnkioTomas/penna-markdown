@@ -53,7 +53,9 @@ function renderCase(item: GfmCase, result: GfmCaseResult): HTMLElement {
       </div>
       <div class="panel">
         <h4>预览</h4>
-        <div class="preview cherry"></div>
+        <div class="cherry-theme-default">
+          <div class="preview cherry"></div>
+        </div>
         ${result.ok ? "" : `<div class="fail-msg"></div>`}
       </div>
       <div class="panel case-expected">

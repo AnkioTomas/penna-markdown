@@ -1,10 +1,10 @@
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
-import { isDark } from "@/transformer/utils/isDark.js";
 import { requiredEl } from "../dom.js";
 // @ts-ignore
 import example from "../test.md?raw";
 
-const transformer = new TransformerEngine();
+let dark = localStorage.getItem("cherry-converter-theme") === "dark";
+const transformer = new TransformerEngine({ isDark: dark });
 
 const markdownInput = requiredEl<HTMLTextAreaElement>("#markdown");
 const preview = requiredEl<HTMLElement>("#preview");
@@ -18,12 +18,13 @@ const THEME_KEY = "cherry-converter-theme";
 markdownInput.value = example;
 
 function syncThemeButton(): void {
-  const dark = isDark(preview);
   themeBtn.textContent = dark ? "白天模式" : "夜间模式";
   themeBtn.setAttribute("aria-pressed", dark ? "true" : "false");
 }
 
-function applyTheme(dark: boolean): void {
+function applyTheme(nextDark: boolean): void {
+  dark = nextDark;
+  transformer.isDark = dark;
   previewWrap.classList.toggle("cherry-dark", dark);
   previewWrap.classList.toggle("cherry-theme-default", !dark);
   document.body.classList.toggle("demo-dark", dark);
@@ -33,12 +34,11 @@ function applyTheme(dark: boolean): void {
 }
 
 function initTheme(): void {
-  const saved = localStorage.getItem(THEME_KEY);
-  applyTheme(saved === "dark");
+  applyTheme(dark);
 }
 
 themeBtn.addEventListener("click", () => {
-  applyTheme(!isDark(preview));
+  applyTheme(!dark);
 });
 
 initTheme();

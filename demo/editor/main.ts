@@ -1,10 +1,5 @@
-import "../highlight-setup.js";
+import { demoHighlightSetup } from "../highlight-setup.js";
 import { createEditor } from "@/editor/index.js";
-import { TransformerEngine } from "@/transformer/TransformerEngine.js";
-import {
-  createExtensionOptions,
-  getAvailableExtensions,
-} from "@/transformer/extends/extends.js";
 import { requiredEl } from "../dom.js";
 import example from "../test.md?raw";
 
@@ -15,8 +10,7 @@ const editor = createEditor({
   mount,
   preview,
   initial: example,
-  transformer: (options) =>
-    new TransformerEngine(createExtensionOptions(getAvailableExtensions(), options)),
+  rendererOptions: { highlight: demoHighlightSetup },
 });
 
 window.cherryEditorDemo = editor;
