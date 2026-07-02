@@ -35,8 +35,8 @@
 @use "../../../transformer/extends/style/footnote";
 @use "../../../transformer/extends/style/code-block";
 
-// 日间：.cherry-theme-claude .cherry-render
-.cherry-theme-claude .cherry-render {
+// 日间：.cherry-theme-claude.cherry-render
+.cherry-theme-claude.cherry-render {
   @include tokens.theme-light;
 
   @include base.styles;
@@ -75,7 +75,9 @@
   @include overrides.styles;
 }
 
-// 夜间：.cherry-dark .cherry-theme-claude .cherry-render
-.cherry-dark .cherry-theme-claude .cherry-render {
-  @include tokens.theme-dark;
+// 夜间：.cherry-dark .cherry-theme-claude.cherry-render
+.cherry-dark {
+  .cherry-theme-claude.cherry-render {
+    @include tokens.theme-dark;
+  }
 }

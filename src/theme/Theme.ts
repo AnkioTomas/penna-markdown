@@ -8,12 +8,13 @@ export class Theme {
   private id = "default";
   private mode: LightDark = "light";
   private render: HTMLElement | null = null;
+  private root: HTMLElement | null = null;
 
   list() {
     return REGISTERED_THEMES;
   }
 
-  setTheme(id: string, render: HTMLElement) {
+  setTheme(id: string, render: HTMLElement, root?: HTMLElement) {
     if (!REGISTERED_THEMES.includes(id as (typeof REGISTERED_THEMES)[number])) {
       throw new Error(`未知主题: ${id}`);
     }
@@ -21,12 +22,10 @@ export class Theme {
     const prev = this.id;
     this.id = id;
     this.render = render;
+    this.root = root ?? render.parentElement ?? render;
 
-    render.classList.add("cherry-render");
-    for (const name of [...render.classList]) {
-      if (name.startsWith("cherry-theme-")) render.classList.remove(name);
-    }
-    render.classList.add(`cherry-theme-${id}`);
+    this.applyThemeClasses();
+    this.applyAppearanceClass();
 
     if (prev !== id) {
       this.emit("change", { prev, id, render });
@@ -39,13 +38,14 @@ export class Theme {
       mode: this.mode,
       isDark: this.mode === "dark",
       render: this.render,
+      root: this.root,
     };
   }
 
   setLightDark(mode: LightDark) {
     if (this.mode === mode) return;
     this.mode = mode;
-    this.render?.classList.toggle("cherry-dark", mode === "dark");
+    this.applyAppearanceClass();
     this.emit("appearance", { mode, isDark: mode === "dark" });
   }
 
@@ -59,5 +59,21 @@ export class Theme {
 
   emit(event: string, payload?: unknown) {
     this.bus.emit(event, payload);
+  }
+
+  /** 主题 class 在 render；明暗 class 在 root（供 `.cherry-dark .cherry-theme-* .cherry-render` 命中） */
+  private applyThemeClasses() {
+    if (!this.render) return;
+
+    this.render.classList.add("cherry-render");
+    for (const name of [...this.render.classList]) {
+      if (name.startsWith("cherry-theme-")) this.render.classList.remove(name);
+    }
+    this.render.classList.add(`cherry-theme-${this.id}`);
+  }
+
+  private applyAppearanceClass() {
+    this.root?.classList.toggle("cherry-dark", this.mode === "dark");
+    this.render?.classList.remove("cherry-dark");
   }
 }

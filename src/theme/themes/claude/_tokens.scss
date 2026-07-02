@@ -47,7 +47,10 @@ $claude-dark-mark-mix: 50%;
   @each $name, $pair in $palette {
     $base-color: list.nth($pair, 1);
     $mark-color: list.nth($pair, 2);
-    $surface: if($is-dark, $claude-dark-bg, $claude-light-bg);
+    $surface: if(sass($is-dark): $claude-dark-bg; else: $claude-light-bg);
+    $contrast-color: if(sass($is-dark): #000; else: #fff);
+    $bg-opacity: if(sass($is-dark): 11%; else: 10%);
+    $border-opacity: if(sass($is-dark): 24%; else: 22%);
 
     --cherry-c-#{$name}: #{$base-color};
     @if $is-dark {
@@ -56,11 +59,7 @@ $claude-dark-mark-mix: 50%;
       --cherry-c-#{$name}-mark: #{$mark-color};
     }
 
-    $contrast-color: if($is-dark, #000, #fff);
     --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 20%, #{$contrast-color});
-
-    $bg-opacity: if($is-dark, 11%, 10%);
-    $border-opacity: if($is-dark, 24%, 22%);
 
     --cherry-c-alert-#{$name}-text: #{$base-color};
     --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
@@ -70,14 +69,12 @@ $claude-dark-mark-mix: 50%;
 
 @mixin component-tokens($is-dark: false) {
   $border-soft: if(
-    $is-dark,
-    color-mix(in srgb, #{$claude-dark-border} 15%, transparent),
-    color-mix(in srgb, #{$claude-light-border} 15%, transparent)
+    sass($is-dark): color-mix(in srgb, #{$claude-dark-border} 15%, transparent);
+    else: color-mix(in srgb, #{$claude-light-border} 15%, transparent)
   );
   $code-inline-bg: if(
-    $is-dark,
-    color-mix(in srgb, #{$claude-dark-text-2} 5%, transparent),
-    color-mix(in srgb, #{$claude-light-text-2} 5%, transparent)
+    sass($is-dark): color-mix(in srgb, #{$claude-dark-text-2} 5%, transparent);
+    else: color-mix(in srgb, #{$claude-light-text-2} 5%, transparent)
   );
 
   --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);

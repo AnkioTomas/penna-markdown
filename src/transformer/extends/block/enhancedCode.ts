@@ -27,11 +27,10 @@ export interface CollapsedCodeAnalysis {
   maxLines: number;
 }
 
-/** highlight.js 最小接口，避免 transformer 硬依赖 hljs 包 */
-export interface HljsLike {
-  getLanguage(lang: string): unknown;
-  highlight(code: string, options: { language: string; ignoreIllegals?: boolean }): { value: string };
-  highlightAuto(code: string, options?: { ignoreIllegals?: boolean }): { value: string };
+/** Prism.js 最小接口，避免 transformer 硬依赖 prism 包 */
+export interface PrismLike {
+  languages: Record<string, unknown>;
+  highlight(text: string, grammar: unknown, language: string): string;
 }
 
 export interface EnhancedCodeHighlightContext {
@@ -48,7 +47,7 @@ export type EnhancedCodeHighlighter = (
 
 /** `syntaxOptions.code` 可配置项 */
 export interface EnhancedCodeOptions {
-  hljs?: HljsLike;
+  prism?: PrismLike;
   highlighter?: EnhancedCodeHighlighter;
 }
 
@@ -272,9 +271,24 @@ export function readCodeLinesText(codeEl: ParentNode): string {
     .join("\n");
 }
 
+const LANG_ALIASES: Record<string, string> = {
+  js: "javascript",
+  ts: "typescript",
+  py: "python",
+  sh: "bash",
+  shell: "bash",
+  yml: "yaml",
+  md: "markdown",
+};
+
+function normalizePrismLang(lang: string): string {
+  const trimmed = lang.trim().toLowerCase();
+  return LANG_ALIASES[trimmed] ?? trimmed;
+}
+
 /** 逐行语法高亮（SSR 与客户端 hydrate 共用） */
 export function highlightCodeLinesHtml(
-  hljs: HljsLike,
+  prism: PrismLike,
   code: string,
   lang: string,
   highlightLines: number[] = [],
@@ -282,6 +296,8 @@ export function highlightCodeLinesHtml(
 ): string {
   const highlightSet = new Set(highlightLines);
   const lines = code.split("\n");
+  const normalized = normalizePrismLang(lang);
+  const grammar = normalized ? prism.languages[normalized] : undefined;
 
   return lines
     .map((line, index) => {
@@ -289,10 +305,10 @@ export function highlightCodeLinesHtml(
       if (collapse && shouldSkipCollapsedLine(collapse, lineNumber)) return "";
 
       let inner = line;
-      if (lang && hljs.getLanguage(lang)) {
-        inner = hljs.highlight(line, { language: lang, ignoreIllegals: true }).value;
+      if (grammar) {
+        inner = prism.highlight(line, grammar, normalized);
       } else if (line) {
-        inner = hljs.highlightAuto(line, { ignoreIllegals: true }).value;
+        inner = escapeHtml(line);
       }
 
       const folded = collapse ? isFoldedCodeLine(collapse, lineNumber) : false;
@@ -345,10 +361,10 @@ function resolveCodeBody(
     };
   }
 
-  if (opts.hljs) {
+  if (opts.prism) {
     return {
       html: highlightCodeLinesHtml(
-        opts.hljs,
+        opts.prism,
         content,
         lang,
         highlightLines,
@@ -427,7 +443,7 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
 
     const langClass = escapeHtml(lang);
     const codeClasses = syntaxHighlighted
-      ? `language-${langClass} cherry-code-block__highlighted hljs`
+      ? `language-${langClass} cherry-code-block__highlighted`
       : `language-${langClass}`;
     const highlightedAttr = syntaxHighlighted ? ' data-cherry-highlighted="1"' : "";
     const codeHtml = `<pre class="cherry-code-block__pre cherry-code-block__pre--lines"><code class="${codeClasses}" data-cherry-code${highlightedAttr}>${codeBody}</code></pre>`;
