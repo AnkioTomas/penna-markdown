@@ -15,7 +15,6 @@ import specialCodeParser from "@/transformer/extends/block/specialCode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { unescapeHref } from "@/transformer/utils/linkDestination.js";
 import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
-import { encodeBase64Utf8 } from "@/transformer/utils/base64.js";
 
 const SPECIAL_LANGS = new Set(["echarts", "mermaid", "graph"]);
 
@@ -167,11 +166,6 @@ export function normalizeCodeLines(content: string): string[] {
 export function buildGutterText(lineCount: number): string {
   return Array.from({ length: lineCount }, (_, index) => String(index + 1)).join("\n");
 }
-
-export function encodeCherryCodeSource(text: string): string {
-  return encodeBase64Utf8(text);
-}
-
 export function buildCodeBodyStyle(
   highlightLines: number[],
   collapse: CollapsedCodeAnalysis | null,

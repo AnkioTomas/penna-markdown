@@ -1,5 +1,4 @@
 import {copyText} from "@/renderer/code/copy";
-import {decodeBase64Utf8} from "@/transformer/utils/base64.js";
 
 export class CodeListener {
     private readonly onClickBound = (e: MouseEvent) => this.onClick(e);
