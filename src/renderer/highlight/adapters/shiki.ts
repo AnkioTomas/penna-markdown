@@ -1,23 +1,14 @@
-/**
- * @file Shiki 高亮适配器（动态 import）
- * @module renderer/adapters/shiki
- *
- * 需自行安装 `shiki`：`pnpm add shiki`
- */
+import { wrapCodeLineHtml } from "@/transformer/extends/block/enhancedCode.js";
+import type { CodeHighlightAdapter } from "../setup.js";
 
-import { wrapCodeLineHtml } from "@/transformer/extends/utils/renderCodeLines.js";
+export interface ShikiAdapterOptions {
+  themes?: string[];
+  langs?: string[];
+}
 
-/**
- * @typedef {import('../codeHighlight.js').CodeHighlightAdapter} CodeHighlightAdapter
- */
-
-/**
- * @param {Object} [options]
- * @param {string[]} [options.themes=['github-light','github-dark']]
- * @param {string[]} [options.langs] - 预加载语言；省略则按块级 lang 动态加载
- * @returns {Promise<CodeHighlightAdapter>}
- */
-export async function loadShikiAdapter(options = {}) {
+export async function loadShikiAdapter(
+  options: ShikiAdapterOptions = {},
+): Promise<CodeHighlightAdapter> {
   const themes = options.themes ?? ["github-light", "github-dark"];
   const { createHighlighter } = await import("shiki");
   const highlighter = await createHighlighter({

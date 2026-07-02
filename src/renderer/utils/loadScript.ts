@@ -3,17 +3,10 @@
  * @module renderer/utils/loadScript
  */
 
-/** @type {Map<string, Promise<void>>} */
-const scriptCache = new Map();
+const scriptCache = new Map<string, Promise<void>>();
+const styleCache = new Map<string, Promise<void>>();
 
-/** @type {Map<string, Promise<void>>} */
-const styleCache = new Map();
-
-/**
- * @param {string} src
- * @returns {Promise<void>}
- */
-export function loadScript(src) {
+export function loadScript(src: string): Promise<void> {
   if (typeof document === "undefined") {
     return Promise.reject(new Error("loadScript 仅可在浏览器环境使用"));
   }
@@ -21,9 +14,9 @@ export function loadScript(src) {
   const cached = scriptCache.get(src);
   if (cached) return cached;
 
-  const promise = new Promise((resolve, reject) => {
+  const promise = new Promise<void>((resolve, reject) => {
     const existing = document.querySelector(`script[src="${CSS.escape(src)}"]`);
-    if (existing) {
+    if (existing instanceof HTMLScriptElement) {
       if (existing.dataset.cherryLoaded === "1") {
         resolve();
         return;
@@ -50,11 +43,7 @@ export function loadScript(src) {
   return promise;
 }
 
-/**
- * @param {string} href
- * @returns {Promise<void>}
- */
-export function loadStylesheet(href) {
+export function loadStylesheet(href: string): Promise<void> {
   if (typeof document === "undefined") {
     return Promise.reject(new Error("loadStylesheet 仅可在浏览器环境使用"));
   }
@@ -62,7 +51,7 @@ export function loadStylesheet(href) {
   const cached = styleCache.get(href);
   if (cached) return cached;
 
-  const promise = new Promise((resolve, reject) => {
+  const promise = new Promise<void>((resolve, reject) => {
     const existing = document.querySelector(`link[rel="stylesheet"][href="${CSS.escape(href)}"]`);
     if (existing) {
       resolve();
