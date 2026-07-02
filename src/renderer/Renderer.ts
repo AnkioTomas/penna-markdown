@@ -1,76 +1,89 @@
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
-import { initContainer, setHtml, teardownContainer } from "./container.js";
-import { setupCherryCodeHighlight } from "./highlight/setup.js";
-import "./interactions/register.js";
-import { afterRender, refreshAfterTheme } from "./theme/refresh.js";
-import { watchCherryTheme } from "./theme/watch.js";
+import { Theme } from "@/theme/Theme.js";
 import { injectHeadingIds } from "./toc/inject.js";
 import { extractToc, extractTocFlat } from "./toc/extract.js";
-import type { RendererApi, RendererOptions, RenderResult } from "./types.js";
+import {replaceGraph} from "@/renderer/graph/graph";
+import {CodeListener} from "@/renderer/code/code";
+import {TransformerEngineOptions} from "@/transformer/TransformerEngineOptions";
+import {HighlightJs} from "@/renderer/highlight/highlight";
 
-function resolveTransformer(
-  factory?: RendererOptions["transformer"],
-): TransformerEngine {
-  if (typeof factory === "function") return factory();
-  return factory ?? new TransformerEngine();
+export interface RenderOption {
+  mount: HTMLElement;
+  theme: Theme;
+  transformerEngineOptions: TransformerEngineOptions;
 }
 
-/** 创建预览渲染器。 */
-export function createRenderer({
-  mount,
-  transformer: transformerOption,
-  watchTheme = true,
-  highlight,
-  isDark,
-}: RendererOptions): RendererApi {
-  if (!mount) {
-    throw new Error("渲染器需要 mount 元素");
+export class Renderer {
+  readonly theme: Theme;
+  private readonly mount: HTMLElement;
+  private readonly transformer : TransformerEngine;
+  private lastAst: MarkdownNode | null = null;
+  private codeListener: CodeListener | null = null;
+  private highlight: HighlightJs | null = null;
+
+  private readonly onLightDarkChanged = (): void => {
+    this.syncDarkFromTheme();
+    replaceGraph(this.mount, this.theme.getTheme().isDark);
+    this.highlight?.run();
+  };
+
+  private readonly onSkinChanged = (): void => {
+  };
+
+  constructor({ mount, theme , transformerEngineOptions}: RenderOption) {
+    if (!mount) {
+      throw new Error("渲染器需要 mount 元素");
+    }
+    if (!theme) {
+      throw new Error("渲染器需要 theme 实例");
+    }
+
+    this.mount = mount;
+    this.theme = theme;
+    this.transformer = new TransformerEngine(transformerEngineOptions)
+
+    this.syncDarkFromTheme();
+
+    theme.on("theme:ld", this.onLightDarkChanged);
+    theme.on("theme:skin", this.onSkinChanged)
+
+
+    this.codeListener = new CodeListener(this.mount);
+    this.highlight = new HighlightJs(this.mount, theme);
   }
 
-  const transformer = resolveTransformer(transformerOption);
-  let lastAst: MarkdownNode | null = null;
-  const themeOptions = isDark ? { isDark } : undefined;
+  private syncDarkFromTheme(): void {
+    this.transformer.isDark = this.theme.getTheme().isDark;
+  }
 
-  initContainer(mount);
-  setupCherryCodeHighlight(highlight);
 
-  let unwatchTheme: (() => void) | null = watchTheme
-    ? watchCherryTheme(mount, () => refreshAfterTheme(mount, themeOptions))
-    : null;
+  render(markdown: string): { html: string; ast: MarkdownNode } {
+    this.syncDarkFromTheme();
+    const ast = this.transformer.parse(markdown);
+    const html = this.transformer.render(ast);
+    this.lastAst = ast;
 
-  return {
-    render(markdown: string): RenderResult {
-      const ast = transformer.parse(markdown);
-      const html = transformer.render(ast);
-      lastAst = ast;
+    this.mount.innerHTML = html;
 
-      setHtml(mount, html);
-      injectHeadingIds(mount);
-      afterRender(mount, themeOptions);
+    injectHeadingIds(this.mount);
+    this.highlight?.run()
+    return { html, ast };
+  }
 
-      return { html, ast };
-    },
+  getToc() {
+    return this.lastAst ? extractToc(this.lastAst) : [];
+  }
 
-    getToc() {
-      return lastAst ? extractToc(lastAst) : [];
-    },
+  getTocFlat() {
+    return this.lastAst ? extractTocFlat(this.lastAst) : [];
+  }
 
-    getTocFlat() {
-      return lastAst ? extractTocFlat(lastAst) : [];
-    },
+  destroy(): void {
+    this.theme.off("theme:ld", this.onLightDarkChanged);
+    this.theme.off("theme:skin", this.onSkinChanged)
 
-    update(input) {
-      setHtml(mount, input.html || "");
-      injectHeadingIds(mount);
-      afterRender(mount, themeOptions);
-    },
-
-    destroy() {
-      unwatchTheme?.();
-      unwatchTheme = null;
-      teardownContainer(mount);
-      lastAst = null;
-    },
-  };
+    this.lastAst = null;
+    this.codeListener?.destroy();
+  }
 }

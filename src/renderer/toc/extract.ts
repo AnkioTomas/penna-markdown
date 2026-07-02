@@ -1,7 +1,19 @@
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
-import type { TocFlatItem, TocItem } from "../types.js";
 import { assignSlug, createSlugRegistry } from "./slug.js";
 import { extractHeadingText } from "./text.js";
+
+export interface TocItem {
+  level: number;
+  text: string;
+  id: string;
+  children: TocItem[];
+}
+
+export interface TocFlatItem {
+  level: number;
+  text: string;
+  id: string;
+}
 
 const HEADING_TYPES = new Set(["atx_heading", "setext_heading"]);
 
