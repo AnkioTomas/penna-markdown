@@ -127,41 +127,7 @@
       white-space: normal;
     }
 
-    // highlight.js token（scoped）
-    &__pre code.hljs,
-    &__highlighted {
-      .hljs-keyword,
-      .hljs-selector-tag,
-      .hljs-built_in {
-        color: var(--cherry-c-hljs-keyword);
-      }
-
-      .hljs-string,
-      .hljs-attr,
-      .hljs-symbol {
-        color: var(--cherry-c-hljs-string);
-      }
-
-      .hljs-number,
-      .hljs-literal {
-        color: var(--cherry-c-hljs-number);
-      }
-
-      .hljs-comment,
-      .hljs-doctag {
-        color: var(--cherry-c-hljs-comment);
-      }
-
-      .hljs-title,
-      .hljs-section,
-      .hljs-type,
-      .hljs-meta,
-      .hljs-variable {
-        color: var(--cherry-c-hljs-title);
-      }
-    }
-
-    // Shiki / 行高亮布局
+    // Shiki 布局（token 颜色由外部高亮库负责）
     .shiki,
     .shiki code {
       display: block;

@@ -60,10 +60,10 @@ $cherry-dark-core-semantics: (
 @mixin generate-semantic-suite($palette, $is-dark: false) {
   @each $name, $pair in $palette {
     $base-color: list.nth($pair, 1);
-    $mark-color: list.nth($pair, 2);
+    $mark-opacity: if($is-dark, 36%, 26%);
 
     --cherry-c-#{$name}: #{$base-color};
-    --cherry-c-#{$name}-mark: #{$mark-color};
+    --cherry-c-#{$name}-mark: color-mix(in srgb, #{$base-color} #{$mark-opacity}, transparent);
 
     $contrast-color: if($is-dark, $cherry-contrast-dark, $cherry-contrast-light);
     --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 20%, #{$contrast-color});
@@ -78,6 +78,8 @@ $cherry-dark-core-semantics: (
 }
 
 @mixin component-tokens {
+  --cherry-c-mark-default: color-mix(in srgb, var(--cherry-c-brand-2) 30%, transparent);
+
   --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
   --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
   --cherry-c-image-card-info-bg: linear-gradient(
@@ -97,12 +99,6 @@ $cherry-dark-core-semantics: (
   --cherry-c-media-shade: var(--cherry-c-bg);
   --cherry-c-on-brand: var(--cherry-c-contrast-light);
 
-  --cherry-c-hljs-keyword: var(--cherry-c-brand-1);
-  --cherry-c-hljs-string: color-mix(in srgb, var(--cherry-c-brand-1) 72%, var(--cherry-c-contrast-dark));
-  --cherry-c-hljs-number: var(--cherry-c-hljs-keyword);
-  --cherry-c-hljs-comment: var(--cherry-c-text-3);
-  --cherry-c-hljs-title: var(--cherry-c-alert-warning-text);
-
   --cherry-c-code-block-header-bg: color-mix(in srgb, var(--cherry-c-text-3) 6%, var(--cherry-c-bg-elevated));
   --cherry-c-code-block-code-bg: color-mix(in srgb, var(--cherry-c-text-3) 4%, var(--cherry-c-bg));
   --cherry-c-code-block-shadow: 0 1px 2px color-mix(in srgb, var(--cherry-c-text-3) 8%, transparent),
@@ -110,6 +106,8 @@ $cherry-dark-core-semantics: (
 }
 
 @mixin component-tokens-dark {
+  --cherry-c-mark-default: color-mix(in srgb, var(--cherry-c-brand-2) 38%, transparent);
+
   --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
   --cherry-c-image-card-info-bg: linear-gradient(
     180deg,
@@ -123,12 +121,6 @@ $cherry-dark-core-semantics: (
     color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 35%,
     color-mix(in srgb, var(--cherry-c-image-card-scrim) 92%, transparent) 100%
   );
-
-  --cherry-c-hljs-keyword: color-mix(in srgb, var(--cherry-c-brand-2) 88%, var(--cherry-c-contrast-light));
-  --cherry-c-hljs-string: color-mix(in srgb, var(--cherry-c-brand-3) 78%, var(--cherry-c-contrast-light));
-  --cherry-c-hljs-number: var(--cherry-c-hljs-keyword);
-  --cherry-c-hljs-comment: var(--cherry-c-text-3);
-  --cherry-c-hljs-title: color-mix(in srgb, var(--cherry-c-alert-warning-text) 88%, var(--cherry-c-contrast-light));
 
   --cherry-c-code-block-header-bg: color-mix(
     in srgb,
