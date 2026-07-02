@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
+import { JSDOM } from "jsdom";
+import { createEngine, renderMarkdown } from "../helpers/engine.js";
 import {
   buildEchartsImageSrc,
   buildMermaidImageSrc,
@@ -10,8 +11,7 @@ const MATH_IMG =
 const ECHARTS_OPTIONS = '{"series":[{"type":"bar"}]}';
 
 describe("extends/cherry_syntax", () => {
-  const engine = () => createEngineWithExtensions(["cherry_syntax"]);
-  const base = () => createEngine();
+  const engine = () => createEngine();
 
   it("renders block math with $$ via math API", () => {
     const html = renderMarkdown(engine(), "$$\nE=mc^2\n$$");
@@ -33,6 +33,22 @@ describe("extends/cherry_syntax", () => {
     expect(buildMermaidImageSrc(mermaid, { theme: "dark" })).toContain("?theme=dark");
   });
 
+  it("renders ```echarts with dark theme when wrapped by cherry-dark", () => {
+    const dom = new JSDOM(`<div class="cherry-dark"><div class="cherry"></div></div>`);
+    const root = dom.window.document.querySelector(".cherry");
+    const md = "```echarts\n{\"series\":[{\"type\":\"bar\"}]}\n```";
+    const html = renderMarkdown(engine(), md, root);
+    expect(html).toContain("%22theme%22%3A%22dark%22");
+  });
+
+  it("renders ```mermaid with dark theme when wrapped by cherry-dark", () => {
+    const dom = new JSDOM(`<div class="cherry-dark"><div class="cherry"></div></div>`);
+    const root = dom.window.document.querySelector(".cherry");
+    const md = "```mermaid\nflowchart TD\n    Start --> Stop\n```";
+    const html = renderMarkdown(engine(), md, root);
+    expect(html).toContain("theme=dark");
+  });
+
   it("renders ```echarts fenced block via echarts API", () => {
     const md = "```echarts\n{\"series\":[{\"type\":\"bar\"}]}\n```";
     const html = renderMarkdown(engine(), md);
@@ -50,14 +66,9 @@ describe("extends/cherry_syntax", () => {
 
   it("renders ```katex and ```latex as normal fenced code", () => {
     const katex = renderMarkdown(engine(), "```katex\nx^2\n```");
-    expect(katex.html).toBe('<pre><code class="language-katex">x^2\n</code></pre>\n');
+    expect(katex).toBe('<pre><code class="language-katex">x^2\n</code></pre>\n');
     const latex = renderMarkdown(engine(), "```latex\nx^2\n```");
-    expect(latex.html).toBe('<pre><code class="language-latex">x^2\n</code></pre>\n');
-  });
-
-  it("falls back to normal code when extension disabled", () => {
-    const html = renderMarkdown(base(), "$$\nE=mc^2\n$$");
-    expect(html).toBe("<p>$$\nE=mc^2\n$$</p>\n");
+    expect(latex).toBe('<pre><code class="language-latex">x^2\n</code></pre>\n');
   });
 
   it("falls back to normal fenced code for js when extension enabled", () => {

@@ -3,7 +3,7 @@ import { JSDOM } from "jsdom";
 import {
   hydrateCherryCodeHighlight,
   registerCherryCodeHighlightLoader,
-} from "@/renderer/codeHighlight.js";
+} from "@/renderer/highlight/setup.js";
 
 describe("renderer/codeHighlight", () => {
   it("applies adapter HTML to code blocks", async () => {

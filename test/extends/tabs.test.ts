@@ -40,11 +40,23 @@ tab 3 内容
     expect(html).toContain("<p>tab 3 内容</p>");
   });
 
+  it("keeps radio inputs inside nav labels for stable focus", () => {
+    const html = renderMarkdown(engine(), sample);
+    expect(html).toContain('<div class="cherry-tabs__nav"><label class="cherry-tabs__label">');
+    expect(html).toContain('<input type="radio" class="cherry-tabs__radio"');
+    expect(html).not.toContain('for="cherry-tabs-');
+  });
+
   it("activates @tab:active panel by default", () => {
     const html = renderMarkdown(engine(), sample);
-    expect(html).toMatch(/id="cherry-tabs-\d+-2" checked/);
-    expect(html).not.toMatch(/id="cherry-tabs-\d+-0" checked/);
-    expect(html).not.toMatch(/id="cherry-tabs-\d+-1" checked/);
+    expect(html).toMatch(
+      /<label class="cherry-tabs__label">\s*<input type="radio" class="cherry-tabs__radio" name="cherry-tabs-\d+"[^>]*>\s*标题 1\s*<\/label>/,
+    );
+    expect(html).toMatch(
+      /<label class="cherry-tabs__label">\s*<input type="radio" class="cherry-tabs__radio" name="cherry-tabs-\d+" checked>\s*标题 3\s*<\/label>/,
+    );
+    expect(html).not.toMatch(/<input[^>]+checked[^>]+>\s*标题 1\s*<\/label>/);
+    expect(html).not.toMatch(/<input[^>]+checked[^>]+>\s*标题 2\s*<\/label>/);
   });
 
   it("defaults to first tab when no :active marker", () => {
@@ -55,8 +67,10 @@ tab 3 内容
 内容 B
 :::`;
     const html = renderMarkdown(engine(), md);
-    expect(html).toMatch(/id="cherry-tabs-\d+-0" checked/);
-    expect(html).not.toMatch(/id="cherry-tabs-\d+-1" checked/);
+    expect(html).toMatch(
+      /<label class="cherry-tabs__label">\s*<input type="radio" class="cherry-tabs__radio" name="cherry-tabs-\d+" checked>\s*A\s*<\/label>/,
+    );
+    expect(html).not.toMatch(/<input[^>]+checked[^>]+>\s*B\s*<\/label>/);
   });
 
   it("supports markdown inside tab panels", () => {

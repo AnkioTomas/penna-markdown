@@ -3,7 +3,7 @@ import {
   getCherryCodeHighlightLoader,
   registerCherryCodeHighlightLoader,
   setupCherryCodeHighlight,
-} from "@/renderer/codeHighlight.js";
+} from "@/renderer/highlight/setup.js";
 
 describe("renderer/codeHighlight setup", () => {
   it("registers highlight callback via setupCherryCodeHighlight", async () => {

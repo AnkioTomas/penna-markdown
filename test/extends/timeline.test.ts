@@ -109,4 +109,29 @@ describe("extends/timeline", () => {
     const html = renderMarkdown(engine(), sample);
     expect(html).not.toContain("cherry-alert--note");
   });
+
+  it("renders task lists inside timeline item content", () => {
+    const md = `::: timeline
+- v0.1.0 首次发布
+  time=2026-01-15 type=success
+
+  - [x] GFM 完整支持
+  - [x] Cherry 扩展语法
+  - [ ] 编辑器完善
+
+- v0.2.0 计划中
+  time=2026-06-01 type=tip
+
+  性能优化。
+:::`;
+    const html = renderMarkdown(engine(), md);
+    expect(html).toContain('<p class="cherry-timeline-title">v0.1.0 首次发布</p>');
+    expect(html).toContain('<p class="cherry-timeline-title">v0.2.0 计划中</p>');
+    expect(html).not.toContain('<p class="cherry-timeline-title">[x] GFM 完整支持</p>');
+    expect(html).toContain('<ul class="task-list">');
+    expect(html).toContain('class="task-item done"');
+    expect(html).toContain('class="task-item todo"');
+    expect(html).toContain("GFM 完整支持");
+    expect(html).toContain("编辑器完善");
+  });
 });

@@ -1,65 +1,43 @@
 import { describe, expect, it, vi } from "vitest";
 import { JSDOM } from "jsdom";
-import {
-  CHERRY_THEME_CHANGE_EVENT,
-  dispatchCherryThemeChange,
-  isCherryDarkMode,
-  watchCherryTheme,
-} from "@/renderer/cherryTheme.js";
-import { resetCherryCodeHighlightTheme } from "@/renderer/codeHighlight.js";
+import { isDark, watchCherryTheme } from "@/renderer/index.js";
+import { resetCherryCodeHighlightTheme } from "@/renderer/highlight/setup.js";
 
-describe("renderer/cherryTheme", () => {
-  it("detects dark mode from data-theme ancestor", () => {
-    const dom = new JSDOM(
-      '<div data-theme="dark"><div class="cherry" id="root"></div></div>',
-    );
-    const root = dom.window.document.getElementById("root");
-    expect(isCherryDarkMode(root)).toBe(true);
-  });
-
-  it("resetCherryCodeHighlightTheme clears highlight cache", () => {
+describe("renderer/theme", () => {
+  it("isDark", () => {
     const dom = new JSDOM(`
-      <div class="cherry">
-        <code data-cherry-code data-cherry-highlighted="1" data-cherry-highlight-theme="light"></code>
-      </div>
+      <div class="cherry-dark"><div class="cherry" id="root"></div></div>
     `);
-    const mount = dom.window.document.querySelector(".cherry")!;
-    const code = mount.querySelector("code")! as HTMLElement;
-    resetCherryCodeHighlightTheme(mount);
+    expect(isDark(dom.window.document.getElementById("root"))).toBe(true);
+  });
+
+  it("resetCherryCodeHighlightTheme", () => {
+    const dom = new JSDOM(`
+      <div class="cherry-theme-default"><div class="cherry">
+        <code data-cherry-code data-cherry-highlighted="1"></code>
+      </div></div>
+    `);
+    const code = dom.window.document.querySelector("code")! as HTMLElement;
+    resetCherryCodeHighlightTheme(dom.window.document.querySelector(".cherry"));
     expect(code.dataset.cherryHighlighted).toBeUndefined();
-    expect(code.dataset.cherryHighlightTheme).toBeUndefined();
   });
 
-  it("watchCherryTheme reacts to data-theme mutation", async () => {
-    const dom = new JSDOM('<html><body><div class="cherry" id="root"></div></body></html>');
-    const { document, MutationObserver } = dom.window;
-    globalThis.MutationObserver = MutationObserver;
+  it("watchCherryTheme on wrapper class change", async () => {
+    const dom = new JSDOM(`
+      <div class="cherry-theme-default" id="wrap"><div class="cherry" id="root"></div></div>
+    `);
+    globalThis.MutationObserver = dom.window.MutationObserver;
 
-    const root = document.getElementById("root");
     const onChange = vi.fn();
-    const unwatch = watchCherryTheme(root, onChange);
+    const unwatch = watchCherryTheme(
+      dom.window.document.getElementById("root"),
+      onChange,
+    );
 
-    document.documentElement.setAttribute("data-theme", "dark");
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    const wrap = dom.window.document.getElementById("wrap")!;
+    wrap.classList.replace("cherry-theme-default", "cherry-dark");
+    await new Promise((r) => setTimeout(r, 0));
     expect(onChange).toHaveBeenCalled();
-
     unwatch();
-  });
-
-  it("dispatchCherryThemeChange triggers watchCherryTheme", () => {
-    const dom = new JSDOM('<html><body><div class="cherry" id="root"></div></body></html>');
-    const { document, MutationObserver, CustomEvent } = dom.window;
-    globalThis.MutationObserver = MutationObserver;
-    globalThis.CustomEvent = CustomEvent;
-
-    const root = document.getElementById("root");
-    const onChange = vi.fn();
-    const unwatch = watchCherryTheme(root, onChange);
-
-    dispatchCherryThemeChange(document.documentElement);
-    expect(onChange).toHaveBeenCalled();
-
-    unwatch();
-    expect(CHERRY_THEME_CHANGE_EVENT).toBe("cherry-theme-change");
   });
 });
