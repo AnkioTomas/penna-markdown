@@ -88,31 +88,32 @@
     }
   }
 
+
   .cherry-align {
-    margin: rem(16) 0;
-    font-size: rem(14);
-    line-height: 1.6;
-
-    &--left {
-      text-align: left;
+      margin: rem(16) 0;
+      font-size: rem(14);
+      line-height: 1.6;
+  
+      &--left {
+        text-align: left;
+      }
+  
+      &--center {
+        text-align: center;
+      }
+  
+      &--right {
+        text-align: right;
+      }
+  
+      &--justify {
+        text-align: justify;
+      }
+  
+      &__title {
+        margin: 0 0 rem(8);
+        font-weight: 600;
+        color: var(--cherry-c-text-2);
+      }
     }
-
-    &--center {
-      text-align: center;
-    }
-
-    &--right {
-      text-align: right;
-    }
-
-    &--justify {
-      text-align: justify;
-    }
-
-    &__title {
-      margin: 0 0 rem(8);
-      font-weight: 600;
-      color: var(--cherry-c-text-2);
-    }
-  }
 }

@@ -336,4 +336,14 @@
       }
     }
   }
+
+  .cherry-mermaid-block,
+  .cherry-echarts-block {
+    margin: rem(16) 0;
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  }
 }

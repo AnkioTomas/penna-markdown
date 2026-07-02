@@ -1,121 +1,121 @@
 @use "../../style/rem" as *;
 
 @mixin styles {
-  .cherry-field-group {
-    margin: rem(16) 0;
-    border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
-    border-radius: rem(8);
-    background: var(--cherry-c-bg-elevated);
-    overflow: hidden;
-  }
-
   .cherry-field {
-    padding: rem(16);
-    border-bottom: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    &__head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: rem(16);
-      margin: 0 0 rem(8);
-    }
-
-    &__meta {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: rem(8);
-      min-width: 0;
-      font-size: rem(14);
-      line-height: 1.5;
-    }
-
-    &__name {
-      font-weight: 600;
-      color: var(--cherry-c-text-1);
-    }
-
-    &__tag {
-      padding: rem(1) rem(8);
-      border-radius: rem(999);
-      font-size: rem(12);
-      font-weight: 500;
-
-      &--required {
-        color: var(--cherry-c-alert-danger-text);
-        background: var(--cherry-c-alert-danger-bg);
-        border: rem(1) solid var(--cherry-c-alert-danger-border);
+      padding: rem(16);
+      border-bottom: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+  
+      &:last-child {
+        border-bottom: none;
       }
-
-      &--optional {
-        color: var(--cherry-c-alert-note-text);
-        background: var(--cherry-c-alert-note-bg);
-        border: rem(1) solid var(--cherry-c-alert-note-border);
+  
+      &__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: rem(16);
+        margin: 0 0 rem(8);
       }
-
-      &--deprecated {
-        color: var(--cherry-c-alert-warning-text);
-        background: var(--cherry-c-alert-warning-bg);
-        border: rem(1) solid var(--cherry-c-alert-warning-border);
+  
+      &__meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: rem(8);
+        min-width: 0;
+        font-size: rem(14);
+        line-height: 1.5;
       }
-    }
-
-    &__type {
-      flex-shrink: 0;
-      margin-left: auto;
-      text-align: right;
-
-      code {
-        padding: rem(2) rem(6);
-        border-radius: rem(4);
-        font-size: rem(12);
-        font-family:
-          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-          "Courier New", monospace;
-        color: var(--cherry-c-brand-1);
-        background: color-mix(in srgb, var(--cherry-c-brand-soft) 65%, transparent);
-      }
-    }
-
-    &__default {
-      margin: 0 0 rem(10);
-      font-size: rem(13);
-      text-align: right;
-      color: var(--cherry-c-text-2);
-
-      code {
-        padding: rem(2) rem(6);
-        border-radius: rem(4);
-        font-family:
-          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-          "Courier New", monospace;
+  
+      &__name {
+        font-weight: 600;
         color: var(--cherry-c-text-1);
-        background: color-mix(in srgb, var(--cherry-c-bg) 70%, transparent);
-        border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+      }
+  
+      &__tag {
+        padding: rem(1) rem(8);
+        border-radius: rem(999);
+        font-size: rem(12);
+        font-weight: 500;
+  
+        &--required {
+          color: var(--cherry-c-alert-danger-text);
+          background: var(--cherry-c-alert-danger-bg);
+          border: rem(1) solid var(--cherry-c-alert-danger-border);
+        }
+  
+        &--optional {
+          color: var(--cherry-c-alert-note-text);
+          background: var(--cherry-c-alert-note-bg);
+          border: rem(1) solid var(--cherry-c-alert-note-border);
+        }
+  
+        &--deprecated {
+          color: var(--cherry-c-alert-warning-text);
+          background: var(--cherry-c-alert-warning-bg);
+          border: rem(1) solid var(--cherry-c-alert-warning-border);
+        }
+      }
+  
+      &__type {
+        flex-shrink: 0;
+        margin-left: auto;
+        text-align: right;
+  
+        code {
+          padding: rem(2) rem(6);
+          border-radius: rem(4);
+          font-size: rem(12);
+          font-family:
+            ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+            "Courier New", monospace;
+          color: var(--cherry-c-brand-1);
+          background: color-mix(in srgb, var(--cherry-c-brand-soft) 65%, transparent);
+        }
+      }
+  
+      &__default {
+        margin: 0 0 rem(10);
+        font-size: rem(13);
+        text-align: right;
+        color: var(--cherry-c-text-2);
+  
+        code {
+          padding: rem(2) rem(6);
+          border-radius: rem(4);
+          font-family:
+            ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+            "Courier New", monospace;
+          color: var(--cherry-c-text-1);
+          background: color-mix(in srgb, var(--cherry-c-bg) 70%, transparent);
+          border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+        }
+      }
+  
+      &__description {
+        color: var(--cherry-c-text-2);
+        font-size: rem(14);
+        line-height: 1.6;
+  
+        > :first-child {
+          margin-top: 0;
+        }
+  
+        > :last-child {
+          margin-bottom: 0;
+        }
+  
+        .cherry-badge {
+          margin-right: rem(8);
+        }
       }
     }
 
-    &__description {
-      color: var(--cherry-c-text-2);
-      font-size: rem(14);
-      line-height: 1.6;
-
-      > :first-child {
-        margin-top: 0;
-      }
-
-      > :last-child {
-        margin-bottom: 0;
-      }
-
-      .cherry-badge {
-        margin-right: rem(8);
-      }
+  .cherry-field-group {
+      margin: rem(16) 0;
+      border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+      border-radius: rem(8);
+      background: var(--cherry-c-bg-elevated);
+      overflow: hidden;
     }
-  }
 }
