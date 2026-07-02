@@ -3,6 +3,7 @@
  * @module transformer/extends/block/enhancedCode
  *
  * 解析 info string、行高亮、折叠、逐行 HTML 与顶栏渲染，均在本模块内完成。
+ * 语法高亮由 renderer hydrate 后处理，本模块只输出纯文本行结构。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
@@ -25,30 +26,6 @@ export interface CollapsedCodeAnalysis {
   visibleCount: number;
   markerLine: number | null;
   maxLines: number;
-}
-
-/** Prism.js 最小接口，避免 transformer 硬依赖 prism 包 */
-export interface PrismLike {
-  languages: Record<string, unknown>;
-  highlight(text: string, grammar: unknown, language: string): string;
-}
-
-export interface EnhancedCodeHighlightContext {
-  highlightLines: number[];
-  collapse: CollapsedCodeAnalysis | null;
-}
-
-/** 自定义高亮器；返回 `<code>` 内部 HTML */
-export type EnhancedCodeHighlighter = (
-  code: string,
-  lang: string,
-  ctx: EnhancedCodeHighlightContext,
-) => string;
-
-/** `syntaxOptions.code` 可配置项 */
-export interface EnhancedCodeOptions {
-  prism?: PrismLike;
-  highlighter?: EnhancedCodeHighlighter;
 }
 
 // --- 行高亮 spec ---
@@ -271,46 +248,18 @@ export function readCodeLinesText(codeEl: ParentNode): string {
     .join("\n");
 }
 
-const LANG_ALIASES: Record<string, string> = {
-  js: "javascript",
-  ts: "typescript",
-  py: "python",
-  sh: "bash",
-  shell: "bash",
-  yml: "yaml",
-  md: "markdown",
-};
-
-function normalizePrismLang(lang: string): string {
-  const trimmed = lang.trim().toLowerCase();
-  return LANG_ALIASES[trimmed] ?? trimmed;
-}
-
-/** 逐行语法高亮（SSR 与客户端 hydrate 共用） */
-export function highlightCodeLinesHtml(
-  prism: PrismLike,
-  code: string,
-  lang: string,
+/** 将逐行内容包裹为带行号 / 行高亮 / 折叠标记的 HTML */
+export function buildCodeLinesHtml(
+  lineContents: string[],
   highlightLines: number[] = [],
   collapse: CollapsedCodeAnalysis | null = null,
 ): string {
   const highlightSet = new Set(highlightLines);
-  const lines = code.split("\n");
-  const normalized = normalizePrismLang(lang);
-  const grammar = normalized ? prism.languages[normalized] : undefined;
 
-  return lines
-    .map((line, index) => {
+  return lineContents
+    .map((inner, index) => {
       const lineNumber = index + 1;
       if (collapse && shouldSkipCollapsedLine(collapse, lineNumber)) return "";
-
-      let inner = line;
-      if (grammar) {
-        inner = prism.highlight(line, grammar, normalized);
-      } else if (line) {
-        inner = escapeHtml(line);
-      }
-
       const folded = collapse ? isFoldedCodeLine(collapse, lineNumber) : false;
       return wrapCodeLineHtml(inner, lineNumber, highlightSet, folded);
     })
@@ -318,64 +267,31 @@ export function highlightCodeLinesHtml(
     .join("");
 }
 
+/** 纯文本 → 逐行 HTML（无语法高亮） */
+export function renderCodeLinesHtml(
+  content: string,
+  highlightLines: number[] = [],
+  collapse: CollapsedCodeAnalysis | null = null,
+): string {
+  return buildCodeLinesHtml(
+    content.split("\n").map((line) => escapeHtml(line)),
+    highlightLines,
+    collapse,
+  );
+}
+
 function renderPlainCodeLinesHtml(
   content: string,
   highlightLines: number[] = [],
   collapse: { enabled?: boolean; maxLines?: number } | null = null,
 ) {
-  const highlightSet = new Set(highlightLines);
-  const lines = content.split("\n");
   const analysis = analyzeCollapsedCode(content, collapse ?? {});
+  const collapseForRender = collapse?.enabled ? analysis : null;
 
-  const html = lines
-    .map((line, index) => {
-      const lineNumber = index + 1;
-      if (shouldSkipCollapsedLine(analysis, lineNumber)) return "";
-      const folded = isFoldedCodeLine(analysis, lineNumber);
-      return wrapCodeLineHtml(escapeHtml(line), lineNumber, highlightSet, folded);
-    })
-    .filter(Boolean)
-    .join("");
-
-  return { html, collapse: analysis };
-}
-
-function resolveCodeBody(
-  opts: EnhancedCodeOptions,
-  content: string,
-  lang: string,
-  highlightLines: number[],
-  collapseOpts: { enabled: boolean; maxLines?: number } | null,
-): { html: string; collapse: CollapsedCodeAnalysis; syntaxHighlighted: boolean } {
-  const plain = renderPlainCodeLinesHtml(content, highlightLines, collapseOpts);
-  const collapseForHighlight = collapseOpts?.enabled ? plain.collapse : null;
-
-  if (typeof opts.highlighter === "function") {
-    return {
-      html: opts.highlighter(content, lang, {
-        highlightLines,
-        collapse: collapseForHighlight,
-      }),
-      collapse: plain.collapse,
-      syntaxHighlighted: true,
-    };
-  }
-
-  if (opts.prism) {
-    return {
-      html: highlightCodeLinesHtml(
-        opts.prism,
-        content,
-        lang,
-        highlightLines,
-        collapseForHighlight,
-      ),
-      collapse: plain.collapse,
-      syntaxHighlighted: true,
-    };
-  }
-
-  return { html: plain.html, collapse: plain.collapse, syntaxHighlighted: false };
+  return {
+    html: renderCodeLinesHtml(content, highlightLines, collapseForRender),
+    collapse: analysis,
+  };
 }
 
 class EnhancedCodeBlockParser extends BaseBlockParser {
@@ -420,7 +336,6 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
   }
 
   private renderEnhancedHtml(node: MarkdownNode): string {
-    const opts = this.getOptions() as EnhancedCodeOptions;
     const props = node.props ?? {};
     const lang = String(props.lang ?? "").trim();
     const title = String(props.title ?? "").trim();
@@ -433,20 +348,14 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
       typeof props.collapsedMaxLines === "number" ? props.collapsedMaxLines : undefined;
 
     const collapseOpts = collapsedLines ? { enabled: true, maxLines: collapsedMaxLines } : null;
-    const { html: codeBody, collapse: collapseAnalysis, syntaxHighlighted } = resolveCodeBody(
-      opts,
+    const { html: codeBody, collapse: collapseAnalysis } = renderPlainCodeLinesHtml(
       content,
-      lang,
       highlightLines,
       collapseOpts,
     );
 
     const langClass = escapeHtml(lang);
-    const codeClasses = syntaxHighlighted
-      ? `language-${langClass} cherry-code-block__highlighted`
-      : `language-${langClass}`;
-    const highlightedAttr = syntaxHighlighted ? ' data-cherry-highlighted="1"' : "";
-    const codeHtml = `<pre class="cherry-code-block__pre cherry-code-block__pre--lines"><code class="${codeClasses}" data-cherry-code${highlightedAttr}>${codeBody}</code></pre>`;
+    const codeHtml = `<pre class="cherry-code-block__pre cherry-code-block__pre--lines"><code class="language-${langClass}" data-cherry-code>${codeBody}</code></pre>`;
     const copyBtn =
       '<button type="button" class="cherry-copy-code-button" aria-label="复制代码" data-copied="已复制"></button>';
     const langLabel = `<span class="cherry-code-block__lang">${langClass}</span>`;
