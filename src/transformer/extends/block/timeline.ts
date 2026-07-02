@@ -15,6 +15,12 @@ const OPEN_RE = /^ {0,3}:::(?!:)\s+timeline(?:\s+(.*))?$/;
 const CLOSE_RE = /^ {0,3}:::\s*$/;
 const NESTED_OPEN_RE = /^ {0,3}:::(?!:)\s+\S/;
 const ITEM_HEAD_RE = /^ {0,3}-\s+(.+)$/;
+/** 与 taskList 一致：`- [ ]` / `- [x]` 等是任务项，不是 timeline 节点 */
+const TASK_ITEM_RE = /^ {0,3}-\s+\[(?: |x|X|\/|>|<|-|\!)\]\s/;
+
+function isTimelineItemHead(line: string): boolean {
+  return ITEM_HEAD_RE.test(line) && !TASK_ITEM_RE.test(line);
+}
 
 const TIMELINE_TYPES = new Set([
   "info",
@@ -122,7 +128,7 @@ function parseTimelineSections(lines: string[]) {
 
   while (i < lines.length) {
     const head = lines[i]?.match(ITEM_HEAD_RE);
-    if (!head) {
+    if (!head || TASK_ITEM_RE.test(lines[i] ?? "")) {
       i += 1;
       continue;
     }
@@ -132,7 +138,7 @@ function parseTimelineSections(lines: string[]) {
 
     while (i < lines.length) {
       const line = lines[i] ?? "";
-      if (ITEM_HEAD_RE.test(line)) break;
+      if (isTimelineItemHead(line)) break;
       if (isConfigLine(line)) break;
       if (line.trim() === "") break;
       titleLines.push(line.trim());
@@ -152,7 +158,7 @@ function parseTimelineSections(lines: string[]) {
     const contentLines: string[] = [];
     while (i < lines.length) {
       const line = lines[i] ?? "";
-      if (ITEM_HEAD_RE.test(line)) break;
+      if (isTimelineItemHead(line)) break;
       contentLines.push(line);
       i += 1;
     }
