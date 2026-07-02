@@ -34,8 +34,25 @@
 @use "../extends/style/footnote";
 @use "../extends/style/code-block";
 
+// 默认亮色主题（推荐挂在 html/body 或 .cherry 根上）
+.cherry-theme-default {
+  @include tokens.theme-default;
+}
+
+// 暗色主题（与 data-theme="dark" 兼容）
+.cherry-dark,
+[data-theme="dark"] {
+  @include tokens.theme-dark;
+}
+
 .cherry {
-  @include tokens.colors;
+  // 无主题类时回退为默认亮色
+  @include tokens.theme-default;
+
+  .cherry-dark &,
+  [data-theme="dark"] & {
+    @include tokens.theme-dark;
+  }
 
   @include base.styles;
   @include heading.styles;

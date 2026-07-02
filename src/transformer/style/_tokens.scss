@@ -2,7 +2,7 @@
 @use "sass:map";
 
 // ==========================================
-// Layer 1: 基础静态色板 (保持不变)
+// Layer 1: 基础静态色板（仅在此文件定义字面量）
 // ==========================================
 $cherry-brand-1: #5086a1;
 $cherry-brand-2: #6aa1b7;
@@ -17,7 +17,9 @@ $cherry-text-3: rgba(60, 60, 67, 0.56);
 $cherry-bg: #fff;
 $cherry-bg-elevated: #fafafa;
 
-// 夜间模式静态色板
+$cherry-contrast-light: #fff;
+$cherry-contrast-dark: #000;
+
 $cherry-dark-bg: #141414;
 $cherry-dark-bg-elevated: #1f1f1f;
 
@@ -31,32 +33,29 @@ $cherry-dark-brand-3: #a8dce3;
 $cherry-dark-brand-soft: rgba(131, 208, 218, 0.2);
 $cherry-dark-brand-on-bg: #e0f4f8;
 
-
 // ==========================================
-// Layer 2: 核心语义“双核”字典
-// 格式: name: (基础主色, 荧光高亮色)
+// Layer 2: 语义色板
 // ==========================================
 $cherry-core-semantics: (
-        note:      (#206aca, #ff0),
-        tip:       (#30a46c, #39ff14),
-        warning:   (#b45309, #fc0),
-        caution:   (#c53030, #f99),
-        danger:    (#dc2626, #f66),
-        important: (#844bbc, #ccf),
+  note: (#206aca, #ff0),
+  tip: (#30a46c, #39ff14),
+  warning: (#b45309, #fc0),
+  caution: (#c53030, #f99),
+  danger: (#dc2626, #f66),
+  important: (#844bbc, #ccf),
 );
 
 $cherry-dark-core-semantics: (
-        note:      (#93c5fd, #db0),
-        tip:       (#4ade80, #4ade80),
-        warning:   (#fbbf24, #fbbf24),
-        caution:   (#fca5a5, #fca5a5),
-        danger:    (#f87171, #f87171),
-        important: (#c4b5fd, #a5b4fc),
+  note: (#93c5fd, #db0),
+  tip: (#4ade80, #4ade80),
+  warning: (#fbbf24, #fbbf24),
+  caution: (#fca5a5, #fca5a5),
+  danger: (#f87171, #f87171),
+  important: (#c4b5fd, #a5b4fc),
 );
 
-
 // ==========================================
-// Layer 3: 终极颜色衍生工厂 Mixin
+// Layer 3: 语义衍生
 // ==========================================
 @mixin generate-semantic-suite($palette, $is-dark: false) {
   @each $name, $pair in $palette {
@@ -66,7 +65,7 @@ $cherry-dark-core-semantics: (
     --cherry-c-#{$name}: #{$base-color};
     --cherry-c-#{$name}-mark: #{$mark-color};
 
-    $contrast-color: if($is-dark, #000, #fff);
+    $contrast-color: if($is-dark, $cherry-contrast-dark, $cherry-contrast-light);
     --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 20%, #{$contrast-color});
 
     $bg-opacity: if($is-dark, 15%, 10%);
@@ -78,11 +77,76 @@ $cherry-dark-core-semantics: (
   }
 }
 
+@mixin component-tokens {
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 45%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 72%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 55%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 82%, transparent) 100%
+  );
+
+  --cherry-c-media-player-bg: var(--cherry-c-bg);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: var(--cherry-c-contrast-light);
+
+  --cherry-c-hljs-keyword: var(--cherry-c-brand-1);
+  --cherry-c-hljs-string: color-mix(in srgb, var(--cherry-c-brand-1) 72%, var(--cherry-c-contrast-dark));
+  --cherry-c-hljs-number: var(--cherry-c-hljs-keyword);
+  --cherry-c-hljs-comment: var(--cherry-c-text-3);
+  --cherry-c-hljs-title: var(--cherry-c-alert-warning-text);
+
+  --cherry-c-code-block-header-bg: color-mix(in srgb, var(--cherry-c-text-3) 6%, var(--cherry-c-bg-elevated));
+  --cherry-c-code-block-code-bg: color-mix(in srgb, var(--cherry-c-text-3) 4%, var(--cherry-c-bg));
+  --cherry-c-code-block-shadow: 0 1px 2px color-mix(in srgb, var(--cherry-c-text-3) 8%, transparent),
+    0 8px 24px color-mix(in srgb, var(--cherry-c-text-3) 6%, transparent);
+}
+
+@mixin component-tokens-dark {
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 88%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 92%, transparent) 100%
+  );
+
+  --cherry-c-hljs-keyword: color-mix(in srgb, var(--cherry-c-brand-2) 88%, var(--cherry-c-contrast-light));
+  --cherry-c-hljs-string: color-mix(in srgb, var(--cherry-c-brand-3) 78%, var(--cherry-c-contrast-light));
+  --cherry-c-hljs-number: var(--cherry-c-hljs-keyword);
+  --cherry-c-hljs-comment: var(--cherry-c-text-3);
+  --cherry-c-hljs-title: color-mix(in srgb, var(--cherry-c-alert-warning-text) 88%, var(--cherry-c-contrast-light));
+
+  --cherry-c-code-block-header-bg: color-mix(
+    in srgb,
+    var(--cherry-c-contrast-light) 4%,
+    var(--cherry-c-bg-elevated)
+  );
+  --cherry-c-code-block-code-bg: color-mix(
+    in srgb,
+    var(--cherry-c-contrast-dark) 22%,
+    var(--cherry-c-bg-elevated)
+  );
+  --cherry-c-code-block-shadow: 0 1px 2px color-mix(in srgb, var(--cherry-c-contrast-dark) 35%, transparent);
+}
 
 // ==========================================
-// Layer 4: 注入全局 CSS 变量
+// Layer 4: 主题注入
 // ==========================================
-@mixin colors {
+@mixin theme-default {
   --cherry-c-brand-1: #{$cherry-brand-1};
   --cherry-c-brand-2: #{$cherry-brand-2};
   --cherry-c-brand-3: #{$cherry-brand-3};
@@ -96,22 +160,43 @@ $cherry-dark-core-semantics: (
   --cherry-c-bg: #{$cherry-bg};
   --cherry-c-bg-elevated: #{$cherry-bg-elevated};
 
+  --cherry-c-contrast-light: #{$cherry-contrast-light};
+  --cherry-c-contrast-dark: #{$cherry-contrast-dark};
+
   @include generate-semantic-suite($cherry-core-semantics, false);
+  @include component-tokens;
+}
 
+@mixin theme-dark {
+  --cherry-c-brand-1: #{$cherry-dark-brand-1};
+  --cherry-c-brand-2: #{$cherry-dark-brand-2};
+  --cherry-c-brand-3: #{$cherry-dark-brand-3};
+  --cherry-c-brand-soft: #{$cherry-dark-brand-soft};
+  --cherry-c-brand-on-bg: #{$cherry-dark-brand-on-bg};
+
+  --cherry-c-text-1: #{$cherry-dark-text-1};
+  --cherry-c-text-2: #{$cherry-dark-text-2};
+  --cherry-c-text-3: #{$cherry-dark-text-3};
+
+  --cherry-c-bg: #{$cherry-dark-bg};
+  --cherry-c-bg-elevated: #{$cherry-dark-bg-elevated};
+
+  --cherry-c-contrast-light: #{$cherry-contrast-light};
+  --cherry-c-contrast-dark: #{$cherry-contrast-dark};
+
+  @include generate-semantic-suite($cherry-dark-core-semantics, true);
+  @include component-tokens;
+  @include component-tokens-dark;
+}
+
+@mixin when-dark {
+  .cherry-dark &,
   [data-theme="dark"] & {
-    --cherry-c-brand-1: #{$cherry-dark-brand-1};
-    --cherry-c-brand-2: #{$cherry-dark-brand-2};
-    --cherry-c-brand-3: #{$cherry-dark-brand-3};
-    --cherry-c-brand-soft: #{$cherry-dark-brand-soft};
-    --cherry-c-brand-on-bg: #{$cherry-dark-brand-on-bg};
-
-    --cherry-c-text-1: #{$cherry-dark-text-1};
-    --cherry-c-text-2: #{$cherry-dark-text-2};
-    --cherry-c-text-3: #{$cherry-dark-text-3};
-
-    --cherry-c-bg: #{$cherry-dark-bg};
-    --cherry-c-bg-elevated: #{$cherry-dark-bg-elevated};
-
-    @include generate-semantic-suite($cherry-dark-core-semantics, true);
+    @content;
   }
+}
+
+/** @deprecated 使用 theme-default / theme-dark */
+@mixin colors {
+  @include theme-default;
 }
