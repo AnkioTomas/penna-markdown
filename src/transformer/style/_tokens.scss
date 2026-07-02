@@ -54,16 +54,25 @@ $cherry-dark-core-semantics: (
   important: (#c4b5fd, #a5b4fc),
 );
 
+$cherry-dark-mark-mix: 50%;
+$cherry-dark-brand-mark-mix: 48%;
+
 // ==========================================
 // Layer 3: 语义衍生
 // ==========================================
 @mixin generate-semantic-suite($palette, $is-dark: false) {
   @each $name, $pair in $palette {
     $base-color: list.nth($pair, 1);
-    $mark-opacity: if($is-dark, 36%, 26%);
+    $mark-color: list.nth($pair, 2);
+    $surface: if($is-dark, $cherry-dark-bg, $cherry-bg);
 
     --cherry-c-#{$name}: #{$base-color};
-    --cherry-c-#{$name}-mark: color-mix(in srgb, #{$base-color} #{$mark-opacity}, transparent);
+    @if $is-dark {
+      // 暗色：用 mark 色相与底色混合，保留高亮感但不铺纯荧光
+      --cherry-c-#{$name}-mark: color-mix(in srgb, #{$mark-color} #{$cherry-dark-mark-mix}, #{$surface});
+    } @else {
+      --cherry-c-#{$name}-mark: #{$mark-color};
+    }
 
     $contrast-color: if($is-dark, $cherry-contrast-dark, $cherry-contrast-light);
     --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 20%, #{$contrast-color});
@@ -78,8 +87,6 @@ $cherry-dark-core-semantics: (
 }
 
 @mixin component-tokens {
-  --cherry-c-mark-default: color-mix(in srgb, var(--cherry-c-brand-2) 30%, transparent);
-
   --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
   --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
   --cherry-c-image-card-info-bg: linear-gradient(
@@ -106,8 +113,6 @@ $cherry-dark-core-semantics: (
 }
 
 @mixin component-tokens-dark {
-  --cherry-c-mark-default: color-mix(in srgb, var(--cherry-c-brand-2) 38%, transparent);
-
   --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
   --cherry-c-image-card-info-bg: linear-gradient(
     180deg,
@@ -155,6 +160,8 @@ $cherry-dark-core-semantics: (
   --cherry-c-contrast-light: #{$cherry-contrast-light};
   --cherry-c-contrast-dark: #{$cherry-contrast-dark};
 
+  --cherry-c-brand-mark: #{$cherry-brand-3};
+
   @include generate-semantic-suite($cherry-core-semantics, false);
   @include component-tokens;
 }
@@ -175,6 +182,8 @@ $cherry-dark-core-semantics: (
 
   --cherry-c-contrast-light: #{$cherry-contrast-light};
   --cherry-c-contrast-dark: #{$cherry-contrast-dark};
+
+  --cherry-c-brand-mark: color-mix(in srgb, #{$cherry-dark-brand-3} #{$cherry-dark-brand-mark-mix}, #{$cherry-dark-bg});
 
   @include generate-semantic-suite($cherry-dark-core-semantics, true);
   @include component-tokens;
