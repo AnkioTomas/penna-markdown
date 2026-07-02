@@ -10,6 +10,7 @@
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
+import { RenderContext } from "@/transformer/core/context/RenderContext";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 
 /** 数学公式渲染 API 基址。 */
@@ -108,9 +109,10 @@ class MathBlockParser extends BaseBlockParser {
   }
 
   /** @inheritdoc */
-  render(node: MarkdownNode) {
+  render(node: MarkdownNode, ctx: RenderContext) {
     const latex = (node.value ?? "").trim();
-    const src = this.buildMathImageSrc(latex);
+    const color = ctx.isDark ? "white" : undefined;
+    const src = this.buildMathImageSrc(latex, { color });
     if (!src) return "";
     return `<div class="cherry-math cherry-math-block" data-type="mathBlock"><img ${mathImgAttrs(latex, false)} src="${src}" loading="lazy" /></div>`;
   }

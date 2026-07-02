@@ -170,11 +170,12 @@ class SpecialCodeBlockParser extends BaseBlockParser {
   }
 
   /** @inheritdoc */
-  render(node: Parameters<BaseBlockParser["render"]>[0]) {
+  render(node: Parameters<BaseBlockParser["render"]>[0], ctx: Parameters<BaseBlockParser["render"]>[1]) {
     const lang = String(node.props?.lang ?? "").toLowerCase();
     const content = node.value ?? "";
-    if (lang === "mermaid" || lang === "graph") return this.renderMermaidBlock(content);
-    if (lang === "echarts") return this.renderEchartsBlock(content);
+    const theme = ctx.isDark ? ("dark" as const) : undefined;
+    if (lang === "mermaid" || lang === "graph") return this.renderMermaidBlock(content, { theme });
+    if (lang === "echarts") return this.renderEchartsBlock(content, { theme });
     return codeParser.render(node);
   }
 }

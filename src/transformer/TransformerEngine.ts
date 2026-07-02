@@ -20,8 +20,11 @@ function normalizeMarkdown(markdown: string): string {
 
 export class TransformerEngine {
     readonly registry: Registry;
+    /** 暗色主题，可由外部在运行时更新后重新 render。 */
+    isDark: boolean;
 
     constructor(options: TransformerEngineOptions = {}) {
+        this.isDark = options.isDark ?? false;
         this.registry = new Registry();
 
         if (options.inlineParsers) {
@@ -65,6 +68,7 @@ export class TransformerEngine {
         const that = this;
         const ctx = new class implements RenderContext {
             store: ParserStore = store as ParserStore;
+            isDark: boolean = that.isDark;
 
             renderInline(nodes?: MarkdownNode[]): string {
                 return that._renderInline(nodes ?? [], ctx);
