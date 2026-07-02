@@ -191,8 +191,7 @@ $cherry-dark-brand-mark-mix: 48%;
 }
 
 @mixin when-dark {
-  .cherry-dark &,
-  [data-theme="dark"] & {
+  .cherry-dark .cherry & {
     @content;
   }
 }
