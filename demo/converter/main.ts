@@ -1,16 +1,47 @@
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
-import { escapeHtml } from "@/transformer/utils/escape.js";
+import { isDark } from "@/transformer/utils/isDark.js";
 import { requiredEl } from "../dom.js";
+// @ts-ignore
 import example from "../test.md?raw";
 
 const transformer = new TransformerEngine();
 
 const markdownInput = requiredEl<HTMLTextAreaElement>("#markdown");
 const preview = requiredEl<HTMLElement>("#preview");
+const previewWrap = requiredEl<HTMLElement>("#preview-wrap");
 const resetBtn = requiredEl<HTMLButtonElement>("#reset-btn");
+const themeBtn = requiredEl<HTMLButtonElement>("#theme-btn");
 const timing = requiredEl<HTMLElement>("#timing");
 
+const THEME_KEY = "cherry-converter-theme";
+
 markdownInput.value = example;
+
+function syncThemeButton(): void {
+  const dark = isDark(preview);
+  themeBtn.textContent = dark ? "白天模式" : "夜间模式";
+  themeBtn.setAttribute("aria-pressed", dark ? "true" : "false");
+}
+
+function applyTheme(dark: boolean): void {
+  previewWrap.classList.toggle("cherry-dark", dark);
+  previewWrap.classList.toggle("cherry-theme-default", !dark);
+  document.body.classList.toggle("demo-dark", dark);
+  localStorage.setItem(THEME_KEY, dark ? "dark" : "light");
+  syncThemeButton();
+  renderNow();
+}
+
+function initTheme(): void {
+  const saved = localStorage.getItem(THEME_KEY);
+  applyTheme(saved === "dark");
+}
+
+themeBtn.addEventListener("click", () => {
+  applyTheme(!isDark(preview));
+});
+
+initTheme();
 
 type ScrollLock = "markdown" | "preview" | null;
 
@@ -38,14 +69,14 @@ function applyScrollRatio(from: HTMLElement, to: HTMLElement): void {
 function syncPreviewFromInput(): void {
   if (scrollLock === "preview" || suppressScrollSync > 0) return;
   scrollLock = "markdown";
-  applyScrollRatio(markdownInput, preview);
+  applyScrollRatio(markdownInput, previewWrap);
   scrollLock = null;
 }
 
 function syncInputFromPreview(): void {
   if (scrollLock === "markdown" || suppressScrollSync > 0) return;
   scrollLock = "preview";
-  applyScrollRatio(preview, markdownInput);
+  applyScrollRatio(previewWrap, markdownInput);
   scrollLock = null;
 }
 
@@ -55,7 +86,6 @@ preview.addEventListener("mousedown", (e) => {
   const label = (e.target as Element).closest(".cherry-tabs__label");
   if (!label) return;
 
-  // 阻止 radio focus 触发的 scrollIntoView，避免预览区跳动
   e.preventDefault();
   pauseScrollSync();
 
@@ -64,7 +94,7 @@ preview.addEventListener("mousedown", (e) => {
 });
 
 markdownInput.addEventListener("scroll", syncPreviewFromInput);
-preview.addEventListener("scroll", syncInputFromPreview);
+previewWrap.addEventListener("scroll", syncInputFromPreview);
 
 function renderNow(): void {
   const md = markdownInput.value;
@@ -94,5 +124,3 @@ resetBtn.addEventListener("click", () => {
 });
 
 renderNow();
-
-window.cherryConverterDemo = { transformer, renderNow };

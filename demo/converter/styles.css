@@ -6,8 +6,24 @@
   gap: 16px;
 }
 
-.timing {
+.theme-btn {
   margin-left: auto;
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  background: #fff;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.theme-btn:hover {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+.timing {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
     monospace;
   font-size: 12px;
@@ -49,4 +65,56 @@
   margin: 0;
   color: #b91c1c;
   font-size: 13px;
+}
+
+#preview-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+body.demo-dark {
+  background: #0f0f0f;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+body.demo-dark .header {
+  background: #141414;
+  border-bottom-color: #2a2a2a;
+}
+
+body.demo-dark .back {
+  color: #8cccd5;
+}
+
+body.demo-dark .panel {
+  background: #141414;
+  border-color: #2a2a2a;
+}
+
+body.demo-dark .panel-title {
+  color: rgba(255, 255, 255, 0.72);
+  border-bottom-color: #2a2a2a;
+}
+
+body.demo-dark .textarea {
+  background: #141414;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+body.demo-dark .theme-btn {
+  background: #1f1f1f;
+  border-color: #3a3a3a;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+body.demo-dark .theme-btn:hover {
+  background: #262626;
+  border-color: #525252;
+}
+
+body.demo-dark .timing {
+  color: #8cccd5;
+  background: rgba(131, 208, 218, 0.12);
+  border-color: rgba(131, 208, 218, 0.28);
 }

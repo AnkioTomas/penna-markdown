@@ -11,6 +11,9 @@
     <div class="header">
       <a class="back" href="../index.html">返回入口</a>
       <div class="title">转换器</div>
+      <button id="theme-btn" type="button" class="theme-btn" aria-pressed="false">
+        夜间模式
+      </button>
       <div id="timing" class="timing" title="parse + render">— ms</div>
     </div>
 
@@ -25,7 +28,9 @@
 
       <div class="panel">
         <div class="panel-title">预览</div>
-        <div id="preview" class="preview cherry"></div>
+        <div id="preview-wrap" class="cherry-theme-default">
+          <div id="preview" class="preview cherry"></div>
+        </div>
       </div>
     </div>
 
