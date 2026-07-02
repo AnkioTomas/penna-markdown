@@ -3,7 +3,7 @@
  */
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 
-const SKIP_KEYS = new Set(["children", "value", "type", "length"]);
+const SKIP_KEYS = new Set(["children", "value", "type", "length", "props"]);
 
 const CHEVRON_SVG = `<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M6 4l4 4-4 4V4z"/></svg>`;
 
@@ -58,8 +58,25 @@ function formatChipValue(value: unknown): string {
   }
 }
 
-function extraProps(node: MarkdownNode): { key: string; value: unknown }[] {
+function summarizePropValue(key: string, value: unknown): unknown {
+  if (key === "store") return "[ParserStore]";
+  return value;
+}
+
+function collectMetaFields(node: MarkdownNode): { key: string; value: unknown }[] {
   const rows: { key: string; value: unknown }[] = [];
+
+  if (node.length !== undefined) {
+    rows.push({ key: "length", value: node.length });
+  }
+
+  const props = node.props;
+  if (props && typeof props === "object") {
+    for (const [key, value] of Object.entries(props)) {
+      if (value === undefined) continue;
+      rows.push({ key: `props.${key}`, value: summarizePropValue(key, value) });
+    }
+  }
 
   for (const [key, value] of Object.entries(node)) {
     if (SKIP_KEYS.has(key) || value === undefined) continue;
@@ -70,18 +87,16 @@ function extraProps(node: MarkdownNode): { key: string; value: unknown }[] {
 }
 
 function nodeMeta(node: MarkdownNode): AstNodeMeta {
-  const { type } = node;
+  const chips = collectMetaFields(node).map(({ key, value }) => ({
+    key,
+    value: formatChipValue(value),
+  }));
 
-  if (type === "text" && node.value !== undefined) {
-    return { value: preview(node.value, 64), chips: [] };
+  if (node.value !== undefined) {
+    return { value: preview(String(node.value), 64), chips };
   }
 
-  return {
-    chips: extraProps(node).map(({ key, value }) => ({
-      key,
-      value: formatChipValue(value),
-    })),
-  };
+  return { chips };
 }
 
 function countNodes(node: MarkdownNode): { count: number; depth: number } {
@@ -113,7 +128,7 @@ export class AstTreeView {
 
   constructor(container: HTMLElement, options: AstTreeViewOptions = {}) {
     this.container = container;
-    this.onSelect = options.onSelect ?? (() => {});
+    this.onSelect = options.onSelect ?? ((_node, _path) => {});
     this._onClick = this.handleClick.bind(this);
     container.addEventListener("click", this._onClick);
   }
@@ -376,6 +391,8 @@ export class AstTreeView {
     for (const chip of meta.chips) {
       const el = document.createElement("span");
       el.className = "ast-chip";
+      if (chip.key === "length") el.dataset.field = "length";
+      else if (chip.key.startsWith("props.")) el.dataset.field = "props";
       el.innerHTML = `<span class="chip-key">${escapeHtml(chip.key)}</span><span class="chip-val">${escapeHtml(chip.value)}</span>`;
       body.append(el);
     }
@@ -398,10 +415,20 @@ export class AstTreeView {
 
   private tooltip(node: MarkdownNode): string {
     try {
-      const clone: Record<string, unknown> = { type: node.type };
+      const clone: Record<string, unknown> = {
+        type: node.type,
+        length: node.length,
+      };
       if (node.value !== undefined) clone.value = node.value;
+      if (node.props && Object.keys(node.props).length > 0) {
+        clone.props = Object.fromEntries(
+          Object.entries(node.props).map(([key, value]) => [
+            key,
+            summarizePropValue(key, value),
+          ]),
+        );
+      }
       if (node.children) clone.children = `[${node.children.length}]`;
-      for (const { key, value } of extraProps(node)) clone[key] = value;
       return JSON.stringify(clone, null, 2);
     } catch {
       return node.type;

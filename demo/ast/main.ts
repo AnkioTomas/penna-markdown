@@ -5,14 +5,11 @@ import { AstTreeView } from "./tree-view.js";
 import { highlightJson } from "./json-highlight.js";
 import initialDoc from "../test.md?raw";
 
-const DOC_LABEL = "demo/test.md";
-const SAVE_URL = "/__ast/save-doc";
 const RENDER_DEBOUNCE_MS = 100;
 
 const transformer = new TransformerEngine();
 
 const markdownInput = requiredEl<HTMLTextAreaElement>("#markdown");
-const saveStatus = requiredEl<HTMLElement>("#save-status");
 const astTree = requiredEl<HTMLElement>("#ast-tree");
 const nodeDetail = requiredEl<HTMLElement>("#node-detail");
 const copyDetailBtn = requiredEl<HTMLButtonElement>("#copy-detail");
@@ -24,65 +21,36 @@ const filterInput = requiredEl<HTMLInputElement>("#type-filter");
 
 markdownInput.value = initialDoc;
 
-type SerializedNode = Record<string, unknown> & {
+type SerializedNode = {
   type: string;
+  length: number;
+  value?: string;
+  props?: Record<string, unknown>;
   children?: SerializedNode[];
 };
 
-type SaveState = "idle" | "dirty" | "saving" | "saved" | "error";
-
-let savedContent = initialDoc;
-let saving = false;
-
-function setSaveStatus(text: string, state: SaveState = "idle"): void {
-  saveStatus.textContent = text;
-  saveStatus.classList.remove("is-dirty", "is-saving", "is-saved", "is-error");
-  if (state === "dirty") saveStatus.classList.add("is-dirty");
-  if (state === "saving") saveStatus.classList.add("is-saving");
-  if (state === "saved") saveStatus.classList.add("is-saved");
-  if (state === "error") saveStatus.classList.add("is-error");
-}
-
-function isDirty(): boolean {
-  return markdownInput.value !== savedContent;
-}
-
-function refreshSaveStatus(): void {
-  if (saving) return;
-  if (isDirty()) {
-    setSaveStatus(`未保存 · 失焦后写回 ${DOC_LABEL}`, "dirty");
-    return;
+function serializeProps(props: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(props)) {
+    if (value === undefined) continue;
+    out[key] = key === "store" ? "[ParserStore]" : value;
   }
-  setSaveStatus(DOC_LABEL, "idle");
+  return out;
 }
 
-async function saveDocument(): Promise<void> {
-  if (!isDirty() || saving) return;
-
-  const content = markdownInput.value;
-  saving = true;
-  setSaveStatus("写回中…", "saving");
-
-  try {
-    const res = await fetch(SAVE_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content }),
-    });
-    if (!res.ok) {
-      throw new Error(await res.text());
-    }
-    savedContent = content;
-    setSaveStatus(`已写回 ${DOC_LABEL}`, "saved");
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
-    setSaveStatus(`保存失败：${message}`, "error");
-  } finally {
-    saving = false;
-    if (isDirty()) {
-      refreshSaveStatus();
-    }
+function serializeNode(node: MarkdownNode): SerializedNode {
+  const out: SerializedNode = {
+    type: node.type,
+    length: node.length,
+  };
+  if (node.value !== undefined) out.value = node.value;
+  if (node.props && Object.keys(node.props).length > 0) {
+    out.props = serializeProps(node.props);
   }
+  if (Array.isArray(node.children)) {
+    out.children = node.children.map(serializeNode);
+  }
+  return out;
 }
 
 function showNodeDetail(node: MarkdownNode): void {
@@ -95,23 +63,6 @@ const treeView = new AstTreeView(astTree, {
   },
 });
 
-/** 调试展示用：序列化 AST 节点字段 */
-function serializeNode(node: MarkdownNode): SerializedNode {
-  const out: SerializedNode = { type: node.type };
-  if (node.value !== undefined) out.value = node.value;
-  if (node.length !== undefined) out.length = node.length;
-  if (Array.isArray(node.children)) {
-    out.children = node.children.map(serializeNode);
-  }
-  for (const [key, value] of Object.entries(node)) {
-    if (key === "type" || key === "children" || key === "value" || key === "length") {
-      continue;
-    }
-    if (value !== undefined) out[key] = value;
-  }
-  return out;
-}
-
 function renderNow(): void {
   const md = markdownInput.value;
   const start = performance.now();
@@ -122,8 +73,8 @@ function renderNow(): void {
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     astTree.innerHTML = `<div class="error-msg">解析错误: ${message}</div>`;
-    nodeDetail.innerHTML = "";
-    timing.textContent = "解析耗时: -";
+    nodeDetail.textContent = "";
+    timing.textContent = "— ms";
     return;
   }
 
@@ -138,14 +89,7 @@ function scheduleRender(): void {
   renderTimer = window.setTimeout(renderNow, RENDER_DEBOUNCE_MS);
 }
 
-markdownInput.addEventListener("input", () => {
-  scheduleRender();
-  refreshSaveStatus();
-});
-
-markdownInput.addEventListener("blur", () => {
-  void saveDocument();
-});
+markdownInput.addEventListener("input", scheduleRender);
 
 expandAllBtn.addEventListener("click", () => treeView.expandAll());
 collapseAllBtn.addEventListener("click", () => treeView.collapseAll());
@@ -170,6 +114,5 @@ copyDetailBtn.addEventListener("click", async () => {
 });
 
 renderNow();
-refreshSaveStatus();
 
-window.cherryAstDemo = { transformer, renderNow, treeView, saveDocument };
+window.cherryAstDemo = { transformer, renderNow, treeView };
