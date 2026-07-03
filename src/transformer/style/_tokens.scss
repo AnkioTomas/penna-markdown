@@ -57,6 +57,38 @@ $cherry-dark-core-semantics: (
 $cherry-dark-mark-mix: 50%;
 $cherry-dark-brand-mark-mix: 48%;
 
+@function cherry-surface($is-dark) {
+  @if $is-dark {
+    @return $cherry-dark-bg;
+  }
+
+  @return $cherry-bg;
+}
+
+@function cherry-contrast-color($is-dark) {
+  @if $is-dark {
+    @return $cherry-contrast-dark;
+  }
+
+  @return $cherry-contrast-light;
+}
+
+@function cherry-bg-opacity($is-dark) {
+  @if $is-dark {
+    @return 15%;
+  }
+
+  @return 10%;
+}
+
+@function cherry-border-opacity($is-dark) {
+  @if $is-dark {
+    @return 40%;
+  }
+
+  @return 30%;
+}
+
 // ==========================================
 // Layer 3: 语义衍生
 // ==========================================
@@ -64,7 +96,7 @@ $cherry-dark-brand-mark-mix: 48%;
   @each $name, $pair in $palette {
     $base-color: list.nth($pair, 1);
     $mark-color: list.nth($pair, 2);
-    $surface: if($is-dark, $cherry-dark-bg, $cherry-bg);
+    $surface: cherry-surface($is-dark);
 
     --cherry-c-#{$name}: #{$base-color};
     @if $is-dark {
@@ -74,11 +106,11 @@ $cherry-dark-brand-mark-mix: 48%;
       --cherry-c-#{$name}-mark: #{$mark-color};
     }
 
-    $contrast-color: if($is-dark, $cherry-contrast-dark, $cherry-contrast-light);
+    $contrast-color: cherry-contrast-color($is-dark);
     --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 20%, #{$contrast-color});
 
-    $bg-opacity: if($is-dark, 15%, 10%);
-    $border-opacity: if($is-dark, 40%, 30%);
+    $bg-opacity: cherry-bg-opacity($is-dark);
+    $border-opacity: cherry-border-opacity($is-dark);
 
     --cherry-c-alert-#{$name}-text: #{$base-color};
     --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
