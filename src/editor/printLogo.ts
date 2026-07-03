@@ -17,7 +17,7 @@ export function printCherryLogo(): void {
   if (!isBrowser() || logoPrinted) return;
   logoPrinted = true;
 
-  const muted = "color:#6b7280;font-size:12px;";
+  const muted = "color:#6b7280;font-size:14px;";
   const title = "color:#e11d48;font-size:18px;font-weight:700;";
   const name = "color:#111827;font-size:16px;font-weight:700;";
   const badge =
