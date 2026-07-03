@@ -1,0 +1,64 @@
+/** 分栏布局与拖拽条 */
+.cherry-body--split {
+  --cherry-split: 50%;
+
+  .cherry-editor {
+    flex: 0 0 var(--cherry-split) !important;
+    max-width: var(--cherry-split);
+  }
+
+  .cherry-preview {
+    flex: 1 1 0 !important;
+    min-width: 0;
+  }
+}
+
+.cherry-body--edit .cherry-editor,
+.cherry-body--preview .cherry-preview {
+  flex: 1;
+}
+
+.cherry-body--edit .cherry-preview,
+.cherry-body--edit .cherry-divider {
+  display: none;
+}
+
+.cherry-body--preview .cherry-editor,
+.cherry-body--preview .cherry-divider {
+  display: none;
+}
+
+.cherry-body--edit .cherry-editor {
+  border-right: none;
+}
+
+.cherry-divider {
+  position: relative;
+  flex-shrink: 0;
+  align-self: stretch;
+  width: 4px;
+  cursor: col-resize;
+  background: color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  transition: background 0.15s;
+  touch-action: none;
+  user-select: none;
+  z-index: 2;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -6px;
+    right: -6px;
+  }
+}
+
+.cherry-divider:hover,
+.cherry-divider.is-dragging {
+  background: var(--cherry-c-brand-1);
+}
+
+.cherry-divider.is-disabled {
+  display: none;
+}
