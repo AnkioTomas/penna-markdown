@@ -1,56 +1,71 @@
 @use "sass:list";
-@use "sass:map";
 
-// Claude 主题色板（源自 claude.css / claude-dark.css，映射到 --cherry-c-*）
-$claude-accent: #d97757;
-$claude-accent-soft: rgba(217, 119, 87, 0.14);
-$claude-accent-hover: #e6987d;
-$claude-highlight-mark: #d4b06d;
+// Anthropic / Claude 官方色板
+$claude-clay: #d97757;
+$claude-clay-hover: #c6613f;
+$claude-clay-soft: rgba(217, 119, 87, 0.14);
+$claude-mark: #d4b06d;
 
-$claude-light-bg: #faf9f5;
-$claude-light-bg-elevated: #f0eee6;
-$claude-light-text-1: #141413;
-$claude-light-text-2: #3d3d3a;
-$claude-light-text-3: #73726c;
-$claude-light-code-fg: #8a2424;
-$claude-light-border: #1f1e1d;
+$claude-ivory: #faf9f5;
+$claude-ivory-medium: #f0eee6;
+$claude-ivory-dark: #e8e6dc;
+$claude-linen: #dedcd1;
 
-$claude-dark-bg: #262624;
-$claude-dark-bg-elevated: #30302e;
-$claude-dark-text-1: #faf9f5;
-$claude-dark-text-2: #c2c0b6;
-$claude-dark-text-3: #9a9c92;
-$claude-dark-code-fg: #fe8181;
-$claude-dark-border: #dedcd1;
+$claude-ink: #141413;
+$claude-ink-soft: #3d3d3a;
+$claude-muted: #87867f;
+$claude-cloud: #b0aea5;
+
+$claude-code-light: #8a2424;
+$claude-code-dark: #fe8181;
+
+$claude-dark-canvas: #181715;
+$claude-dark-surface: #252320;
+$claude-dark-elevated: #30302e;
+$claude-dark-text: #faf9f5;
+$claude-dark-text-soft: #c2c0b6;
+$claude-dark-muted: #9a9c92;
 
 $claude-light-semantics: (
-  note: (#5d7d9a, #5d7d9a),
-  tip: (#688a5d, #688a5d),
-  warning: (#ad7837, #ad7837),
-  caution: (#b45f51, #b45f51),
-  danger: (#b45f51, #b45f51),
-  important: (#8b6f9d, #8b6f9d),
+  note: (#5d7d9a, #c8e0f4),
+  tip: (#688a5d, #d7eccf),
+  warning: (#ad7837, #f2ddb3),
+  caution: (#b45f51, #f3ccc4),
+  danger: (#b45f51, #f3ccc4),
+  important: (#8b6f9d, #e6d4f2),
 );
 
 $claude-dark-semantics: (
-  note: (#88a9c7, #88a9c7),
-  tip: (#91b685, #91b685),
-  warning: (#d6a15e, #d6a15e),
-  caution: (#d88678, #d88678),
-  danger: (#d88678, #d88678),
-  important: (#b69acd, #b69acd),
+  note: (#88a9c7, #5f7896),
+  tip: (#91b685, #5f7a57),
+  warning: (#d6a15e, #8f6a34),
+  caution: (#d88678, #8f5348),
+  danger: (#d88678, #8f5348),
+  important: (#b69acd, #7a5f8f),
 );
 
-$claude-dark-mark-mix: 50%;
+$claude-dark-mark-mix: 40%;
+
+@mixin typography-tokens {
+  --claude-font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
+    "Times New Roman", serif;
+  --claude-font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --claude-font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", monospace;
+  --claude-text-size: 0.9375rem;
+  --claude-text-leading: 1.7;
+  --claude-heading-leading: 1.25;
+}
 
 @mixin generate-semantic-suite($palette, $is-dark: false) {
   @each $name, $pair in $palette {
     $base-color: list.nth($pair, 1);
     $mark-color: list.nth($pair, 2);
-    $surface: if(sass($is-dark): $claude-dark-bg; else: $claude-light-bg);
+    $surface: if(sass($is-dark): $claude-dark-canvas; else: $claude-ivory);
     $contrast-color: if(sass($is-dark): #000; else: #fff);
-    $bg-opacity: if(sass($is-dark): 11%; else: 10%);
-    $border-opacity: if(sass($is-dark): 24%; else: 22%);
+    $bg-opacity: if(sass($is-dark): 10%; else: 8%);
+    $border-opacity: if(sass($is-dark): 22%; else: 18%);
 
     --cherry-c-#{$name}: #{$base-color};
     @if $is-dark {
@@ -59,7 +74,7 @@ $claude-dark-mark-mix: 50%;
       --cherry-c-#{$name}-mark: #{$mark-color};
     }
 
-    --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 20%, #{$contrast-color});
+    --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 16%, #{$contrast-color});
 
     --cherry-c-alert-#{$name}-text: #{$base-color};
     --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
@@ -69,12 +84,16 @@ $claude-dark-mark-mix: 50%;
 
 @mixin component-tokens($is-dark: false) {
   $border-soft: if(
-    sass($is-dark): color-mix(in srgb, #{$claude-dark-border} 15%, transparent);
-    else: color-mix(in srgb, #{$claude-light-border} 15%, transparent)
+    sass($is-dark): color-mix(in srgb, #{$claude-linen} 28%, transparent);
+    else: color-mix(in srgb, #{$claude-linen} 72%, transparent)
+  );
+  $border-faint: if(
+    sass($is-dark): color-mix(in srgb, #{$claude-linen} 14%, transparent);
+    else: color-mix(in srgb, #{$claude-linen} 42%, transparent)
   );
   $code-inline-bg: if(
-    sass($is-dark): color-mix(in srgb, #{$claude-dark-text-2} 5%, transparent);
-    else: color-mix(in srgb, #{$claude-light-text-2} 5%, transparent)
+    sass($is-dark): color-mix(in srgb, #{$claude-dark-text-soft} 8%, transparent);
+    else: color-mix(in srgb, #{$claude-ink} 5%, transparent)
   );
 
   --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
@@ -82,82 +101,85 @@ $claude-dark-mark-mix: 50%;
   --cherry-c-image-card-info-bg: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 45%, transparent) 55%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 72%, transparent) 100%
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 40%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 65%, transparent) 100%
   );
   --cherry-c-image-card-info-bg-hover: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 55%, transparent) 35%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 82%, transparent) 100%
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 50%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 75%, transparent) 100%
   );
 
   --cherry-c-media-player-bg: var(--cherry-c-bg);
   --cherry-c-media-shade: var(--cherry-c-bg);
-  --cherry-c-on-brand: var(--cherry-c-contrast-light);
+  --cherry-c-on-brand: #fff;
 
   --cherry-c-code-inline-bg: #{$code-inline-bg};
   --cherry-c-code-inline-fg: var(--cherry-c-code-fg);
-  --cherry-c-code-inline-border: #{$border-soft};
+  --cherry-c-code-inline-border: transparent;
 
-  --cherry-c-code-block-header-bg: color-mix(in srgb, var(--cherry-c-text-3) 8%, var(--cherry-c-bg-elevated));
-  --cherry-c-code-block-code-bg: color-mix(in srgb, var(--cherry-c-text-3) 4%, var(--cherry-c-bg));
-  --cherry-c-code-block-shadow: 0 1px 2px color-mix(in srgb, var(--cherry-c-text-3) 8%, transparent),
-    0 8px 24px color-mix(in srgb, var(--cherry-c-text-3) 6%, transparent);
+  --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-code-bg: var(--cherry-c-bg);
+  --cherry-c-code-block-shadow: none;
 
-  --cherry-c-table-th-border: var(--cherry-c-border-soft);
-  --cherry-c-table-td-border: var(--cherry-c-border-faint);
-  --cherry-c-hr-color: var(--cherry-c-border-faint);
-  --cherry-c-blockquote-border: var(--cherry-c-border-soft);
+  --cherry-c-table-th-border: #{$border-soft};
+  --cherry-c-table-td-border: #{$border-faint};
+  --cherry-c-hr-color: #{$border-faint};
+  --cherry-c-blockquote-border: #{$border-soft};
 }
 
 @mixin theme-light {
-  --cherry-c-brand-1: #{$claude-accent};
-  --cherry-c-brand-2: #{$claude-accent-hover};
-  --cherry-c-brand-3: #{$claude-accent};
-  --cherry-c-brand-soft: #{$claude-accent-soft};
-  --cherry-c-brand-on-bg: #{$claude-light-text-1};
+  @include typography-tokens;
 
-  --cherry-c-text-1: #{$claude-light-text-1};
-  --cherry-c-text-2: #{$claude-light-text-2};
-  --cherry-c-text-3: #{$claude-light-text-3};
+  --cherry-c-brand-1: #{$claude-clay};
+  --cherry-c-brand-2: #{$claude-clay-hover};
+  --cherry-c-brand-3: #{$claude-clay};
+  --cherry-c-brand-soft: #{$claude-clay-soft};
+  --cherry-c-brand-on-bg: #{$claude-ink};
 
-  --cherry-c-bg: #{$claude-light-bg};
-  --cherry-c-bg-elevated: #{$claude-light-bg-elevated};
+  --cherry-c-text-1: #{$claude-ink};
+  --cherry-c-text-2: #{$claude-ink-soft};
+  --cherry-c-text-3: #{$claude-muted};
+
+  --cherry-c-bg: #{$claude-ivory};
+  --cherry-c-bg-elevated: #{$claude-ivory-medium};
 
   --cherry-c-contrast-light: #fff;
   --cherry-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #{$claude-accent};
-  --cherry-c-code-fg: #{$claude-light-code-fg};
-  --cherry-c-border-soft: #{color-mix(in srgb, #{$claude-light-border} 60%, transparent)};
-  --cherry-c-border-faint: #{color-mix(in srgb, #{$claude-light-border} 30%, transparent)};
+  --cherry-c-brand-mark: #{$claude-mark};
+  --cherry-c-code-fg: #{$claude-code-light};
+  --cherry-c-border-soft: #{color-mix(in srgb, #{$claude-linen} 85%, transparent)};
+  --cherry-c-border-faint: #{color-mix(in srgb, #{$claude-linen} 55%, transparent)};
 
   @include generate-semantic-suite($claude-light-semantics, false);
   @include component-tokens(false);
 }
 
 @mixin theme-dark {
-  --cherry-c-brand-1: #{$claude-accent};
-  --cherry-c-brand-2: #{$claude-accent-hover};
-  --cherry-c-brand-3: #{$claude-accent};
+  @include typography-tokens;
+
+  --cherry-c-brand-1: #{$claude-clay};
+  --cherry-c-brand-2: #e6987d;
+  --cherry-c-brand-3: #{$claude-clay};
   --cherry-c-brand-soft: rgba(217, 119, 87, 0.16);
-  --cherry-c-brand-on-bg: #{$claude-dark-text-1};
+  --cherry-c-brand-on-bg: #{$claude-dark-text};
 
-  --cherry-c-text-1: #{$claude-dark-text-1};
-  --cherry-c-text-2: #{$claude-dark-text-2};
-  --cherry-c-text-3: #{$claude-dark-text-3};
+  --cherry-c-text-1: #{$claude-dark-text};
+  --cherry-c-text-2: #{$claude-dark-text-soft};
+  --cherry-c-text-3: #{$claude-dark-muted};
 
-  --cherry-c-bg: #{$claude-dark-bg};
-  --cherry-c-bg-elevated: #{$claude-dark-bg-elevated};
+  --cherry-c-bg: #{$claude-dark-canvas};
+  --cherry-c-bg-elevated: #{$claude-dark-surface};
 
   --cherry-c-contrast-light: #fff;
   --cherry-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #{$claude-highlight-mark};
-  --cherry-c-code-fg: #{$claude-dark-code-fg};
-  --cherry-c-border-soft: #{color-mix(in srgb, #{$claude-dark-border} 60%, transparent)};
-  --cherry-c-border-faint: #{color-mix(in srgb, #{$claude-dark-border} 30%, transparent)};
+  --cherry-c-brand-mark: #{$claude-mark};
+  --cherry-c-code-fg: #{$claude-code-dark};
+  --cherry-c-border-soft: #{color-mix(in srgb, #{$claude-linen} 24%, transparent)};
+  --cherry-c-border-faint: #{color-mix(in srgb, #{$claude-linen} 12%, transparent)};
 
   @include generate-semantic-suite($claude-dark-semantics, true);
   @include component-tokens(true);

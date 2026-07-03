@@ -34,8 +34,8 @@
 @use "../../../transformer/extends/style/footnote";
 @use "../../../transformer/extends/style/code-block";
 
-// 默认主题：日间 .cherry-theme-default.cherry-render
-.cherry-theme-default{
+// 日间：.cherry-theme-default .cherry-render
+.cherry-theme-default {
   .cherry-render {
     @include tokens.theme-default;
 
@@ -74,11 +74,9 @@
   }
 }
 
-// 夜间模式：.cherry-dark .cherry-theme-default.cherry-render
-.cherry-dark.cherry-theme-default{
-    .cherry-render {
-      @include tokens.theme-dark;
-    }
+// 夜间：.cherry-dark.cherry-theme-default .cherry-render
+.cherry-dark.cherry-theme-default {
+  .cherry-render {
+    @include tokens.theme-dark;
+  }
 }
-
-

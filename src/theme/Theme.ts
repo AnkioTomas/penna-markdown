@@ -28,7 +28,7 @@ export class Theme {
     this.applyAppearanceClass();
 
     if (prev !== id) {
-      this.emit("change", { prev, id, render });
+      this.emit("theme:skin", { prev, id, render });
     }
   }
 
@@ -46,7 +46,7 @@ export class Theme {
     if (this.mode === mode) return;
     this.mode = mode;
     this.applyAppearanceClass();
-    this.emit("appearance", { mode, isDark: mode === "dark" });
+    this.emit("theme:ld", { mode, isDark: mode === "dark" });
   }
 
   on(event: string, handler: EventHandler) {
@@ -61,7 +61,7 @@ export class Theme {
     this.bus.emit(event, payload);
   }
 
-  /** 主题 class 在 render；明暗 class 在 root（供 `.cherry-dark .cherry-theme-* .cherry-render` 命中） */
+  /** 主题 class 在 root；render 仅 cherry-render（供 `.cherry-theme-* .cherry-render` 命中） */
   private applyThemeClasses() {
     if (!this.render) return;
 
@@ -69,7 +69,12 @@ export class Theme {
     for (const name of [...this.render.classList]) {
       if (name.startsWith("cherry-theme-")) this.render.classList.remove(name);
     }
-    this.render.classList.add(`cherry-theme-${this.id}`);
+
+    const themeRoot = this.root ?? this.render;
+    for (const name of [...themeRoot.classList]) {
+      if (name.startsWith("cherry-theme-")) themeRoot.classList.remove(name);
+    }
+    themeRoot.classList.add(`cherry-theme-${this.id}`);
   }
 
   private applyAppearanceClass() {

@@ -35,49 +35,51 @@
 @use "../../../transformer/extends/style/footnote";
 @use "../../../transformer/extends/style/code-block";
 
-// 日间：.cherry-theme-claude.cherry-render
-.cherry-theme-claude.cherry-render {
-  @include tokens.theme-light;
+// 日间：.cherry-theme-claude .cherry-render
+.cherry-theme-claude {
+  .cherry-render {
+    @include tokens.theme-light;
 
-  @include base.styles;
-  @include heading.styles;
-  @include paragraph.styles;
-  @include link.styles;
-  @include emphasis.styles;
-  @include blockquote.styles;
-  @include hr.styles;
-  @include list.styles;
-  @include image.styles;
-  @include code.styles;
-  @include table.styles;
+    @include base.styles;
+    @include heading.styles;
+    @include paragraph.styles;
+    @include link.styles;
+    @include emphasis.styles;
+    @include blockquote.styles;
+    @include hr.styles;
+    @include list.styles;
+    @include image.styles;
+    @include code.styles;
+    @include table.styles;
 
-  @include highlight.styles;
-  @include spoiler.styles;
-  @include alert.styles;
-  @include tasklist.styles;
-  @include badge.styles;
-  @include card.styles;
-  @include link-card.styles;
-  @include image-card.styles;
-  @include repo-card.styles;
-  @include card-grid.styles;
-  @include card-masonry.styles;
-  @include steps.styles;
-  @include tabs.styles;
-  @include field.styles;
-  @include timeline.styles;
-  @include collapse.styles;
-  @include media.styles;
-  @include math.styles;
-  @include footnote.styles;
-  @include code-block.styles;
+    @include highlight.styles;
+    @include spoiler.styles;
+    @include alert.styles;
+    @include tasklist.styles;
+    @include badge.styles;
+    @include card.styles;
+    @include link-card.styles;
+    @include image-card.styles;
+    @include repo-card.styles;
+    @include card-grid.styles;
+    @include card-masonry.styles;
+    @include steps.styles;
+    @include tabs.styles;
+    @include field.styles;
+    @include timeline.styles;
+    @include collapse.styles;
+    @include media.styles;
+    @include math.styles;
+    @include footnote.styles;
+    @include code-block.styles;
 
-  @include overrides.styles;
+    @include overrides.styles;
+  }
 }
 
-// 夜间：.cherry-dark .cherry-theme-claude.cherry-render
-.cherry-dark {
-  .cherry-theme-claude.cherry-render {
+// 夜间：.cherry-dark.cherry-theme-claude .cherry-render
+.cherry-dark.cherry-theme-claude {
+  .cherry-render {
     @include tokens.theme-dark;
   }
 }
