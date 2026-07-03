@@ -1,27 +1,7 @@
-import { Theme } from "@/theme/Theme";
 import hljs from "highlight.js";
-import {HLJS_THEME_DARK, HLJS_THEME_LIGHT} from "@/renderer/highlight/hljsThemes";
 
 export class HighlightJs {
-  constructor(
-    private el: HTMLElement,
-    private theme: Theme,
-  ) {
-    this.injectHljsTheme(document);
-  }
-
-  injectHljsTheme(doc: Document): void {
-    const css = this.theme.getTheme().isDark ? HLJS_THEME_DARK : HLJS_THEME_LIGHT;
-    const HLJS_THEME_STYLE_ID = "hljsTheme";
-    let style = doc.getElementById(HLJS_THEME_STYLE_ID) as HTMLStyleElement | null;
-    if (!style) {
-      style = doc.createElement("style");
-      style.id = HLJS_THEME_STYLE_ID;
-      doc.head.appendChild(style);
-    }
-    // @ts-ignore
-    style.textContent = css;
-  }
+  constructor(private el: HTMLElement) {}
 
   run() {
     this.el.querySelectorAll(".cherry-code-block__panel code[data-cherry-code]").forEach((codeEl) => {
@@ -55,4 +35,3 @@ export class HighlightJs {
     return "";
   }
 }
-

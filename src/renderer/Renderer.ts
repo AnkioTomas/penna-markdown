@@ -51,7 +51,7 @@ export class Renderer {
 
 
     this.codeListener = new CodeListener(this.mount);
-    this.highlight = new HighlightJs(this.mount, theme);
+    this.highlight = new HighlightJs(this.mount);
   }
 
   private syncDarkFromTheme(): void {
