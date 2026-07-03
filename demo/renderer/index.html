@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>渲染器 · Cherry Markdown Next</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="../cherry.scss" />
+  </head>
+  <body>
+    <div class="header">
+      <a class="back" href="../index.html">返回入口</a>
+      <div class="title">渲染器</div>
+      <div class="subtitle">createRenderer · TOC · 高亮 · 主题</div>
+      <button id="theme-btn" type="button" class="theme-btn" aria-pressed="false">
+        夜间模式
+      </button>
+      <label class="skin-label">
+        主题
+        <select id="theme-select" class="skin-select" aria-label="渲染主题"></select>
+      </label>
+      <label class="skin-label">
+        明暗
+        <select id="appearance-select" class="skin-select">
+          <option value="light">浅色</option>
+          <option value="dark">深色</option>
+          <option value="auto">跟随系统</option>
+        </select>
+      </label>
+      <div id="timing" class="timing" title="renderer.render() 耗时">— ms</div>
+    </div>
+
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-title">Markdown 输入</div>
+        <textarea id="markdown" class="textarea" spellcheck="false"></textarea>
+        <button id="reset-btn" type="button" class="btn">恢复示例</button>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">预览（Renderer 挂载点）</div>
+        <div id="preview-wrap" class="preview-wrap">
+          <div id="preview" class="preview cherry"></div>
+        </div>
+      </div>
+
+      <aside class="panel panel-side">
+        <div class="panel-title">Renderer API</div>
+        <div id="stats" class="stats"></div>
+        <div class="panel-title panel-title-sub">目录 getTocFlat()</div>
+        <nav id="toc" class="toc" aria-label="文档目录"></nav>
+      </aside>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

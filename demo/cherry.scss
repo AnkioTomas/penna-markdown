@@ -1,1 +1,8 @@
-@import "../src/theme/themes/default/render.scss";
+@use "../src/theme/themes/default/render";
+@use "../src/theme/themes/claude/render" as claude;
+@use "../src/theme/themes/github/render" as github;
+@use "../src/theme/themes/morandi/render" as morandi;
+@use "../src/theme/themes/latex/render" as latex;
+@use "../src/theme/themes/vue/render" as vue;
+@use "../src/theme/themes/gitbook/render" as gitbook;
+@use "../src/theme/themes/notion/render" as notion;
