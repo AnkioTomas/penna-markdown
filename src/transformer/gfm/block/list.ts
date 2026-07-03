@@ -117,7 +117,6 @@ class ListBlockParser extends BaseBlockParser {
     if (!canOrderedListOpenAt(lines, index, initialMarker)) return null;
 
     const listItems: MarkdownNode[] = [];
-    let length = 0;
     let i = index;
     let listLooseFromBlankBetweenItems = false;
     let hadBlankLineBetweenItems = false;
@@ -145,11 +144,10 @@ class ListBlockParser extends BaseBlockParser {
 
       // --- 开始消费一个新的 List Item ---
       const itemLines: string[] = [];
-      let itemLength = 0;
+      const itemStart = i;
 
       // 剥去内容起始的缩进
       const firstLine = lines[i];
-      itemLength += firstLine.length;
       const rawMarker = parseListMarkerLine(firstLine);
       let firstContent = expandListItemContent(firstLine, itemMarker.contentStart);
       // GFM 规则 #2：marker 行以 4+ 空格缩进代码开头（不含 tab 场景，见 Example 7）
@@ -191,7 +189,6 @@ class ListBlockParser extends BaseBlockParser {
             }
           }
           itemLines.push("");
-          itemLength += currentLine.length;
           i++;
           // GFM #258：空 marker 后至多一行空行，再遇到空行则结束 item
           if (itemMarker.isBlank) {
@@ -233,7 +230,6 @@ class ListBlockParser extends BaseBlockParser {
 
         // C. 检查缩进（Tab 按 4 列制表位计入视觉列）
         if (getIndent(currentLine) >= itemMarker.contentStartCol) {
-          itemLength += currentLine.length;
           const slice = expandLinePrefixTabs(currentLine).slice(itemMarker.contentStartCol);
           itemLines.push(slice);
           ({ inFence, fenceChar } = updateFenceState(slice, inFence, fenceChar));
@@ -259,7 +255,6 @@ class ListBlockParser extends BaseBlockParser {
             currentLine,
             (probeLines) => ctx.parseBlocks(probeLines)
         )) {
-          itemLength += currentLine.length;
           // 惰性延续行无需剥离前缀，直接塞入
           itemLines.push(currentLine);
           i++;
@@ -287,11 +282,10 @@ class ListBlockParser extends BaseBlockParser {
       const itemLoose = itemHadBlankLine && itemLines.some((l) => isBlankString(l));
 
       const itemChildren = ctx.parseBlocks(itemLines);
-      listItems.push(createNode("list_item", itemLength, undefined, itemChildren, { loose: itemLoose }));
-      length += itemLength;
+      listItems.push(createNode("list_item", i - itemStart, undefined, itemChildren, { loose: itemLoose }));
     }
 
-    const node = createNode("list", length, undefined, listItems, {
+    const node = createNode("list", i - index, undefined, listItems, {
       ordered: initialMarker.isOrdered,
       start: initialMarker.start,
       bulletChar: initialMarker.bulletChar,

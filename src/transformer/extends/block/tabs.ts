@@ -20,8 +20,7 @@ import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.j
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
-
-/** 选项卡开标记行：`::: tabs` */
+import { blockLength } from "./card/shared.js";
 const OPEN_RE = /^ {0,3}:::(?!:)\s+tabs\s*$/;
 
 /** 选项卡闭标记行：`:::` */
@@ -35,14 +34,6 @@ const TAB_HEAD_RE = /^@tab(:active)?(?:\s+(.*))?$/;
 
 /** 全局选项卡组序号，用于生成唯一 radio name / id */
 let tabGroupSeq = 0;
-
-function blockLength(lines: string[], start: number, end: number): number {
-  let length = 0;
-  for (let i = start; i < end; i++) {
-    length += lines[i]?.length ?? 0;
-  }
-  return length;
-}
 
 function readTabsInnerLines(
   lines: string[],

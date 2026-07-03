@@ -111,7 +111,6 @@ class HTMLBlockParser extends BaseBlockParser {
 
     const type = detectHtmlBlockType(lines[index]) as number;
     const contentLines: string[] = [];
-    let length = 0;
     let i = index;
 
     while (i < lines.length) {
@@ -124,7 +123,6 @@ class HTMLBlockParser extends BaseBlockParser {
       }
 
       contentLines.push(currentLine);
-      length += currentLine.length;
       i++;
 
       // --- Types 1-5 闭合判断 ---
@@ -134,7 +132,7 @@ class HTMLBlockParser extends BaseBlockParser {
       }
     }
 
-    const node = createNode("html_block", length, undefined, [], {
+    const node = createNode("html_block", i - index, undefined, [], {
       value: contentLines.join("\n")
     });
 

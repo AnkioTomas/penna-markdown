@@ -78,12 +78,10 @@ class CodeBlockParser extends BaseBlockParser {
 
     // --- 解析内容与闭合行 (Content and End line) ---
     const contentLines: string[] = [];
-    let length = 0;
     let i = index + 1;
 
     while (i < lines.length) {
       const currentLine = lines[i];
-      length += currentLine.length;
 
       // 1. 检查是否是闭合行
       let endIndent = 0;
@@ -136,7 +134,7 @@ class CodeBlockParser extends BaseBlockParser {
 
     const node = createNode(
         this.type,
-        length,
+        i - index,
         contentLines.join("\n"),
         [],
         { lang }

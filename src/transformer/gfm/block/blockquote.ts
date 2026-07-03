@@ -48,12 +48,10 @@ class BlockquoteBlockParser extends BaseBlockParser {
 
         return withBlockquoteFrame(ctx, () => {
             let innerLines: string[] = [];
-            let length = 0;
             let i = index;
 
             while (i < lines.length) {
                 const ln = lines[i];
-                length += ln.length;
 
                 if (isBlankString(ln)) {
                     i += 1;
@@ -85,7 +83,6 @@ class BlockquoteBlockParser extends BaseBlockParser {
                     ln,
                     (probeLines) => ctx.parseBlocks(probeLines)
                 )) {
-                    length += ln.length;
                     innerLines.push(ln);
                     i += 1;
                     continue;
@@ -94,7 +91,7 @@ class BlockquoteBlockParser extends BaseBlockParser {
                 break;
             }
 
-            const node = createNode("blockquote", length, undefined, ctx.parseBlocks(innerLines));
+            const node = createNode("blockquote", i - index, undefined, ctx.parseBlocks(innerLines));
             return {node, nextIndex: i};
         });
     }

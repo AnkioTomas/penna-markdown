@@ -75,7 +75,17 @@ export class BlockParseEngine {
             if (parser.canOpenAt(lines, index, this.ctx)) {
                 const result = parser.parse(lines, index, this.ctx);
                 if (result) {
-                    return { nextIndex: result.nextIndex, node: result.node ?? null };
+                    const lineCount = result.nextIndex - index;
+                    let node = result.node ?? null;
+                    if (!node && lineCount > 0) {
+                        node = createNode(parser.type, lineCount, undefined, undefined, {
+                            invisible: true,
+                        });
+                    }
+                    if (node && node.length <= 0 && lineCount > 0) {
+                        node.length = lineCount;
+                    }
+                    return { nextIndex: result.nextIndex, node };
                 }
             }
         }
@@ -88,8 +98,17 @@ export class BlockParseEngine {
 
         while (index < lines.length) {
             const { nextIndex, node } = this.parseBlockAt(lines, index);
-            if (node) {
-                children.push(node);
+            let block = node;
+            if (!block && nextIndex > index) {
+                block = createNode("blank_line", nextIndex - index, undefined, undefined, {
+                    invisible: true,
+                });
+            }
+            if (block) {
+                if (block.length <= 0) {
+                    block.length = nextIndex - index;
+                }
+                children.push(block);
             }
             index = nextIndex;
         }
@@ -98,7 +117,8 @@ export class BlockParseEngine {
     }
 
     parse(lines: string[]): MarkdownNode {
-        const root = createNode('root', 0, undefined, this.parseBlocks(lines), {store: null});
+        const blocks = this.parseBlocks(lines);
+        const root = createNode('root', lines.length, undefined, blocks, {store: null});
         return this.store.finalize(root, this.ctx);
     }
 }

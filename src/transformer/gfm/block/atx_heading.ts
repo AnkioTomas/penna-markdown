@@ -50,7 +50,7 @@ class HeadingBlockParser extends BaseBlockParser {
         const line = lines[index] ?? "";
         const atx = getAtxHeadingInfo(line);
         if (atx) {
-            const node = createNode("atx_heading", line.length, undefined, ctx.parseInline(atx.content), {
+            const node = createNode("atx_heading", 1, undefined, ctx.parseInline(atx.content), {
                 level: atx.level
             });
             return { node, nextIndex: index + 1 };

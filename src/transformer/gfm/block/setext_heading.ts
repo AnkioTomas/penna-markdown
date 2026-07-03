@@ -51,7 +51,6 @@ class SetextHeadingBlockParser extends BaseBlockParser {
   /** @inheritdoc */
   parse(lines: string[], index: number, ctx: BlockParseContext) {
     let i = index;
-    let length = 0;
     const contentLines: string[] = [];
 
     // 这里的逻辑和 canOpenAt 一模一样，只不过这次是真的吃掉它们
@@ -60,11 +59,9 @@ class SetextHeadingBlockParser extends BaseBlockParser {
       const underline = getSetextUnderlineInfo(line);
 
       if (underline > 0) {
-        // 吃掉下划线，结账！
-        length += line.length;
         const content = contentLines.join("\n");
 
-        const node = createNode("setext_heading", length, undefined, ctx.parseInline(content), {
+        const node = createNode("setext_heading", i + 1 - index, undefined, ctx.parseInline(content), {
           level: underline
         });
 
@@ -73,7 +70,6 @@ class SetextHeadingBlockParser extends BaseBlockParser {
 
       // 吃掉文本
       contentLines.push(line);
-      length += line.length;
       i++;
     }
 

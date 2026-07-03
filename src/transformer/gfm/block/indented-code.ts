@@ -38,7 +38,6 @@ class IndentedCodeBlockParser extends BaseBlockParser {
     if (!this.canOpenAt(lines, index, ctx)) return null;
 
     const contentLines: string[] = [];
-    let length = 0;
     let i = index;
     let pending = 0;
 
@@ -48,7 +47,6 @@ class IndentedCodeBlockParser extends BaseBlockParser {
       if (isIndentedCodeLine(line)) {
         // GFM Example 87：恰好 4 列的空白行只是 chunk 分界，不计入内容
         if (isBlankString(line) && getIndent(line) === CODE_INDENT) {
-          length += line.length;
           i += 1;
           continue;
         }
@@ -59,13 +57,11 @@ class IndentedCodeBlockParser extends BaseBlockParser {
         }
 
         contentLines.push(isBlankString(line) ? stripVisualIndent(line) : stripCodeContent(line));
-        length += line.length;
         i += 1;
         continue;
       }
 
       if (isBlankString(line)) {
-        length += line.length;
         pending += 1;
         i += 1;
         continue;
@@ -76,7 +72,7 @@ class IndentedCodeBlockParser extends BaseBlockParser {
 
     i -= pending;
 
-    const node = createNode(this.type, length, undefined, [], {
+    const node = createNode(this.type, i - index, undefined, [], {
       content: contentLines.join("\n"),
       lang: "",
     });

@@ -66,12 +66,8 @@ export function parseRepoCardOpen(attrs: string) {
   };
 }
 
-export function blockLength(lines: string[], start: number, end: number): number {
-  let length = 0;
-  for (let i = start; i < end; i++) {
-    length += lines[i]?.length ?? 0;
-  }
-  return length;
+export function blockLength(_lines: string[], start: number, end: number): number {
+  return end - start;
 }
 
 export interface ColonBlockResult {

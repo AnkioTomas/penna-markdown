@@ -100,9 +100,13 @@ export class TransformerEngine {
 
 
     _renderBlocks(blocks: MarkdownNode[], ctx: RenderContext): string {
-        return blocks.map((node) =>
-            this.registry.getBlockParser(node.type)?.render(node, ctx) ?? ""
-        ).join("\n");
+        const parts: string[] = [];
+        for (const node of blocks) {
+            if (node.props?.invisible || node.type === "blank_line") continue;
+            const html = this.registry.getBlockParser(node.type)?.render(node, ctx) ?? "";
+            if (html) parts.push(html);
+        }
+        return parts.join("\n");
     }
 
     _withTrailingNewline(html: string): string {

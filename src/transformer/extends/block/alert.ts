@@ -57,12 +57,10 @@ class AlertBlockParser extends BaseBlockParser {
 
     return withBlockquoteFrame(ctx, () => {
       const innerLines: string[] = [];
-      let length = lines[index]?.length ?? 0;
       let i = index + 1;
 
       while (i < lines.length) {
         const ln = lines[i];
-        length += ln.length;
 
         if (isBlankString(ln)) {
           i += 1;
@@ -108,7 +106,7 @@ class AlertBlockParser extends BaseBlockParser {
 
       const node = createNode(
         this.type,
-        length,
+        i - index,
         undefined,
         ctx.parseBlocks(normalizeInnerLines(innerLines)),
         { alertType },

@@ -161,17 +161,17 @@ class TableBlockParser extends BaseBlockParser {
     if (!align || headerParsed.cells.length !== align.length) return null;
 
     const numCols = align.length;
-    let totalLength = headerLine.length + delimLine.length;
 
-    // 创建 Header 行 AST
-    const headerRow = createNode("table_row", headerLine.length, undefined,
-        headerParsed.cells.map((text, i) =>
+    const headerRow = createNode("table_row", 1, undefined,
+        headerParsed.cells.map((text, col) =>
             createNode("table_cell", text.length, undefined, ctx.parseInline(text), {
-              align: align[i],
+              align: align[col],
               isHeader: true
             })
-        ), { isHeader: true }
+        ), { isHeader: true },
     );
+
+    const delimRow = createNode("table_delim", 1, undefined, undefined, { align });
 
     const bodyRows: MarkdownNode[] = [];
     let i = index + 2;
@@ -201,29 +201,31 @@ class TableBlockParser extends BaseBlockParser {
       while (rowCells.length < numCols) rowCells.push("");
 
       bodyRows.push(
-          createNode("table_row", line.length, undefined,
+          createNode("table_row", 1, undefined,
               rowCells.map((text, j) =>
                   createNode("table_cell", text.length, undefined, ctx.parseInline(text), {
                     align: align[j],
                     isHeader: false
                   })
-              ), { isHeader: false }
-          )
+              ), { isHeader: false },
+          ),
       );
 
-      totalLength += line.length;
       i++;
     }
 
-    const children = [createNode("table_head", headerLine.length, undefined, [headerRow])];
+    const children = [createNode("table_head", 2, undefined, [headerRow, delimRow])];
 
     if (bodyRows.length > 0) {
-      // 近似计算 body 部分占用的总源码长度
-      const bodyLength = bodyRows.reduce((acc, row) => acc + (row.length || 0), 0);
-      children.push(createNode("table_body", bodyLength, undefined, bodyRows));
+      children.push(createNode(
+        "table_body",
+        bodyRows.length,
+        undefined,
+        bodyRows,
+      ));
     }
 
-    const node = createNode("table", totalLength, undefined, children, { align });
+    const node = createNode("table", i - index, undefined, children, { align });
 
     return { node, nextIndex: i };
   }
@@ -238,11 +240,17 @@ class TableBlockParser extends BaseBlockParser {
 
       if (section.type === "table_head") {
         parts.push("<thead>");
-        for (const row of rows) parts.push(this.renderRowHtml(row, ctx));
+        for (const row of rows) {
+          if (row.type === "table_delim") continue;
+          parts.push(this.renderRowHtml(row, ctx));
+        }
         parts.push("</thead>");
       } else if (section.type === "table_body") {
         parts.push("<tbody>");
-        for (const row of rows) parts.push(this.renderRowHtml(row, ctx));
+        for (const row of rows) {
+          if (row.type === "table_delim") continue;
+          parts.push(this.renderRowHtml(row, ctx));
+        }
         parts.push("</tbody>");
       }
     }

@@ -122,17 +122,12 @@ class ContainerBlockParser extends BaseBlockParser {
     const block = readContainerInnerLines(lines, index + 1);
     if (!block) return null;
 
-    let length = line.length;
-    for (let i = index + 1; i < block.nextIndex; i++) {
-      length += lines[i]?.length ?? 0;
-    }
-
     const innerChildren = ctx.parseBlocks(normalizeInnerLines(block.innerLines));
     const titleNodes = info.title ? ctx.parseInline(info.title) : [];
 
     const node = createNode(
       this.type,
-      length,
+      block.nextIndex - index,
       undefined,
       innerChildren,
       {

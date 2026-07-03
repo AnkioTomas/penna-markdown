@@ -25,6 +25,7 @@ import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.j
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
+import { blockLength } from "./card/shared.js";
 
 /** 步骤块开标记行：`::: steps` */
 const OPEN_RE = /^ {0,3}:::(?!:)\s+steps\s*$/;
@@ -37,14 +38,6 @@ const NESTED_OPEN_RE = /^ {0,3}:::(?!:)\s+\S/;
 
 /** 步骤标题行：`1. 标题` */
 const STEP_HEAD_RE = /^ {0,3}(\d+)\.\s+(.*)$/;
-
-function blockLength(lines: string[], start: number, end: number): number {
-  let length = 0;
-  for (let i = start; i < end; i++) {
-    length += lines[i]?.length ?? 0;
-  }
-  return length;
-}
 
 function readStepsInnerLines(
   lines: string[],

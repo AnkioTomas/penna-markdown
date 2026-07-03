@@ -40,7 +40,7 @@ class ThematicBreakParser extends BaseBlockParser {
     const line = lines[index] ?? "";
     if (!isThematicBreakLine(line)) return null;
 
-    const node = createNode(this.type, line.length);
+    const node = createNode(this.type, 1);
     return {node, nextIndex: index + 1};
   }
 
