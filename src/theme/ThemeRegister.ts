@@ -1,1 +1,1 @@
-export default ["default", "claude"];
+export default ["default", "claude", "github"];
