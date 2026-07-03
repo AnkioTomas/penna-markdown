@@ -29,6 +29,7 @@ export class Renderer {
   };
 
   private readonly onSkinChanged = (): void => {
+    this.highlight?.run();
   };
 
   constructor({ mount, theme , transformerEngineOptions}: RenderOption) {
