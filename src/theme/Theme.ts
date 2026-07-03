@@ -1,7 +1,10 @@
 import { EventBus, type EventHandler } from "./event/EventBus.js";
+import { logD as emitLogD, logE as emitLogE, logW as emitLogW } from "./log.js";
 import REGISTERED_THEMES from "./ThemeRegister.js";
 
 export type LightDark = "light" | "dark";
+
+const LOG_PREFIX = "[cherry]";
 
 export class Theme {
   private bus = new EventBus();
@@ -9,6 +12,29 @@ export class Theme {
   private mode: LightDark = "light";
   private render: HTMLElement | null = null;
   private root: HTMLElement | null = null;
+
+  constructor(private readonly  debug = false) {}
+
+  /** 是否处于调试模式 */
+  isDebug(): boolean {
+    return this.debug;
+  }
+
+  /** 调试日志；非调试模式不输出 */
+  logD(...args: unknown[]): void {
+    if (!this.debug) return;
+    emitLogD(LOG_PREFIX, ...args);
+  }
+
+  /** 警告日志 */
+  logW(...args: unknown[]): void {
+    emitLogW(LOG_PREFIX, ...args);
+  }
+
+  /** 错误日志 */
+  logE(...args: unknown[]): void {
+    emitLogE(LOG_PREFIX, ...args);
+  }
 
   list() {
     return REGISTERED_THEMES;
@@ -28,6 +54,7 @@ export class Theme {
     this.applyAppearanceClass();
 
     if (prev !== id) {
+      this.logD("setTheme", { prev, id });
       this.emit("change", { prev, id, render });
       this.emit("theme:skin", { prev, id, render });
     }
@@ -47,19 +74,23 @@ export class Theme {
     if (this.mode === mode) return;
     this.mode = mode;
     this.applyAppearanceClass();
+    this.logD("setLightDark", { mode });
     this.emit("appearance", { mode, isDark: mode === "dark" });
     this.emit("theme:ld", { mode, isDark: mode === "dark" });
   }
 
   on(event: string, handler: EventHandler) {
+    this.logD("on", event);
     return this.bus.on(event, handler);
   }
 
   off(event: string, handler: EventHandler) {
+    this.logD("off", event);
     this.bus.off(event, handler);
   }
 
   emit(event: string, payload?: unknown) {
+    this.logD("emit", event, payload);
     this.bus.emit(event, payload);
   }
 
