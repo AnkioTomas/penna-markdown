@@ -28,6 +28,7 @@ export class Theme {
     this.applyAppearanceClass();
 
     if (prev !== id) {
+      this.emit("change", { prev, id, render });
       this.emit("theme:skin", { prev, id, render });
     }
   }
@@ -46,6 +47,7 @@ export class Theme {
     if (this.mode === mode) return;
     this.mode = mode;
     this.applyAppearanceClass();
+    this.emit("appearance", { mode, isDark: mode === "dark" });
     this.emit("theme:ld", { mode, isDark: mode === "dark" });
   }
 

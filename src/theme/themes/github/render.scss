@@ -34,6 +34,7 @@
 @use "../../../transformer/extends/style/math";
 @use "../../../transformer/extends/style/footnote";
 @use "../../../transformer/extends/style/code-block";
+@use "../../style/hljs-github" as hljs-github;
 
 // 日间：.cherry-theme-github .cherry-render
 .cherry-theme-github {
@@ -81,5 +82,6 @@
 .cherry-dark.cherry-theme-github {
   .cherry-render {
     @include tokens.theme-dark;
+    @include hljs-github.dark;
   }
 }

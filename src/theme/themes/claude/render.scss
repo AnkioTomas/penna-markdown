@@ -53,6 +53,7 @@
     @include table.styles;
 
     @include highlight.styles;
+    @include highlight.wave;
     @include spoiler.styles;
     @include alert.styles;
     @include tasklist.styles;

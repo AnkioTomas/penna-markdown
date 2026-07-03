@@ -33,6 +33,7 @@
 @use "../../../transformer/extends/style/math";
 @use "../../../transformer/extends/style/footnote";
 @use "../../../transformer/extends/style/code-block";
+@use "../../style/hljs-github" as hljs-github;
 
 // 日间：.cherry-theme-default .cherry-render
 .cherry-theme-default {
@@ -71,6 +72,7 @@
     @include math.styles;
     @include footnote.styles;
     @include code-block.styles;
+    @include hljs-github.light;
   }
 }
 
@@ -78,5 +80,6 @@
 .cherry-dark.cherry-theme-default {
   .cherry-render {
     @include tokens.theme-dark;
+    @include hljs-github.dark;
   }
 }

@@ -1,4 +1,5 @@
 @use "../../../transformer/style/rem" as *;
+@use "../../style/hljs-github" as hljs-github;
 
 // GitHub markdown-body 排版：无衬线、h1/h2 下划线、蓝色链接、网格表格
 @mixin styles {
@@ -168,12 +169,6 @@
     border-radius: rem(6);
   }
 
-  .cherry-mark {
-    --cherry-mark-bg-height: 100%;
-    --cherry-mark-bg-shift: 0%;
-    padding: rem(1) rem(2);
-  }
-
   .cherry-alert {
     margin: rem(16) 0;
     padding: rem(12) rem(16);
@@ -221,12 +216,9 @@
       background: transparent;
       border-radius: 0;
     }
-
-    .hljs,
-    pre:not(.cherry-code-block__pre) .hljs {
-      background: transparent;
-    }
   }
+
+  @include hljs-github.light;
 
   .cherry-card,
   .cherry-link-card,
