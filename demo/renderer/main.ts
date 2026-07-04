@@ -29,7 +29,7 @@ function resolveAppearance(mode: AppearanceMode): "light" | "dark" {
 const markdownInput = requiredEl<HTMLTextAreaElement>("#markdown");
 const preview = requiredEl<HTMLElement>("#preview");
 const previewWrap = requiredEl<HTMLElement>("#preview-wrap");
-const tocEl = requiredEl<HTMLElement>("#toc");
+const tocEl = requiredEl<HTMLElement>("#sidebar");
 const statsEl = requiredEl<HTMLElement>("#stats");
 const timingEl = requiredEl<HTMLElement>("#timing");
 const themeBtn = requiredEl<HTMLButtonElement>("#theme-btn");
@@ -97,7 +97,7 @@ function syncDemoChrome(): void {
 function renderToc(): void {
   const flat = renderer.getTocFlat();
   if (flat.length === 0) {
-    tocEl.innerHTML = '<p class="toc-empty">无标题</p>';
+    tocEl.innerHTML = '<p class="sidebar-empty">无标题</p>';
     return;
   }
 
@@ -193,7 +193,7 @@ markdownInput.addEventListener("input", () => {
 });
 
 tocEl.addEventListener("click", (event) => {
-  const link = (event.target as Element).closest<HTMLAnchorElement>("a.toc-item");
+  const link = (event.target as Element).closest<HTMLAnchorElement>("a.sidebar-item");
   if (!link?.hash) return;
   const id = decodeURIComponent(link.hash.slice(1));
   const target = document.getElementById(id);
