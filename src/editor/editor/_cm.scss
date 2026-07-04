@@ -1,0 +1,112 @@
+@use "syntax" as syntax;
+
+/** CodeMirror 6 容器、结构与换行 */
+.cherry-editor {
+  &.cherry-editor-cm,
+  .cherry-editor-cm {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    background: var(--cherry-c-bg);
+    border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  }
+
+  &.cherry-editor-cm .cm-editor,
+  .cherry-editor-cm .cm-editor {
+    height: 100%;
+  }
+}
+
+.cherry-editor-cm {
+  @include syntax.editor;
+}
+
+.cherry-editor-cm .cm-editor {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--cherry-c-bg);
+  color: var(--cherry-c-text-1);
+}
+
+.cherry-editor-cm .cm-editor.cm-focused {
+  outline: none;
+}
+
+.cherry-editor-cm .cm-scroller {
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.5;
+  height: 100%;
+  min-width: 0;
+  overflow: auto;
+  position: relative;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.cherry-editor-cm .cm-content {
+  margin: 0;
+  flex-grow: 2;
+  flex-shrink: 1;
+  display: block;
+  box-sizing: border-box;
+  min-height: 100%;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  padding: 4px 0;
+  outline: none;
+  caret-color: var(--cherry-c-text-1);
+}
+
+.cherry-editor-cm .cm-content.cm-lineWrapping {
+  white-space: break-spaces;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.cherry-editor-cm .cm-line {
+  display: block;
+  padding: 0 2px 0 6px;
+  max-width: 100%;
+}
+
+.cherry-editor-cm .cm-gutters {
+  flex-shrink: 0;
+  display: flex;
+  height: 100%;
+  box-sizing: border-box;
+  flex-direction: column;
+  background: var(--cherry-c-bg);
+  border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  color: var(--cherry-c-text-3);
+}
+
+.cherry-editor-cm .cm-gutter {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  min-height: 100%;
+}
+
+.cherry-editor-cm .cm-lineNumbers .cm-gutterElement {
+  padding: 0 8px 0 12px;
+  min-width: 2.5em;
+  text-align: right;
+}
+
+.cherry-editor-cm .cm-cursor,
+.cherry-editor-cm .cm-dropCursor {
+  border-left: 3px solid var(--cherry-c-brand-2);
+}
+
+.cherry-editor-cm .cm-selectionBackground {
+  background: color-mix(in srgb, var(--cherry-c-brand-1) 20%, transparent) !important;
+}
+
+.cherry-editor-cm .cm-focused .cm-selectionBackground {
+  background: color-mix(in srgb, var(--cherry-c-brand-1) 30%, transparent) !important;
+}
