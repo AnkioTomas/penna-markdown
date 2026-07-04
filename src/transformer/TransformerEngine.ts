@@ -10,14 +10,7 @@ import {Registry} from "@/transformer/core/Registry.js";
 import {TransformerEngineOptions} from "@/transformer/TransformerEngineOptions";
 import {RenderContext} from "@/transformer/core/context/RenderContext";
 import {MarkdownNode} from "@/transformer/core/MarkdownNode";
-
-
-function normalizeMarkdown(markdown: string): string {
-    let text = String(markdown).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-    if (!text.endsWith("\n")) text += "\n";
-    return text;
-}
-
+import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
 export class TransformerEngine {
     readonly registry: Registry;
     /** 暗色主题，可由外部在运行时更新后重新 render。 */
@@ -44,11 +37,7 @@ export class TransformerEngine {
     }
 
     parse(markdown: string): MarkdownNode {
-        const source = normalizeMarkdown(markdown);
-        const lines = source.split("\n");
-        if (lines.length > 0 && lines[lines.length - 1] === "") {
-            lines.pop();
-        }
+        const lines = normalizeMarkdownLines(markdown);
         const store = new ParserStore(lines);
 
         const inlineParser = new InlineParseEngine(this.registry, store);
@@ -59,26 +48,37 @@ export class TransformerEngine {
         return ast;
     }
 
+    createRenderContext(store: ParserStore): RenderContext {
+        const that = this;
+        return new class implements RenderContext {
+            store: ParserStore = store;
+            isDark: boolean = that.isDark;
+
+            renderInline(nodes?: MarkdownNode[]): string {
+                return that._renderInline(nodes ?? [], this);
+            }
+
+            renderBlock(nodes?: MarkdownNode[]): string {
+                return that._renderBlocks(nodes ?? [], this);
+            }
+        };
+    }
+
+    renderBlock(node: MarkdownNode, ast: MarkdownNode): string {
+        const store = ast.props?.store as ParserStore | undefined;
+        if (!store) return "";
+        if (node.props?.invisible || node.type === "blank_line") return "";
+        const ctx = this.createRenderContext(store);
+        return this.registry.getBlockParser(node.type)?.render(node, ctx) ?? "";
+    }
+
     render(ast: MarkdownNode): string {
 
         const store = ast.props?.store;
 
         if (!store) return '';
 
-        const that = this;
-        const ctx = new class implements RenderContext {
-            store: ParserStore = store as ParserStore;
-            isDark: boolean = that.isDark;
-
-            renderInline(nodes?: MarkdownNode[]): string {
-                return that._renderInline(nodes ?? [], ctx);
-            }
-
-            renderBlock(nodes?: MarkdownNode[]): string {
-                return that._renderBlocks(nodes ?? [], ctx);
-            }
-
-        }
+        const ctx = this.createRenderContext(store as ParserStore);
         return  this._withTrailingNewline(this._renderBlocks(ast.children ?? [], ctx));
     }
 
