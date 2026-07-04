@@ -1,13 +1,12 @@
-import { createRenderer } from "@/renderer/index.js";
-import type { TransformerEngine } from "@/transformer/TransformerEngine.js";
+import { Theme } from "@/theme/Theme.js";
+import { Renderer } from "@/renderer/Renderer.js";
 import { requiredById } from "./dom.js";
 import type { SyntaxExample } from "./syntax-example.js";
-import type { CodeHighlightSetup } from "@/renderer/highlight/setup.js";
 
 export interface SyntaxDemoConfig {
   examples: SyntaxExample[];
-  transformer: TransformerEngine;
-  highlight?: CodeHighlightSetup | null;
+  theme: Theme;
+  themeId?: string;
   /** 侧栏列表面板 id，默认 `syntax-list` */
   listId?: string;
   formatStatus?: (time: string) => string;
@@ -20,8 +19,8 @@ export interface SyntaxDemoApi {
 
 export function initSyntaxDemo({
   examples,
-  transformer,
-  highlight,
+  theme,
+  themeId = "default",
   listId = "syntax-list",
   formatStatus = (time) => time,
 }: SyntaxDemoConfig): SyntaxDemoApi {
@@ -33,7 +32,8 @@ export function initSyntaxDemo({
   const rerunBtn = requiredById<HTMLButtonElement>("rerun-btn");
   const statusEl = requiredById<HTMLElement>("status");
 
-  const renderer = createRenderer({ mount: preview, transformer, highlight });
+  theme.setTheme(themeId, preview);
+  const renderer = new Renderer({ mount: preview, theme });
 
   let currentSyntaxIndex = 0;
 

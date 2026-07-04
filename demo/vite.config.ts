@@ -1,7 +1,3 @@
-/**
- * Demo 开发服务器：直接消费 src 源码，无需预编译 dist。
- */
-
 import { defineConfig } from "vite";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -35,4 +31,5 @@ export default defineConfig({
       allow: [rootDir],
     },
   },
+  optimizeDeps: {},
 });

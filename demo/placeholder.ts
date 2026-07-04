@@ -1,29 +1,33 @@
-/** 网易云音乐外链占位 */
-export const audio =
-  "http://music.163.com/song/media/outer/url?id=453003622.mp3";
+/**
+ * Demo 占位资源 — 统一走 Ankio API
+ * @see https://api.ankio.net/?help=1 全量接口帮助（任意接口加 ?help=1 可查看该接口说明）
+ */
+export const API_BASE = "https://api.ankio.net";
 
-/** 视频外链占位 */
-export const video = "https://media.w3.org/2010/05/sintel/trailer.mp4";
+/** 随机音频（302 → sample MP3） */
+export const audio = `${API_BASE}/music`;
+
+/** 随机视频（302 → sample MP4） */
+export const video = `${API_BASE}/video`;
 
 export interface PlaceholderImageStyle {
   fg?: string;
   bg?: string;
 }
 
-/**
- * iph.href.lu 占位图
- * @see http://iph.href.lu/
- */
+/** 随机图片 — `/picsum/{width}/{height}` */
 export function img(
   width: number,
   height: number,
-  text: string,
-  style: PlaceholderImageStyle = {},
+  _text?: string,
+  _style: PlaceholderImageStyle = {},
 ): string {
-  const w = Math.min(2048, Math.max(1, Math.round(width)));
-  const h = Math.min(2048, Math.max(1, Math.round(height)));
-  const params = new URLSearchParams({ text });
-  if (style.fg) params.set("fg", style.fg.replace(/^#/, ""));
-  if (style.bg) params.set("bg", style.bg.replace(/^#/, ""));
-  return `http://iph.href.lu/${w}x${h}?${params}`;
+  const w = Math.min(5000, Math.max(1, Math.round(width)));
+  const h = Math.min(5000, Math.max(1, Math.round(height)));
+  return `${API_BASE}/picsum/${w}/${h}`;
+}
+
+/** 站点 favicon — `/favicon?url=` */
+export function favicon(siteUrl: string): string {
+  return `${API_BASE}/favicon?url=${encodeURIComponent(siteUrl)}`;
 }

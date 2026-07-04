@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-import type { Renderer } from "@/renderer/index.js";
+import type { Renderer } from "@/renderer/Renderer.js";
 import type { Theme } from "@/theme/Theme.js";
 
 declare global {

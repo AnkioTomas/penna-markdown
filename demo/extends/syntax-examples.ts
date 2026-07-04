@@ -44,11 +44,15 @@ export const builtinSyntaxExamples: SyntaxExample[] = [
 title: 演示文档
 author:
   name: Cherry
+tags:
+  - docs
+  - demo
+version: 0.1.0
 ---
 
 # [[title]]
 
-作者：[[author.name]]`,
+作者：[[author.name]] · 版本 \`[[version]]\` · 标签 [[tags]]`,
   },
   {
     name: "math",
@@ -399,7 +403,7 @@ console.log('Hello World!')
   {
     name: "iframe",
     desc: "内嵌 iframe",
-    markdown: "!iframe[演示页面](https://example.com)",
+    markdown: "!iframe[API 帮助](https://api.ankio.net/?help=1)",
   },
   mediaExample,
   {

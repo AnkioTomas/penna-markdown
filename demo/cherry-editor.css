@@ -1,4 +1,5 @@
 @charset "UTF-8";
+/** default 主题编辑器样式 */
 /** default 主题渲染样式 */
 .cherry-theme-default .cherry-render {
   --cherry-c-brand-1: #5086a1;
@@ -2105,6 +2106,788 @@
   background-color: #67060c;
 }
 
+/** Cherry 编辑器结构样式（主题无关，由 _cherry.scss 统一出口） */
+/** 分栏布局与拖拽条 */
+.cherry-body--split {
+  --cherry-split: 50%;
+}
+.cherry-body--split .cherry-editor {
+  flex: 0 0 var(--cherry-split) !important;
+  max-width: var(--cherry-split);
+}
+.cherry-body--split .cherry-preview {
+  flex: 1 1 0 !important;
+  min-width: 0;
+}
+
+.cherry-body--edit .cherry-editor,
+.cherry-body--preview .cherry-preview {
+  flex: 1;
+}
+
+.cherry-body--edit .cherry-preview,
+.cherry-body--edit .cherry-divider {
+  display: none;
+}
+
+.cherry-body--preview .cherry-editor,
+.cherry-body--preview .cherry-divider {
+  display: none;
+}
+
+.cherry-body--edit .cherry-editor {
+  border-right: none;
+}
+
+.cherry-divider {
+  position: relative;
+  flex-shrink: 0;
+  align-self: stretch;
+  width: 4px;
+  cursor: col-resize;
+  background: color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  transition: background 0.15s;
+  touch-action: none;
+  user-select: none;
+  z-index: 2;
+}
+.cherry-divider::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -6px;
+  right: -6px;
+}
+
+.cherry-divider:hover,
+.cherry-divider.is-dragging {
+  background: var(--cherry-c-brand-1);
+}
+
+.cherry-divider.is-disabled {
+  display: none;
+}
+
+.cherry-sidebar {
+  --cherry-sidebar-width: 240px;
+  width: var(--cherry-sidebar-width);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--cherry-c-bg);
+  border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  overflow: hidden;
+  transition: width 0.2s ease;
+}
+
+.cherry-sidebar.is-collapsed {
+  width: 40px;
+}
+
+.cherry-sidebar.is-collapsed .cherry-toc {
+  display: none;
+}
+
+.cherry-sidebar-toggle {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
+  background: var(--cherry-c-bg);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cherry-c-text-2);
+  text-align: left;
+}
+
+.cherry-sidebar-toggle:hover {
+  background: var(--cherry-c-bg-elevated);
+}
+
+.cherry-toc {
+  flex: 1;
+  overflow: auto;
+  padding: 8px 0;
+}
+
+.cherry-toc-empty {
+  padding: 8px 12px;
+  margin: 0;
+  font-size: 12px;
+  color: var(--cherry-c-text-3);
+}
+
+.cherry .toc-item {
+  display: block;
+  padding: 4px 12px;
+  font-size: 13px;
+  color: var(--cherry-c-text-2);
+  text-decoration: none;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cherry .toc-item:hover {
+  background: var(--cherry-c-bg-elevated);
+  color: var(--cherry-c-brand-1);
+}
+
+.cherry .toc-h1 {
+  padding-left: 8px;
+  font-weight: 600;
+}
+
+.cherry .toc-h2 {
+  padding-left: 16px;
+}
+
+.cherry .toc-h3 {
+  padding-left: 24px;
+  color: var(--cherry-c-text-3);
+}
+
+.cherry .toc-h4 {
+  padding-left: 32px;
+  color: var(--cherry-c-text-3);
+}
+
+.cherry .toc-h5 {
+  padding-left: 40px;
+  color: var(--cherry-c-text-3);
+}
+
+.cherry .toc-h6 {
+  padding-left: 48px;
+  color: var(--cherry-c-text-3);
+}
+
+.cherry-preview {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  background: var(--cherry-c-bg);
+  padding: 14px;
+}
+
+/** CM6 语法高亮 — 使用 --cherry-c-*，各主题 token 自动生效 */
+/** CodeMirror 6 容器、结构与换行 */
+.cherry-editor.cherry-editor-cm,
+.cherry-editor .cherry-editor-cm {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--cherry-c-bg);
+  border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+}
+.cherry-editor.cherry-editor-cm .cm-editor,
+.cherry-editor .cherry-editor-cm .cm-editor {
+  height: 100%;
+}
+
+.cherry-editor-cm .cm-h1 {
+  color: var(--cherry-c-brand-1);
+  font-weight: bold;
+  font-size: 1.6em;
+}
+.cherry-editor-cm .cm-h2 {
+  color: var(--cherry-c-brand-1);
+  font-weight: bold;
+  font-size: 1.3em;
+}
+.cherry-editor-cm .cm-h3 {
+  color: var(--cherry-c-brand-1);
+  font-weight: bold;
+  font-size: 1.15em;
+}
+.cherry-editor-cm .cm-h4,
+.cherry-editor-cm .cm-h5,
+.cherry-editor-cm .cm-h6,
+.cherry-editor-cm .cm-h {
+  color: var(--cherry-c-brand-1);
+  font-weight: bold;
+}
+.cherry-editor-cm .cm-mark,
+.cherry-editor-cm .cm-atom {
+  color: var(--cherry-c-text-3);
+}
+.cherry-editor-cm .cm-code,
+.cherry-editor-cm .cm-comment,
+.cherry-editor-cm .cm-label {
+  color: var(--cherry-c-code-fg);
+  font-family: ui-monospace, monospace;
+}
+.cherry-editor-cm .cm-link {
+  color: var(--cherry-c-brand-2);
+  text-decoration: underline;
+}
+.cherry-editor-cm .cm-url,
+.cherry-editor-cm .cm-str {
+  color: var(--cherry-c-text-2);
+}
+.cherry-editor-cm .cm-quote {
+  color: var(--cherry-c-tip);
+  font-style: italic;
+}
+.cherry-editor-cm .cm-em {
+  font-style: italic;
+}
+.cherry-editor-cm .cm-strong {
+  font-weight: bold;
+}
+.cherry-editor-cm .cm-strike {
+  text-decoration: line-through;
+  color: var(--cherry-c-text-3);
+}
+.cherry-editor-cm .cm-list {
+  color: var(--cherry-c-brand-3);
+}
+.cherry-editor-cm .cm-hr {
+  color: var(--cherry-c-border-soft);
+}
+.cherry-editor-cm .cm-ext-highlight {
+  background: color-mix(in srgb, var(--cherry-c-warning) 25%, transparent);
+  border-radius: 2px;
+}
+.cherry-editor-cm .cm-ext-emoji {
+  color: var(--cherry-c-brand-3);
+}
+.cherry-editor-cm .cm-ext-spoiler {
+  background: var(--cherry-c-text-3);
+  color: var(--cherry-c-text-3);
+  border-radius: 2px;
+}
+.cherry-editor-cm .cm-ext-math-inline,
+.cherry-editor-cm .cm-ext-math-block {
+  color: var(--cherry-c-brand-2);
+  font-family: ui-monospace, monospace;
+}
+.cherry-editor-cm .cm-ext-badge {
+  color: var(--cherry-c-brand-1);
+  font-weight: 600;
+}
+.cherry-editor-cm .cm-ext-comment {
+  color: var(--cherry-c-text-3);
+  font-style: italic;
+  opacity: 0.7;
+}
+.cherry-editor-cm .cm-ext-footnote,
+.cherry-editor-cm .cm-ext-frontmatter-var {
+  color: var(--cherry-c-brand-3);
+}
+.cherry-editor-cm .cm-ext-html-attrs {
+  color: var(--cherry-c-text-3);
+  font-size: 0.9em;
+}
+.cherry-editor-cm .cm-ext-sub,
+.cherry-editor-cm .cm-ext-sup {
+  color: var(--cherry-c-text-2);
+  font-size: 0.85em;
+}
+.cherry-editor-cm .cm-ext-media,
+.cherry-editor-cm .cm-ext-iframe {
+  color: var(--cherry-c-brand-2);
+  text-decoration: underline dotted;
+}
+.cherry-editor-cm .cm-ext-alert {
+  border-left: 3px solid var(--cherry-c-brand-2);
+  background: color-mix(in srgb, var(--cherry-c-brand-2) 8%, transparent);
+}
+.cherry-editor-cm .cm-ext-frontmatter {
+  color: var(--cherry-c-text-3);
+  background: color-mix(in srgb, var(--cherry-c-border-soft) 40%, transparent);
+}
+.cherry-editor-cm .cm-ext-collapse,
+.cherry-editor-cm .cm-ext-tabs,
+.cherry-editor-cm .cm-ext-steps,
+.cherry-editor-cm .cm-ext-timeline,
+.cherry-editor-cm .cm-ext-container {
+  border-left: 2px solid var(--cherry-c-border-soft);
+}
+.cherry-editor-cm .cm-ext-card,
+.cherry-editor-cm .cm-ext-card-grid,
+.cherry-editor-cm .cm-ext-card-masonry,
+.cherry-editor-cm .cm-ext-image-card,
+.cherry-editor-cm .cm-ext-link-card,
+.cherry-editor-cm .cm-ext-repo-card,
+.cherry-editor-cm .cm-ext-field,
+.cherry-editor-cm .cm-ext-field-group {
+  background: color-mix(in srgb, var(--cherry-c-border-soft) 30%, transparent);
+}
+.cherry-editor-cm .cm-ext-footnotes {
+  border-top: 1px dashed var(--cherry-c-border-soft);
+}
+
+.cherry-editor-cm .cm-editor {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--cherry-c-bg);
+  color: var(--cherry-c-text-1);
+}
+
+.cherry-editor-cm .cm-editor.cm-focused {
+  outline: none;
+}
+
+.cherry-editor-cm .cm-scroller {
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.5;
+  height: 100%;
+  min-width: 0;
+  overflow: auto;
+  position: relative;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.cherry-editor-cm .cm-content {
+  margin: 0;
+  flex-grow: 2;
+  flex-shrink: 1;
+  display: block;
+  box-sizing: border-box;
+  min-height: 100%;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  padding: 4px 0;
+  outline: none;
+  caret-color: var(--cherry-c-text-1);
+}
+
+.cherry-editor-cm .cm-content.cm-lineWrapping {
+  white-space: break-spaces;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.cherry-editor-cm .cm-line {
+  display: block;
+  padding: 0 2px 0 6px;
+  max-width: 100%;
+}
+
+.cherry-editor-cm .cm-gutters {
+  flex-shrink: 0;
+  display: flex;
+  height: 100%;
+  box-sizing: border-box;
+  flex-direction: column;
+  background: var(--cherry-c-bg);
+  border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  color: var(--cherry-c-text-3);
+}
+
+.cherry-editor-cm .cm-gutter {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  min-height: 100%;
+}
+
+.cherry-editor-cm .cm-lineNumbers .cm-gutterElement {
+  padding: 0 8px 0 12px;
+  min-width: 2.5em;
+  text-align: right;
+}
+
+.cherry-editor-cm .cm-cursor,
+.cherry-editor-cm .cm-dropCursor {
+  border-left: 3px solid var(--cherry-c-brand-2);
+}
+
+.cherry-editor-cm .cm-selectionBackground {
+  background: color-mix(in srgb, var(--cherry-c-brand-1) 20%, transparent) !important;
+}
+
+.cherry-editor-cm .cm-focused .cm-selectionBackground {
+  background: color-mix(in srgb, var(--cherry-c-brand-1) 30%, transparent) !important;
+}
+
+.cherry-toolbar {
+  display: flex;
+  align-items: stretch;
+  background: var(--cherry-c-bg);
+  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  flex-shrink: 0;
+  min-height: 0;
+}
+
+.cherry-toolbar-scroll {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.cherry-toolbar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.cherry-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.cherry-toolbar-group + .cherry-toolbar-group {
+  margin-left: 4px;
+  padding-left: 8px;
+  border-left: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+}
+
+.cherry-toolbar-layout {
+  margin-left: auto;
+  position: sticky;
+  right: 0;
+  background: var(--cherry-c-bg);
+  padding-left: 8px;
+  z-index: 1;
+}
+
+.cherry-toolbar-btn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cherry-c-text-2);
+  line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.cherry-toolbar-btn:hover,
+.cherry-toolbar-menu-trigger[aria-expanded=true] {
+  background: var(--cherry-c-bg-elevated);
+  border-color: color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+}
+
+.cherry-toolbar-layout-btn.is-active {
+  background: color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
+  border-color: color-mix(in srgb, var(--cherry-c-brand-1) 35%, transparent);
+  color: var(--cherry-c-brand-1);
+}
+
+.cherry-toolbar-sep {
+  width: 1px;
+  height: 18px;
+  margin: 0 4px;
+  background: color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  flex-shrink: 0;
+}
+
+.cherry-toolbar-menu,
+.cherry-toolbar-submenu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.cherry-toolbar-menu-caret {
+  font-size: 8px;
+  opacity: 0.6;
+  line-height: 1;
+}
+.cherry-toolbar-menu-caret::after {
+  content: "▾";
+}
+
+.cherry-toolbar-submenu .cherry-toolbar-menu-caret::after {
+  content: "▸";
+}
+
+.cherry-toolbar-menu-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 140px;
+  padding: 4px;
+  background: var(--cherry-c-bg);
+  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--cherry-c-text-1) 12%, transparent);
+  z-index: 20;
+}
+
+.cherry-toolbar-submenu .cherry-toolbar-menu-panel {
+  top: 0;
+  left: calc(100% + 2px);
+}
+
+.cherry-toolbar-menu.is-open > .cherry-toolbar-menu-panel,
+.cherry-toolbar-submenu.is-open > .cherry-toolbar-menu-panel {
+  display: block;
+}
+
+.cherry-toolbar-menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--cherry-c-text-2);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.cherry-toolbar-menu-item:hover {
+  background: var(--cherry-c-bg-elevated);
+  color: var(--cherry-c-text-1);
+}
+
+.cherry-toolbar-menu-sep {
+  display: block;
+  height: 1px;
+  margin: 4px 6px;
+  background: color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+}
+
+@media (max-width: 640px) {
+  .cherry-toolbar-scroll {
+    padding: 4px 8px;
+    gap: 2px;
+  }
+  .cherry-toolbar-btn {
+    min-width: 36px;
+    height: 36px;
+    font-size: 13px;
+  }
+  .cherry-toolbar-menu-item {
+    min-height: 40px;
+    padding: 8px 12px;
+  }
+  .cherry-toolbar-submenu .cherry-toolbar-menu-panel {
+    top: calc(100% + 2px);
+    left: 0;
+  }
+}
+.cherry {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--cherry-c-text-1);
+  background: color-mix(in srgb, var(--cherry-c-text-3) 8%, var(--cherry-c-bg));
+}
+
+.cherry-toolbar {
+  flex-shrink: 0;
+}
+
+.cherry-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.cherry-editor {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.cherry-theme-default.cherry {
+  --cherry-c-brand-1: #5086a1;
+  --cherry-c-brand-2: #6aa1b7;
+  --cherry-c-brand-3: #8cccd5;
+  --cherry-c-brand-soft: rgba(131, 208, 218, 0.314);
+  --cherry-c-brand-on-bg: #1a3d47;
+  --cherry-c-text-1: rgb(60, 60, 67);
+  --cherry-c-text-2: rgba(60, 60, 67, 0.78);
+  --cherry-c-text-3: rgba(60, 60, 67, 0.56);
+  --cherry-c-bg: #fff;
+  --cherry-c-bg-elevated: #fafafa;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: #8cccd5;
+  --cherry-c-note: #206aca;
+  --cherry-c-note-mark: #ff0;
+  --cherry-c-note-on-bg: color-mix(in srgb, #206aca 20%, #fff);
+  --cherry-c-alert-note-text: #206aca;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #206aca 10%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #206aca 30%, transparent);
+  --cherry-c-tip: #30a46c;
+  --cherry-c-tip-mark: #39ff14;
+  --cherry-c-tip-on-bg: color-mix(in srgb, #30a46c 20%, #fff);
+  --cherry-c-alert-tip-text: #30a46c;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #30a46c 10%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #30a46c 30%, transparent);
+  --cherry-c-warning: #b45309;
+  --cherry-c-warning-mark: #fc0;
+  --cherry-c-warning-on-bg: color-mix(in srgb, #b45309 20%, #fff);
+  --cherry-c-alert-warning-text: #b45309;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #b45309 10%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #b45309 30%, transparent);
+  --cherry-c-caution: #c53030;
+  --cherry-c-caution-mark: #f99;
+  --cherry-c-caution-on-bg: color-mix(in srgb, #c53030 20%, #fff);
+  --cherry-c-alert-caution-text: #c53030;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #c53030 10%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #c53030 30%, transparent);
+  --cherry-c-danger: #dc2626;
+  --cherry-c-danger-mark: #f66;
+  --cherry-c-danger-on-bg: color-mix(in srgb, #dc2626 20%, #fff);
+  --cherry-c-alert-danger-text: #dc2626;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #dc2626 10%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #dc2626 30%, transparent);
+  --cherry-c-important: #844bbc;
+  --cherry-c-important-mark: #ccf;
+  --cherry-c-important-on-bg: color-mix(in srgb, #844bbc 20%, #fff);
+  --cherry-c-alert-important-text: #844bbc;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #844bbc 10%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #844bbc 30%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 45%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 72%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 55%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 82%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: var(--cherry-c-contrast-light);
+  --cherry-c-code-block-header-bg: color-mix(in srgb, var(--cherry-c-text-3) 6%, var(--cherry-c-bg-elevated));
+  --cherry-c-code-block-code-bg: color-mix(in srgb, var(--cherry-c-text-3) 4%, var(--cherry-c-bg));
+  --cherry-c-code-block-shadow: 0 1px 2px color-mix(in srgb, var(--cherry-c-text-3) 8%, transparent),
+    0 8px 24px color-mix(in srgb, var(--cherry-c-text-3) 6%, transparent);
+}
+
+.cherry-dark.cherry-theme-default.cherry {
+  --cherry-c-brand-1: #6aa1b7;
+  --cherry-c-brand-2: #8cccd5;
+  --cherry-c-brand-3: #a8dce3;
+  --cherry-c-brand-soft: rgba(131, 208, 218, 0.2);
+  --cherry-c-brand-on-bg: #e0f4f8;
+  --cherry-c-text-1: rgba(255, 255, 255, 0.87);
+  --cherry-c-text-2: rgba(255, 255, 255, 0.6);
+  --cherry-c-text-3: rgba(255, 255, 255, 0.38);
+  --cherry-c-bg: #141414;
+  --cherry-c-bg-elevated: #1f1f1f;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: color-mix(in srgb, #a8dce3 48%, #141414);
+  --cherry-c-note: #93c5fd;
+  --cherry-c-note-mark: color-mix(in srgb, #db0 50%, #141414);
+  --cherry-c-note-on-bg: color-mix(in srgb, #93c5fd 20%, #000);
+  --cherry-c-alert-note-text: #93c5fd;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #93c5fd 15%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #93c5fd 40%, transparent);
+  --cherry-c-tip: #4ade80;
+  --cherry-c-tip-mark: color-mix(in srgb, #4ade80 50%, #141414);
+  --cherry-c-tip-on-bg: color-mix(in srgb, #4ade80 20%, #000);
+  --cherry-c-alert-tip-text: #4ade80;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #4ade80 15%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #4ade80 40%, transparent);
+  --cherry-c-warning: #fbbf24;
+  --cherry-c-warning-mark: color-mix(in srgb, #fbbf24 50%, #141414);
+  --cherry-c-warning-on-bg: color-mix(in srgb, #fbbf24 20%, #000);
+  --cherry-c-alert-warning-text: #fbbf24;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #fbbf24 15%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #fbbf24 40%, transparent);
+  --cherry-c-caution: #fca5a5;
+  --cherry-c-caution-mark: color-mix(in srgb, #fca5a5 50%, #141414);
+  --cherry-c-caution-on-bg: color-mix(in srgb, #fca5a5 20%, #000);
+  --cherry-c-alert-caution-text: #fca5a5;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #fca5a5 15%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #fca5a5 40%, transparent);
+  --cherry-c-danger: #f87171;
+  --cherry-c-danger-mark: color-mix(in srgb, #f87171 50%, #141414);
+  --cherry-c-danger-on-bg: color-mix(in srgb, #f87171 20%, #000);
+  --cherry-c-alert-danger-text: #f87171;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #f87171 15%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #f87171 40%, transparent);
+  --cherry-c-important: #c4b5fd;
+  --cherry-c-important-mark: color-mix(in srgb, #a5b4fc 50%, #141414);
+  --cherry-c-important-on-bg: color-mix(in srgb, #c4b5fd 20%, #000);
+  --cherry-c-alert-important-text: #c4b5fd;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #c4b5fd 15%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #c4b5fd 40%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 45%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 72%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 55%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 82%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: var(--cherry-c-contrast-light);
+  --cherry-c-code-block-header-bg: color-mix(in srgb, var(--cherry-c-text-3) 6%, var(--cherry-c-bg-elevated));
+  --cherry-c-code-block-code-bg: color-mix(in srgb, var(--cherry-c-text-3) 4%, var(--cherry-c-bg));
+  --cherry-c-code-block-shadow: 0 1px 2px color-mix(in srgb, var(--cherry-c-text-3) 8%, transparent),
+    0 8px 24px color-mix(in srgb, var(--cherry-c-text-3) 6%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 88%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 92%, transparent) 100%
+  );
+  --cherry-c-code-block-header-bg: color-mix(
+    in srgb,
+    var(--cherry-c-contrast-light) 4%,
+    var(--cherry-c-bg-elevated)
+  );
+  --cherry-c-code-block-code-bg: color-mix(
+    in srgb,
+    var(--cherry-c-contrast-dark) 22%,
+    var(--cherry-c-bg-elevated)
+  );
+  --cherry-c-code-block-shadow: 0 1px 2px color-mix(in srgb, var(--cherry-c-contrast-dark) 35%, transparent);
+}
+
+/** Claude 主题编辑器样式 */
 /** Claude 主题渲染样式（结构对齐 src/theme/themes/default/render.scss） */
 /** 语义 token 通用取值（避免 if(sass(...)) 与 @if 块变量作用域问题） */
 .cherry-theme-claude .cherry-render {
@@ -4404,6 +5187,189 @@
   --cherry-c-blockquote-border: color-mix(in srgb, #dedcd1 28%, transparent);
 }
 
+.cherry-theme-claude.cherry {
+  --claude-font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
+    "Times New Roman", serif;
+  --claude-font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --claude-font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", monospace;
+  --claude-text-size: 0.9375rem;
+  --claude-text-leading: 1.7;
+  --claude-heading-leading: 1.25;
+  --cherry-c-brand-1: #d97757;
+  --cherry-c-brand-2: #c6613f;
+  --cherry-c-brand-3: #d97757;
+  --cherry-c-brand-soft: rgba(217, 119, 87, 0.14);
+  --cherry-c-brand-on-bg: #141413;
+  --cherry-c-text-1: #141413;
+  --cherry-c-text-2: #3d3d3a;
+  --cherry-c-text-3: #87867f;
+  --cherry-c-bg: #faf9f5;
+  --cherry-c-bg-elevated: #f0eee6;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: #d4b06d;
+  --cherry-c-code-fg: #8a2424;
+  --cherry-c-border-soft: color-mix(in srgb, #dedcd1 85%, transparent);
+  --cherry-c-border-faint: color-mix(in srgb, #dedcd1 55%, transparent);
+  --cherry-c-note: #5d7d9a;
+  --cherry-c-note-mark: #c8e0f4;
+  --cherry-c-note-on-bg: color-mix(in srgb, #5d7d9a 16%, #fff);
+  --cherry-c-alert-note-text: #5d7d9a;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #5d7d9a 8%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #5d7d9a 18%, transparent);
+  --cherry-c-tip: #688a5d;
+  --cherry-c-tip-mark: #d7eccf;
+  --cherry-c-tip-on-bg: color-mix(in srgb, #688a5d 16%, #fff);
+  --cherry-c-alert-tip-text: #688a5d;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #688a5d 8%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #688a5d 18%, transparent);
+  --cherry-c-warning: #ad7837;
+  --cherry-c-warning-mark: #f2ddb3;
+  --cherry-c-warning-on-bg: color-mix(in srgb, #ad7837 16%, #fff);
+  --cherry-c-alert-warning-text: #ad7837;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #ad7837 8%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #ad7837 18%, transparent);
+  --cherry-c-caution: #b45f51;
+  --cherry-c-caution-mark: #f3ccc4;
+  --cherry-c-caution-on-bg: color-mix(in srgb, #b45f51 16%, #fff);
+  --cherry-c-alert-caution-text: #b45f51;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #b45f51 8%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #b45f51 18%, transparent);
+  --cherry-c-danger: #b45f51;
+  --cherry-c-danger-mark: #f3ccc4;
+  --cherry-c-danger-on-bg: color-mix(in srgb, #b45f51 16%, #fff);
+  --cherry-c-alert-danger-text: #b45f51;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #b45f51 8%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #b45f51 18%, transparent);
+  --cherry-c-important: #8b6f9d;
+  --cherry-c-important-mark: #e6d4f2;
+  --cherry-c-important-on-bg: color-mix(in srgb, #8b6f9d 16%, #fff);
+  --cherry-c-alert-important-text: #8b6f9d;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #8b6f9d 8%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #8b6f9d 18%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 40%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 65%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 50%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 75%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: color-mix(in srgb, #141413 5%, transparent);
+  --cherry-c-code-inline-fg: var(--cherry-c-code-fg);
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-code-bg: var(--cherry-c-bg);
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: color-mix(in srgb, #dedcd1 72%, transparent);
+  --cherry-c-table-td-border: color-mix(in srgb, #dedcd1 42%, transparent);
+  --cherry-c-hr-color: color-mix(in srgb, #dedcd1 42%, transparent);
+  --cherry-c-blockquote-border: color-mix(in srgb, #dedcd1 72%, transparent);
+}
+
+.cherry-dark.cherry-theme-claude.cherry {
+  --claude-font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
+    "Times New Roman", serif;
+  --claude-font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --claude-font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", monospace;
+  --claude-text-size: 0.9375rem;
+  --claude-text-leading: 1.7;
+  --claude-heading-leading: 1.25;
+  --cherry-c-brand-1: #d97757;
+  --cherry-c-brand-2: #e6987d;
+  --cherry-c-brand-3: #d97757;
+  --cherry-c-brand-soft: rgba(217, 119, 87, 0.16);
+  --cherry-c-brand-on-bg: #faf9f5;
+  --cherry-c-text-1: #faf9f5;
+  --cherry-c-text-2: #c2c0b6;
+  --cherry-c-text-3: #9a9c92;
+  --cherry-c-bg: #181715;
+  --cherry-c-bg-elevated: #252320;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: #d4b06d;
+  --cherry-c-code-fg: #fe8181;
+  --cherry-c-border-soft: color-mix(in srgb, #dedcd1 24%, transparent);
+  --cherry-c-border-faint: color-mix(in srgb, #dedcd1 12%, transparent);
+  --cherry-c-note: #88a9c7;
+  --cherry-c-note-mark: color-mix(in srgb, #5f7896 40%, #181715);
+  --cherry-c-note-on-bg: color-mix(in srgb, #88a9c7 16%, #000);
+  --cherry-c-alert-note-text: #88a9c7;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #88a9c7 10%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #88a9c7 22%, transparent);
+  --cherry-c-tip: #91b685;
+  --cherry-c-tip-mark: color-mix(in srgb, #5f7a57 40%, #181715);
+  --cherry-c-tip-on-bg: color-mix(in srgb, #91b685 16%, #000);
+  --cherry-c-alert-tip-text: #91b685;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #91b685 10%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #91b685 22%, transparent);
+  --cherry-c-warning: #d6a15e;
+  --cherry-c-warning-mark: color-mix(in srgb, #8f6a34 40%, #181715);
+  --cherry-c-warning-on-bg: color-mix(in srgb, #d6a15e 16%, #000);
+  --cherry-c-alert-warning-text: #d6a15e;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #d6a15e 10%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #d6a15e 22%, transparent);
+  --cherry-c-caution: #d88678;
+  --cherry-c-caution-mark: color-mix(in srgb, #8f5348 40%, #181715);
+  --cherry-c-caution-on-bg: color-mix(in srgb, #d88678 16%, #000);
+  --cherry-c-alert-caution-text: #d88678;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #d88678 10%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #d88678 22%, transparent);
+  --cherry-c-danger: #d88678;
+  --cherry-c-danger-mark: color-mix(in srgb, #8f5348 40%, #181715);
+  --cherry-c-danger-on-bg: color-mix(in srgb, #d88678 16%, #000);
+  --cherry-c-alert-danger-text: #d88678;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #d88678 10%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #d88678 22%, transparent);
+  --cherry-c-important: #b69acd;
+  --cherry-c-important-mark: color-mix(in srgb, #7a5f8f 40%, #181715);
+  --cherry-c-important-on-bg: color-mix(in srgb, #b69acd 16%, #000);
+  --cherry-c-alert-important-text: #b69acd;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #b69acd 10%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #b69acd 22%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 40%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 65%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 50%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 75%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: color-mix(in srgb, #c2c0b6 8%, transparent);
+  --cherry-c-code-inline-fg: var(--cherry-c-code-fg);
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-code-bg: var(--cherry-c-bg);
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: color-mix(in srgb, #dedcd1 28%, transparent);
+  --cherry-c-table-td-border: color-mix(in srgb, #dedcd1 14%, transparent);
+  --cherry-c-hr-color: color-mix(in srgb, #dedcd1 14%, transparent);
+  --cherry-c-blockquote-border: color-mix(in srgb, #dedcd1 28%, transparent);
+}
+
+/** GitHub 主题编辑器样式 */
 /** GitHub 主题渲染样式（结构对齐 src/theme/themes/claude/render.scss） */
 .cherry-theme-github .cherry-render {
   --github-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial,
@@ -6747,6 +7713,185 @@
   background-color: #67060c;
 }
 
+.cherry-theme-github.cherry {
+  --github-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --github-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  --github-text-size: 1rem;
+  --github-text-leading: 1.5;
+  --github-heading-leading: 1.25;
+  --cherry-c-brand-1: #0969da;
+  --cherry-c-brand-2: #0550ae;
+  --cherry-c-brand-3: #0969da;
+  --cherry-c-brand-soft: rgba(9, 105, 218, 0.12);
+  --cherry-c-brand-on-bg: #fff;
+  --cherry-c-text-1: #1f2328;
+  --cherry-c-text-2: #59636e;
+  --cherry-c-text-3: #818b98;
+  --cherry-c-bg: #ffffff;
+  --cherry-c-bg-elevated: #f6f8fa;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: #fff8c5;
+  --cherry-c-code-fg: #1f2328;
+  --cherry-c-border-soft: #d1d9e0;
+  --cherry-c-border-faint: color-mix(in srgb, #d1d9e0 55%, transparent);
+  --cherry-c-note: #0969da;
+  --cherry-c-note-mark: #cae8ff;
+  --cherry-c-note-on-bg: color-mix(in srgb, #0969da 16%, #fff);
+  --cherry-c-alert-note-text: #0969da;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #0969da 10%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #0969da 24%, transparent);
+  --cherry-c-tip: #1a7f37;
+  --cherry-c-tip-mark: #c6f6d5;
+  --cherry-c-tip-on-bg: color-mix(in srgb, #1a7f37 16%, #fff);
+  --cherry-c-alert-tip-text: #1a7f37;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #1a7f37 10%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #1a7f37 24%, transparent);
+  --cherry-c-warning: #9a6700;
+  --cherry-c-warning-mark: #fff8c5;
+  --cherry-c-warning-on-bg: color-mix(in srgb, #9a6700 16%, #fff);
+  --cherry-c-alert-warning-text: #9a6700;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #9a6700 10%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #9a6700 24%, transparent);
+  --cherry-c-caution: #cf222e;
+  --cherry-c-caution-mark: #ffebe9;
+  --cherry-c-caution-on-bg: color-mix(in srgb, #cf222e 16%, #fff);
+  --cherry-c-alert-caution-text: #cf222e;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #cf222e 10%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #cf222e 24%, transparent);
+  --cherry-c-danger: #cf222e;
+  --cherry-c-danger-mark: #ffebe9;
+  --cherry-c-danger-on-bg: color-mix(in srgb, #cf222e 16%, #fff);
+  --cherry-c-alert-danger-text: #cf222e;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #cf222e 10%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #cf222e 24%, transparent);
+  --cherry-c-important: #8250df;
+  --cherry-c-important-mark: #fbefff;
+  --cherry-c-important-on-bg: color-mix(in srgb, #8250df 16%, #fff);
+  --cherry-c-alert-important-text: #8250df;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #8250df 10%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #8250df 24%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 40%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 65%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 50%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 75%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: color-mix(in srgb, #afb8c1 20%, transparent);
+  --cherry-c-code-inline-fg: var(--cherry-c-code-fg);
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-code-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: #d1d9e0;
+  --cherry-c-table-td-border: color-mix(in srgb, #d1d9e0 72%, transparent);
+  --cherry-c-hr-color: #d1d9e0;
+  --cherry-c-blockquote-border: #d1d9e0;
+}
+
+.cherry-dark.cherry-theme-github.cherry {
+  --github-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --github-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  --github-text-size: 1rem;
+  --github-text-leading: 1.5;
+  --github-heading-leading: 1.25;
+  --cherry-c-brand-1: #4493f8;
+  --cherry-c-brand-2: #3182f6;
+  --cherry-c-brand-3: #4493f8;
+  --cherry-c-brand-soft: rgba(68, 147, 248, 0.16);
+  --cherry-c-brand-on-bg: #f0f6fc;
+  --cherry-c-text-1: #f0f6fc;
+  --cherry-c-text-2: #9198a1;
+  --cherry-c-text-3: #656c76;
+  --cherry-c-bg: #0d1117;
+  --cherry-c-bg-elevated: #151b23;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: #3d3400;
+  --cherry-c-code-fg: #f0f6fc;
+  --cherry-c-border-soft: #3d444d;
+  --cherry-c-border-faint: color-mix(in srgb, #3d444d 55%, transparent);
+  --cherry-c-note: #4493f8;
+  --cherry-c-note-mark: color-mix(in srgb, #264f78 42%, #0d1117);
+  --cherry-c-note-on-bg: color-mix(in srgb, #4493f8 16%, #000);
+  --cherry-c-alert-note-text: #4493f8;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #4493f8 12%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #4493f8 28%, transparent);
+  --cherry-c-tip: #3fb950;
+  --cherry-c-tip-mark: color-mix(in srgb, #1b4721 42%, #0d1117);
+  --cherry-c-tip-on-bg: color-mix(in srgb, #3fb950 16%, #000);
+  --cherry-c-alert-tip-text: #3fb950;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #3fb950 12%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #3fb950 28%, transparent);
+  --cherry-c-warning: #d4a72c;
+  --cherry-c-warning-mark: color-mix(in srgb, #624710 42%, #0d1117);
+  --cherry-c-warning-on-bg: color-mix(in srgb, #d4a72c 16%, #000);
+  --cherry-c-alert-warning-text: #d4a72c;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #d4a72c 12%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #d4a72c 28%, transparent);
+  --cherry-c-caution: #ff8182;
+  --cherry-c-caution-mark: color-mix(in srgb, #67060c 42%, #0d1117);
+  --cherry-c-caution-on-bg: color-mix(in srgb, #ff8182 16%, #000);
+  --cherry-c-alert-caution-text: #ff8182;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #ff8182 12%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #ff8182 28%, transparent);
+  --cherry-c-danger: #ff8182;
+  --cherry-c-danger-mark: color-mix(in srgb, #67060c 42%, #0d1117);
+  --cherry-c-danger-on-bg: color-mix(in srgb, #ff8182 16%, #000);
+  --cherry-c-alert-danger-text: #ff8182;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #ff8182 12%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #ff8182 28%, transparent);
+  --cherry-c-important: #ab7df8;
+  --cherry-c-important-mark: color-mix(in srgb, #512a97 42%, #0d1117);
+  --cherry-c-important-on-bg: color-mix(in srgb, #ab7df8 16%, #000);
+  --cherry-c-alert-important-text: #ab7df8;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #ab7df8 12%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #ab7df8 28%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 40%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 65%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 50%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 75%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: color-mix(in srgb, #9198a1 16%, transparent);
+  --cherry-c-code-inline-fg: var(--cherry-c-code-fg);
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-code-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: #3d444d;
+  --cherry-c-table-td-border: color-mix(in srgb, #3d444d 72%, transparent);
+  --cherry-c-hr-color: #3d444d;
+  --cherry-c-blockquote-border: #3d444d;
+}
+
+/** Morandi 主题编辑器样式 */
 /** MorandiGarden 主题渲染样式（结构对齐 claude / github） */
 /** MorandiGarden 主题渲染样式（结构对齐 claude / github） */
 .cherry-theme-morandi .cherry-render {
@@ -8959,6 +10104,203 @@
   --cherry-c-blockquote-border: #c4a99a;
 }
 
+.cherry-theme-morandi.cherry {
+  --morandi-font-sans: "Alibaba PuHuiTi", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans SC", sans-serif;
+  --morandi-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    "Liberation Mono", monospace;
+  --morandi-text-size: 1rem;
+  --morandi-text-leading: 1.8;
+  --morandi-heading-leading: 1.4;
+  --morandi-h1-color: #7a5f52;
+  --morandi-h2-color: #506956;
+  --morandi-h3-color: #7a6f89;
+  --morandi-h4-color: #6f7f88;
+  --morandi-h5-color: #8a7a6f;
+  --morandi-h6-color: #7d7a71;
+  --cherry-c-brand-1: #506956;
+  --cherry-c-brand-2: #405946;
+  --cherry-c-brand-3: #de7487;
+  --cherry-c-brand-soft: rgba(80, 105, 86, 0.12);
+  --cherry-c-brand-on-bg: #fff;
+  --cherry-c-text-1: #403c3c;
+  --cherry-c-text-2: color-mix(in srgb, #403c3c 72%, #98948c);
+  --cherry-c-text-3: #98948c;
+  --cherry-c-bg: #fbfdfb;
+  --cherry-c-bg-elevated: #f0f5f3;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: color-mix(in srgb, #506956 22%, #eef4ef);
+  --cherry-c-code-fg: #403c3c;
+  --cherry-c-border-soft: #7ea388;
+  --cherry-c-border-faint: color-mix(in srgb, #7ea388 45%, transparent);
+  --cherry-c-note: #6f7f88;
+  --cherry-c-note-mark: #dce8ea;
+  --cherry-c-note-on-bg: color-mix(in srgb, #6f7f88 16%, #fff);
+  --cherry-c-alert-note-text: #6f7f88;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #6f7f88 10%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #6f7f88 22%, transparent);
+  --cherry-c-tip: #506956;
+  --cherry-c-tip-mark: #d9e8dc;
+  --cherry-c-tip-on-bg: color-mix(in srgb, #506956 16%, #fff);
+  --cherry-c-alert-tip-text: #506956;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #506956 10%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #506956 22%, transparent);
+  --cherry-c-warning: #8a7a6f;
+  --cherry-c-warning-mark: #efe4d8;
+  --cherry-c-warning-on-bg: color-mix(in srgb, #8a7a6f 16%, #fff);
+  --cherry-c-alert-warning-text: #8a7a6f;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #8a7a6f 10%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #8a7a6f 22%, transparent);
+  --cherry-c-caution: #de7487;
+  --cherry-c-caution-mark: #f5dde2;
+  --cherry-c-caution-on-bg: color-mix(in srgb, #de7487 16%, #fff);
+  --cherry-c-alert-caution-text: #de7487;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #de7487 10%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #de7487 22%, transparent);
+  --cherry-c-danger: #de7487;
+  --cherry-c-danger-mark: #f5dde2;
+  --cherry-c-danger-on-bg: color-mix(in srgb, #de7487 16%, #fff);
+  --cherry-c-alert-danger-text: #de7487;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #de7487 10%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #de7487 22%, transparent);
+  --cherry-c-important: #7a6f89;
+  --cherry-c-important-mark: #e8e0ef;
+  --cherry-c-important-on-bg: color-mix(in srgb, #7a6f89 16%, #fff);
+  --cherry-c-alert-important-text: #7a6f89;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #7a6f89 10%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #7a6f89 22%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: #f0f5f3;
+  --cherry-c-code-inline-fg: var(--morandi-h3-color);
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-code-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: #7ea388;
+  --cherry-c-table-td-border: color-mix(in srgb, #7ea388 55%, transparent);
+  --cherry-c-hr-color: #ccd8cf;
+  --cherry-c-blockquote-border: #7a5f52;
+}
+
+.cherry-dark.cherry-theme-morandi.cherry {
+  --morandi-font-sans: "Alibaba PuHuiTi", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans SC", sans-serif;
+  --morandi-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    "Liberation Mono", monospace;
+  --morandi-text-size: 1rem;
+  --morandi-text-leading: 1.8;
+  --morandi-heading-leading: 1.4;
+  --morandi-h1-color: #7a5f52;
+  --morandi-h2-color: #506956;
+  --morandi-h3-color: #7a6f89;
+  --morandi-h4-color: #6f7f88;
+  --morandi-h5-color: #8a7a6f;
+  --morandi-h6-color: #7d7a71;
+  --morandi-h1-color: #c4a99a;
+  --morandi-h2-color: #8fa896;
+  --morandi-h3-color: #a89bb8;
+  --morandi-h4-color: #93a0a8;
+  --morandi-h5-color: #b0a399;
+  --morandi-h6-color: #a8a59d;
+  --cherry-c-brand-1: #8fa896;
+  --cherry-c-brand-2: #a8c0ae;
+  --cherry-c-brand-3: #de7487;
+  --cherry-c-brand-soft: rgba(143, 168, 150, 0.16);
+  --cherry-c-brand-on-bg: #e8e6e1;
+  --cherry-c-text-1: #e8e6e1;
+  --cherry-c-text-2: #b4b0a8;
+  --cherry-c-text-3: #8f8b84;
+  --cherry-c-bg: #2e3330;
+  --cherry-c-bg-elevated: #383e3a;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: color-mix(in srgb, #8fa896 28%, #343a36);
+  --cherry-c-code-fg: #e8e6e1;
+  --cherry-c-border-soft: #5a7260;
+  --cherry-c-border-faint: color-mix(in srgb, #5a7260 45%, transparent);
+  --cherry-c-note: #93a0a8;
+  --cherry-c-note-mark: color-mix(in srgb, #4a555c 40%, #2e3330);
+  --cherry-c-note-on-bg: color-mix(in srgb, #93a0a8 16%, #000);
+  --cherry-c-alert-note-text: #93a0a8;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #93a0a8 12%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #93a0a8 26%, transparent);
+  --cherry-c-tip: #8fa896;
+  --cherry-c-tip-mark: color-mix(in srgb, #3f5248 40%, #2e3330);
+  --cherry-c-tip-on-bg: color-mix(in srgb, #8fa896 16%, #000);
+  --cherry-c-alert-tip-text: #8fa896;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #8fa896 12%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #8fa896 26%, transparent);
+  --cherry-c-warning: #b0a399;
+  --cherry-c-warning-mark: color-mix(in srgb, #5c5348 40%, #2e3330);
+  --cherry-c-warning-on-bg: color-mix(in srgb, #b0a399 16%, #000);
+  --cherry-c-alert-warning-text: #b0a399;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #b0a399 12%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #b0a399 26%, transparent);
+  --cherry-c-caution: #de7487;
+  --cherry-c-caution-mark: color-mix(in srgb, #6a4048 40%, #2e3330);
+  --cherry-c-caution-on-bg: color-mix(in srgb, #de7487 16%, #000);
+  --cherry-c-alert-caution-text: #de7487;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #de7487 12%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #de7487 26%, transparent);
+  --cherry-c-danger: #de7487;
+  --cherry-c-danger-mark: color-mix(in srgb, #6a4048 40%, #2e3330);
+  --cherry-c-danger-on-bg: color-mix(in srgb, #de7487 16%, #000);
+  --cherry-c-alert-danger-text: #de7487;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #de7487 12%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #de7487 26%, transparent);
+  --cherry-c-important: #a89bb8;
+  --cherry-c-important-mark: color-mix(in srgb, #524860 40%, #2e3330);
+  --cherry-c-important-on-bg: color-mix(in srgb, #a89bb8 16%, #000);
+  --cherry-c-alert-important-text: #a89bb8;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #a89bb8 12%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #a89bb8 26%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: #3a403c;
+  --cherry-c-code-inline-fg: var(--morandi-h3-color);
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-code-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: #5a7260;
+  --cherry-c-table-td-border: color-mix(in srgb, #5a7260 55%, transparent);
+  --cherry-c-hr-color: #4a524c;
+  --cherry-c-blockquote-border: #c4a99a;
+}
+
+/** LaTeX 主题编辑器样式 */
 /** LaTeX 主题（typora-latex-theme / Keldos-Li） */
 .cherry-theme-latex .cherry-render {
   --latex-font-serif: "Latin Modern Roman", "Latin Modern Roman 10", "Times New Roman", "Noto Serif CJK SC",
@@ -11175,6 +12517,195 @@
   --cherry-c-blockquote-border: hsl(0, 0%, 70%);
 }
 
+.cherry-theme-latex.cherry {
+  --latex-font-serif: "Latin Modern Roman", "Latin Modern Roman 10", "Times New Roman", "Noto Serif CJK SC",
+    "Songti SC", "STSong", "SimSun", serif;
+  --latex-font-heiti: "STHeiti", "SimHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  --latex-font-kai: "STKaiti", "KaiTi", "FZDocKai", "Noto Serif CJK SC", serif;
+  --latex-font-fangsong: "STFangsong", "FangSong", "Noto Serif CJK SC", serif;
+  --latex-font-mono: "Latin Modern Mono", "Latin Modern Mono 10", Consolas, "Courier New", monospace;
+  --latex-font-ui: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --latex-text-size: 9.5pt;
+  --latex-text-leading: 1.618em;
+  --latex-strong-weight: 900;
+  --latex-quote-size: 1.05em;
+  --cherry-c-brand-1: #2e67d3;
+  --cherry-c-brand-2: color-mix(in srgb, #2e67d3 82%, #000);
+  --cherry-c-brand-3: #2e67d3;
+  --cherry-c-brand-soft: rgba(46, 103, 211, 0.1);
+  --cherry-c-brand-on-bg: #fff;
+  --cherry-c-text-1: #000000;
+  --cherry-c-text-2: color-mix(in srgb, #000000 72%, #666);
+  --cherry-c-text-3: #666666;
+  --cherry-c-bg: #ffffff;
+  --cherry-c-bg-elevated: #fefefe;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: #fff3bf;
+  --cherry-c-code-fg: #3c70c6;
+  --cherry-c-border-soft: hsl(0, 0%, 70%);
+  --cherry-c-border-faint: color-mix(in srgb, #dddddd 90%, transparent);
+  --latex-code-inline-shadow: #c8d3df;
+  --cherry-c-note: #2e67d3;
+  --cherry-c-note-mark: #d6e4ff;
+  --cherry-c-note-on-bg: color-mix(in srgb, #2e67d3 16%, #fff);
+  --cherry-c-alert-note-text: #2e67d3;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #2e67d3 10%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #2e67d3 22%, transparent);
+  --cherry-c-tip: #3a6b4a;
+  --cherry-c-tip-mark: #d9e8dc;
+  --cherry-c-tip-on-bg: color-mix(in srgb, #3a6b4a 16%, #fff);
+  --cherry-c-alert-tip-text: #3a6b4a;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #3a6b4a 10%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #3a6b4a 22%, transparent);
+  --cherry-c-warning: #8a6b3a;
+  --cherry-c-warning-mark: #f0e6d0;
+  --cherry-c-warning-on-bg: color-mix(in srgb, #8a6b3a 16%, #fff);
+  --cherry-c-alert-warning-text: #8a6b3a;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #8a6b3a 10%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #8a6b3a 22%, transparent);
+  --cherry-c-caution: #a84832;
+  --cherry-c-caution-mark: #f5ddd6;
+  --cherry-c-caution-on-bg: color-mix(in srgb, #a84832 16%, #fff);
+  --cherry-c-alert-caution-text: #a84832;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #a84832 10%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #a84832 22%, transparent);
+  --cherry-c-danger: #a84832;
+  --cherry-c-danger-mark: #f5ddd6;
+  --cherry-c-danger-on-bg: color-mix(in srgb, #a84832 16%, #fff);
+  --cherry-c-alert-danger-text: #a84832;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #a84832 10%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #a84832 22%, transparent);
+  --cherry-c-important: #5a4a72;
+  --cherry-c-important-mark: #e8e0ef;
+  --cherry-c-important-on-bg: color-mix(in srgb, #5a4a72 16%, #fff);
+  --cherry-c-alert-important-text: #5a4a72;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #5a4a72 10%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #5a4a72 22%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: #fefefe;
+  --cherry-c-code-inline-fg: #3c70c6;
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: #fefefe;
+  --cherry-c-code-block-code-bg: #fefefe;
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: var(--cherry-c-text-1);
+  --cherry-c-table-td-border: transparent;
+  --cherry-c-hr-color: #dddddd;
+  --cherry-c-blockquote-border: hsl(0, 0%, 70%);
+}
+
+.cherry-dark.cherry-theme-latex.cherry {
+  --latex-font-serif: "Latin Modern Roman", "Latin Modern Roman 10", "Times New Roman", "Noto Serif CJK SC",
+    "Songti SC", "STSong", "SimSun", serif;
+  --latex-font-heiti: "STHeiti", "SimHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  --latex-font-kai: "STKaiti", "KaiTi", "FZDocKai", "Noto Serif CJK SC", serif;
+  --latex-font-fangsong: "STFangsong", "FangSong", "Noto Serif CJK SC", serif;
+  --latex-font-mono: "Latin Modern Mono", "Latin Modern Mono 10", Consolas, "Courier New", monospace;
+  --latex-font-ui: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --latex-text-size: 9.5pt;
+  --latex-text-leading: 1.618em;
+  --latex-strong-weight: 900;
+  --latex-quote-size: 1.05em;
+  --cherry-c-brand-1: #8bb1f9;
+  --cherry-c-brand-2: color-mix(in srgb, #8bb1f9 88%, #fff);
+  --cherry-c-brand-3: #8bb1f9;
+  --cherry-c-brand-soft: rgba(139, 177, 249, 0.14);
+  --cherry-c-brand-on-bg: #dcdcdc;
+  --cherry-c-text-1: #dcdcdc;
+  --cherry-c-text-2: color-mix(in srgb, #dcdcdc 78%, #888);
+  --cherry-c-text-3: #989898;
+  --cherry-c-bg: #1e1e1e;
+  --cherry-c-bg-elevated: #1f1e1e;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: #3d3400;
+  --cherry-c-code-fg: #8bb1f9;
+  --cherry-c-border-soft: #888888;
+  --cherry-c-border-faint: color-mix(in srgb, #888888 55%, transparent);
+  --latex-code-inline-shadow: #141414;
+  --cherry-c-note: #8bb1f9;
+  --cherry-c-note-mark: color-mix(in srgb, #2a3f66 42%, #1e1e1e);
+  --cherry-c-note-on-bg: color-mix(in srgb, #8bb1f9 16%, #000);
+  --cherry-c-alert-note-text: #8bb1f9;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #8bb1f9 12%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #8bb1f9 26%, transparent);
+  --cherry-c-tip: #8fa896;
+  --cherry-c-tip-mark: color-mix(in srgb, #2a3a30 42%, #1e1e1e);
+  --cherry-c-tip-on-bg: color-mix(in srgb, #8fa896 16%, #000);
+  --cherry-c-alert-tip-text: #8fa896;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #8fa896 12%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #8fa896 26%, transparent);
+  --cherry-c-warning: #d4a15e;
+  --cherry-c-warning-mark: color-mix(in srgb, #4a3820 42%, #1e1e1e);
+  --cherry-c-warning-on-bg: color-mix(in srgb, #d4a15e 16%, #000);
+  --cherry-c-alert-warning-text: #d4a15e;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #d4a15e 12%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #d4a15e 26%, transparent);
+  --cherry-c-caution: #e89888;
+  --cherry-c-caution-mark: color-mix(in srgb, #4a2820 42%, #1e1e1e);
+  --cherry-c-caution-on-bg: color-mix(in srgb, #e89888 16%, #000);
+  --cherry-c-alert-caution-text: #e89888;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #e89888 12%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #e89888 26%, transparent);
+  --cherry-c-danger: #e89888;
+  --cherry-c-danger-mark: color-mix(in srgb, #4a2820 42%, #1e1e1e);
+  --cherry-c-danger-on-bg: color-mix(in srgb, #e89888 16%, #000);
+  --cherry-c-alert-danger-text: #e89888;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #e89888 12%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #e89888 26%, transparent);
+  --cherry-c-important: #b69acd;
+  --cherry-c-important-mark: color-mix(in srgb, #3a3048 42%, #1e1e1e);
+  --cherry-c-important-on-bg: color-mix(in srgb, #b69acd 16%, #000);
+  --cherry-c-alert-important-text: #b69acd;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #b69acd 12%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #b69acd 26%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: #161616;
+  --cherry-c-code-inline-fg: #8bb1f9;
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: #1f1e1e;
+  --cherry-c-code-block-code-bg: #1f1e1e;
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: var(--cherry-c-text-1);
+  --cherry-c-table-td-border: transparent;
+  --cherry-c-hr-color: #888888;
+  --cherry-c-blockquote-border: hsl(0, 0%, 70%);
+}
+
+/** Vue 主题编辑器样式 */
 /** Vue 主题（typora-vue-theme / blinkfox） */
 /** Vue 主题（typora-vue-theme / blinkfox） */
 .cherry-theme-vue .cherry-render {
@@ -13356,6 +14887,189 @@
   --cherry-c-blockquote-border: #42b983;
 }
 
+.cherry-theme-vue.cherry {
+  --vue-font-sans: "Ubuntu", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --vue-font-mono: "Fira Code", "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    monospace;
+  --vue-text-size: 1rem;
+  --vue-text-leading: 1.6rem;
+  --vue-heading-leading: 1.4;
+  --cherry-c-brand-1: #42b983;
+  --cherry-c-brand-2: #33a06f;
+  --cherry-c-brand-3: #b4654d;
+  --cherry-c-brand-soft: rgba(66, 185, 131, 0.1);
+  --cherry-c-brand-on-bg: #fff;
+  --cherry-c-text-1: #34495e;
+  --cherry-c-text-2: #777777;
+  --cherry-c-text-3: #999999;
+  --cherry-c-bg: #ffffff;
+  --cherry-c-bg-elevated: #f8f8f8;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: #ebffeb;
+  --cherry-c-code-fg: #e96900;
+  --cherry-c-border-soft: #dfe2e5;
+  --cherry-c-border-faint: color-mix(in srgb, #dfe2e5 45%, transparent);
+  --vue-h2-rule: #dddddd;
+  --vue-code-block-border: #f4f4f4;
+  --cherry-c-note: #22a2c9;
+  --cherry-c-note-mark: #d6f3fb;
+  --cherry-c-note-on-bg: color-mix(in srgb, #22a2c9 16%, #fff);
+  --cherry-c-alert-note-text: #22a2c9;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #22a2c9 10%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #22a2c9 22%, transparent);
+  --cherry-c-tip: #42b983;
+  --cherry-c-tip-mark: #d7f5e8;
+  --cherry-c-tip-on-bg: color-mix(in srgb, #42b983 16%, #fff);
+  --cherry-c-alert-tip-text: #42b983;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #42b983 10%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #42b983 22%, transparent);
+  --cherry-c-warning: #e96900;
+  --cherry-c-warning-mark: #ffe8cc;
+  --cherry-c-warning-on-bg: color-mix(in srgb, #e96900 16%, #fff);
+  --cherry-c-alert-warning-text: #e96900;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #e96900 10%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #e96900 22%, transparent);
+  --cherry-c-caution: #b4654d;
+  --cherry-c-caution-mark: #f5ddd4;
+  --cherry-c-caution-on-bg: color-mix(in srgb, #b4654d 16%, #fff);
+  --cherry-c-alert-caution-text: #b4654d;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #b4654d 10%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #b4654d 22%, transparent);
+  --cherry-c-danger: #b4654d;
+  --cherry-c-danger-mark: #f5ddd4;
+  --cherry-c-danger-on-bg: color-mix(in srgb, #b4654d 16%, #fff);
+  --cherry-c-alert-danger-text: #b4654d;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #b4654d 10%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #b4654d 22%, transparent);
+  --cherry-c-important: #34495e;
+  --cherry-c-important-mark: #e2e8ef;
+  --cherry-c-important-on-bg: color-mix(in srgb, #34495e 16%, #fff);
+  --cherry-c-alert-important-text: #34495e;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #34495e 10%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #34495e 22%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: #f8f8f8;
+  --cherry-c-code-inline-fg: #e96900;
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: #f8f8f8;
+  --cherry-c-code-block-code-bg: #f8f8f8;
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: #dfe2e5;
+  --cherry-c-table-td-border: color-mix(in srgb, #dfe2e5 55%, transparent);
+  --cherry-c-hr-color: #e7e7e7;
+  --cherry-c-blockquote-border: #42b983;
+}
+
+.cherry-dark.cherry-theme-vue.cherry {
+  --vue-font-sans: "Ubuntu", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --vue-font-mono: "Fira Code", "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    monospace;
+  --vue-text-size: 1rem;
+  --vue-text-leading: 1.6rem;
+  --vue-heading-leading: 1.4;
+  --cherry-c-brand-1: #42b983;
+  --cherry-c-brand-2: color-mix(in srgb, #42b983 85%, #fff);
+  --cherry-c-brand-3: #f3b37f;
+  --cherry-c-brand-soft: rgba(66, 185, 131, 0.16);
+  --cherry-c-brand-on-bg: #eeeeee;
+  --cherry-c-text-1: #eeeeee;
+  --cherry-c-text-2: hsl(0, 0%, 53%);
+  --cherry-c-text-3: #aaaaaa;
+  --cherry-c-bg: #1f1f1f;
+  --cherry-c-bg-elevated: hsl(0, 0%, 10%);
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: #ebffeb;
+  --cherry-c-code-fg: #f3b37f;
+  --cherry-c-border-soft: hsl(0, 0%, 11%);
+  --cherry-c-border-faint: color-mix(in srgb, hsl(0, 0%, 11%) 45%, transparent);
+  --vue-h2-rule: hsl(0, 0%, 20%);
+  --vue-code-block-border: hsl(0, 0%, 11%);
+  --cherry-c-note: #7f7fe5;
+  --cherry-c-note-mark: color-mix(in srgb, #2a2850 40%, #1f1f1f);
+  --cherry-c-note-on-bg: color-mix(in srgb, #7f7fe5 16%, #000);
+  --cherry-c-alert-note-text: #7f7fe5;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #7f7fe5 12%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #7f7fe5 26%, transparent);
+  --cherry-c-tip: #42b983;
+  --cherry-c-tip-mark: color-mix(in srgb, #1a4030 40%, #1f1f1f);
+  --cherry-c-tip-on-bg: color-mix(in srgb, #42b983 16%, #000);
+  --cherry-c-alert-tip-text: #42b983;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #42b983 12%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #42b983 26%, transparent);
+  --cherry-c-warning: #f3b37f;
+  --cherry-c-warning-mark: color-mix(in srgb, #4a3828 40%, #1f1f1f);
+  --cherry-c-warning-on-bg: color-mix(in srgb, #f3b37f 16%, #000);
+  --cherry-c-alert-warning-text: #f3b37f;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #f3b37f 12%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #f3b37f 26%, transparent);
+  --cherry-c-caution: #cb8c8c;
+  --cherry-c-caution-mark: color-mix(in srgb, #402828 40%, #1f1f1f);
+  --cherry-c-caution-on-bg: color-mix(in srgb, #cb8c8c 16%, #000);
+  --cherry-c-alert-caution-text: #cb8c8c;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #cb8c8c 12%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #cb8c8c 26%, transparent);
+  --cherry-c-danger: #cb8c8c;
+  --cherry-c-danger-mark: color-mix(in srgb, #402828 40%, #1f1f1f);
+  --cherry-c-danger-on-bg: color-mix(in srgb, #cb8c8c 16%, #000);
+  --cherry-c-alert-danger-text: #cb8c8c;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #cb8c8c 12%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #cb8c8c 26%, transparent);
+  --cherry-c-important: #9088cc;
+  --cherry-c-important-mark: color-mix(in srgb, #302850 40%, #1f1f1f);
+  --cherry-c-important-on-bg: color-mix(in srgb, #9088cc 16%, #000);
+  --cherry-c-alert-important-text: #9088cc;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #9088cc 12%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #9088cc 26%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: hsla(0, 0%, 0%, 0.2);
+  --cherry-c-code-inline-fg: #f3b37f;
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: hsl(0, 0%, 10%);
+  --cherry-c-code-block-code-bg: hsl(0, 0%, 10%);
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: hsl(0, 0%, 11%);
+  --cherry-c-table-td-border: color-mix(in srgb, hsl(0, 0%, 11%) 55%, transparent);
+  --cherry-c-hr-color: hsl(0, 0%, 18%);
+  --cherry-c-blockquote-border: #42b983;
+}
+
+/** GitBook 主题编辑器样式 */
 /** GitBook 主题（typora-gitbook-theme / h16nning） */
 /** GitBook 主题（typora-gitbook-theme / h16nning） */
 .cherry-theme-gitbook .cherry-render {
@@ -15503,6 +17217,187 @@
   --cherry-c-blockquote-border: var(--cherry-c-brand-1);
 }
 
+.cherry-theme-gitbook.cherry {
+  --gitbook-font-sans: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+    Arial, sans-serif;
+  --gitbook-font-mono: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --gitbook-text-size: 0.95rem;
+  --gitbook-text-leading: 1.6rem;
+  --gitbook-heading-leading: 1.5;
+  --cherry-c-brand-1: #3884ff;
+  --cherry-c-brand-2: #1968e6;
+  --cherry-c-brand-3: #3884ff;
+  --cherry-c-brand-soft: rgba(56, 132, 255, 0.12);
+  --cherry-c-brand-on-bg: #fff;
+  --cherry-c-text-1: #3b454e;
+  --cherry-c-text-2: #9daab6;
+  --cherry-c-text-3: #74818d;
+  --cherry-c-bg: #ffffff;
+  --cherry-c-bg-elevated: #f5f7f9;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: #fff3bf;
+  --cherry-c-code-fg: #ffffff;
+  --cherry-c-border-soft: #e6ecf1;
+  --cherry-c-border-faint: color-mix(in srgb, #e6ecf1 45%, transparent);
+  --gitbook-heading-color: #242a31;
+  --gitbook-boxes: #f5f7f9;
+  --gitbook-code-fg: #ffffff;
+  --cherry-c-note: #3884ff;
+  --cherry-c-note-mark: #d6e6ff;
+  --cherry-c-note-on-bg: color-mix(in srgb, #3884ff 16%, #fff);
+  --cherry-c-alert-note-text: #3884ff;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #3884ff 10%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #3884ff 22%, transparent);
+  --cherry-c-tip: #15ac8e;
+  --cherry-c-tip-mark: #d4f5ec;
+  --cherry-c-tip-on-bg: color-mix(in srgb, #15ac8e 16%, #fff);
+  --cherry-c-alert-tip-text: #15ac8e;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #15ac8e 10%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #15ac8e 22%, transparent);
+  --cherry-c-warning: #ff9d3d;
+  --cherry-c-warning-mark: #ffe8cc;
+  --cherry-c-warning-on-bg: color-mix(in srgb, #ff9d3d 16%, #fff);
+  --cherry-c-alert-warning-text: #ff9d3d;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #ff9d3d 10%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #ff9d3d 22%, transparent);
+  --cherry-c-caution: #ff4642;
+  --cherry-c-caution-mark: #ffd6d5;
+  --cherry-c-caution-on-bg: color-mix(in srgb, #ff4642 16%, #fff);
+  --cherry-c-alert-caution-text: #ff4642;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #ff4642 10%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #ff4642 22%, transparent);
+  --cherry-c-danger: #ff4642;
+  --cherry-c-danger-mark: #ffd6d5;
+  --cherry-c-danger-on-bg: color-mix(in srgb, #ff4642 16%, #fff);
+  --cherry-c-alert-danger-text: #ff4642;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #ff4642 10%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #ff4642 22%, transparent);
+  --cherry-c-important: #242a31;
+  --cherry-c-important-mark: #e2e8ef;
+  --cherry-c-important-on-bg: color-mix(in srgb, #242a31 16%, #fff);
+  --cherry-c-alert-important-text: #242a31;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #242a31 10%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #242a31 22%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: #e6ecf1;
+  --cherry-c-code-inline-fg: var(--cherry-c-text-1);
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: #1c375f;
+  --cherry-c-code-block-code-bg: #183055;
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: #e6ecf1;
+  --cherry-c-table-td-border: color-mix(in srgb, #e6ecf1 55%, transparent);
+  --cherry-c-hr-color: #e6ecf1;
+  --cherry-c-blockquote-border: var(--cherry-c-brand-1);
+}
+
+.cherry-dark.cherry-theme-gitbook.cherry {
+  --gitbook-font-sans: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+    Arial, sans-serif;
+  --gitbook-font-mono: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --gitbook-text-size: 0.95rem;
+  --gitbook-text-leading: 1.6rem;
+  --gitbook-heading-leading: 1.5;
+  --cherry-c-brand-1: #3884ff;
+  --cherry-c-brand-2: #1968e6;
+  --cherry-c-brand-3: #3884ff;
+  --cherry-c-brand-soft: rgba(56, 132, 255, 0.16);
+  --cherry-c-brand-on-bg: #e6e7eb;
+  --cherry-c-text-1: #e6e7eb;
+  --cherry-c-text-2: #8a92a3;
+  --cherry-c-text-3: #8092af;
+  --cherry-c-bg: hsl(217, 18%, 9%);
+  --cherry-c-bg-elevated: #1c2027;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: #4a4028;
+  --cherry-c-border-faint: color-mix(in srgb, #272c35 45%, transparent);
+  --gitbook-heading-color: #ffffff;
+  --gitbook-boxes: #1c2027;
+  --gitbook-code-fg: #ffffff;
+  --cherry-c-note: #71a7ff;
+  --cherry-c-note-mark: color-mix(in srgb, #1c375f 40%, hsl(217, 18%, 9%));
+  --cherry-c-note-on-bg: color-mix(in srgb, #71a7ff 16%, #000);
+  --cherry-c-alert-note-text: #71a7ff;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #71a7ff 12%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #71a7ff 26%, transparent);
+  --cherry-c-tip: #61e3a5;
+  --cherry-c-tip-mark: color-mix(in srgb, #1a4030 40%, hsl(217, 18%, 9%));
+  --cherry-c-tip-on-bg: color-mix(in srgb, #61e3a5 16%, #000);
+  --cherry-c-alert-tip-text: #61e3a5;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #61e3a5 12%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #61e3a5 26%, transparent);
+  --cherry-c-warning: #ff9d3d;
+  --cherry-c-warning-mark: color-mix(in srgb, #4a3820 40%, hsl(217, 18%, 9%));
+  --cherry-c-warning-on-bg: color-mix(in srgb, #ff9d3d 16%, #000);
+  --cherry-c-alert-warning-text: #ff9d3d;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #ff9d3d 12%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #ff9d3d 26%, transparent);
+  --cherry-c-caution: #ff4642;
+  --cherry-c-caution-mark: color-mix(in srgb, #4a2020 40%, hsl(217, 18%, 9%));
+  --cherry-c-caution-on-bg: color-mix(in srgb, #ff4642 16%, #000);
+  --cherry-c-alert-caution-text: #ff4642;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #ff4642 12%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #ff4642 26%, transparent);
+  --cherry-c-danger: #ff4642;
+  --cherry-c-danger-mark: color-mix(in srgb, #4a2020 40%, hsl(217, 18%, 9%));
+  --cherry-c-danger-on-bg: color-mix(in srgb, #ff4642 16%, #000);
+  --cherry-c-alert-danger-text: #ff4642;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #ff4642 12%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #ff4642 26%, transparent);
+  --cherry-c-important: #bd93f9;
+  --cherry-c-important-mark: color-mix(in srgb, #302850 40%, hsl(217, 18%, 9%));
+  --cherry-c-important-on-bg: color-mix(in srgb, #bd93f9 16%, #000);
+  --cherry-c-alert-important-text: #bd93f9;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #bd93f9 12%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #bd93f9 26%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: #272c35;
+  --cherry-c-code-inline-fg: var(--cherry-c-text-1);
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: #1c375f;
+  --cherry-c-code-block-code-bg: #183055;
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: #272c35;
+  --cherry-c-table-td-border: color-mix(in srgb, #272c35 55%, transparent);
+  --cherry-c-hr-color: #272c35;
+  --cherry-c-blockquote-border: var(--cherry-c-brand-1);
+}
+
+/** Notion 主题编辑器样式 */
 /** Notion 主题（typora-notion-theme / adrian-fuertes） */
 /** Notion 主题（typora-notion-theme / adrian-fuertes） */
 .cherry-theme-notion .cherry-render {
@@ -17717,4 +19612,206 @@
   --notion-code-fg: #ecebeb;
 }
 
-/*# sourceMappingURL=cherry.css.map */
+.cherry-theme-notion.cherry {
+  --notion-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji",
+    Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  --notion-font-mono: "SF Mono Medium", "Fira Code", Cousine, Consolas, ui-monospace,
+    SFMono-Regular, Menlo, monospace;
+  --notion-text-size: 1rem;
+  --notion-text-leading: 1.6;
+  --notion-heading-leading: 1.4;
+  --notion-radius: 4px;
+  --cherry-c-brand-1: #2eaadc;
+  --cherry-c-brand-2: color-mix(in srgb, #2eaadc 85%, #000);
+  --cherry-c-brand-3: #9a6e3a;
+  --cherry-c-brand-soft: rgba(46, 170, 220, 0.12);
+  --cherry-c-brand-on-bg: #fff;
+  --cherry-c-text-1: #37352f;
+  --cherry-c-text-2: #73726e;
+  --cherry-c-text-3: #888884;
+  --cherry-c-bg: #ffffff;
+  --cherry-c-bg-elevated: #f7f6f3;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: #feecc8;
+  --cherry-c-code-fg: #37352f;
+  --cherry-c-border-soft: #e9e9e7;
+  --cherry-c-border-faint: color-mix(in srgb, #e9e9e7 45%, transparent);
+  --notion-heading-color: #38352f;
+  --notion-link-fg: #000000;
+  --notion-link-underline: #37352f;
+  --notion-mark-fg: #4f3b2a;
+  --notion-mark-bg: #feecc8;
+  --notion-table-a: #f7f7f7;
+  --notion-table-b: #fdfdfd;
+  --notion-footnote-bg: #888884;
+  --notion-footnote-fg: #f7f6f3;
+  --cherry-c-note: #2eaadc;
+  --cherry-c-note-mark: #d6eef8;
+  --cherry-c-note-on-bg: color-mix(in srgb, #2eaadc 16%, #fff);
+  --cherry-c-alert-note-text: #2eaadc;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #2eaadc 10%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #2eaadc 22%, transparent);
+  --cherry-c-tip: #448361;
+  --cherry-c-tip-mark: #edf3ec;
+  --cherry-c-tip-on-bg: color-mix(in srgb, #448361 16%, #fff);
+  --cherry-c-alert-tip-text: #448361;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #448361 10%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #448361 22%, transparent);
+  --cherry-c-warning: #d44c47;
+  --cherry-c-warning-mark: #fdebec;
+  --cherry-c-warning-on-bg: color-mix(in srgb, #d44c47 16%, #fff);
+  --cherry-c-alert-warning-text: #d44c47;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #d44c47 10%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #d44c47 22%, transparent);
+  --cherry-c-caution: #9a6e3a;
+  --cherry-c-caution-mark: #f5ebe0;
+  --cherry-c-caution-on-bg: color-mix(in srgb, #9a6e3a 16%, #fff);
+  --cherry-c-alert-caution-text: #9a6e3a;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #9a6e3a 10%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #9a6e3a 22%, transparent);
+  --cherry-c-danger: #d44c47;
+  --cherry-c-danger-mark: #fdebec;
+  --cherry-c-danger-on-bg: color-mix(in srgb, #d44c47 16%, #fff);
+  --cherry-c-alert-danger-text: #d44c47;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #d44c47 10%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #d44c47 22%, transparent);
+  --cherry-c-important: #37352f;
+  --cherry-c-important-mark: #e9e9e7;
+  --cherry-c-important-on-bg: color-mix(in srgb, #37352f 16%, #fff);
+  --cherry-c-alert-important-text: #37352f;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #37352f 10%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #37352f 22%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: #f7f6f3;
+  --cherry-c-code-inline-fg: #9a6e3a;
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: #f7f6f3;
+  --cherry-c-code-block-code-bg: #f7f6f3;
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: #e9e9e7;
+  --cherry-c-table-td-border: color-mix(in srgb, #e9e9e7 55%, transparent);
+  --cherry-c-hr-color: #38352f;
+  --cherry-c-blockquote-border: var(--cherry-c-text-1);
+  --notion-quote-bg: #f7f7f7;
+  --notion-code-fg: #37352f;
+}
+
+.cherry-dark.cherry-theme-notion.cherry {
+  --notion-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji",
+    Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  --notion-font-mono: "SF Mono Medium", "Fira Code", Cousine, Consolas, ui-monospace,
+    SFMono-Regular, Menlo, monospace;
+  --notion-text-size: 1rem;
+  --notion-text-leading: 1.6;
+  --notion-heading-leading: 1.4;
+  --notion-radius: 4px;
+  --cherry-c-brand-1: #2eaadc;
+  --cherry-c-brand-2: color-mix(in srgb, #2eaadc 85%, #fff);
+  --cherry-c-brand-3: #9a6e3a;
+  --cherry-c-brand-soft: rgba(46, 170, 220, 0.16);
+  --cherry-c-brand-on-bg: #ebebeb;
+  --cherry-c-text-1: #ebebeb;
+  --cherry-c-text-2: #73726e;
+  --cherry-c-text-3: #acaeaf;
+  --cherry-c-bg: #2f3437;
+  --cherry-c-bg-elevated: #3f4447;
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+  --cherry-c-brand-mark: #4f4029;
+  --cherry-c-code-fg: #ecebeb;
+  --cherry-c-border-soft: #393c3f;
+  --cherry-c-border-faint: color-mix(in srgb, #393c3f 45%, transparent);
+  --notion-heading-color: #ebebeb;
+  --notion-link-fg: #ebebeb;
+  --notion-link-underline: #ebebeb;
+  --notion-mark-fg: #ffffff;
+  --notion-mark-bg: #4f4029;
+  --notion-table-a: #2f3437;
+  --notion-table-b: #2f3437;
+  --notion-footnote-bg: #393c3f;
+  --notion-footnote-fg: #b1b3b4;
+  --cherry-c-note: #2eaadc;
+  --cherry-c-note-mark: color-mix(in srgb, #1a3a4a 40%, #2f3437);
+  --cherry-c-note-on-bg: color-mix(in srgb, #2eaadc 16%, #000);
+  --cherry-c-alert-note-text: #2eaadc;
+  --cherry-c-alert-note-bg: color-mix(in srgb, #2eaadc 12%, transparent);
+  --cherry-c-alert-note-border: color-mix(in srgb, #2eaadc 26%, transparent);
+  --cherry-c-tip: #448361;
+  --cherry-c-tip-mark: color-mix(in srgb, #2e443a 40%, #2f3437);
+  --cherry-c-tip-on-bg: color-mix(in srgb, #448361 16%, #000);
+  --cherry-c-alert-tip-text: #448361;
+  --cherry-c-alert-tip-bg: color-mix(in srgb, #448361 12%, transparent);
+  --cherry-c-alert-tip-border: color-mix(in srgb, #448361 26%, transparent);
+  --cherry-c-warning: #d1949e;
+  --cherry-c-warning-mark: color-mix(in srgb, #5e3436 40%, #2f3437);
+  --cherry-c-warning-on-bg: color-mix(in srgb, #d1949e 16%, #000);
+  --cherry-c-alert-warning-text: #d1949e;
+  --cherry-c-alert-warning-bg: color-mix(in srgb, #d1949e 12%, transparent);
+  --cherry-c-alert-warning-border: color-mix(in srgb, #d1949e 26%, transparent);
+  --cherry-c-caution: #998066;
+  --cherry-c-caution-mark: color-mix(in srgb, #4a4030 40%, #2f3437);
+  --cherry-c-caution-on-bg: color-mix(in srgb, #998066 16%, #000);
+  --cherry-c-alert-caution-text: #998066;
+  --cherry-c-alert-caution-bg: color-mix(in srgb, #998066 12%, transparent);
+  --cherry-c-alert-caution-border: color-mix(in srgb, #998066 26%, transparent);
+  --cherry-c-danger: #d1949e;
+  --cherry-c-danger-mark: color-mix(in srgb, #5e3436 40%, #2f3437);
+  --cherry-c-danger-on-bg: color-mix(in srgb, #d1949e 16%, #000);
+  --cherry-c-alert-danger-text: #d1949e;
+  --cherry-c-alert-danger-bg: color-mix(in srgb, #d1949e 12%, transparent);
+  --cherry-c-alert-danger-border: color-mix(in srgb, #d1949e 26%, transparent);
+  --cherry-c-important: #ebebeb;
+  --cherry-c-important-mark: color-mix(in srgb, #393c3f 40%, #2f3437);
+  --cherry-c-important-on-bg: color-mix(in srgb, #ebebeb 16%, #000);
+  --cherry-c-alert-important-text: #ebebeb;
+  --cherry-c-alert-important-bg: color-mix(in srgb, #ebebeb 12%, transparent);
+  --cherry-c-alert-important-border: color-mix(in srgb, #ebebeb 26%, transparent);
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+  --cherry-c-code-inline-bg: #3f4447;
+  --cherry-c-code-inline-fg: #9a6e3a;
+  --cherry-c-code-inline-border: transparent;
+  --cherry-c-code-block-header-bg: #3f4447;
+  --cherry-c-code-block-code-bg: #3f4447;
+  --cherry-c-code-block-shadow: none;
+  --cherry-c-table-th-border: #393c3f;
+  --cherry-c-table-td-border: color-mix(in srgb, #393c3f 55%, transparent);
+  --cherry-c-hr-color: #ebebeb;
+  --cherry-c-blockquote-border: var(--cherry-c-text-1);
+  --notion-quote-bg: #3c4144;
+  --notion-code-fg: #ecebeb;
+}
+
+/*# sourceMappingURL=cherry-editor.css.map */

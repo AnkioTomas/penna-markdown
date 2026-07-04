@@ -1,4 +1,5 @@
 import { Cherry } from "@/editor/Cherry.js";
+import { THEME_EVENT_LIGHT_DARK, THEME_EVENT_SKIN } from "@/theme/Theme.js";
 import REGISTERED_THEMES from "@/theme/ThemeRegister.js";
 import simple from "../simple.md?raw";
 import test from "../test.md?raw";
@@ -107,8 +108,6 @@ const editor = new Cherry(document.querySelector("#cherry-editor")!!, {
   sidebar: false,
 });
 
-editor.theme.setLightDark(resolveAppearance(appearance));
-
 const themeSelect = document.getElementById("editor-theme-select") as HTMLSelectElement | null;
 const appearanceSelect = document.getElementById("editor-appearance-select") as HTMLSelectElement | null;
 const themeBtn = document.getElementById("editor-theme-btn") as HTMLButtonElement | null;
@@ -158,7 +157,6 @@ function applyThemeId(next: string) {
   } catch {
     /* ignore */
   }
-  syncDemoChrome();
 }
 
 function applyResolvedAppearance() {
@@ -168,7 +166,6 @@ function applyResolvedAppearance() {
   } catch {
     /* ignore */
   }
-  syncDemoChrome();
 }
 
 function toggleAppearance() {
@@ -176,8 +173,9 @@ function toggleAppearance() {
   applyResolvedAppearance();
 }
 
-editor.theme.on("appearance", syncDemoChrome);
-editor.theme.on("change", syncDemoChrome);
+editor.theme.on(THEME_EVENT_LIGHT_DARK, syncDemoChrome);
+editor.theme.on(THEME_EVENT_SKIN, syncDemoChrome);
+editor.theme.setLightDark(resolveAppearance(appearance));
 
 populateThemeSelect();
 if (docSelect) docSelect.value = initialDoc;
@@ -210,7 +208,6 @@ if (docSelect) {
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
   if (appearance !== "auto") return;
   editor.theme.setLightDark(resolveAppearance("auto"));
-  syncDemoChrome();
 });
 
 editor.theme.on("editor:layout", ({ mode }) => {

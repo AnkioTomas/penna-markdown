@@ -1,5 +1,6 @@
-import { Theme } from "@/theme/Theme.js";
-import { Renderer } from "@/renderer/index.js";
+import { createDemoTheme } from "../theme.js";
+import { Theme, THEME_EVENT_LIGHT_DARK, THEME_EVENT_SKIN } from "@/theme/Theme.js";
+import { Renderer } from "@/renderer/Renderer.js";
 import { requiredEl } from "../dom.js";
 // @ts-ignore
 import example from "../test.md?raw";
@@ -29,7 +30,7 @@ function resolveAppearance(mode: AppearanceMode): "light" | "dark" {
 const markdownInput = requiredEl<HTMLTextAreaElement>("#markdown");
 const preview = requiredEl<HTMLElement>("#preview");
 const previewWrap = requiredEl<HTMLElement>("#preview-wrap");
-const tocEl = requiredEl<HTMLElement>("#sidebar");
+const tocEl = requiredEl<HTMLElement>("#toc");
 const statsEl = requiredEl<HTMLElement>("#stats");
 const timingEl = requiredEl<HTMLElement>("#timing");
 const themeBtn = requiredEl<HTMLButtonElement>("#theme-btn");
@@ -38,7 +39,7 @@ const appearanceSelect = requiredEl<HTMLSelectElement>("#appearance-select");
 const resetBtn = requiredEl<HTMLButtonElement>("#reset-btn");
 
 let appearance = readAppearance();
-const theme = new Theme();
+const theme = createDemoTheme();
 
 function readThemeId(): string {
   const saved = localStorage.getItem(THEME_KEY);
@@ -51,7 +52,6 @@ theme.setTheme(readThemeId(), preview, previewWrap);
 const renderer = new Renderer({
   mount: preview,
   theme,
-  transformerEngineOptions: {},
 });
 
 function escapeHtml(text: string): string {
@@ -145,8 +145,6 @@ function renderNow(): void {
 function applyResolvedAppearance(): void {
   theme.setLightDark(resolveAppearance(appearance));
   localStorage.setItem(APPEARANCE_KEY, appearance);
-  syncDemoChrome();
-  renderNow();
 }
 
 function toggleAppearance(): void {
@@ -167,8 +165,6 @@ function applyThemeId(next: string): void {
   if (!theme.list().includes(next as ReturnType<Theme["list"]>[number])) return;
   theme.setTheme(next, preview, previewWrap);
   localStorage.setItem(THEME_KEY, next);
-  syncDemoChrome();
-  renderNow();
 }
 
 themeBtn.addEventListener("click", toggleAppearance);
@@ -193,7 +189,7 @@ markdownInput.addEventListener("input", () => {
 });
 
 tocEl.addEventListener("click", (event) => {
-  const link = (event.target as Element).closest<HTMLAnchorElement>("a.sidebar-item");
+  const link = (event.target as Element).closest<HTMLAnchorElement>("a.toc-item");
   if (!link?.hash) return;
   const id = decodeURIComponent(link.hash.slice(1));
   const target = document.getElementById(id);
@@ -202,19 +198,22 @@ tocEl.addEventListener("click", (event) => {
   target.scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
+function onThemeChanged(): void {
+  syncDemoChrome();
+  renderNow();
+}
+
 function boot(): void {
   populateThemeSelect();
   markdownInput.value = example;
-  theme.on("appearance", syncDemoChrome);
-  theme.on("change", syncDemoChrome);
+  theme.on(THEME_EVENT_LIGHT_DARK, onThemeChanged);
+  theme.on(THEME_EVENT_SKIN, onThemeChanged);
   theme.setLightDark(resolveAppearance(appearance));
   renderNow();
 
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
     if (appearance !== "auto") return;
     theme.setLightDark(resolveAppearance("auto"));
-    syncDemoChrome();
-    renderNow();
   });
 }
 

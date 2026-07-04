@@ -108,7 +108,7 @@ flowchart LR
 | --- | --- | --- |
 | **Transformer** | `src/transformer` | 解析注册表、`gfm/` 内置语法、`extends/` 扩展语法 |
 | **Renderer** | `src/renderer` | 代码高亮、复制按钮、主题切换、折叠展开交互 |
-| **Editor** | `src/editor` | 编辑器封装（ProseMirror / CodeMirror 集成点） |
+| **Cherry** | `src/editor` | 编辑器封装（ProseMirror / CodeMirror 集成点） |
 
 块级与行内均采用**优先级注册表**：同层 parser 按 priority 从高到低 `canOpenAt` → `parse`，先匹配者胜出。这是消除「特殊情况 if-else 链」的数据结构——新语法只需注册 priority，不必改核心循环。
 
@@ -3081,7 +3081,7 @@ renderer:
 ---
 
 
-## 第 3 章 · Editor 编辑器集成 {#appendix-ch3}
+## 第 3 章 · Cherry 编辑器集成 {#appendix-ch3}
 
 > [!IMPORTANT]
 > **模块标识**：`editor` · **文档版本**：0.1.0-draft · **最后更新**：2026-07-02
@@ -3090,7 +3090,7 @@ ProseMirror / CodeMirror 集成点，提供 WYSIWYG 与源码模式切换。
 
 ### 3.1 设计目标
 
-- **单一职责**：Editor 编辑器集成 只做一件事并做好，不越界调用其他模块的内部状态。
+- **单一职责**：Cherry 编辑器集成 只做一件事并做好，不越界调用其他模块的内部状态。
 - **零破坏性**：默认配置下 GFM 行为与官方 spec 对齐；扩展语法 opt-in。
 - **可测试性**：每个 parser / renderer 适配器都有独立 vitest 用例，不依赖浏览器 DOM。
 - **可扩展性**：新语法通过 `registry.register()` 注入，禁止修改核心 `blockScan` 循环。
@@ -3103,7 +3103,7 @@ ProseMirror / CodeMirror 集成点，提供 WYSIWYG 与源码模式切换。
 @optional
 @default true
 
-是否启用 Editor 编辑器集成 模块。
+是否启用 Cherry 编辑器集成 模块。
 :::
 
 ::: field editor.priority
@@ -3125,14 +3125,14 @@ Registry 匹配优先级，仅对 parser 类模块生效。
 
 | 选项键 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `editor.opt1` | string \| boolean | `true` | Editor 编辑器集成 配置项 1：控制子功能开关或渲染模式 |
-| `editor.opt2` | string \| boolean | `auto` | Editor 编辑器集成 配置项 2：控制子功能开关或渲染模式 |
-| `editor.opt3` | string \| boolean | `true` | Editor 编辑器集成 配置项 3：控制子功能开关或渲染模式 |
-| `editor.opt4` | string \| boolean | `auto` | Editor 编辑器集成 配置项 4：控制子功能开关或渲染模式 |
-| `editor.opt5` | string \| boolean | `true` | Editor 编辑器集成 配置项 5：控制子功能开关或渲染模式 |
-| `editor.opt6` | string \| boolean | `auto` | Editor 编辑器集成 配置项 6：控制子功能开关或渲染模式 |
-| `editor.opt7` | string \| boolean | `true` | Editor 编辑器集成 配置项 7：控制子功能开关或渲染模式 |
-| `editor.opt8` | string \| boolean | `auto` | Editor 编辑器集成 配置项 8：控制子功能开关或渲染模式 |
+| `editor.opt1` | string \| boolean | `true` | Cherry 编辑器集成 配置项 1：控制子功能开关或渲染模式 |
+| `editor.opt2` | string \| boolean | `auto` | Cherry 编辑器集成 配置项 2：控制子功能开关或渲染模式 |
+| `editor.opt3` | string \| boolean | `true` | Cherry 编辑器集成 配置项 3：控制子功能开关或渲染模式 |
+| `editor.opt4` | string \| boolean | `auto` | Cherry 编辑器集成 配置项 4：控制子功能开关或渲染模式 |
+| `editor.opt5` | string \| boolean | `true` | Cherry 编辑器集成 配置项 5：控制子功能开关或渲染模式 |
+| `editor.opt6` | string \| boolean | `auto` | Cherry 编辑器集成 配置项 6：控制子功能开关或渲染模式 |
+| `editor.opt7` | string \| boolean | `true` | Cherry 编辑器集成 配置项 7：控制子功能开关或渲染模式 |
+| `editor.opt8` | string \| boolean | `auto` | Cherry 编辑器集成 配置项 8：控制子功能开关或渲染模式 |
 
 ### 3.3 数据流
 
@@ -3155,7 +3155,7 @@ const engine = new TransformerEngine({
   editor: { enabled: true, priority: 90 },
 });
 
-const markdown = "# Editor 编辑器集成 Demo\n\n正文内容。";
+const markdown = "# Cherry 编辑器集成 Demo\n\n正文内容。";
 const html = engine.render(engine.parse(markdown));
 console.log(html.length);
 ```
@@ -3172,7 +3172,7 @@ editor:
 
 @tab 输出
 ```html
-<h1>Editor 编辑器集成 Demo</h1>
+<h1>Cherry 编辑器集成 Demo</h1>
 <p>正文内容。</p>
 ```
 :::
@@ -3181,33 +3181,33 @@ editor:
 
 | 场景 | 输入规模 | parse (ms) | render (ms) | 备注 |
 | --- | --- | ---: | ---: | --- |
-| Editor 编辑器集成 · 1KB | 1KB | 1.1 | 0.2 | 本地 M2 / Node 22 |
-| Editor 编辑器集成 · 10KB | 10KB | 3.6 | 0.5 | 本地 M2 / Node 22 |
-| Editor 编辑器集成 · 60KB | 60KB | 35.6 | 4.3 | 本地 M2 / Node 22 |
-| Editor 编辑器集成 · 100KB | 100KB | 58.6 | 7.1 | 本地 M2 / Node 22 |
+| Cherry 编辑器集成 · 1KB | 1KB | 1.1 | 0.2 | 本地 M2 / Node 22 |
+| Cherry 编辑器集成 · 10KB | 10KB | 3.6 | 0.5 | 本地 M2 / Node 22 |
+| Cherry 编辑器集成 · 60KB | 60KB | 35.6 | 4.3 | 本地 M2 / Node 22 |
+| Cherry 编辑器集成 · 100KB | 100KB | 58.6 | 7.1 | 本地 M2 / Node 22 |
 
 ### 3.6 常见问题
 
 ::: collapse accordion
-- Q1：Editor 编辑器集成 相关问题 1？
+- Q1：Cherry 编辑器集成 相关问题 1？
 
-  **A1**：首先检查 `editor.enabled` 是否为 `true`；其次确认 Registry 中 parser priority 未被其他扩展抢占。若仍异常，在 `demo/ast` 加载本文档并定位「附录 · Editor 编辑器集成」章节，对比 AST 节点类型。参考错误码 `E001` 与下表。
+  **A1**：首先检查 `editor.enabled` 是否为 `true`；其次确认 Registry 中 parser priority 未被其他扩展抢占。若仍异常，在 `demo/ast` 加载本文档并定位「附录 · Cherry 编辑器集成」章节，对比 AST 节点类型。参考错误码 `E001` 与下表。
 
-- Q2：Editor 编辑器集成 相关问题 2？
+- Q2：Cherry 编辑器集成 相关问题 2？
 
-  **A2**：首先检查 `editor.enabled` 是否为 `true`；其次确认 Registry 中 parser priority 未被其他扩展抢占。若仍异常，在 `demo/ast` 加载本文档并定位「附录 · Editor 编辑器集成」章节，对比 AST 节点类型。参考错误码 `E002` 与下表。
+  **A2**：首先检查 `editor.enabled` 是否为 `true`；其次确认 Registry 中 parser priority 未被其他扩展抢占。若仍异常，在 `demo/ast` 加载本文档并定位「附录 · Cherry 编辑器集成」章节，对比 AST 节点类型。参考错误码 `E002` 与下表。
 
-- Q3：Editor 编辑器集成 相关问题 3？
+- Q3：Cherry 编辑器集成 相关问题 3？
 
-  **A3**：首先检查 `editor.enabled` 是否为 `true`；其次确认 Registry 中 parser priority 未被其他扩展抢占。若仍异常，在 `demo/ast` 加载本文档并定位「附录 · Editor 编辑器集成」章节，对比 AST 节点类型。参考错误码 `E003` 与下表。
+  **A3**：首先检查 `editor.enabled` 是否为 `true`；其次确认 Registry 中 parser priority 未被其他扩展抢占。若仍异常，在 `demo/ast` 加载本文档并定位「附录 · Cherry 编辑器集成」章节，对比 AST 节点类型。参考错误码 `E003` 与下表。
 
-- Q4：Editor 编辑器集成 相关问题 4？
+- Q4：Cherry 编辑器集成 相关问题 4？
 
-  **A4**：首先检查 `editor.enabled` 是否为 `true`；其次确认 Registry 中 parser priority 未被其他扩展抢占。若仍异常，在 `demo/ast` 加载本文档并定位「附录 · Editor 编辑器集成」章节，对比 AST 节点类型。参考错误码 `E004` 与下表。
+  **A4**：首先检查 `editor.enabled` 是否为 `true`；其次确认 Registry 中 parser priority 未被其他扩展抢占。若仍异常，在 `demo/ast` 加载本文档并定位「附录 · Cherry 编辑器集成」章节，对比 AST 节点类型。参考错误码 `E004` 与下表。
 
-- Q5：Editor 编辑器集成 相关问题 5？
+- Q5：Cherry 编辑器集成 相关问题 5？
 
-  **A5**：首先检查 `editor.enabled` 是否为 `true`；其次确认 Registry 中 parser priority 未被其他扩展抢占。若仍异常，在 `demo/ast` 加载本文档并定位「附录 · Editor 编辑器集成」章节，对比 AST 节点类型。参考错误码 `E005` 与下表。
+  **A5**：首先检查 `editor.enabled` 是否为 `true`；其次确认 Registry 中 parser priority 未被其他扩展抢占。若仍异常，在 `demo/ast` 加载本文档并定位「附录 · Cherry 编辑器集成」章节，对比 AST 节点类型。参考错误码 `E005` 与下表。
 
 :::
 
@@ -3217,7 +3217,7 @@ editor:
 | --- | --- | --- | --- |
 | editor → transformer | transformer | 编译期 | 所有模块最终汇入 TransformerEngine |
 | editor → gfm | gfm | 运行时 | GFM parser 与扩展 parser 共享 Registry |
-| renderer → editor | renderer | 运行时 | Renderer 增强 Editor 编辑器集成 输出的 HTML |
+| renderer → editor | renderer | 运行时 | Renderer 增强 Cherry 编辑器集成 输出的 HTML |
 | security → editor | security | 运行时 | sanitize 在 render 后或 render 内应用 |
 
 ---
@@ -5878,7 +5878,7 @@ math:
 
   - [x] renderAsync + Shiki 异步
   - [x] 插件 API 公开
-  - [x] Editor WYSIWYG 完善
+  - [x] Cherry WYSIWYG 完善
 
 :::
 

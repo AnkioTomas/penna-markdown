@@ -1,7 +1,7 @@
 import type { SyntaxExample } from '../../syntax-example.js';
-import { img } from "../../placeholder.js";
+import { favicon, img } from "../../placeholder.js";
 
-const icon = img(80, 80, "DOC", { bg: "2563eb" });
+const icon = favicon("https://github.com");
 
 const example = {
   name: "link-card",

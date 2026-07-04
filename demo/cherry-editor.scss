@@ -1,0 +1,8 @@
+@use "../src/theme/themes/default/editor";
+@use "../src/theme/themes/claude/editor" as claude;
+@use "../src/theme/themes/github/editor" as github;
+@use "../src/theme/themes/morandi/editor" as morandi;
+@use "../src/theme/themes/latex/editor" as latex;
+@use "../src/theme/themes/vue/editor" as vue;
+@use "../src/theme/themes/gitbook/editor" as gitbook;
+@use "../src/theme/themes/notion/editor" as notion;
