@@ -1,6 +1,9 @@
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
-import { assignSlug, createSlugRegistry } from "./slug.js";
-import { extractHeadingText } from "./text.js";
+import {
+  assignSlug,
+  createSlugRegistry,
+  extractHeadingText,
+} from "@/transformer/gfm/block/atx_heading.js";
 
 export interface TocItem {
   level: number;
