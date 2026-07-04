@@ -232,7 +232,7 @@ class TableBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext) {
-    const parts = ["<table>"];
+    const parts = [`<table${this.sourceLineAttrs(node)}>`];
 
     for (const section of node.children ?? []) {
       const rows = section.children ?? [];
