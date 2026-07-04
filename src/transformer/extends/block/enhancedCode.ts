@@ -17,15 +17,10 @@ import { escapeHtml } from "@/transformer/utils/escape.js";
 import { unescapeHref } from "@/transformer/utils/linkDestination.js";
 import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
 
-/** 最小高亮接口，避免 transformer → renderer 循环依赖。 */
-export interface CodeHighlighter {
-  highlightCodeHtml(code: string, lang: string): string;
-}
-
 /** `syntaxOptions.code`（增强围栏代码块） */
 export interface CodeOptions extends  ParserOptions{
   enable?: boolean;
-  highlightJs?: CodeHighlighter;
+  highlightJs?: (code: string, lang: string) => string;
 }
 
 const SPECIAL_LANGS = new Set(["echarts", "mermaid", "graph"]);
@@ -199,14 +194,14 @@ export function renderCodeBlockBodyHtml(
   langClass: string,
   highlightLines: number[] = [],
   collapse: CollapsedCodeAnalysis | null = null,
-  highlighter?: CodeHighlighter,
+  highlighter?: (code: string, lang: string) => string,
 ): { html: string; collapse: CollapsedCodeAnalysis; lineCount: number } {
   const analysis = collapse ?? analyzeCollapsedCode(content, {});
   const lines = normalizeCodeLines(content);
   const lineCount = lines.length;
   const gutter = escapeHtml(buildGutterText(lineCount));
   const codeText = highlighter
-    ? highlighter.highlightCodeHtml(content, langClass)
+    ? highlighter(content, langClass)
     : lines.map((line) => escapeHtml(line)).join("\n");
   const codeClass = highlighter
     ? `language-${langClass} hljs cherry-code-block__highlighted`
