@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { JSDOM } from "jsdom";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
 import {
   buildEchartsImageSrc,
@@ -33,19 +32,15 @@ describe("extends/cherry_syntax", () => {
     expect(buildMermaidImageSrc(mermaid, { theme: "dark" })).toContain("?theme=dark");
   });
 
-  it("renders ```echarts with dark theme when wrapped by cherry-dark", () => {
-    const dom = new JSDOM(`<div class="cherry-dark"><div class="cherry"></div></div>`);
-    const root = dom.window.document.querySelector(".cherry");
+  it("renders ```echarts with dark theme when isDark option is true", () => {
     const md = "```echarts\n{\"series\":[{\"type\":\"bar\"}]}\n```";
-    const html = renderMarkdown(engine(), md, root);
+    const html = renderMarkdown(createEngine({ isDark: true }), md);
     expect(html).toContain("%22theme%22%3A%22dark%22");
   });
 
-  it("renders ```mermaid with dark theme when wrapped by cherry-dark", () => {
-    const dom = new JSDOM(`<div class="cherry-dark"><div class="cherry"></div></div>`);
-    const root = dom.window.document.querySelector(".cherry");
+  it("renders ```mermaid with dark theme when isDark option is true", () => {
     const md = "```mermaid\nflowchart TD\n    Start --> Stop\n```";
-    const html = renderMarkdown(engine(), md, root);
+    const html = renderMarkdown(createEngine({ isDark: true }), md);
     expect(html).toContain("theme=dark");
   });
 

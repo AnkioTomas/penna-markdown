@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
+import { createEngine, renderMarkdown } from "../helpers/engine.js";
 
 const MD = `---
 title: Hello World
@@ -20,8 +20,7 @@ Unknown: [[missing]]
 `;
 
 describe("extends/frontmatter", () => {
-  const engine = () => createEngineWithExtensions(["frontmatter"]);
-  const base = () => createEngine();
+  const engine = () => createEngine();
 
   it("strips YAML frontmatter from HTML output", () => {
     const html = renderMarkdown(engine(), "---\ntitle: Hi\n---\n\nBody");
@@ -32,18 +31,33 @@ describe("extends/frontmatter", () => {
     const html = renderMarkdown(engine(), MD);
     expect(html).toContain("<h1>Hello World</h1>");
     expect(html).toContain("By Alice, tags:");
-    expect(html).toContain("[&quot;docs&quot;,&quot;demo&quot;]");
+    expect(html).toContain("docs, demo");
+    expect(html).not.toContain("[&quot;docs&quot;");
     expect(html).toContain("<p>Unknown: [[missing]]</p>");
     expect(html).toContain("<code>[[title]]</code>");
   });
 
-  it("attaches frontMatter to root AST", () => {
-    const { ast } = engine().parse("---\ntitle: Hi\n---\n\n# [[title]]");
-    expect(ast.frontMatter).toEqual({ title: "Hi" });
+  it("stores frontMatter in ParserStore", () => {
+    const ast = engine().parse("---\ntitle: Hi\n---\n\n# [[title]]");
+    const store = ast.props?.store as { get(key: string): unknown } | undefined;
+    expect(store?.get("frontMatter")).toEqual({ title: "Hi" });
   });
 
-  it("leaves syntax unchanged when extension disabled", () => {
-    const html = renderMarkdown(base(), "# [[title]]\n");
-    expect(html).toBe("<h1>[[title]]</h1>\n");
+  it("formats string arrays as comma-separated text", () => {
+    const html = renderMarkdown(
+      engine(),
+      `---
+tags:
+  - markdown
+  - gfm
+---
+[[tags]]`,
+    );
+    expect(html).toBe("<p>markdown, gfm</p>\n");
+  });
+
+  it("does not resolve variables inside inline code", () => {
+    const html = renderMarkdown(engine(), "---\nversion: 0.1.0\n---\n\n`[[version]]`\n");
+    expect(html).toBe("<p><code>[[version]]</code></p>\n");
   });
 });

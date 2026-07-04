@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildLineHighlightGradient,
   mergeLineHighlightSpecs,
   parseFenceMeta,
   parseHighlightLinesAttr,
@@ -34,5 +35,13 @@ describe("extends/parseLineHighlight", () => {
     expect(meta?.lang).toBe("json");
     expect(meta?.title).toBe("package.json");
     expect(meta?.highlightLines).toEqual([2, 3]);
+  });
+
+  it("builds line highlight gradient css", () => {
+    const gradient = buildLineHighlightGradient([1, 4, 6, 7, 8]);
+    expect(gradient).toContain("linear-gradient");
+    expect(gradient).toContain("var(--cb-line-step)");
+    expect(gradient).toContain("var(--cb-body-pad-y");
+    expect(gradient).toContain("var(--cb-line-highlight)");
   });
 });

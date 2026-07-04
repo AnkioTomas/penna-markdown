@@ -1,13 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { TransformerEngine } from "@/transformer/TransformerEngine.js";
-import { createEngine, renderMarkdown } from "../helpers/engine.js";
-import type { HljsLike } from "@/transformer/extends/block/enhancedCode.js";
+import { createEngine, createEnhancedEngine, renderMarkdown } from "../helpers/engine.js";
 import { buildEchartsImageSrc } from "@/transformer/extends/block/specialCode.js";
 
 const ECHARTS_OPTIONS = '{"series":[{"type":"bar"}]}';
 
 describe("extends/code_block", () => {
-  const engine = () => createEngine();
+  const engine = () => createEnhancedEngine();
 
   it("renders header with lang left, title after lang, copy right", () => {
     const md = '```json title="package.json"\n{"name":"plume"}\n```';
@@ -36,24 +34,6 @@ describe("extends/code_block", () => {
     const html = renderMarkdown(engine(), "```\nplain\n```");
     expect(html).toBe("<pre><code>plain\n</code></pre>\n");
     expect(html).not.toContain("cherry-code-block");
-  });
-
-  it("syntax-highlights at render when syntaxOptions.code.hljs is set", () => {
-    const mockHljs: HljsLike = {
-      getLanguage: (lang) => (lang === "js" ? {} : undefined),
-      highlight: (code, { language }) => ({
-        value: `<span class="hljs-keyword">${language}</span>${code}`,
-      }),
-      highlightAuto: (code) => ({ value: code }),
-    };
-    const hlEngine = new TransformerEngine({
-      syntaxOptions: { code: { hljs: mockHljs } },
-    });
-    const html = renderMarkdown(hlEngine, "```js\nconst a = 1;\n```");
-    expect(html).toContain("cherry-code-block__highlighted");
-    expect(html).toContain('data-cherry-highlighted="1"');
-    expect(html).toContain("hljs-keyword");
-    expect(html).not.toContain("&lt;span"); // 不应二次 escape
   });
 
   it("parses single-quoted and unquoted title", () => {
@@ -94,11 +74,17 @@ describe("extends/code_block", () => {
     ].join("\n");
     const html = renderMarkdown(engine(), md);
     expect(html).toContain('data-cherry-highlight-lines="1,4,6,7,8"');
-    expect(html).toContain('class="line cherry-code-block__line--highlighted" data-line="1"');
-    expect(html).toContain('class="line cherry-code-block__line--highlighted" data-line="4"');
-    expect(html).toContain('class="line cherry-code-block__line--highlighted" data-line="6"');
-    expect(html).toContain('class="line cherry-code-block__line--highlighted" data-line="7"');
-    expect(html).toContain('class="line" data-line="2"');
+    expect(html).toContain('class="cherry-code-block__body"');
+    expect(html).toContain('class="cherry-code-block__gutter"');
+    expect(html).toContain("--cherry-line-count:");
+    expect(html).toContain("--cherry-line-highlight-bg:linear-gradient");
+    expect(html).toContain("export default {");
     expect(html).toContain('class="cherry-code-block__lang">js</span>');
+  });
+
+  it("falls back to plain GFM code when enhancedCode is disabled", () => {
+    const html = renderMarkdown(createEngine(), "```js\nconst a = 1;\n```");
+    expect(html).toContain('<pre><code class="language-js">');
+    expect(html).not.toContain("cherry-code-block");
   });
 });

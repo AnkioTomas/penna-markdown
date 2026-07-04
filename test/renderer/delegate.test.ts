@@ -6,7 +6,7 @@ import {
   registerPreviewClickDelegation,
   releasePreviewDelegation,
 } from "@/renderer/delegate.js";
-import "@/renderer/interactions/register.js";
+import "@/renderer/interactions.js";
 
 describe("renderer/delegate", () => {
   it("binds click handlers on cherry-preview only once", () => {

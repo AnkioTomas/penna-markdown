@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, renderMarkdown } from "../helpers/engine.js";
+import { createEnhancedEngine, renderMarkdown } from "../helpers/engine.js";
 import {
   analyzeCollapsedCode,
   isCollapseMarkerLine,
@@ -7,7 +7,7 @@ import {
 } from "@/transformer/extends/block/enhancedCode.js";
 
 describe("extends/collapsedCode", () => {
-  const engine = () => createEngine();
+  const engine = () => createEnhancedEngine();
 
   it("detects collapse marker lines", () => {
     expect(isCollapseMarkerLine("... more code")).toBe(true);
@@ -52,8 +52,9 @@ describe("extends/collapsedCode", () => {
     expect(html).toContain("cherry-code-block__panel--collapsed");
     expect(html).toContain('class="cherry-code-block__expand"');
     expect(html).toContain('data-cherry-collapsed="1"');
-    expect(html).toContain('class="line cherry-code-block__line--folded"');
-    expect(html).toContain('class="cherry-code-block__ln"');
+    expect(html).toContain('class="cherry-code-block__body"');
+    expect(html).toContain('class="cherry-code-block__gutter"');
+    expect(html).toContain("--cherry-collapsed-visible:4");
     expect(html).not.toContain("... more code");
     expect(html).toContain("body {");
   });

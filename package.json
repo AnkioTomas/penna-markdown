@@ -23,18 +23,51 @@
       "require": "./dist/transformer.min.cjs",
       "default": "./dist/transformer.min.mjs"
     },
-    "./transformer.css": "./dist/transformer.css",
-    "./transformer.min.css": "./dist/transformer.min.css",
+    "./transformer.css": "./dist/cherry-theme-default-render.css",
+    "./transformer.min.css": "./dist/cherry-theme-default-render.min.css",
+    "./theme/default/render.css": "./dist/cherry-theme-default-render.css",
+    "./theme/default/render.min.css": "./dist/cherry-theme-default-render.min.css",
+    "./cherry-theme-default-render.css": "./dist/cherry-theme-default-render.css",
+    "./cherry-theme-default-render.min.css": "./dist/cherry-theme-default-render.min.css",
     "./renderer": {
       "import": "./dist/renderer.mjs",
       "require": "./dist/renderer.cjs",
       "default": "./dist/renderer.mjs"
     },
+    "./editor.css": "./dist/cherry-theme-default-editor.css",
+    "./editor.min.css": "./dist/cherry-theme-default-editor.min.css",
+    "./theme/default/editor.css": "./dist/cherry-theme-default-editor.css",
+    "./theme/default/editor.min.css": "./dist/cherry-theme-default-editor.min.css",
+    "./cherry-theme-default-editor.css": "./dist/cherry-theme-default-editor.css",
+    "./cherry-theme-default-editor.min.css": "./dist/cherry-theme-default-editor.min.css",
+    "./cherry-editor-base.css": "./dist/cherry-editor-base.css",
+    "./cherry-editor-base.min.css": "./dist/cherry-editor-base.min.css",
+    "./theme/claude/editor.css": "./dist/cherry-theme-claude-editor.css",
+    "./theme/github/editor.css": "./dist/cherry-theme-github-editor.css",
+    "./theme/morandi/editor.css": "./dist/cherry-theme-morandi-editor.css",
+    "./theme/latex/editor.css": "./dist/cherry-theme-latex-editor.css",
+    "./theme/vue/editor.css": "./dist/cherry-theme-vue-editor.css",
+    "./theme/gitbook/editor.css": "./dist/cherry-theme-gitbook-editor.css",
+    "./theme/notion/editor.css": "./dist/cherry-theme-notion-editor.css",
+    "./cherry-theme-claude-editor.css": "./dist/cherry-theme-claude-editor.css",
+    "./cherry-theme-github-editor.css": "./dist/cherry-theme-github-editor.css",
+    "./cherry-theme-morandi-editor.css": "./dist/cherry-theme-morandi-editor.css",
+    "./cherry-theme-latex-editor.css": "./dist/cherry-theme-latex-editor.css",
+    "./cherry-theme-vue-editor.css": "./dist/cherry-theme-vue-editor.css",
+    "./cherry-theme-gitbook-editor.css": "./dist/cherry-theme-gitbook-editor.css",
+    "./cherry-theme-notion-editor.css": "./dist/cherry-theme-notion-editor.css",
     "./editor": {
       "import": "./dist/editor.mjs",
       "require": "./dist/editor.cjs",
       "default": "./dist/editor.mjs"
-    }
+    },
+    "./theme": {
+      "import": "./dist/theme.mjs",
+      "require": "./dist/theme.cjs",
+      "default": "./dist/theme.mjs"
+    },
+    "./theme.css": "./dist/theme.css",
+    "./theme.min.css": "./dist/theme.min.css"
   },
   "files": [
     "dist",
@@ -53,17 +86,18 @@
   "dependencies": {
     "@codemirror/commands": "^6.8.1",
     "@codemirror/lang-markdown": "^6.3.4",
+    "@codemirror/language": "^6.12.3",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.38.6",
-    "dompurify": "^3.4.9",
+    "@lezer/highlight": "^1.2.3",
     "entities": "^6.0.1",
     "esbuild": "^0.28.0",
+    "highlight.js": "11.11.1",
     "yaml": "^2.9.0"
   },
   "devDependencies": {
     "@types/jsdom": "^28.0.3",
     "@types/node": "^25.9.3",
-    "highlight.js": "^11.11.1",
     "jsdom": "^26.1.0",
     "sass": "^1.100.0",
     "tsx": "^4.22.4",

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { extractToc, extractTocFlat } from "@/renderer/toc/extract.js";
 
-describe("renderer/toc/extract", () => {
+describe("renderer/sidebar/extract", () => {
   const ast = createNode("document", 0, undefined, [
     createNode("atx_heading", 10, undefined, [createNode("text", 5, "Intro", undefined)], { level: 1 }),
     createNode("paragraph", 5, undefined, [createNode("text", 5, "body", undefined)]),

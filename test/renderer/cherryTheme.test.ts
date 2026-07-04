@@ -1,43 +1,33 @@
 import { describe, expect, it, vi } from "vitest";
 import { JSDOM } from "jsdom";
-import { isDark, watchCherryTheme } from "@/renderer/index.js";
-import { resetCherryCodeHighlightTheme } from "@/renderer/highlight/setup.js";
+import { Theme } from "@/theme/Theme.js";
+import { resetCodeHighlight } from "@/renderer/highlight/hljs.js";
 
-describe("renderer/theme", () => {
-  it("isDark", () => {
-    const dom = new JSDOM(`
-      <div class="cherry-dark"><div class="cherry" id="root"></div></div>
-    `);
-    expect(isDark(dom.window.document.getElementById("root"))).toBe(true);
+describe("Theme + renderer integration", () => {
+  it("appearance 事件在 setLightDark 后触发", async () => {
+    const dom = new JSDOM(`<div id="wrap"><div class="cherry"></div></div>`);
+    const wrap = dom.window.document.getElementById("wrap")! as HTMLElement;
+    const mount = dom.window.document.querySelector(".cherry")! as HTMLElement;
+    const theme = new Theme();
+    theme.setTheme("default", mount, wrap);
+
+    const onAppearance = vi.fn();
+    theme.on("appearance", onAppearance);
+
+    theme.setLightDark("dark");
+    expect(onAppearance).toHaveBeenCalled();
   });
+});
 
-  it("resetCherryCodeHighlightTheme", () => {
+describe("renderer/theme refresh", () => {
+  it("resetCodeHighlight", () => {
     const dom = new JSDOM(`
       <div class="cherry-theme-default"><div class="cherry">
         <code data-cherry-code data-cherry-highlighted="1"></code>
       </div></div>
     `);
+    resetCodeHighlight(dom.window.document.querySelector(".cherry"));
     const code = dom.window.document.querySelector("code")! as HTMLElement;
-    resetCherryCodeHighlightTheme(dom.window.document.querySelector(".cherry"));
     expect(code.dataset.cherryHighlighted).toBeUndefined();
-  });
-
-  it("watchCherryTheme on wrapper class change", async () => {
-    const dom = new JSDOM(`
-      <div class="cherry-theme-default" id="wrap"><div class="cherry" id="root"></div></div>
-    `);
-    globalThis.MutationObserver = dom.window.MutationObserver;
-
-    const onChange = vi.fn();
-    const unwatch = watchCherryTheme(
-      dom.window.document.getElementById("root"),
-      onChange,
-    );
-
-    const wrap = dom.window.document.getElementById("wrap")!;
-    wrap.classList.replace("cherry-theme-default", "cherry-dark");
-    await new Promise((r) => setTimeout(r, 0));
-    expect(onChange).toHaveBeenCalled();
-    unwatch();
   });
 });

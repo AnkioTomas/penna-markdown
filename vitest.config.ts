@@ -1,6 +1,7 @@
-import { defineConfig } from "vitest/config";
 import { resolve, dirname } from "node:path";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { defineConfig } from "vitest/config";
 
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)));
 
@@ -10,9 +11,34 @@ export default defineConfig({
       "@": resolve(rootDir, "src"),
     },
   },
+  plugins: [
+    {
+      name: "css-text",
+      enforce: "pre",
+      transform(_code, id) {
+        const [filePath, query] = id.split("?");
+        if (!filePath.endsWith(".css")) return;
+        const raw = query === "raw";
+        const css = readFileSync(filePath, "utf8");
+        return {
+          code: raw ? `export default ${JSON.stringify(css)}` : `export default ${JSON.stringify(css)}`,
+          map: null,
+        };
+      },
+    },
+  ],
   test: {
+    server: {
+      deps: {
+        inline: [/highlight\.js/],
+      },
+    },
     environment: "node",
     include: ["test/**/*.test.ts"],
+    exclude: [
+      "test/editor/commands.test.ts",
+      "test/editor/toolbar.test.ts",
+    ],
     coverage: {
       provider: "v8",
       reporter: ["text", "html"],

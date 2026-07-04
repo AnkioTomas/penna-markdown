@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { JSDOM } from "jsdom";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
 import { buildMathImageSrc } from "@/transformer/extends/block/mathBlock.js";
 
@@ -35,16 +34,12 @@ describe("extends/math", () => {
   });
 
   it("renders block math with dark theme color parameter", () => {
-    const dom = new JSDOM(`<div class="cherry-dark"><div class="cherry"></div></div>`);
-    const root = dom.window.document.querySelector(".cherry");
-    const html = renderMarkdown(engine(), "$$\nE=mc^2\n$$", root);
+    const html = renderMarkdown(createEngine({ isDark: true }), "$$\nE=mc^2\n$$");
     expect(html).toContain("&color=white");
   });
 
   it("renders inline math with dark theme color parameter", () => {
-    const dom = new JSDOM(`<div class="cherry-dark"><div class="cherry"></div></div>`);
-    const root = dom.window.document.querySelector(".cherry");
-    const html = renderMarkdown(engine(), "$x^2$", root);
+    const html = renderMarkdown(createEngine({ isDark: true }), "$x^2$");
     expect(html).toContain("&color=white");
   });
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, renderMarkdown } from "../helpers/engine.js";
+import { createEnhancedEngine, renderMarkdown } from "../helpers/engine.js";
 
 describe("extends/steps", () => {
-  const engine = () => createEngine();
+  const engine = () => createEnhancedEngine();
 
   const sample = `::: steps
 

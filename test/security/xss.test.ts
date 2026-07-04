@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, renderMarkdown } from "../helpers/engine.js";
+import { createEngine, createEnhancedEngine, renderMarkdown } from "../helpers/engine.js";
 
 describe("security/xss", () => {
   const engine = () => createEngine();
@@ -39,7 +39,7 @@ describe("security/xss", () => {
 
   it("preserves cherry components", () => {
     const md = "- [ ] todo\n\n```js\nconst a = 1;\n```";
-    const html = renderMarkdown(engine(), md);
+    const html = renderMarkdown(createEnhancedEngine(), md);
     expect(html).toContain('class="task-list"');
     expect(html).toContain("cherry-code-block");
     expect(html).toContain('data-state="todo"');
