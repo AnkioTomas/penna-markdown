@@ -63,6 +63,11 @@ export class Registry {
     return this._block.find((e) => e.parser.type === type)?.parser;
   }
 
+  clearParserOptions(): void {
+    for (const entry of this._inline) entry.parser.clearOptions();
+    for (const entry of this._block) entry.parser.clearOptions();
+  }
+
   setOptions(syntaxOptions: SyntaxOptions): void {
     for (const [key, options] of Object.entries(syntaxOptions)) {
       this.getInlineParser(key)?.setOptions(options);

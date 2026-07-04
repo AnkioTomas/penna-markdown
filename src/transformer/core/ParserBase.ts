@@ -87,6 +87,10 @@ export abstract class BaseBlockParser {
         this.options = { ...this.options, ...options };
     }
 
+    clearOptions(): void {
+        this.options = {};
+    }
+
     getOptions(): ParserOptions {
         return this.options;
     }

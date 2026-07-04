@@ -38,6 +38,7 @@ export class TransformerEngine {
                 this.registry.registerBlockParser(parser, Number(pri));
             }
         }
+        this.registry.clearParserOptions();
         this.registry.setOptions(options.syntaxOptions ?? {});
         this.registry.setRenderOptions(options.renderOptions ?? {});
     }
