@@ -5,6 +5,7 @@
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { isBlankString } from "@/transformer/utils/normalize";
@@ -81,9 +82,11 @@ class IndentedCodeBlockParser extends BaseBlockParser {
   }
 
   /** @inheritdoc */
-  render(node: MarkdownNode) {
+  render(node: MarkdownNode, ctx: RenderContext) {
     const content = (node.props?.content as string) || "";
-    return `<pre><code>${escapeHtml(content)}\n</code></pre>`;
+    const suffix = content === "" ? "" : "\n";
+    const inner = `${escapeHtml(content)}${suffix}`;
+    return `<pre${this.sourceLineAttrs(node)}><code>${inner}</code></pre>`;
   }
 }
 

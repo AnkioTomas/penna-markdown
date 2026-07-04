@@ -99,8 +99,8 @@ class BlockquoteBlockParser extends BaseBlockParser {
     /** @inheritdoc */
     render(node: MarkdownNode, ctx: RenderContext) {
         const inner = ctx.renderBlock(node.children);
-        if (!inner) return "<blockquote>\n</blockquote>";
-        return `<blockquote>\n${inner}\n</blockquote>`;
+        if (!inner) return `<blockquote${this.sourceLineAttrs(node)}>\n</blockquote>`;
+        return `<blockquote${this.sourceLineAttrs(node)}>\n${inner}\n</blockquote>`;
     }
 }
 

@@ -46,7 +46,7 @@ class ThematicBreakParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext | undefined) {
-    return "<hr />";
+    return `<hr${this.sourceLineAttrs(node)} />`;
   }
 }
 

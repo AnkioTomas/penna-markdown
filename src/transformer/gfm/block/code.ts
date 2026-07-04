@@ -7,6 +7,7 @@
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
 import { unescapeHref } from "@/transformer/utils/linkDestination.js";
@@ -144,12 +145,13 @@ class CodeBlockParser extends BaseBlockParser {
   }
 
   /** @inheritdoc */
-  render(node: MarkdownNode) {
+  render(node: MarkdownNode, ctx: RenderContext) {
     const lang = node.props?.lang as string;
     const content = node.value as string;
     const classAttr = lang ? ` class="language-${escapeHtml(lang)}"` : "";
     const suffix = content === "" ? "" : "\n";
-    return `<pre><code${classAttr}>${escapeHtml(content)}${suffix}</code></pre>`;
+    const inner = `${escapeHtml(content)}${suffix}`;
+    return `<pre${this.sourceLineAttrs(node)}><code${classAttr}>${inner}</code></pre>`;
   }
 }
 
