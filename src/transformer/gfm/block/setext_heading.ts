@@ -1,13 +1,17 @@
 /**
  * @file 块级语法：Setext 标题 (===, ---)
  * @module transformer/gfm/block/setextHeading
+ *
+ * slug 配置见 `atx_heading.ts` 的 `syntaxOptions.atx_heading`
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
 import { isBlankString } from "@/transformer/utils/normalize";
+import { getAtxHeadingOptions, renderHeadingHtml } from "@/transformer/gfm/block/atx_heading.js";
 
 export function getSetextUnderlineInfo(line: string): number  {
   let i = skipBlockPrefixSpaces(line);
@@ -77,9 +81,17 @@ class SetextHeadingBlockParser extends BaseBlockParser {
   }
 
   /** @inheritdoc */
-  render(node: MarkdownNode, ctx: any) {
-    const level = node.props?.level || 1;
-    return `<h${level}>${ctx.renderInline(node.children).trim()}</h${level}>`;
+  render(node: MarkdownNode, ctx: RenderContext) {
+    const level = node.props?.level as number || 1;
+    const inner = ctx.renderInline(node.children).trim();
+    return renderHeadingHtml(
+      node,
+      ctx,
+      level,
+      inner,
+      getAtxHeadingOptions(),
+      this.sourceLineAttrs(node),
+    );
   }
 }
 
