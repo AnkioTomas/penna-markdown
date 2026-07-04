@@ -61,7 +61,7 @@ class ParagraphBlockParser extends BaseBlockParser {
 
     /** @inheritdoc */
     render(node: MarkdownNode, ctx: RenderContext) {
-        return `<p>${ctx.renderInline(node.children)}</p>`;
+        return `<p${this.sourceLineAttrs(node)}>${ctx.renderInline(node.children)}</p>`;
     }
 }
 

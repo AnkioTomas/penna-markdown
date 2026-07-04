@@ -340,7 +340,7 @@ class ListBlockParser extends BaseBlockParser {
         .map((item) => this.renderListItem(item, ctx, listLoose))
         .join("\n");
 
-    return `<${tag}${startAttr}>\n${itemsHtml}\n</${tag}>`;
+    return `<${tag}${startAttr}${this.sourceLineAttrs(node)}>\n${itemsHtml}\n</${tag}>`;
   }
 }
 
