@@ -1,0 +1,244 @@
+@use "sass:list";
+@use "../../style/semantic-picks" as picks;
+
+// typora-vue-theme（blinkfox）色板
+$vue-green: #42b983;
+$vue-green-hover: #33a06f;
+$vue-green-soft: rgba(66, 185, 131, 0.1);
+$vue-mark: #ebffeb;
+
+$vue-text: #34495e;
+$vue-text-muted: #777777;
+$vue-text-subtle: #999999;
+
+$vue-bg: #ffffff;
+$vue-bg-subtle: #fafafa;
+$vue-bg-code: #f8f8f8;
+$vue-border: #dfe2e5;
+$vue-hr: #e7e7e7;
+$vue-h2-rule: #dddddd;
+
+$vue-code-inline: #e96900;
+$vue-lang: #b4654d;
+$vue-link-code: #22a2c9;
+
+$vue-dark-bg: #1f1f1f;
+$vue-dark-surface: #1d1d1d;
+$vue-dark-elevated: hsl(0, 0%, 10%);
+$vue-dark-text: #eeeeee;
+$vue-dark-text-muted: hsl(0, 0%, 53%);
+$vue-dark-h2-rule: hsl(0, 0%, 20%);
+$vue-dark-hr: hsl(0, 0%, 18%);
+$vue-dark-code-inline: #f3b37f;
+$vue-dark-border: hsl(0, 0%, 11%);
+
+$vue-light-semantics: (
+  note: (#22a2c9, #d6f3fb),
+  tip: (#42b983, #d7f5e8),
+  warning: (#e96900, #ffe8cc),
+  caution: (#b4654d, #f5ddd4),
+  danger: (#b4654d, #f5ddd4),
+  important: (#34495e, #e2e8ef),
+);
+
+$vue-dark-semantics: (
+  note: (#7f7fe5, #2a2850),
+  tip: (#42b983, #1a4030),
+  warning: (#f3b37f, #4a3828),
+  caution: (#cb8c8c, #402828),
+  danger: (#cb8c8c, #402828),
+  important: (#9088cc, #302850),
+);
+
+$vue-dark-mark-mix: 40%;
+
+@function vue-surface($is-dark) {
+  @if $is-dark {
+    @return $vue-dark-bg;
+  }
+
+  @return $vue-bg;
+}
+
+@function vue-code-inline-bg($is-dark) {
+  @if $is-dark {
+    @return hsla(0, 0%, 0%, 0.2);
+  }
+
+  @return #{$vue-bg-code};
+}
+
+@function vue-code-block-bg($is-dark) {
+  @if $is-dark {
+    @return #{$vue-dark-elevated};
+  }
+
+  @return #{$vue-bg-code};
+}
+
+@function vue-border-soft($is-dark) {
+  @if $is-dark {
+    @return #{$vue-dark-border};
+  }
+
+  @return #{$vue-border};
+}
+
+@function vue-border-faint($is-dark) {
+  @if $is-dark {
+    @return color-mix(in srgb, #{$vue-dark-border} 55%, transparent);
+  }
+
+  @return color-mix(in srgb, #{$vue-border} 55%, transparent);
+}
+
+@function vue-code-inline-fg($is-dark) {
+  @if $is-dark {
+    @return $vue-dark-code-inline;
+  }
+
+  @return $vue-code-inline;
+}
+
+@function vue-hr-color($is-dark) {
+  @if $is-dark {
+    @return $vue-dark-hr;
+  }
+
+  @return $vue-hr;
+}
+
+@mixin typography-tokens {
+  --vue-font-sans: "Ubuntu", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --vue-font-mono: "Fira Code", "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    monospace;
+  --vue-text-size: 1rem;
+  --vue-text-leading: 1.6rem;
+  --vue-heading-leading: 1.4;
+}
+
+@mixin generate-semantic-suite($palette, $is-dark: false) {
+  @each $name, $pair in $palette {
+    $base-color: list.nth($pair, 1);
+    $mark-color: list.nth($pair, 2);
+    $surface: vue-surface($is-dark);
+    $contrast-color: picks.pick-contrast($is-dark);
+    $bg-opacity: picks.pick-bg-opacity($is-dark);
+    $border-opacity: picks.pick-border-opacity($is-dark);
+
+    --cherry-c-#{$name}: #{$base-color};
+    @if $is-dark {
+      --cherry-c-#{$name}-mark: color-mix(in srgb, #{$mark-color} #{$vue-dark-mark-mix}, #{$surface});
+    } @else {
+      --cherry-c-#{$name}-mark: #{$mark-color};
+    }
+
+    --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 16%, #{$contrast-color});
+
+    --cherry-c-alert-#{$name}-text: #{$base-color};
+    --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
+    --cherry-c-alert-#{$name}-border: color-mix(in srgb, #{$base-color} #{$border-opacity}, transparent);
+  }
+}
+
+@mixin component-tokens($is-dark: false) {
+  $code-inline-bg: vue-code-inline-bg($is-dark);
+  $code-block-bg: vue-code-block-bg($is-dark);
+  $border-soft: vue-border-soft($is-dark);
+  $border-faint: vue-border-faint($is-dark);
+
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+
+  --cherry-c-code-inline-bg: #{$code-inline-bg};
+  --cherry-c-code-inline-fg: #{vue-code-inline-fg($is-dark)};
+  --cherry-c-code-inline-border: transparent;
+
+  --cherry-c-code-block-header-bg: #{$code-block-bg};
+  --cherry-c-code-block-code-bg: #{$code-block-bg};
+  --cherry-c-code-block-shadow: none;
+
+  --cherry-c-table-th-border: #{$border-soft};
+  --cherry-c-table-td-border: #{$border-faint};
+  --cherry-c-hr-color: #{vue-hr-color($is-dark)};
+  --cherry-c-blockquote-border: #{$vue-green};
+}
+
+@mixin theme-light {
+  @include typography-tokens;
+
+  --cherry-c-brand-1: #{$vue-green};
+  --cherry-c-brand-2: #{$vue-green-hover};
+  --cherry-c-brand-3: #{$vue-lang};
+  --cherry-c-brand-soft: #{$vue-green-soft};
+  --cherry-c-brand-on-bg: #fff;
+
+  --cherry-c-text-1: #{$vue-text};
+  --cherry-c-text-2: #{$vue-text-muted};
+  --cherry-c-text-3: #{$vue-text-subtle};
+
+  --cherry-c-bg: #{$vue-bg};
+  --cherry-c-bg-elevated: #{$vue-bg-code};
+
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+
+  --cherry-c-brand-mark: #{$vue-mark};
+  --cherry-c-code-fg: #{$vue-code-inline};
+  --cherry-c-border-soft: #{$vue-border};
+  --cherry-c-border-faint: #{color-mix(in srgb, #{$vue-border} 45%, transparent)};
+
+  --vue-h2-rule: #{$vue-h2-rule};
+  --vue-code-block-border: #f4f4f4;
+
+  @include generate-semantic-suite($vue-light-semantics, false);
+  @include component-tokens(false);
+}
+
+@mixin theme-dark {
+  @include typography-tokens;
+
+  --cherry-c-brand-1: #{$vue-green};
+  --cherry-c-brand-2: #{color-mix(in srgb, #{$vue-green} 85%, #fff)};
+  --cherry-c-brand-3: #{$vue-dark-code-inline};
+  --cherry-c-brand-soft: rgba(66, 185, 131, 0.16);
+  --cherry-c-brand-on-bg: #{$vue-dark-text};
+
+  --cherry-c-text-1: #{$vue-dark-text};
+  --cherry-c-text-2: #{$vue-dark-text-muted};
+  --cherry-c-text-3: #aaaaaa;
+
+  --cherry-c-bg: #{$vue-dark-bg};
+  --cherry-c-bg-elevated: #{$vue-dark-elevated};
+
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+
+  --cherry-c-brand-mark: #{$vue-mark};
+  --cherry-c-code-fg: #{$vue-dark-code-inline};
+  --cherry-c-border-soft: #{$vue-dark-border};
+  --cherry-c-border-faint: #{color-mix(in srgb, #{$vue-dark-border} 45%, transparent)};
+
+  --vue-h2-rule: #{$vue-dark-h2-rule};
+  --vue-code-block-border: #{$vue-dark-border};
+
+  @include generate-semantic-suite($vue-dark-semantics, true);
+  @include component-tokens(true);
+}

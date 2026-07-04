@@ -1,4 +1,5 @@
 @use "sass:list";
+@use "../../style/semantic-picks" as picks;
 
 // GitHub Primer / markdown-body 色板
 $github-accent: #0969da;
@@ -50,6 +51,38 @@ $github-dark-semantics: (
 
 $github-dark-mark-mix: 42%;
 
+@function github-surface($is-dark) {
+  @if $is-dark {
+    @return $github-dark-canvas;
+  }
+
+  @return $github-canvas;
+}
+
+@function github-border-soft($is-dark) {
+  @if $is-dark {
+    @return #{$github-dark-border};
+  }
+
+  @return #{$github-border};
+}
+
+@function github-border-faint($is-dark) {
+  @if $is-dark {
+    @return color-mix(in srgb, #{$github-dark-border} 72%, transparent);
+  }
+
+  @return color-mix(in srgb, #{$github-border} 72%, transparent);
+}
+
+@function github-code-inline-bg($is-dark) {
+  @if $is-dark {
+    @return color-mix(in srgb, #{$github-dark-fg-muted} 16%, transparent);
+  }
+
+  @return color-mix(in srgb, #afb8c1 20%, transparent);
+}
+
 @mixin typography-tokens {
   --github-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial,
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
@@ -64,10 +97,10 @@ $github-dark-mark-mix: 42%;
   @each $name, $pair in $palette {
     $base-color: list.nth($pair, 1);
     $mark-color: list.nth($pair, 2);
-    $surface: if(sass($is-dark): $github-dark-canvas; else: $github-canvas);
-    $contrast-color: if(sass($is-dark): #000; else: #fff);
-    $bg-opacity: if(sass($is-dark): 12%; else: 10%);
-    $border-opacity: if(sass($is-dark): 28%; else: 24%);
+    $surface: github-surface($is-dark);
+    $contrast-color: picks.pick-contrast($is-dark);
+    $bg-opacity: picks.pick-bg-opacity($is-dark, 12%, 10%);
+    $border-opacity: picks.pick-border-opacity($is-dark, 28%, 24%);
 
     --cherry-c-#{$name}: #{$base-color};
     @if $is-dark {
@@ -85,18 +118,9 @@ $github-dark-mark-mix: 42%;
 }
 
 @mixin component-tokens($is-dark: false) {
-  $border-soft: if(
-    sass($is-dark): #{$github-dark-border};
-    else: #{$github-border}
-  );
-  $border-faint: if(
-    sass($is-dark): color-mix(in srgb, #{$github-dark-border} 72%, transparent);
-    else: color-mix(in srgb, #{$github-border} 72%, transparent)
-  );
-  $code-inline-bg: if(
-    sass($is-dark): color-mix(in srgb, #{$github-dark-fg-muted} 16%, transparent);
-    else: color-mix(in srgb, #afb8c1 20%, transparent)
-  );
+  $border-soft: github-border-soft($is-dark);
+  $border-faint: github-border-faint($is-dark);
+  $code-inline-bg: github-code-inline-bg($is-dark);
 
   --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
   --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);

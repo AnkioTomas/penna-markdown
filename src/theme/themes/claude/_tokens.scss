@@ -1,4 +1,5 @@
 @use "sass:list";
+@use "../../style/semantic-picks" as picks;
 
 // Anthropic / Claude 官方色板
 $claude-clay: #d97757;
@@ -46,6 +47,38 @@ $claude-dark-semantics: (
 
 $claude-dark-mark-mix: 40%;
 
+@function claude-surface($is-dark) {
+  @if $is-dark {
+    @return $claude-dark-canvas;
+  }
+
+  @return $claude-ivory;
+}
+
+@function claude-border-soft($is-dark) {
+  @if $is-dark {
+    @return color-mix(in srgb, #{$claude-linen} 28%, transparent);
+  }
+
+  @return color-mix(in srgb, #{$claude-linen} 72%, transparent);
+}
+
+@function claude-border-faint($is-dark) {
+  @if $is-dark {
+    @return color-mix(in srgb, #{$claude-linen} 14%, transparent);
+  }
+
+  @return color-mix(in srgb, #{$claude-linen} 42%, transparent);
+}
+
+@function claude-code-inline-bg($is-dark) {
+  @if $is-dark {
+    @return color-mix(in srgb, #{$claude-dark-text-soft} 8%, transparent);
+  }
+
+  @return color-mix(in srgb, #{$claude-ink} 5%, transparent);
+}
+
 @mixin typography-tokens {
   --claude-font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
     "Times New Roman", serif;
@@ -62,10 +95,10 @@ $claude-dark-mark-mix: 40%;
   @each $name, $pair in $palette {
     $base-color: list.nth($pair, 1);
     $mark-color: list.nth($pair, 2);
-    $surface: if(sass($is-dark): $claude-dark-canvas; else: $claude-ivory);
-    $contrast-color: if(sass($is-dark): #000; else: #fff);
-    $bg-opacity: if(sass($is-dark): 10%; else: 8%);
-    $border-opacity: if(sass($is-dark): 22%; else: 18%);
+    $surface: claude-surface($is-dark);
+    $contrast-color: picks.pick-contrast($is-dark);
+    $bg-opacity: picks.pick-bg-opacity($is-dark, 10%, 8%);
+    $border-opacity: picks.pick-border-opacity($is-dark, 22%, 18%);
 
     --cherry-c-#{$name}: #{$base-color};
     @if $is-dark {
@@ -83,18 +116,9 @@ $claude-dark-mark-mix: 40%;
 }
 
 @mixin component-tokens($is-dark: false) {
-  $border-soft: if(
-    sass($is-dark): color-mix(in srgb, #{$claude-linen} 28%, transparent);
-    else: color-mix(in srgb, #{$claude-linen} 72%, transparent)
-  );
-  $border-faint: if(
-    sass($is-dark): color-mix(in srgb, #{$claude-linen} 14%, transparent);
-    else: color-mix(in srgb, #{$claude-linen} 42%, transparent)
-  );
-  $code-inline-bg: if(
-    sass($is-dark): color-mix(in srgb, #{$claude-dark-text-soft} 8%, transparent);
-    else: color-mix(in srgb, #{$claude-ink} 5%, transparent)
-  );
+  $border-soft: claude-border-soft($is-dark);
+  $border-faint: claude-border-faint($is-dark);
+  $code-inline-bg: claude-code-inline-bg($is-dark);
 
   --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
   --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);

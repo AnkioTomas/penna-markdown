@@ -4,6 +4,22 @@ import REGISTERED_THEMES from "./ThemeRegister.js";
 
 export type LightDark = "light" | "dark";
 
+/** 主题皮肤切换事件 */
+export const THEME_EVENT_SKIN = "theme:skin";
+/** 明暗模式切换事件 */
+export const THEME_EVENT_LIGHT_DARK = "theme:ld";
+
+export interface ThemeSkinEvent {
+  prev: string;
+  id: string;
+  render: HTMLElement;
+}
+
+export interface ThemeLightDarkEvent {
+  mode: LightDark;
+  isDark: boolean;
+}
+
 const LOG_PREFIX = "[cherry]";
 
 export class Theme {
@@ -55,8 +71,7 @@ export class Theme {
 
     if (prev !== id) {
       this.logD("setTheme", { prev, id });
-      this.emit("change", { prev, id, render });
-      this.emit("theme:skin", { prev, id, render });
+      this.emit(THEME_EVENT_SKIN, { prev, id, render } satisfies ThemeSkinEvent);
     }
   }
 
@@ -75,22 +90,21 @@ export class Theme {
     this.mode = mode;
     this.applyAppearanceClass();
     this.logD("setLightDark", { mode });
-    this.emit("appearance", { mode, isDark: mode === "dark" });
-    this.emit("theme:ld", { mode, isDark: mode === "dark" });
+    this.emit(THEME_EVENT_LIGHT_DARK, { mode, isDark: mode === "dark" } satisfies ThemeLightDarkEvent);
   }
 
-  on(event: string, handler: EventHandler) {
-    this.logD("on", event);
+  on<T = unknown>(event: string, handler: EventHandler<T>): () => void {
+    this.logD("event:on", event);
     return this.bus.on(event, handler);
   }
 
-  off(event: string, handler: EventHandler) {
-    this.logD("off", event);
+  off<T = unknown>(event: string, handler: EventHandler<T>): void {
+    this.logD("event:off", event);
     this.bus.off(event, handler);
   }
 
-  emit(event: string, payload?: unknown) {
-    this.logD("emit", event, payload);
+  emit<T = unknown>(event: string, payload?: T): void {
+    this.logD("event:emit", event, payload);
     this.bus.emit(event, payload);
   }
 

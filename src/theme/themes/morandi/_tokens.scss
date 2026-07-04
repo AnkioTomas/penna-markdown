@@ -1,0 +1,260 @@
+@use "sass:list";
+@use "../../style/semantic-picks" as picks;
+
+// MorandiGarden（Typora / Kitsunee-CN）色板
+$morandi-bg: #fbfdfb;
+$morandi-text: #403c3c;
+$morandi-muted: #98948c;
+
+$morandi-h1: #7a5f52;
+$morandi-h2: #506956;
+$morandi-h3: #7a6f89;
+$morandi-h4: #6f7f88;
+$morandi-h5: #8a7a6f;
+$morandi-h6: #7d7a71;
+
+$morandi-link: #506956;
+$morandi-link-hover: #405946;
+$morandi-rose: #de7487;
+
+$morandi-code-bg: #f0f5f3;
+$morandi-blockquote-bg: #eef4ef;
+$morandi-table-border: #7ea388;
+$morandi-table-head-bg: #eaf0eb;
+$morandi-h1-rule: #dde6df;
+$morandi-hr: #ccd8cf;
+
+$morandi-dark-bg: #2e3330;
+$morandi-dark-elevated: #383e3a;
+$morandi-dark-text: #e8e6e1;
+$morandi-dark-text-muted: #b4b0a8;
+$morandi-dark-text-subtle: #8f8b84;
+
+$morandi-dark-h1: #c4a99a;
+$morandi-dark-h2: #8fa896;
+$morandi-dark-h3: #a89bb8;
+$morandi-dark-h4: #93a0a8;
+$morandi-dark-h5: #b0a399;
+$morandi-dark-h6: #a8a59d;
+
+$morandi-dark-link: #8fa896;
+$morandi-dark-link-hover: #a8c0ae;
+$morandi-dark-code-bg: #3a403c;
+$morandi-dark-blockquote-bg: #343a36;
+$morandi-dark-table-border: #5a7260;
+$morandi-dark-table-head-bg: #404840;
+$morandi-dark-h1-rule: #4a524c;
+$morandi-dark-hr: #4a524c;
+
+$morandi-light-semantics: (
+  note: (#6f7f88, #dce8ea),
+  tip: (#506956, #d9e8dc),
+  warning: (#8a7a6f, #efe4d8),
+  caution: (#de7487, #f5dde2),
+  danger: (#de7487, #f5dde2),
+  important: (#7a6f89, #e8e0ef),
+);
+
+$morandi-dark-semantics: (
+  note: (#93a0a8, #4a555c),
+  tip: (#8fa896, #3f5248),
+  warning: (#b0a399, #5c5348),
+  caution: (#de7487, #6a4048),
+  danger: (#de7487, #6a4048),
+  important: (#a89bb8, #524860),
+);
+
+$morandi-dark-mark-mix: 40%;
+
+@function morandi-surface($is-dark) {
+  @if $is-dark {
+    @return $morandi-dark-bg;
+  }
+
+  @return $morandi-bg;
+}
+
+@function morandi-border-soft($is-dark) {
+  @if $is-dark {
+    @return #{$morandi-dark-table-border};
+  }
+
+  @return #{$morandi-table-border};
+}
+
+@function morandi-border-faint($is-dark) {
+  @if $is-dark {
+    @return color-mix(in srgb, #{$morandi-dark-table-border} 55%, transparent);
+  }
+
+  @return color-mix(in srgb, #{$morandi-table-border} 55%, transparent);
+}
+
+@function morandi-code-inline-bg($is-dark) {
+  @if $is-dark {
+    @return #{$morandi-dark-code-bg};
+  }
+
+  @return #{$morandi-code-bg};
+}
+
+@function morandi-hr-color($is-dark) {
+  @if $is-dark {
+    @return $morandi-dark-hr;
+  }
+
+  @return $morandi-hr;
+}
+
+@function morandi-blockquote-border($is-dark) {
+  @if $is-dark {
+    @return $morandi-dark-h1;
+  }
+
+  @return $morandi-h1;
+}
+
+@mixin typography-tokens {
+  --morandi-font-sans: "Alibaba PuHuiTi", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans SC", sans-serif;
+  --morandi-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    "Liberation Mono", monospace;
+  --morandi-text-size: 1rem;
+  --morandi-text-leading: 1.8;
+  --morandi-heading-leading: 1.4;
+
+  --morandi-h1-color: #{$morandi-h1};
+  --morandi-h2-color: #{$morandi-h2};
+  --morandi-h3-color: #{$morandi-h3};
+  --morandi-h4-color: #{$morandi-h4};
+  --morandi-h5-color: #{$morandi-h5};
+  --morandi-h6-color: #{$morandi-h6};
+}
+
+@mixin typography-tokens-dark {
+  --morandi-h1-color: #{$morandi-dark-h1};
+  --morandi-h2-color: #{$morandi-dark-h2};
+  --morandi-h3-color: #{$morandi-dark-h3};
+  --morandi-h4-color: #{$morandi-dark-h4};
+  --morandi-h5-color: #{$morandi-dark-h5};
+  --morandi-h6-color: #{$morandi-dark-h6};
+}
+
+@mixin generate-semantic-suite($palette, $is-dark: false) {
+  @each $name, $pair in $palette {
+    $base-color: list.nth($pair, 1);
+    $mark-color: list.nth($pair, 2);
+    $surface: morandi-surface($is-dark);
+    $contrast-color: picks.pick-contrast($is-dark);
+    $bg-opacity: picks.pick-bg-opacity($is-dark);
+    $border-opacity: picks.pick-border-opacity($is-dark);
+
+    --cherry-c-#{$name}: #{$base-color};
+    @if $is-dark {
+      --cherry-c-#{$name}-mark: color-mix(in srgb, #{$mark-color} #{$morandi-dark-mark-mix}, #{$surface});
+    } @else {
+      --cherry-c-#{$name}-mark: #{$mark-color};
+    }
+
+    --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 16%, #{$contrast-color});
+
+    --cherry-c-alert-#{$name}-text: #{$base-color};
+    --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
+    --cherry-c-alert-#{$name}-border: color-mix(in srgb, #{$base-color} #{$border-opacity}, transparent);
+  }
+}
+
+@mixin component-tokens($is-dark: false) {
+  $border-soft: morandi-border-soft($is-dark);
+  $border-faint: morandi-border-faint($is-dark);
+  $code-inline-bg: morandi-code-inline-bg($is-dark);
+
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+
+  --cherry-c-code-inline-bg: #{$code-inline-bg};
+  --cherry-c-code-inline-fg: var(--morandi-h3-color);
+  --cherry-c-code-inline-border: transparent;
+
+  --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-code-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-shadow: none;
+
+  --cherry-c-table-th-border: #{$border-soft};
+  --cherry-c-table-td-border: #{$border-faint};
+  --cherry-c-hr-color: #{morandi-hr-color($is-dark)};
+  --cherry-c-blockquote-border: #{morandi-blockquote-border($is-dark)};
+}
+
+@mixin theme-light {
+  @include typography-tokens;
+
+  --cherry-c-brand-1: #{$morandi-link};
+  --cherry-c-brand-2: #{$morandi-link-hover};
+  --cherry-c-brand-3: #{$morandi-rose};
+  --cherry-c-brand-soft: rgba(80, 105, 86, 0.12);
+  --cherry-c-brand-on-bg: #fff;
+
+  --cherry-c-text-1: #{$morandi-text};
+  --cherry-c-text-2: #{color-mix(in srgb, #{$morandi-text} 72%, #{$morandi-muted})};
+  --cherry-c-text-3: #{$morandi-muted};
+
+  --cherry-c-bg: #{$morandi-bg};
+  --cherry-c-bg-elevated: #{$morandi-code-bg};
+
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+
+  --cherry-c-brand-mark: #{color-mix(in srgb, #{$morandi-h2} 22%, #{$morandi-blockquote-bg})};
+  --cherry-c-code-fg: #{$morandi-text};
+  --cherry-c-border-soft: #{$morandi-table-border};
+  --cherry-c-border-faint: #{color-mix(in srgb, #{$morandi-table-border} 45%, transparent)};
+
+  @include generate-semantic-suite($morandi-light-semantics, false);
+  @include component-tokens(false);
+}
+
+@mixin theme-dark {
+  @include typography-tokens;
+  @include typography-tokens-dark;
+
+  --cherry-c-brand-1: #{$morandi-dark-link};
+  --cherry-c-brand-2: #{$morandi-dark-link-hover};
+  --cherry-c-brand-3: #{$morandi-rose};
+  --cherry-c-brand-soft: rgba(143, 168, 150, 0.16);
+  --cherry-c-brand-on-bg: #{$morandi-dark-text};
+
+  --cherry-c-text-1: #{$morandi-dark-text};
+  --cherry-c-text-2: #{$morandi-dark-text-muted};
+  --cherry-c-text-3: #{$morandi-dark-text-subtle};
+
+  --cherry-c-bg: #{$morandi-dark-bg};
+  --cherry-c-bg-elevated: #{$morandi-dark-elevated};
+
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+
+  --cherry-c-brand-mark: #{color-mix(in srgb, #{$morandi-dark-h2} 28%, #{$morandi-dark-blockquote-bg})};
+  --cherry-c-code-fg: #{$morandi-dark-text};
+  --cherry-c-border-soft: #{$morandi-dark-table-border};
+  --cherry-c-border-faint: #{color-mix(in srgb, #{$morandi-dark-table-border} 45%, transparent)};
+
+  @include generate-semantic-suite($morandi-dark-semantics, true);
+  @include component-tokens(true);
+}

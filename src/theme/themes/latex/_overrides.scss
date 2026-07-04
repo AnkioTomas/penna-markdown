@@ -1,0 +1,374 @@
+@use "../../../transformer/style/rem" as *;
+
+@mixin heading-counter($level, $content) {
+  &::before {
+    content: #{$content};
+    counter-increment: heading-#{$level};
+    margin-right: 1.2em;
+  }
+}
+
+// typora-latex-theme 排版（标题编号 + 三线表 + 论文版心，不改代码块行 metrics）
+@mixin styles {
+  box-sizing: border-box;
+  max-width: 21cm;
+  margin-inline: auto;
+  padding: rem(68) rem(75);
+  background-color: var(--cherry-c-bg);
+  color: var(--cherry-c-text-1);
+  font-family: var(--latex-font-serif);
+  font-size: var(--latex-text-size);
+  word-wrap: break-word;
+
+  counter-reset: heading-h2 heading-h3 heading-h4 heading-h5 heading-h6;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 1em 0;
+    padding: 0;
+    border: 0;
+    font-weight: normal;
+    break-after: avoid-page;
+  }
+
+  h1 {
+    counter-reset: heading-h2 heading-h3 heading-h4 heading-h5 heading-h6;
+    font-family: var(--latex-font-heiti), var(--latex-font-serif);
+    font-size: 1.9em;
+    text-align: center;
+  }
+
+  h2 {
+    counter-reset: heading-h3 heading-h4 heading-h5 heading-h6;
+    font-family: var(--latex-font-heiti), var(--latex-font-serif);
+    font-size: 1.5em;
+    @include heading-counter(h2, "counter(heading-h2)");
+  }
+
+  h3 {
+    counter-reset: heading-h4 heading-h5 heading-h6;
+    font-family: var(--latex-font-heiti), var(--latex-font-serif);
+    font-size: 1.25em;
+    line-height: 1.25em;
+    @include heading-counter(h3, "counter(heading-h2) \".\" counter(heading-h3)");
+  }
+
+  h4 {
+    counter-reset: heading-h5 heading-h6;
+    font-family: var(--latex-font-kai), var(--latex-font-serif);
+    font-size: 1.15em;
+    line-height: 1.15em;
+    @include heading-counter(h4, "counter(heading-h2) \".\" counter(heading-h3) \".\" counter(heading-h4)");
+  }
+
+  h5 {
+    counter-reset: heading-h6;
+    font-family: var(--latex-font-fangsong), var(--latex-font-serif);
+    font-size: 1.1em;
+    line-height: 1.1em;
+    @include heading-counter(
+      h5,
+      "counter(heading-h2) \".\" counter(heading-h3) \".\" counter(heading-h4) \".\" counter(heading-h5)"
+    );
+  }
+
+  h6 {
+    font-family: var(--latex-font-fangsong), var(--latex-font-serif);
+    font-size: 1.05em;
+    line-height: 1.1em;
+    @include heading-counter(
+      h6,
+      "counter(heading-h2) \".\" counter(heading-h3) \".\" counter(heading-h4) \".\" counter(heading-h5) \".\" counter(heading-h6)"
+    );
+  }
+
+  :first-child {
+    margin-top: 0;
+  }
+
+  p {
+    margin: 1em 0;
+    text-align: left;
+    line-height: var(--latex-text-leading);
+  }
+
+  strong {
+    font-weight: var(--latex-strong-weight);
+  }
+
+  a {
+    color: var(--cherry-c-brand-1);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--cherry-c-brand-2);
+      text-decoration: underline;
+    }
+  }
+
+  blockquote {
+    margin: 1em 0;
+    padding: 0 2em 0 calc(2em - #{rem(4)});
+    border-left: rem(4) solid var(--cherry-c-blockquote-border);
+    font-family: var(--latex-font-fangsong), var(--latex-font-serif);
+    font-size: var(--latex-quote-size);
+    font-style: normal;
+    color: var(--cherry-c-text-1);
+
+    blockquote {
+      font-size: inherit;
+      padding-right: 0;
+    }
+  }
+
+  hr {
+    margin: 1.8em 0;
+    border: 0;
+    border-top: rem(1) solid var(--cherry-c-hr-color);
+  }
+
+  ul {
+    list-style: disc;
+    margin: 0;
+    padding-inline-start: 2em;
+
+    ul {
+      list-style: "–   ";
+
+      ul {
+        list-style: "◦  ";
+      }
+    }
+  }
+
+  ol {
+    list-style: decimal;
+    margin: 0;
+    padding-inline-start: 2em;
+
+    ol {
+      counter-reset: latex-ol-alpha;
+      list-style: none;
+
+      > li {
+        counter-increment: latex-ol-alpha;
+        position: relative;
+
+        &::before {
+          content: "(" counter(latex-ol-alpha, lower-alpha) ")";
+          position: absolute;
+          left: -1.8em;
+        }
+      }
+
+      ol {
+        counter-reset: latex-ol-roman;
+        list-style: none;
+
+        > li {
+          counter-increment: latex-ol-roman;
+          position: relative;
+
+          &::before {
+            content: counter(latex-ol-roman, lower-roman) ".";
+            position: absolute;
+            left: -4.5em;
+            width: 4em;
+            text-align: right;
+          }
+        }
+      }
+    }
+  }
+
+  ul:not(.task-list),
+  ol:not(.task-list) {
+    li {
+      position: relative;
+      margin-block: 0.2em;
+    }
+  }
+
+  :not(pre) > code {
+    margin: 0 rem(2);
+    padding: 0 rem(2);
+    font-family: var(--latex-font-mono), var(--latex-font-ui), monospace;
+    font-size: inherit;
+    color: var(--cherry-c-code-inline-fg);
+    background: var(--cherry-c-code-inline-bg);
+    border: 0;
+    border-radius: rem(2);
+    box-shadow: 0 0 rem(1) rem(1) var(--latex-code-inline-shadow);
+  }
+
+  pre:not(.cherry-code-block__pre) {
+    margin: 1em 0;
+    padding: rem(12) rem(10);
+    font-family: var(--latex-font-mono), var(--latex-font-ui), monospace;
+    color: var(--cherry-c-text-1);
+    background: var(--cherry-c-bg-elevated);
+    border: 0;
+    border-radius: rem(2);
+    box-shadow: none;
+  }
+
+  table {
+    --cherry-table-border: transparent;
+    --cherry-table-head-bg: transparent;
+    --cherry-table-row-bg: transparent;
+    --cherry-table-stripe-bg: transparent;
+    width: auto;
+    margin: 1em auto;
+    border-collapse: collapse;
+    border-spacing: rem(6);
+    border-top: 1.2pt solid var(--cherry-c-text-1);
+    border-bottom: 1.2pt solid var(--cherry-c-text-1);
+    font-family: var(--latex-font-serif);
+    text-align: center;
+
+    th,
+    td {
+      padding: rem(2) rem(6);
+      border: 0;
+    }
+
+    thead {
+      border-bottom: 0.5pt solid var(--cherry-c-text-1);
+    }
+
+    th {
+      font-family: var(--latex-font-heiti), var(--latex-font-serif);
+      font-weight: var(--latex-strong-weight);
+    }
+  }
+
+  img {
+    break-inside: avoid-page;
+  }
+
+  .cherry-alert {
+    margin: 1em 0;
+    padding: rem(10) rem(14);
+    border: rem(1) solid var(--alert-border);
+    border-left-width: rem(4);
+    box-shadow: none;
+    background: var(--alert-bg);
+    font-size: var(--latex-quote-size);
+  }
+
+  .cherry-code-block {
+    --cb-radius: #{rem(2)};
+    --cb-border: transparent;
+    --cb-shadow: none;
+    --cb-header-bg: var(--cherry-c-bg-elevated);
+    --cb-code-bg: var(--cherry-c-bg-elevated);
+    --cb-lang-fg: var(--cherry-c-text-3);
+    --cb-lang-bg: transparent;
+    --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 10%, transparent);
+    margin: 1em 0;
+
+    &__panel {
+      border: 0;
+      box-shadow: none;
+    }
+
+    &__header {
+      min-height: rem(28);
+      padding: rem(4) rem(10);
+      border-bottom: 0;
+    }
+
+    &__lang {
+      padding: 0;
+      font-family: var(--latex-font-ui), var(--latex-font-serif);
+      font-size: 0.95em;
+      font-weight: normal;
+      letter-spacing: 0;
+      text-transform: none;
+      text-align: center;
+      background: transparent;
+      border-radius: 0;
+    }
+
+    .hljs {
+      background: transparent;
+      color: var(--cherry-c-text-1);
+    }
+  }
+
+  .cherry-card,
+  .cherry-link-card,
+  .cherry-repo-card,
+  .cherry-tabs,
+  .cherry-collapse {
+    border: rem(1) solid var(--cherry-c-border-faint);
+    border-radius: rem(2);
+    background: var(--cherry-c-bg);
+    box-shadow: none;
+  }
+
+  sup.cherry-footnote-ref {
+    margin-inline: -0.44em;
+    font-weight: inherit;
+    background: transparent;
+
+    &::before {
+      content: "［";
+    }
+
+    &::after {
+      content: "］";
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+
+      &:hover {
+        color: var(--cherry-c-brand-1);
+      }
+    }
+  }
+
+  @at-root .cherry-dark.cherry-theme-latex .cherry-render {
+    .cherry-code-block,
+    pre:not(.cherry-code-block__pre) {
+      .hljs-comment {
+        color: #546e7a;
+        font-style: italic;
+      }
+
+      .hljs-keyword {
+        color: #c792ea;
+      }
+
+      .hljs-string {
+        color: #c3e88d;
+      }
+
+      .hljs-number,
+      .hljs-literal {
+        color: #f77669;
+      }
+
+      .hljs-title,
+      .hljs-type,
+      .hljs-built_in {
+        color: #82b1ff;
+      }
+
+      .hljs-variable,
+      .hljs-attribute {
+        color: #80cbc4;
+      }
+
+      .hljs-meta {
+        color: #80cbc4;
+      }
+    }
+  }
+}

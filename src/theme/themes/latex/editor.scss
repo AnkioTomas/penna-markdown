@@ -1,0 +1,12 @@
+/** LaTeX 主题编辑器样式 */
+@use "render";
+@use "tokens";
+@use "../../../editor/cherry" as *;
+
+.cherry-theme-latex.cherry {
+  @include tokens.theme-light;
+}
+
+.cherry-dark.cherry-theme-latex.cherry {
+  @include tokens.theme-dark;
+}

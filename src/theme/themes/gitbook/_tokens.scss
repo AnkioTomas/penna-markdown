@@ -1,0 +1,211 @@
+@use "sass:list";
+@use "../../style/semantic-picks" as picks;
+
+// typora-gitbook-theme（h16nning）— 浅色 azure / 深色 slate
+$gitbook-primary: #3884ff;
+$gitbook-primary-hover: #1968e6;
+$gitbook-primary-soft: rgba(56, 132, 255, 0.12);
+
+$gitbook-azure-bg: #ffffff;
+$gitbook-azure-text: #3b454e;
+$gitbook-azure-heading: #242a31;
+$gitbook-azure-muted: #9daab6;
+$gitbook-azure-boxes: #f5f7f9;
+$gitbook-azure-border: #e6ecf1;
+
+$gitbook-slate-bg: hsl(217, 18%, 9%);
+$gitbook-slate-text: #e6e7eb;
+$gitbook-slate-heading: #ffffff;
+$gitbook-slate-muted: #8a92a3;
+$gitbook-slate-boxes: #1c2027;
+$gitbook-slate-border: #272c35;
+
+$gitbook-codebox: #183055;
+$gitbook-codebox-lighter: #1c375f;
+$gitbook-mark-light: #fff3bf;
+$gitbook-mark-dark: #4a4028;
+
+$gitbook-light-semantics: (
+  note: (#3884ff, #d6e6ff),
+  tip: (#15ac8e, #d4f5ec),
+  warning: (#ff9d3d, #ffe8cc),
+  caution: (#ff4642, #ffd6d5),
+  danger: (#ff4642, #ffd6d5),
+  important: (#242a31, #e2e8ef),
+);
+
+$gitbook-dark-semantics: (
+  note: (#71a7ff, #1c375f),
+  tip: (#61e3a5, #1a4030),
+  warning: (#ff9d3d, #4a3820),
+  caution: (#ff4642, #4a2020),
+  danger: (#ff4642, #4a2020),
+  important: (#bd93f9, #302850),
+);
+
+$gitbook-dark-mark-mix: 40%;
+
+@function gitbook-surface($is-dark) {
+  @if $is-dark {
+    @return $gitbook-slate-bg;
+  }
+
+  @return $gitbook-azure-bg;
+}
+
+@function gitbook-border-soft($is-dark) {
+  @if $is-dark {
+    @return #{$gitbook-slate-border};
+  }
+
+  @return #{$gitbook-azure-border};
+}
+
+@function gitbook-border-faint($is-dark) {
+  @if $is-dark {
+    @return color-mix(in srgb, #{$gitbook-slate-border} 55%, transparent);
+  }
+
+  @return color-mix(in srgb, #{$gitbook-azure-border} 55%, transparent);
+}
+
+@function gitbook-inline-code-bg($is-dark) {
+  @if $is-dark {
+    @return #{$gitbook-slate-border};
+  }
+
+  @return #{$gitbook-azure-border};
+}
+
+@mixin typography-tokens {
+  --gitbook-font-sans: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+    Arial, sans-serif;
+  --gitbook-font-mono: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --gitbook-text-size: 0.95rem;
+  --gitbook-text-leading: 1.6rem;
+  --gitbook-heading-leading: 1.5;
+}
+
+@mixin generate-semantic-suite($palette, $is-dark: false) {
+  @each $name, $pair in $palette {
+    $base-color: list.nth($pair, 1);
+    $mark-color: list.nth($pair, 2);
+    $surface: gitbook-surface($is-dark);
+    $contrast-color: picks.pick-contrast($is-dark);
+    $bg-opacity: picks.pick-bg-opacity($is-dark);
+    $border-opacity: picks.pick-border-opacity($is-dark);
+
+    --cherry-c-#{$name}: #{$base-color};
+    @if $is-dark {
+      --cherry-c-#{$name}-mark: color-mix(in srgb, #{$mark-color} #{$gitbook-dark-mark-mix}, #{$surface});
+    } @else {
+      --cherry-c-#{$name}-mark: #{$mark-color};
+    }
+
+    --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 16%, #{$contrast-color});
+
+    --cherry-c-alert-#{$name}-text: #{$base-color};
+    --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
+    --cherry-c-alert-#{$name}-border: color-mix(in srgb, #{$base-color} #{$border-opacity}, transparent);
+  }
+}
+
+@mixin component-tokens($is-dark: false) {
+  $border-soft: gitbook-border-soft($is-dark);
+  $border-faint: gitbook-border-faint($is-dark);
+  $inline-code-bg: gitbook-inline-code-bg($is-dark);
+
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+
+  --cherry-c-code-inline-bg: #{$inline-code-bg};
+  --cherry-c-code-inline-fg: var(--cherry-c-text-1);
+  --cherry-c-code-inline-border: transparent;
+
+  --cherry-c-code-block-header-bg: #{$gitbook-codebox-lighter};
+  --cherry-c-code-block-code-bg: #{$gitbook-codebox};
+  --cherry-c-code-block-shadow: none;
+
+  --cherry-c-table-th-border: #{$border-soft};
+  --cherry-c-table-td-border: #{$border-faint};
+  --cherry-c-hr-color: #{$border-soft};
+  --cherry-c-blockquote-border: var(--cherry-c-brand-1);
+}
+
+@mixin theme-light {
+  @include typography-tokens;
+
+  --cherry-c-brand-1: #{$gitbook-primary};
+  --cherry-c-brand-2: #{$gitbook-primary-hover};
+  --cherry-c-brand-3: #{$gitbook-primary};
+  --cherry-c-brand-soft: #{$gitbook-primary-soft};
+  --cherry-c-brand-on-bg: #fff;
+
+  --cherry-c-text-1: #{$gitbook-azure-text};
+  --cherry-c-text-2: #{$gitbook-azure-muted};
+  --cherry-c-text-3: #74818d;
+
+  --cherry-c-bg: #{$gitbook-azure-bg};
+  --cherry-c-bg-elevated: #{$gitbook-azure-boxes};
+
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+
+  --cherry-c-brand-mark: #{$gitbook-mark-light};
+  --cherry-c-code-fg: #ffffff;
+  --cherry-c-border-soft: #{$gitbook-azure-border};
+  --cherry-c-border-faint: #{color-mix(in srgb, #{$gitbook-azure-border} 45%, transparent)};
+
+  --gitbook-heading-color: #{$gitbook-azure-heading};
+  --gitbook-boxes: #{$gitbook-azure-boxes};
+  --gitbook-code-fg: #ffffff;
+
+  @include generate-semantic-suite($gitbook-light-semantics, false);
+  @include component-tokens(false);
+}
+
+@mixin theme-dark {
+  @include typography-tokens;
+
+  --cherry-c-brand-1: #{$gitbook-primary};
+  --cherry-c-brand-2: #{$gitbook-primary-hover};
+  --cherry-c-brand-3: #{$gitbook-primary};
+  --cherry-c-brand-soft: rgba(56, 132, 255, 0.16);
+  --cherry-c-brand-on-bg: #{$gitbook-slate-text};
+
+  --cherry-c-text-1: #{$gitbook-slate-text};
+  --cherry-c-text-2: #{$gitbook-slate-muted};
+  --cherry-c-text-3: #8092af;
+
+  --cherry-c-bg: #{$gitbook-slate-bg};
+  --cherry-c-bg-elevated: #{$gitbook-slate-boxes};
+
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+
+  --cherry-c-brand-mark: #{$gitbook-mark-dark};
+  --cherry-c-border-faint: #{color-mix(in srgb, #{$gitbook-slate-border} 45%, transparent)};
+
+  --gitbook-heading-color: #{$gitbook-slate-heading};
+  --gitbook-boxes: #{$gitbook-slate-boxes};
+  --gitbook-code-fg: #ffffff;
+
+  @include generate-semantic-suite($gitbook-dark-semantics, true);
+  @include component-tokens(true);
+}

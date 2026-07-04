@@ -11,7 +11,7 @@ export class EventBus {
       this.listeners.set(event, set);
     }
     set.add(handler as EventHandler);
-    return () => this.off(event, handler as EventHandler);
+    return () => this.off(event, handler);
   }
 
   once<T = unknown>(event: string, handler: EventHandler<T>): () => void {
@@ -23,15 +23,15 @@ export class EventBus {
     return unsubscribe;
   }
 
-  off(event: string, handler: EventHandler): void {
-    this.listeners.get(event)?.delete(handler);
+  off<T = unknown>(event: string, handler: EventHandler<T>): void {
+    this.listeners.get(event)?.delete(handler as EventHandler);
   }
 
   emit<T = unknown>(event: string, payload?: T): void {
     const set = this.listeners.get(event);
     if (!set) return;
     for (const handler of [...set]) {
-      handler(payload);
+      (handler as EventHandler<T>)(payload as T);
     }
   }
 

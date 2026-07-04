@@ -1,0 +1,275 @@
+@use "sass:list";
+@use "../../style/semantic-picks" as picks;
+
+// typora-notion-theme（adrian-fuertes）— enhanced 浅色 / dark 深色
+$notion-accent: #2eaadc;
+$notion-accent-soft: rgba(46, 170, 220, 0.12);
+
+$notion-light-bg: #ffffff;
+$notion-light-surface: #f7f6f3;
+$notion-light-text: #37352f;
+$notion-light-heading: #38352f;
+$notion-light-muted: #73726e;
+$notion-light-border: #e9e9e7;
+$notion-light-quote-bg: #f7f7f7;
+$notion-light-code-bg: #f7f6f3;
+$notion-light-table-a: #f7f7f7;
+$notion-light-table-b: #fdfdfd;
+$notion-light-mark-bg: #feecc8;
+$notion-light-mark-fg: #4f3b2a;
+$notion-light-inline-code: #9a6e3a;
+
+$notion-dark-bg: #2f3437;
+$notion-dark-surface: #3f4447;
+$notion-dark-text: #ebebeb;
+$notion-dark-muted: #73726e;
+$notion-dark-border: #393c3f;
+$notion-dark-quote-bg: #3c4144;
+$notion-dark-code-bg: #3f4447;
+$notion-dark-code-fg: #ecebeb;
+$notion-dark-mark-bg: #4f4029;
+$notion-dark-mark-fg: #ffffff;
+$notion-dark-inline-code: #9a6e3a;
+
+$notion-green: #448361;
+$notion-red: #d44c47;
+
+$notion-light-semantics: (
+  note: (#2eaadc, #d6eef8),
+  tip: (#448361, #edf3ec),
+  warning: (#d44c47, #fdebec),
+  caution: (#9a6e3a, #f5ebe0),
+  danger: (#d44c47, #fdebec),
+  important: (#37352f, #e9e9e7),
+);
+
+$notion-dark-semantics: (
+  note: (#2eaadc, #1a3a4a),
+  tip: (#448361, #2e443a),
+  warning: (#d1949e, #5e3436),
+  caution: (#998066, #4a4030),
+  danger: (#d1949e, #5e3436),
+  important: (#ebebeb, #393c3f),
+);
+
+$notion-dark-mark-mix: 40%;
+
+@function notion-surface($is-dark) {
+  @if $is-dark {
+    @return $notion-dark-bg;
+  }
+
+  @return $notion-light-bg;
+}
+
+@function notion-code-bg($is-dark) {
+  @if $is-dark {
+    @return $notion-dark-code-bg;
+  }
+
+  @return $notion-light-code-bg;
+}
+
+@function notion-code-fg($is-dark) {
+  @if $is-dark {
+    @return $notion-dark-code-fg;
+  }
+
+  @return $notion-light-text;
+}
+
+@function notion-inline-fg($is-dark) {
+  @if $is-dark {
+    @return $notion-dark-inline-code;
+  }
+
+  @return $notion-light-inline-code;
+}
+
+@function notion-border-soft($is-dark) {
+  @if $is-dark {
+    @return $notion-dark-border;
+  }
+
+  @return $notion-light-border;
+}
+
+@function notion-border-faint($is-dark) {
+  @if $is-dark {
+    @return color-mix(in srgb, #{$notion-dark-border} 55%, transparent);
+  }
+
+  @return color-mix(in srgb, #{$notion-light-border} 55%, transparent);
+}
+
+@function notion-quote-bg($is-dark) {
+  @if $is-dark {
+    @return $notion-dark-quote-bg;
+  }
+
+  @return $notion-light-quote-bg;
+}
+
+@function notion-hr-color($is-dark) {
+  @if $is-dark {
+    @return $notion-dark-text;
+  }
+
+  @return $notion-light-heading;
+}
+
+@mixin typography-tokens {
+  --notion-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji",
+    Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  --notion-font-mono: "SF Mono Medium", "Fira Code", Cousine, Consolas, ui-monospace,
+    SFMono-Regular, Menlo, monospace;
+  --notion-text-size: 1rem;
+  --notion-text-leading: 1.6;
+  --notion-heading-leading: 1.4;
+  --notion-radius: #{4px};
+}
+
+@mixin generate-semantic-suite($palette, $is-dark: false) {
+  @each $name, $pair in $palette {
+    $base-color: list.nth($pair, 1);
+    $mark-color: list.nth($pair, 2);
+    $surface: notion-surface($is-dark);
+    $contrast-color: picks.pick-contrast($is-dark);
+    $bg-opacity: picks.pick-bg-opacity($is-dark);
+    $border-opacity: picks.pick-border-opacity($is-dark);
+
+    --cherry-c-#{$name}: #{$base-color};
+    @if $is-dark {
+      --cherry-c-#{$name}-mark: color-mix(in srgb, #{$mark-color} #{$notion-dark-mark-mix}, #{$surface});
+    } @else {
+      --cherry-c-#{$name}-mark: #{$mark-color};
+    }
+
+    --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 16%, #{$contrast-color});
+
+    --cherry-c-alert-#{$name}-text: #{$base-color};
+    --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
+    --cherry-c-alert-#{$name}-border: color-mix(in srgb, #{$base-color} #{$border-opacity}, transparent);
+  }
+}
+
+@mixin component-tokens($is-dark: false) {
+  $code-bg: notion-code-bg($is-dark);
+  $code-fg: notion-code-fg($is-dark);
+  $inline-fg: notion-inline-fg($is-dark);
+  $border-soft: notion-border-soft($is-dark);
+  $border-faint: notion-border-faint($is-dark);
+  $quote-bg: notion-quote-bg($is-dark);
+  $hr-color: notion-hr-color($is-dark);
+
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+
+  --cherry-c-code-inline-bg: #{$code-bg};
+  --cherry-c-code-inline-fg: #{$inline-fg};
+  --cherry-c-code-inline-border: transparent;
+
+  --cherry-c-code-block-header-bg: #{$code-bg};
+  --cherry-c-code-block-code-bg: #{$code-bg};
+  --cherry-c-code-block-shadow: none;
+
+  --cherry-c-table-th-border: #{$border-soft};
+  --cherry-c-table-td-border: #{$border-faint};
+  --cherry-c-hr-color: #{$hr-color};
+  --cherry-c-blockquote-border: var(--cherry-c-text-1);
+
+  --notion-quote-bg: #{$quote-bg};
+  --notion-code-fg: #{$code-fg};
+}
+
+@mixin theme-light {
+  @include typography-tokens;
+
+  --cherry-c-brand-1: #{$notion-accent};
+  --cherry-c-brand-2: #{color-mix(in srgb, #{$notion-accent} 85%, #000)};
+  --cherry-c-brand-3: #{$notion-light-inline-code};
+  --cherry-c-brand-soft: #{$notion-accent-soft};
+  --cherry-c-brand-on-bg: #fff;
+
+  --cherry-c-text-1: #{$notion-light-text};
+  --cherry-c-text-2: #{$notion-light-muted};
+  --cherry-c-text-3: #888884;
+
+  --cherry-c-bg: #{$notion-light-bg};
+  --cherry-c-bg-elevated: #{$notion-light-surface};
+
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+
+  --cherry-c-brand-mark: #{$notion-light-mark-bg};
+  --cherry-c-code-fg: #{$notion-light-text};
+  --cherry-c-border-soft: #{$notion-light-border};
+  --cherry-c-border-faint: #{color-mix(in srgb, #{$notion-light-border} 45%, transparent)};
+
+  --notion-heading-color: #{$notion-light-heading};
+  --notion-link-fg: #000000;
+  --notion-link-underline: #{$notion-light-text};
+  --notion-mark-fg: #{$notion-light-mark-fg};
+  --notion-mark-bg: #{$notion-light-mark-bg};
+  --notion-table-a: #{$notion-light-table-a};
+  --notion-table-b: #{$notion-light-table-b};
+  --notion-footnote-bg: #888884;
+  --notion-footnote-fg: #{$notion-light-surface};
+
+  @include generate-semantic-suite($notion-light-semantics, false);
+  @include component-tokens(false);
+}
+
+@mixin theme-dark {
+  @include typography-tokens;
+
+  --cherry-c-brand-1: #{$notion-accent};
+  --cherry-c-brand-2: #{color-mix(in srgb, #{$notion-accent} 85%, #fff)};
+  --cherry-c-brand-3: #{$notion-dark-inline-code};
+  --cherry-c-brand-soft: rgba(46, 170, 220, 0.16);
+  --cherry-c-brand-on-bg: #{$notion-dark-text};
+
+  --cherry-c-text-1: #{$notion-dark-text};
+  --cherry-c-text-2: #{$notion-dark-muted};
+  --cherry-c-text-3: #acaeaf;
+
+  --cherry-c-bg: #{$notion-dark-bg};
+  --cherry-c-bg-elevated: #{$notion-dark-surface};
+
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+
+  --cherry-c-brand-mark: #{$notion-dark-mark-bg};
+  --cherry-c-code-fg: #{$notion-dark-code-fg};
+  --cherry-c-border-soft: #{$notion-dark-border};
+  --cherry-c-border-faint: #{color-mix(in srgb, #{$notion-dark-border} 45%, transparent)};
+
+  --notion-heading-color: #{$notion-dark-text};
+  --notion-link-fg: #{$notion-dark-text};
+  --notion-link-underline: #{$notion-dark-text};
+  --notion-mark-fg: #{$notion-dark-mark-fg};
+  --notion-mark-bg: #{$notion-dark-mark-bg};
+  --notion-table-a: #{$notion-dark-bg};
+  --notion-table-b: #{$notion-dark-bg};
+  --notion-footnote-bg: #{$notion-dark-border};
+  --notion-footnote-fg: #b1b3b4;
+
+  @include generate-semantic-suite($notion-dark-semantics, true);
+  @include component-tokens(true);
+}

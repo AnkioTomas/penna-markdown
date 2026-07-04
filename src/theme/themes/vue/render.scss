@@ -1,0 +1,83 @@
+/** Vue 主题（typora-vue-theme / blinkfox） */
+@use "tokens";
+@use "overrides";
+
+@use "../../../transformer/gfm/style/base";
+@use "../../../transformer/gfm/style/heading";
+@use "../../../transformer/gfm/style/paragraph";
+@use "../../../transformer/gfm/style/link";
+@use "../../../transformer/gfm/style/emphasis";
+@use "../../../transformer/gfm/style/blockquote";
+@use "../../../transformer/gfm/style/hr";
+@use "../../../transformer/gfm/style/list";
+@use "../../../transformer/gfm/style/image";
+@use "../../../transformer/gfm/style/code";
+@use "../../../transformer/gfm/style/table";
+
+@use "../../../transformer/extends/style/highlight";
+@use "../../../transformer/extends/style/spoiler";
+@use "../../../transformer/extends/style/alert";
+@use "../../../transformer/extends/style/tasklist";
+@use "../../../transformer/extends/style/badge";
+@use "../../../transformer/extends/style/card";
+@use "../../../transformer/extends/style/link-card";
+@use "../../../transformer/extends/style/image-card";
+@use "../../../transformer/extends/style/repo-card";
+@use "../../../transformer/extends/style/card-grid";
+@use "../../../transformer/extends/style/card-masonry";
+@use "../../../transformer/extends/style/steps";
+@use "../../../transformer/extends/style/tabs";
+@use "../../../transformer/extends/style/field";
+@use "../../../transformer/extends/style/timeline";
+@use "../../../transformer/extends/style/collapse";
+@use "../../../transformer/extends/style/media";
+@use "../../../transformer/extends/style/math";
+@use "../../../transformer/extends/style/footnote";
+@use "../../../transformer/extends/style/code-block";
+
+.cherry-theme-vue {
+  .cherry-render {
+    @include tokens.theme-light;
+
+    @include base.styles;
+    @include heading.styles;
+    @include paragraph.styles;
+    @include link.styles;
+    @include emphasis.styles;
+    @include blockquote.styles;
+    @include hr.styles;
+    @include list.styles;
+    @include image.styles;
+    @include code.styles;
+    @include table.styles;
+
+    @include highlight.styles;
+    @include spoiler.styles;
+    @include alert.styles;
+    @include tasklist.styles;
+    @include badge.styles;
+    @include card.styles;
+    @include link-card.styles;
+    @include image-card.styles;
+    @include repo-card.styles;
+    @include card-grid.styles;
+    @include card-masonry.styles;
+    @include steps.styles;
+    @include tabs.styles;
+    @include field.styles;
+    @include timeline.styles;
+    @include collapse.styles;
+    @include media.styles;
+    @include math.styles;
+    @include footnote.styles;
+    @include code-block.styles;
+
+    @include overrides.styles;
+  }
+}
+
+.cherry-dark.cherry-theme-vue {
+  .cherry-render {
+    @include tokens.theme-dark;
+  }
+}

@@ -1,0 +1,381 @@
+@use "../../../transformer/style/rem" as *;
+@use "tokens" as *;
+
+// MorandiGarden 排版（源自 Kitsunee-CN/MorandiGarden，不修改代码块行 metrics）
+@mixin styles {
+  box-sizing: border-box;
+  padding: rem(32) rem(16);
+  background-color: var(--cherry-c-bg);
+  color: var(--cherry-c-text-1);
+  font-family: var(--morandi-font-sans);
+  font-size: var(--morandi-text-size);
+  line-height: var(--morandi-text-leading);
+  word-wrap: break-word;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: rem(29) 0 rem(16);
+    padding: 0;
+    border: 0;
+    font-family: var(--morandi-font-sans);
+    font-weight: 700;
+    letter-spacing: rem(2);
+    line-height: var(--morandi-heading-leading);
+  }
+
+  h1 {
+    font-size: rem(35);
+    color: var(--morandi-h1-color);
+    padding-bottom: rem(10);
+    border-bottom: rem(2) solid #{$morandi-h1-rule};
+  }
+
+  h2 {
+    font-size: rem(29);
+    color: var(--morandi-h2-color);
+    font-weight: 800;
+    padding-left: rem(13);
+    border-left: rem(4) solid var(--morandi-h2-color);
+  }
+
+  h3 {
+    font-size: rem(24);
+    color: var(--morandi-h3-color);
+    padding-left: rem(6);
+  }
+
+  h4 {
+    font-size: rem(21);
+    color: var(--morandi-h4-color);
+  }
+
+  h5 {
+    font-size: rem(18);
+    color: var(--morandi-h5-color);
+    font-style: italic;
+  }
+
+  h6 {
+    font-size: rem(16);
+    color: var(--morandi-h6-color);
+    font-weight: 400;
+  }
+
+  :first-child {
+    margin-top: 0;
+  }
+
+  p {
+    margin: 0 0 rem(16);
+  }
+
+  a {
+    color: var(--cherry-c-brand-1);
+    text-decoration: none;
+    border-bottom: rem(1) solid color-mix(in srgb, var(--cherry-c-brand-1) 30%, transparent);
+
+    &:hover {
+      color: var(--cherry-c-brand-2);
+      border-bottom-color: var(--cherry-c-brand-2);
+    }
+  }
+
+  blockquote {
+    margin: rem(24) 0;
+    padding: rem(16) rem(19);
+    border-left: rem(4) solid var(--cherry-c-blockquote-border);
+    border-radius: 0 rem(10) rem(10) 0;
+    background: #{$morandi-blockquote-bg};
+    color: var(--cherry-c-text-1);
+    font-style: italic;
+
+    blockquote {
+      margin: rem(13) 0;
+      border-left-color: var(--morandi-h3-color);
+      background: color-mix(in srgb, #{$morandi-blockquote-bg} 60%, transparent);
+    }
+
+    blockquote blockquote {
+      border-left-color: var(--morandi-h4-color);
+      background: color-mix(in srgb, #{$morandi-blockquote-bg} 40%, transparent);
+    }
+  }
+
+  hr {
+    height: rem(2);
+    margin: rem(40) 0;
+    padding: 0;
+    border: 0;
+    background-color: var(--cherry-c-hr-color);
+  }
+
+  ul,
+  ol {
+    margin: rem(16) 0 rem(16) rem(26);
+    padding-left: 0;
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  ul ul {
+    list-style-type: circle;
+    margin-left: rem(19);
+  }
+
+  ul ul ul {
+    list-style-type: square;
+    margin-left: rem(19);
+  }
+
+  ol ol {
+    margin-left: rem(19);
+  }
+
+  ul:not(.task-list) > li,
+  ol:not(.task-list) > li {
+    position: relative;
+    margin: rem(8) 0;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: rem(35);
+      left: rem(-16);
+      height: calc(100% - #{rem(40)});
+      border-left: rem(1.5) solid var(--morandi-h3-color);
+    }
+  }
+
+  ul:not(.task-list) ul > li::before,
+  ol:not(.task-list) ol > li::before {
+    border-left-width: rem(1);
+    border-left-color: var(--morandi-h2-color);
+  }
+
+  ul:not(.task-list) ul ul > li::before,
+  ol:not(.task-list) ol ol > li::before {
+    border-left-width: rem(0.5);
+    border-left-color: var(--morandi-h1-color);
+  }
+
+  :not(pre) > code {
+    padding: rem(3) rem(3) rem(1);
+    font-family: var(--morandi-font-mono);
+    letter-spacing: rem(0.5);
+    color: var(--cherry-c-code-inline-fg);
+    background: var(--cherry-c-code-inline-bg);
+    border: 0;
+    border-radius: rem(5);
+  }
+
+  pre:not(.cherry-code-block__pre) {
+    margin: 0 0 rem(16);
+    padding: rem(19) rem(13);
+    font-family: var(--morandi-font-mono);
+    color: var(--cherry-c-text-1);
+    background: var(--cherry-c-bg-elevated);
+    border: 0;
+    border-radius: rem(10);
+    box-shadow: none;
+  }
+
+  table {
+    --cherry-table-border: var(--cherry-c-table-td-border);
+    --cherry-table-head-bg: #{$morandi-table-head-bg};
+    --cherry-table-row-bg: var(--cherry-c-bg);
+    --cherry-table-stripe-bg: transparent;
+    margin: rem(32) 0;
+    border-collapse: collapse;
+
+    th,
+    td {
+      padding: rem(13) rem(16);
+      border: rem(1) solid var(--cherry-c-table-td-border);
+    }
+
+    th {
+      font-weight: 700;
+      color: var(--morandi-h2-color);
+      background: var(--cherry-table-head-bg);
+    }
+
+    tbody tr:hover {
+      background: color-mix(in srgb, #{$morandi-blockquote-bg} 50%, transparent);
+    }
+  }
+
+  img {
+    border-radius: rem(6);
+  }
+
+  .cherry-alert {
+    margin: rem(16) 0;
+    padding: rem(14) rem(16);
+    border: rem(1) solid var(--alert-border);
+    border-left-width: rem(4);
+    border-radius: 0 rem(10) rem(10) 0;
+    box-shadow: none;
+    background: var(--alert-bg);
+    font-size: rem(14);
+  }
+
+  .cherry-code-block {
+    --cb-radius: #{rem(10)};
+    --cb-border: transparent;
+    --cb-shadow: none;
+    --cb-header-bg: var(--cherry-c-bg-elevated);
+    --cb-code-bg: var(--cherry-c-bg-elevated);
+    --cb-lang-fg: var(--cherry-c-text-3);
+    --cb-lang-bg: transparent;
+    --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 10%, transparent);
+    margin: rem(16) 0;
+
+    &__panel {
+      border: 0;
+      box-shadow: none;
+    }
+
+    &__header {
+      min-height: rem(30);
+      padding: rem(4) rem(12);
+      border-bottom: 0;
+    }
+
+    &__lang {
+      padding: 0;
+      font-family: var(--morandi-font-sans);
+      font-size: rem(13);
+      font-weight: 400;
+      letter-spacing: 0;
+      text-transform: none;
+      text-align: center;
+      background: transparent;
+      border-radius: 0;
+    }
+
+    .hljs {
+      background: transparent;
+      color: var(--cherry-c-text-1);
+    }
+
+    .hljs-comment,
+    .hljs-quote {
+      color: #93a1a1;
+      font-style: italic;
+    }
+
+    .hljs-keyword,
+    .hljs-selector-tag {
+      color: #d33682;
+      font-weight: 700;
+    }
+
+    .hljs-string,
+    .hljs-regexp {
+      color: #dc322f;
+    }
+
+    .hljs-number,
+    .hljs-literal {
+      color: #6c71c4;
+    }
+
+    .hljs-title,
+    .hljs-title.class_,
+    .hljs-type,
+    .hljs-built_in {
+      color: #2aa198;
+    }
+
+    .hljs-variable,
+    .hljs-template-variable,
+    .hljs-attribute {
+      color: #586e75;
+    }
+
+    .hljs-meta {
+      color: #cb4b16;
+      font-style: italic;
+    }
+
+    .hljs-name,
+    .hljs-section {
+      color: #859900;
+    }
+  }
+
+  pre:not(.cherry-code-block__pre) .hljs {
+    background: transparent;
+  }
+
+  .task-list .task-item {
+    &.todo .marker {
+      --marker-color: #8f9fa8;
+    }
+
+    &.done .marker {
+      --marker-color: #708976;
+    }
+  }
+
+  .cherry-card,
+  .cherry-link-card,
+  .cherry-repo-card,
+  .cherry-tabs,
+  .cherry-collapse {
+    border: rem(1) solid var(--cherry-c-border-faint);
+    border-radius: rem(10);
+    background: var(--cherry-c-bg);
+    box-shadow: none;
+  }
+
+  .cherry-link-card:hover {
+    border-color: var(--cherry-c-brand-1);
+    box-shadow: none;
+  }
+
+  sup.cherry-footnote-ref a {
+    color: var(--cherry-c-brand-3);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  @at-root .cherry-dark.cherry-theme-morandi .cherry-render {
+    h1 {
+      border-bottom-color: #{$morandi-dark-h1-rule};
+    }
+
+    blockquote {
+      background: #{$morandi-dark-blockquote-bg};
+
+      blockquote {
+        background: color-mix(in srgb, #{$morandi-dark-blockquote-bg} 72%, transparent);
+      }
+
+      blockquote blockquote {
+        background: color-mix(in srgb, #{$morandi-dark-blockquote-bg} 52%, transparent);
+      }
+    }
+
+    table {
+      --cherry-table-head-bg: #{$morandi-dark-table-head-bg};
+
+      tbody tr:hover {
+        background: color-mix(in srgb, #{$morandi-dark-blockquote-bg} 65%, transparent);
+      }
+    }
+  }
+}

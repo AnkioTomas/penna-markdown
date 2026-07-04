@@ -1,0 +1,12 @@
+/** Vue 主题编辑器样式 */
+@use "render";
+@use "tokens";
+@use "../../../editor/cherry" as *;
+
+.cherry-theme-vue.cherry {
+  @include tokens.theme-light;
+}
+
+.cherry-dark.cherry-theme-vue.cherry {
+  @include tokens.theme-dark;
+}

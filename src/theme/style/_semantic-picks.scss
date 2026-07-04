@@ -1,0 +1,24 @@
+/** 语义 token 通用取值（避免 if(sass(...)) 与 @if 块变量作用域问题） */
+@function pick-contrast($is-dark) {
+  @if $is-dark {
+    @return #000;
+  }
+
+  @return #fff;
+}
+
+@function pick-bg-opacity($is-dark, $dark: 12%, $light: 10%) {
+  @if $is-dark {
+    @return $dark;
+  }
+
+  @return $light;
+}
+
+@function pick-border-opacity($is-dark, $dark: 26%, $light: 22%) {
+  @if $is-dark {
+    @return $dark;
+  }
+
+  @return $light;
+}

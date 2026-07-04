@@ -1,0 +1,229 @@
+@use "sass:list";
+@use "../../style/semantic-picks" as picks;
+
+// typora-latex-theme（Keldos-Li）色板
+$latex-link-light: #2e67d3;
+$latex-link-dark: #8bb1f9;
+
+$latex-bg: #ffffff;
+$latex-text: #000000;
+$latex-code-inline-fg: #3c70c6;
+$latex-code-inline-bg: #fefefe;
+$latex-code-inline-shadow: #c8d3df;
+$latex-blockquote-border: hsl(0, 0%, 70%);
+$latex-hr: #dddddd;
+
+$latex-dark-bg: #1e1e1e;
+$latex-dark-text: #dcdcdc;
+$latex-dark-title: #dddddd;
+$latex-dark-code-inline-fg: #8bb1f9;
+$latex-dark-code-inline-bg: #161616;
+$latex-dark-code-inline-shadow: #141414;
+$latex-dark-hr: #888888;
+$latex-dark-code-block-bg: #1f1e1e;
+
+$latex-light-semantics: (
+  note: (#2e67d3, #d6e4ff),
+  tip: (#3a6b4a, #d9e8dc),
+  warning: (#8a6b3a, #f0e6d0),
+  caution: (#a84832, #f5ddd6),
+  danger: (#a84832, #f5ddd6),
+  important: (#5a4a72, #e8e0ef),
+);
+
+$latex-dark-semantics: (
+  note: (#8bb1f9, #2a3f66),
+  tip: (#8fa896, #2a3a30),
+  warning: (#d4a15e, #4a3820),
+  caution: (#e89888, #4a2820),
+  danger: (#e89888, #4a2820),
+  important: (#b69acd, #3a3048),
+);
+
+$latex-dark-mark-mix: 42%;
+
+@function latex-surface($is-dark) {
+  @if $is-dark {
+    @return $latex-dark-bg;
+  }
+
+  @return $latex-bg;
+}
+
+@function latex-code-inline-bg($is-dark) {
+  @if $is-dark {
+    @return $latex-dark-code-inline-bg;
+  }
+
+  @return $latex-code-inline-bg;
+}
+
+@function latex-code-inline-fg($is-dark) {
+  @if $is-dark {
+    @return $latex-dark-code-inline-fg;
+  }
+
+  @return $latex-code-inline-fg;
+}
+
+@function latex-code-block-bg($is-dark) {
+  @if $is-dark {
+    @return $latex-dark-code-block-bg;
+  }
+
+  @return $latex-code-inline-bg;
+}
+
+@function latex-border-faint($is-dark) {
+  @if $is-dark {
+    @return color-mix(in srgb, #{$latex-dark-hr} 45%, transparent);
+  }
+
+  @return color-mix(in srgb, #{$latex-hr} 80%, transparent);
+}
+
+@function latex-hr-color($is-dark) {
+  @if $is-dark {
+    @return $latex-dark-hr;
+  }
+
+  @return $latex-hr;
+}
+
+@mixin typography-tokens {
+  --latex-font-serif: "Latin Modern Roman", "Latin Modern Roman 10", "Times New Roman", "Noto Serif CJK SC",
+    "Songti SC", "STSong", "SimSun", serif;
+  --latex-font-heiti: "STHeiti", "SimHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  --latex-font-kai: "STKaiti", "KaiTi", "FZDocKai", "Noto Serif CJK SC", serif;
+  --latex-font-fangsong: "STFangsong", "FangSong", "Noto Serif CJK SC", serif;
+  --latex-font-mono: "Latin Modern Mono", "Latin Modern Mono 10", Consolas, "Courier New", monospace;
+  --latex-font-ui: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+
+  --latex-text-size: 9.5pt;
+  --latex-text-leading: 1.618em;
+  --latex-strong-weight: 900;
+  --latex-quote-size: 1.05em;
+}
+
+@mixin generate-semantic-suite($palette, $is-dark: false) {
+  @each $name, $pair in $palette {
+    $base-color: list.nth($pair, 1);
+    $mark-color: list.nth($pair, 2);
+    $surface: latex-surface($is-dark);
+    $contrast-color: picks.pick-contrast($is-dark);
+    $bg-opacity: picks.pick-bg-opacity($is-dark);
+    $border-opacity: picks.pick-border-opacity($is-dark);
+
+    --cherry-c-#{$name}: #{$base-color};
+    @if $is-dark {
+      --cherry-c-#{$name}-mark: color-mix(in srgb, #{$mark-color} #{$latex-dark-mark-mix}, #{$surface});
+    } @else {
+      --cherry-c-#{$name}-mark: #{$mark-color};
+    }
+
+    --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 16%, #{$contrast-color});
+
+    --cherry-c-alert-#{$name}-text: #{$base-color};
+    --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
+    --cherry-c-alert-#{$name}-border: color-mix(in srgb, #{$base-color} #{$border-opacity}, transparent);
+  }
+}
+
+@mixin component-tokens($is-dark: false) {
+  $code-inline-bg: latex-code-inline-bg($is-dark);
+  $code-inline-fg: latex-code-inline-fg($is-dark);
+  $code-block-bg: latex-code-block-bg($is-dark);
+  $border-faint: latex-border-faint($is-dark);
+
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #fff;
+
+  --cherry-c-code-inline-bg: #{$code-inline-bg};
+  --cherry-c-code-inline-fg: #{$code-inline-fg};
+  --cherry-c-code-inline-border: transparent;
+
+  --cherry-c-code-block-header-bg: #{$code-block-bg};
+  --cherry-c-code-block-code-bg: #{$code-block-bg};
+  --cherry-c-code-block-shadow: none;
+
+  --cherry-c-table-th-border: var(--cherry-c-text-1);
+  --cherry-c-table-td-border: transparent;
+  --cherry-c-hr-color: #{latex-hr-color($is-dark)};
+  --cherry-c-blockquote-border: #{$latex-blockquote-border};
+}
+
+@mixin theme-light {
+  @include typography-tokens;
+
+  --cherry-c-brand-1: #{$latex-link-light};
+  --cherry-c-brand-2: #{color-mix(in srgb, #{$latex-link-light} 82%, #000)};
+  --cherry-c-brand-3: #{$latex-link-light};
+  --cherry-c-brand-soft: rgba(46, 103, 211, 0.1);
+  --cherry-c-brand-on-bg: #fff;
+
+  --cherry-c-text-1: #{$latex-text};
+  --cherry-c-text-2: #{color-mix(in srgb, #{$latex-text} 72%, #666)};
+  --cherry-c-text-3: #666666;
+
+  --cherry-c-bg: #{$latex-bg};
+  --cherry-c-bg-elevated: #{$latex-code-inline-bg};
+
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+
+  --cherry-c-brand-mark: #fff3bf;
+  --cherry-c-code-fg: #{$latex-code-inline-fg};
+  --cherry-c-border-soft: #{$latex-blockquote-border};
+  --cherry-c-border-faint: #{color-mix(in srgb, #{$latex-hr} 90%, transparent)};
+
+  --latex-code-inline-shadow: #{$latex-code-inline-shadow};
+
+  @include generate-semantic-suite($latex-light-semantics, false);
+  @include component-tokens(false);
+}
+
+@mixin theme-dark {
+  @include typography-tokens;
+
+  --cherry-c-brand-1: #{$latex-link-dark};
+  --cherry-c-brand-2: #{color-mix(in srgb, #{$latex-link-dark} 88%, #fff)};
+  --cherry-c-brand-3: #{$latex-link-dark};
+  --cherry-c-brand-soft: rgba(139, 177, 249, 0.14);
+  --cherry-c-brand-on-bg: #{$latex-dark-text};
+
+  --cherry-c-text-1: #{$latex-dark-text};
+  --cherry-c-text-2: #{color-mix(in srgb, #{$latex-dark-text} 78%, #888)};
+  --cherry-c-text-3: #989898;
+
+  --cherry-c-bg: #{$latex-dark-bg};
+  --cherry-c-bg-elevated: #{$latex-dark-code-block-bg};
+
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #000;
+
+  --cherry-c-brand-mark: #3d3400;
+  --cherry-c-code-fg: #{$latex-dark-code-inline-fg};
+  --cherry-c-border-soft: #{$latex-dark-hr};
+  --cherry-c-border-faint: #{color-mix(in srgb, #{$latex-dark-hr} 55%, transparent)};
+
+  --latex-code-inline-shadow: #{$latex-dark-code-inline-shadow};
+
+  @include generate-semantic-suite($latex-dark-semantics, true);
+  @include component-tokens(true);
+}
