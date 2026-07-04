@@ -263,7 +263,7 @@ class TaskListBlockParser extends BaseBlockParser {
       .map((item) => renderTaskItem(item, ctx, isLoose))
       .join("\n");
 
-    return `<${tag} class="task-list"${startAttr}>\n${itemsHtml}\n</${tag}>`;
+    return `<${tag} class="task-list"${startAttr}${this.sourceLineAttrs(node)}>\n${itemsHtml}\n</${tag}>`;
   }
 }
 

@@ -107,7 +107,7 @@ class ImageCardBlockParser extends BaseBlockParser {
     ].filter(Boolean);
 
     return [
-      `<div class="cherry-image-card">`,
+      `<div class="cherry-image-card"${this.sourceLineAttrs(node)}>`,
       `<div class="cherry-image-card__media">`,
       img,
       infoParts.length ? `<div class="cherry-image-card__info">${infoParts.join("\n")}</div>` : "",

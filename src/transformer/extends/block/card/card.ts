@@ -46,7 +46,7 @@ class CardBlockParser extends BaseBlockParser {
     const titleNodes = (node.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
     const body = ctx.renderBlock(node.children ?? []);
 
-    const parts = [`<div class="cherry-card">`];
+    const parts = [`<div class="cherry-card"${this.sourceLineAttrs(node)}>`];
     if (title) {
       parts.push(`<p class="cherry-card__title">${ctx.renderInline(titleNodes)}</p>`);
     }

@@ -83,7 +83,7 @@ class FieldBlockParser extends BaseBlockParser {
     const descriptionHtml = ctx.renderBlock(node.children ?? []);
 
     return [
-      `<div class="cherry-field cherry-field--${status}">`,
+      `<div class="cherry-field cherry-field--${status}"${this.sourceLineAttrs(node)}>`,
       `<div class="cherry-field__head">`,
       `<div class="cherry-field__meta">`,
       `<span class="cherry-field__name">${name}</span>`,

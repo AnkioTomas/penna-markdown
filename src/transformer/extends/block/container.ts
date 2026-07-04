@@ -148,7 +148,7 @@ class ContainerBlockParser extends BaseBlockParser {
 
     if (ALIGN_TYPES.has(containerType)) {
       const parts = [
-        `<div class="cherry-align cherry-align--${escapeHtml(containerType)}">`,
+        `<div class="cherry-align cherry-align--${escapeHtml(containerType)}"${this.sourceLineAttrs(node)}>`,
       ];
       if (title) {
         parts.push(
@@ -161,7 +161,7 @@ class ContainerBlockParser extends BaseBlockParser {
     }
 
     const themeType = THEME_TYPES.has(containerType) ? containerType : "note";
-    const parts = [`<div class="cherry-alert cherry-alert--${escapeHtml(themeType)}">`];
+    const parts = [`<div class="cherry-alert cherry-alert--${escapeHtml(themeType)}"${this.sourceLineAttrs(node)}>`];
     if (title) {
       parts.push(
         `<p class="cherry-alert__title">${ctx.renderInline(titleNodes)}</p>`,

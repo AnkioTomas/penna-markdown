@@ -45,7 +45,7 @@ class FieldGroupBlockParser extends BaseBlockParser {
       .map((child) => ctx.renderBlock([child]))
       .join("");
 
-    return `<div class="cherry-field-group">${items}</div>`;
+    return `<div class="cherry-field-group"${this.sourceLineAttrs(node)}>${items}</div>`;
   }
 }
 

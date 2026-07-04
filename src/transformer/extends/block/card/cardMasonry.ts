@@ -97,7 +97,7 @@ class CardMasonryBlockParser extends BaseBlockParser {
       })
       .join("\n");
 
-    return `<div class="cherry-card-masonry cherry-card-masonry--cols-${cols}" style="gap: ${gap}px; --card-masonry-cols: ${cols};">\n${columnHtml}\n</div>`;
+    return `<div class="cherry-card-masonry cherry-card-masonry--cols-${cols}" style="gap: ${gap}px; --card-masonry-cols: ${cols};"${this.sourceLineAttrs(node)}>\n${columnHtml}\n</div>`;
   }
 }
 

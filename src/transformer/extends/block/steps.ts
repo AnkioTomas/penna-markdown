@@ -146,7 +146,7 @@ class StepsBlockParser extends BaseBlockParser {
       return `<li>${titleHtml}${bodyHtml}</li>`;
     });
 
-    return `<div class="cherry-steps"><ol>${items.join("")}</ol></div>`;
+    return `<div class="cherry-steps"${this.sourceLineAttrs(node)}><ol>${items.join("")}</ol></div>`;
   }
 }
 

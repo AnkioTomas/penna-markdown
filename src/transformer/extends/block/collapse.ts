@@ -213,7 +213,7 @@ class CollapseBlockParser extends BaseBlockParser {
       ].join("\n");
     });
 
-    return `<div class="${containerClasses}">\n${parts.join("\n")}\n</div>\n`;
+    return `<div class="${containerClasses}"${this.sourceLineAttrs(node)}>\n${parts.join("\n")}\n</div>\n`;
   }
 }
 

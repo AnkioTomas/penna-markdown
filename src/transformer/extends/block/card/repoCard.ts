@@ -102,7 +102,7 @@ class RepoCardBlockParser extends BaseBlockParser {
       ? `<div class="cherry-repo-card__desc">${bodyHtml}</div>`
       : "";
 
-    const parts = [`<div class="cherry-repo-card">`];
+    const parts = [`<div class="cherry-repo-card"${this.sourceLineAttrs(node)}>`];
 
     parts.push(`<p class="cherry-repo-card__name">`);
     parts.push(`<span class="cherry-repo-card__icon" aria-hidden="true"></span>`);

@@ -291,7 +291,7 @@ class TimelineBlockParser extends BaseBlockParser {
     });
 
     return [
-      `<div class="${containerClasses}">`,
+      `<div class="${containerClasses}"${this.sourceLineAttrs(node)}>`,
       `<div class="cherry-timeline-box">${rendered.join("")}</div>`,
       `</div>`,
     ].join("");

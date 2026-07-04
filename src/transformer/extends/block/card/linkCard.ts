@@ -63,7 +63,7 @@ class LinkCardBlockParser extends BaseBlockParser {
       .filter(Boolean)
       .join(" ");
 
-    const parts = [`<a class="${cardClasses}"${href}>`];
+    const parts = [`<a class="${cardClasses}"${href}${this.sourceLineAttrs(node)}>`];
 
     if (icon) {
       parts.push(

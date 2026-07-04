@@ -171,7 +171,7 @@ class TabsBlockParser extends BaseBlockParser {
     });
 
     return [
-      `<div class="cherry-tabs">`,
+      `<div class="cherry-tabs"${this.sourceLineAttrs(node)}>`,
       `<div class="cherry-tabs__nav">${labels.join("")}</div>`,
       `<div class="cherry-tabs__panels">${panels.join("")}</div>`,
       "</div>",

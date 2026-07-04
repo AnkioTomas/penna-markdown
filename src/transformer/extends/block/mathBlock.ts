@@ -16,8 +16,8 @@ import { escapeHtml } from "@/transformer/utils/escape.js";
 /** 数学公式渲染 API 基址。 */
 export const MATH_API_HOST = "https://math-api-delta.vercel.app";
 
-/** `syntaxOptions.math_block` 可配置项 */
-export interface MathBlockOptions {
+/** `syntaxOptions.math_block` */
+export interface MathBlockOptions extends Record<string, unknown> {
   apiHost?: string;
 }
 
@@ -114,7 +114,7 @@ class MathBlockParser extends BaseBlockParser {
     const color = ctx.isDark ? "white" : undefined;
     const src = this.buildMathImageSrc(latex, { color });
     if (!src) return "";
-    return `<div class="cherry-math cherry-math-block" data-type="mathBlock"><img ${mathImgAttrs(latex, false)} src="${src}" loading="lazy" /></div>`;
+    return `<div class="cherry-math cherry-math-block" data-type="mathBlock"${this.sourceLineAttrs(node)}><img ${mathImgAttrs(latex, false)} src="${src}" loading="lazy" /></div>`;
   }
 }
 

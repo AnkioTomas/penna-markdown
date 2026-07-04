@@ -122,7 +122,7 @@ class AlertBlockParser extends BaseBlockParser {
     const title = ALERT_TYPES[alertType as keyof typeof ALERT_TYPES] ?? alertType;
     const inner = ctx.renderBlock(node.children ?? []);
     const parts: string[] = [
-      `<div class="cherry-alert cherry-alert--${escapeHtml(alertType)}">`,
+      `<div class="cherry-alert cherry-alert--${escapeHtml(alertType)}"${this.sourceLineAttrs(node)}>`,
       `<p class="cherry-alert__title">${escapeHtml(title)}</p>`,
     ];
     if (inner) parts.push(inner);
