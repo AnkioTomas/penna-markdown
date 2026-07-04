@@ -12,7 +12,6 @@ import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import codeParser from "@/transformer/gfm/block/code.js";
 import specialCodeParser from "@/transformer/extends/block/specialCode.js";
-import { renderCodeInnerHtml } from "@/transformer/utils/codeContent.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { unescapeHref } from "@/transformer/utils/linkDestination.js";
 import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
@@ -187,6 +186,19 @@ export function buildCodeBodyStyle(
     parts.push(`--cherry-collapsed-visible:${collapse.visibleCount}`);
   }
   return parts.length > 0 ? ` style="${parts.join(";")}"` : "";
+}
+
+/** 渲染普通 GFM 代码块内部 HTML：有高亮函数时内联高亮，否则转义纯文本。 */
+export function renderCodeInnerHtml(
+  content: string,
+  lang: string,
+  highlightJs?: (code: string, lang: string) => string,
+): string {
+  if (highlightJs && content) {
+    return highlightJs(content, lang);
+  }
+  const suffix = content === "" ? "" : "\n";
+  return `${escapeHtml(content)}${suffix}`;
 }
 
 export function renderCodeBlockBodyHtml(
@@ -424,7 +436,7 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
     const classAttr = lang ? ` class="language-${escapeHtml(lang.trim())}"` : "";
 
     const opts = this.getOptions() as CodeOptions;
-    const inner = renderCodeInnerHtml(content, lang, opts);
+    const inner = renderCodeInnerHtml(content, lang, opts.highlightJs);
     const hljsClass = opts.highlightJs && content ? " hljs" : "";
     return `<pre${this.sourceLineAttrs(node)}><code${classAttr}${hljsClass}>${inner}</code></pre>`;
   }
