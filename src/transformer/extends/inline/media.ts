@@ -14,6 +14,7 @@ import { InlineParseContext } from "@/transformer/core/context/InlineParseContex
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { RenderContext } from "@/transformer/core/context/RenderContext";
 import { escapeHtml, isEscaped } from "@/transformer/utils/escape.js";
+import { formatSourceLineAttrs } from "@/transformer/utils/sourceLine.js";
 import {
   normalizeLinkDestination,
   parseInlineLinkParen,
@@ -132,9 +133,10 @@ function mediaProps(node: MarkdownNode): MediaProps {
 
 function renderMediaHtml(
   node: MarkdownNode,
-  _ctx: RenderContext,
+  parserOptions: Record<string, unknown>,
   options: { block?: boolean } = {},
 ): string {
+  const lineAttrs = options.block === false ? "" : formatSourceLineAttrs(node, parserOptions);
   const { mediaType, href, title, poster } = mediaProps(node);
   const alt = renderAltText(node.children ?? []);
   const src = escapeHtml(href);
@@ -153,7 +155,7 @@ function renderMediaHtml(
       ? `<figcaption class="cherry-media__caption">${escapeHtml(alt)}</figcaption>`
       : "";
 
-    return `<figure class="cherry-media cherry-video">${player}${caption}</figure>`;
+    return `<figure class="cherry-media cherry-video"${lineAttrs}>${player}${caption}</figure>`;
   }
 
   const audio = `<audio class="cherry-audio-player__track" src="${src}"${titleAttr} controls preload="metadata"></audio>`;
@@ -171,7 +173,7 @@ function renderMediaHtml(
     : "";
 
   return [
-    `<figure class="cherry-media cherry-audio">`,
+    `<figure class="cherry-media cherry-audio"${lineAttrs}>`,
     `<div class="cherry-audio-player">`,
     `<div class="${coverClass}" aria-hidden="true">${coverHtml}</div>`,
     `<div class="cherry-audio-player__main">`,
@@ -183,7 +185,7 @@ function renderMediaHtml(
   ].join("");
 }
 
-function renderIframeHtml(node: MarkdownNode): string {
+function renderIframeHtml(node: MarkdownNode, parserOptions: Record<string, unknown>): string {
   const { href, title } = mediaProps(node);
   const alt = renderAltText(node.children ?? []);
   const src = escapeHtml(href);
@@ -204,7 +206,7 @@ function renderIframeHtml(node: MarkdownNode): string {
     ? `<figcaption class="cherry-media__caption">${escapeHtml(alt)}</figcaption>`
     : "";
 
-  return `<figure class="cherry-media cherry-iframe">${frame}${caption}</figure>`;
+  return `<figure class="cherry-media cherry-iframe"${formatSourceLineAttrs(node, parserOptions)}>${frame}${caption}</figure>`;
 }
 
 /** 行内 video / audio 解析器 */
@@ -224,8 +226,8 @@ class MediaInlineParser extends BaseInlineParser {
   }
 
   /** @inheritdoc */
-  render(node: MarkdownNode, ctx: RenderContext) {
-    return renderMediaHtml(node, ctx, { block: false });
+  render(node: MarkdownNode, _ctx: RenderContext) {
+    return renderMediaHtml(node, this.getOptions(), { block: false });
   }
 }
 
@@ -263,7 +265,7 @@ class MediaBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext) {
-    return renderMediaHtml(node, ctx, { block: true });
+    return renderMediaHtml(node, this.getOptions(), { block: true });
   }
 }
 
@@ -300,8 +302,8 @@ class IframeBlockParser extends BaseBlockParser {
   }
 
   /** @inheritdoc */
-  render(node: MarkdownNode) {
-    return renderIframeHtml(node);
+  render(node: MarkdownNode, ctx: RenderContext) {
+    return renderIframeHtml(node, this.getOptions());
   }
 }
 
