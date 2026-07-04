@@ -1,19 +1,11 @@
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
-import { Theme } from "@/theme/Theme.js";
+import { Theme, THEME_EVENT_LIGHT_DARK, type ThemeLightDarkEvent } from "@/theme/Theme.js";
 import { extractToc, extractTocFlat } from "./toc/extract.js";
 import { replaceGraph } from "@/renderer/graph/graph";
 import { CodeListener } from "@/renderer/code/code";
-import type {BaseBlockParser, BaseInlineParser} from "@/transformer/core/ParserBase";
 import hljs from "highlight.js";
-
-export interface RenderOption {
-  mount: HTMLElement;
-  theme: Theme;
-  inlineParsers?: Record<number, BaseInlineParser>;
-  blockParsers?: Record<number, BaseBlockParser>;
-}
-
+import { RenderOption } from "@/renderer/RenderOption";
 
 export class Renderer {
   readonly theme: Theme;
@@ -22,12 +14,12 @@ export class Renderer {
   private lastAst: MarkdownNode | null = null;
   private codeListener: CodeListener | null = null;
 
-  private readonly onLightDarkChanged = (): void => {
-    this.syncDarkFromTheme();
-    replaceGraph(this.mount, this.theme.getTheme().isDark);
+  private readonly onLightDarkChanged = ({ isDark }: ThemeLightDarkEvent): void => {
+    this.transformer.isDark = isDark;
+    replaceGraph(this.mount, isDark);
   };
 
-  constructor({ mount, theme, inlineParsers = {} ,blockParsers = {}}: RenderOption) {
+  constructor({ mount, theme, inlineParsers = {}, blockParsers = {} }: RenderOption) {
     if (!mount) {
       throw new Error("渲染器需要 mount 元素");
     }
@@ -55,7 +47,7 @@ export class Renderer {
 
     this.syncDarkFromTheme();
 
-    theme.on("theme:ld", this.onLightDarkChanged);
+    theme.on(THEME_EVENT_LIGHT_DARK, this.onLightDarkChanged);
 
     this.codeListener = new CodeListener(this.mount);
   }
@@ -79,7 +71,6 @@ export class Renderer {
     const ast = this.transformer.parse(markdown);
     const html = this.transformer.render(ast);
     this.lastAst = ast;
-
     this.mount.innerHTML = html;
     return { html, ast };
   }
@@ -93,7 +84,7 @@ export class Renderer {
   }
 
   destroy(): void {
-    this.theme.off("theme:ld", this.onLightDarkChanged);
+    this.theme.off(THEME_EVENT_LIGHT_DARK, this.onLightDarkChanged);
 
     this.lastAst = null;
     this.codeListener?.destroy();
