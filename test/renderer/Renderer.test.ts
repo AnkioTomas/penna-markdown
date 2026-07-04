@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { JSDOM } from "jsdom";
 import { Theme } from "@/theme/Theme.js";
 import { Renderer } from "@/renderer/Renderer.js";
+import { SOURCE_LINE_ATTR } from "@/transformer/utils/sourceLine.js";
 
 describe("renderer/Renderer", () => {
   it("render parses markdown and exposes sidebar", () => {
@@ -26,6 +27,31 @@ describe("renderer/Renderer", () => {
     const h1 = mount.querySelector("h1") as HTMLElement;
     expect(h1.id).toBe("Hello");
     expect(renderer.theme).toBe(theme);
+
+    renderer.destroy();
+  });
+
+  it("ignores external overrides for renderer-owned transformer options", () => {
+    const dom = new JSDOM(`<div id="preview" class="cherry"></div>`);
+    const mount = dom.window.document.getElementById("preview") as HTMLElement;
+    const theme = new Theme();
+    theme.setTheme("default", mount);
+
+    const renderer = new Renderer({
+      mount,
+      theme,
+      transformer: {
+        syntaxOptions: {
+          atx_heading: { slug: false },
+          code: { enable: false },
+        },
+        renderOptions: { sourceLineMap: false },
+      },
+    });
+
+    const { html } = renderer.render("# Hello\n");
+    expect(html).toContain('<h1 id="Hello"');
+    expect(html).toContain(SOURCE_LINE_ATTR);
 
     renderer.destroy();
   });
