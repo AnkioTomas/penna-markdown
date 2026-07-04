@@ -166,6 +166,37 @@ body {
   font-family: var(--font-mono);
 }
 
+.doc-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.doc-switch-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.doc-select {
+  min-width: 180px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-tree);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.doc-select:focus {
+  outline: none;
+  border-color: rgba(124, 108, 245, 0.5);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
 .textarea {
   flex: 1;
   min-height: 0;
@@ -268,6 +299,11 @@ body {
 .btn-ghost:hover {
   background: rgba(255, 255, 255, 0.06);
   color: var(--text);
+}
+
+.btn-ghost.active {
+  background: var(--accent-soft);
+  color: #ddd6fe;
 }
 
 .btn-sm {

@@ -3,9 +3,17 @@ import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import { requiredEl } from "../dom.js";
 import { AstTreeView } from "./tree-view.js";
 import { highlightJson } from "./json-highlight.js";
-import initialDoc from "../test.md?raw";
+import testDoc from "../test.md?raw";
+import simpleDoc from "../simple.md?raw";
 
 const RENDER_DEBOUNCE_MS = 100;
+
+const DOCS = {
+  test: { label: "demo/test.md", markdown: testDoc },
+  simple: { label: "demo/simple.md", markdown: simpleDoc },
+} as const;
+
+type DocId = keyof typeof DOCS;
 
 const transformer = new TransformerEngine();
 
@@ -14,12 +22,16 @@ const astTree = requiredEl<HTMLElement>("#ast-tree");
 const nodeDetail = requiredEl<HTMLElement>("#node-detail");
 const copyDetailBtn = requiredEl<HTMLButtonElement>("#copy-detail");
 const timing = requiredEl<HTMLElement>("#timing");
+const expandDepth1Btn = requiredEl<HTMLButtonElement>("#expand-depth-1");
+const expandDepth2Btn = requiredEl<HTMLButtonElement>("#expand-depth-2");
 const expandAllBtn = requiredEl<HTMLButtonElement>("#expand-all");
 const collapseAllBtn = requiredEl<HTMLButtonElement>("#collapse-all");
-const expandDepthBtn = requiredEl<HTMLButtonElement>("#expand-depth");
 const filterInput = requiredEl<HTMLInputElement>("#type-filter");
+const docSelect = requiredEl<HTMLSelectElement>("#doc-select");
+const docLabel = requiredEl<HTMLElement>("#doc-label");
 
-markdownInput.value = initialDoc;
+let expandDepth = 2;
+let activeDocId: DocId = "test";
 
 type SerializedNode = {
   type: string;
@@ -63,6 +75,24 @@ const treeView = new AstTreeView(astTree, {
   },
 });
 
+function setExpandDepth(depth: 1 | 2): void {
+  expandDepth = depth;
+  expandDepth1Btn.classList.toggle("active", depth === 1);
+  expandDepth2Btn.classList.toggle("active", depth === 2);
+  if (treeView.hasAst()) {
+    treeView.expandToDepth(depth);
+  }
+}
+
+function loadDoc(id: DocId): void {
+  const doc = DOCS[id];
+  activeDocId = id;
+  docSelect.value = id;
+  docLabel.textContent = doc.label;
+  markdownInput.value = doc.markdown;
+  renderNow();
+}
+
 function renderNow(): void {
   const md = markdownInput.value;
   const start = performance.now();
@@ -79,7 +109,7 @@ function renderNow(): void {
   }
 
   timing.textContent = `${(performance.now() - start).toFixed(2)} ms`;
-  treeView.setAst(ast);
+  treeView.setAst(ast, expandDepth);
   showNodeDetail(ast);
 }
 
@@ -91,9 +121,15 @@ function scheduleRender(): void {
 
 markdownInput.addEventListener("input", scheduleRender);
 
+docSelect.addEventListener("change", () => {
+  const id = docSelect.value as DocId;
+  if (id in DOCS) loadDoc(id);
+});
+
+expandDepth1Btn.addEventListener("click", () => setExpandDepth(1));
+expandDepth2Btn.addEventListener("click", () => setExpandDepth(2));
 expandAllBtn.addEventListener("click", () => treeView.expandAll());
 collapseAllBtn.addEventListener("click", () => treeView.collapseAll());
-expandDepthBtn.addEventListener("click", () => treeView.expandToDepth(2));
 
 filterInput.addEventListener("input", () => {
   treeView.setFilter(filterInput.value);
@@ -113,6 +149,6 @@ copyDetailBtn.addEventListener("click", async () => {
   }
 });
 
-renderNow();
+loadDoc(activeDocId);
 
-window.cherryAstDemo = { transformer, renderNow, treeView };
+window.cherryAstDemo = { transformer, renderNow, treeView, loadDoc, activeDocId };

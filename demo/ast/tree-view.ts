@@ -133,11 +133,11 @@ export class AstTreeView {
     container.addEventListener("click", this._onClick);
   }
 
-  setAst(ast: MarkdownNode): void {
+  setAst(ast: MarkdownNode, maxDepth = 2): void {
     this.ast = ast;
     this.collapsed.clear();
     this.selectedPath = "0";
-    this.collectPaths(ast, "0", false, 0, 2);
+    this.collectPaths(ast, "0", false, 0, maxDepth);
     this.render();
   }
 
@@ -163,6 +163,10 @@ export class AstTreeView {
     if (!this.ast) return;
     this.collectPaths(this.ast, "0", false, 0, maxDepth);
     this.render();
+  }
+
+  hasAst(): boolean {
+    return this.ast !== null;
   }
 
   destroy(): void {

@@ -29,7 +29,14 @@
         </div>
         <textarea id="markdown" class="textarea" spellcheck="false"></textarea>
         <footer class="panel-foot">
-          <span class="doc-label">demo/test.md</span>
+          <label class="doc-switch">
+            <span class="doc-switch-label">文档</span>
+            <select id="doc-select" class="doc-select" aria-label="切换示例文档">
+              <option value="test">test.md — 完整演示</option>
+              <option value="simple">simple.md — 语法速览</option>
+            </select>
+          </label>
+          <span id="doc-label" class="doc-label">demo/test.md</span>
         </footer>
       </section>
 
@@ -51,9 +58,10 @@
                 autocomplete="off"
               />
             </label>
-            <div class="btn-group">
-              <button id="expand-depth" class="btn btn-ghost" type="button">2 层</button>
-              <button id="expand-all" class="btn btn-ghost" type="button">展开</button>
+            <div class="btn-group" role="group" aria-label="展开深度">
+              <button id="expand-depth-1" class="btn btn-ghost" type="button">1 层</button>
+              <button id="expand-depth-2" class="btn btn-ghost active" type="button">2 层</button>
+              <button id="expand-all" class="btn btn-ghost" type="button">全部</button>
               <button id="collapse-all" class="btn btn-ghost" type="button">折叠</button>
             </div>
           </div>
