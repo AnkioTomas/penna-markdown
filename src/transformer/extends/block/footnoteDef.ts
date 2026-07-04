@@ -48,7 +48,7 @@ function appendFootnoteBackref(html: string, backref: string): string {
   return `${trimmed}\n<p>${backref}</p>`;
 }
 
-function renderFootnotesSection(ctx: RenderContext): string {
+function renderFootnotesSection(ctx: RenderContext, lineAttrs: string): string {
   const items = ctx.store.get<FootnoteItem[]>(FOOTNOTE_ITEMS_KEY);
   if (!items?.length) return "";
 
@@ -62,7 +62,7 @@ function renderFootnotesSection(ctx: RenderContext): string {
     .join("\n");
 
   return [
-    `<div class="cherry-footnotes">`,
+    `<div class="cherry-footnotes"${lineAttrs}>`,
     `<hr class="cherry-footnotes__sep">`,
     `<section class="cherry-footnotes__section">`,
     `<ol class="cherry-footnotes__list">`,
@@ -116,7 +116,14 @@ function finalizeFootnotes(
     });
 
   ctx.store.set(FOOTNOTE_ITEMS_KEY, items);
-  root.children = [...(root.children ?? []), createNode("footnotes", 0)];
+  let lineIndex = 0;
+  for (const child of root.children ?? []) {
+    lineIndex += child.length > 0 ? child.length : 0;
+  }
+  root.children = [
+    ...(root.children ?? []),
+    createNode("footnotes", 0, undefined, undefined, { sourceStartLine: lineIndex }),
+  ];
   return root;
 }
 
@@ -210,8 +217,8 @@ class FootnotesSectionBlockParser extends BaseBlockParser {
     return null;
   }
 
-  render(_node: MarkdownNode, ctx: RenderContext): string {
-    return renderFootnotesSection(ctx);
+  render(node: MarkdownNode, ctx: RenderContext): string {
+    return renderFootnotesSection(ctx, this.sourceLineAttrs(node));
   }
 }
 
