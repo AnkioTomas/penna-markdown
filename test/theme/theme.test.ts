@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { Theme } from "@/theme/Theme.js";
+import { Theme, THEME_EVENT_SKIN } from "@/theme/Theme.js";
 
 describe("Theme", () => {
   async function createRenderTree() {
@@ -89,12 +89,12 @@ describe("Theme", () => {
     const theme = new Theme();
     const handler = vi.fn();
 
-    theme.on("change", handler);
+    theme.on(THEME_EVENT_SKIN, handler);
     theme.setTheme("default", render, root);
     theme.setTheme("claude", render, root);
     expect(handler).toHaveBeenCalledTimes(1);
 
-    theme.off("change", handler);
+    theme.off(THEME_EVENT_SKIN, handler);
     theme.setTheme("default", render, root);
     expect(handler).toHaveBeenCalledTimes(1);
   });
@@ -140,14 +140,18 @@ describe("Theme", () => {
     const theme = new Theme(true);
     const handler = vi.fn();
 
-    theme.on("change", handler);
+    theme.on(THEME_EVENT_SKIN, handler);
     theme.setTheme("claude", render, root);
-    theme.off("change", handler);
+    theme.off(THEME_EVENT_SKIN, handler);
 
-    expect(logSpy).toHaveBeenCalledWith("[cherry]", "on", "change");
+    expect(logSpy).toHaveBeenCalledWith("[cherry]", "event:on", THEME_EVENT_SKIN);
     expect(logSpy).toHaveBeenCalledWith("[cherry]", "setTheme", { prev: "default", id: "claude" });
-    expect(logSpy).toHaveBeenCalledWith("[cherry]", "emit", "change", { prev: "default", id: "claude", render });
-    expect(logSpy).toHaveBeenCalledWith("[cherry]", "off", "change");
+    expect(logSpy).toHaveBeenCalledWith("[cherry]", "event:emit", THEME_EVENT_SKIN, {
+      prev: "default",
+      id: "claude",
+      render,
+    });
+    expect(logSpy).toHaveBeenCalledWith("[cherry]", "event:off", THEME_EVENT_SKIN);
 
     logSpy.mockRestore();
   });

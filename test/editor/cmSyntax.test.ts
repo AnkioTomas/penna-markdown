@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import {
   createEditorSyntaxHighlighting,
   defineEditorTag,
-} from "@/editor/cmSyntax.js";
+} from "@/editor/editor/cmSyntax.js";
 
 describe("cmSyntax", () => {
   it("defineEditorTag returns unique tags", () => {

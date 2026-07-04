@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   collectHighlightSpans,
   DEFAULT_INLINE_HIGHLIGHT_CLASSES,
-} from "@/editor/highlightSpans.js";
+} from "@/editor/editor/highlightSpans.js";
 
 describe("collectHighlightSpans", () => {
   it("highlights ==highlight== inline syntax", () => {

@@ -4,7 +4,7 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import { buildHighlightDecorations, createTransformerHighlightExtension } from "@/editor/cmDecorations.js";
+import { buildHighlightDecorations, createTransformerHighlightExtension } from "@/editor/editor/cmDecorations.js";
 
 describe("cmDecorations", () => {
   beforeEach(() => {

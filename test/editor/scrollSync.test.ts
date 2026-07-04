@@ -4,7 +4,7 @@ import { TransformerEngine } from "@/transformer/TransformerEngine";
 import {
   buildBlockLineAnchors,
   isRenderedTopLevelBlock,
-} from "@/editor/scrollSync/blockLineMap";
+} from "@/editor/preview/scrollSync/blockLineMap";
 import {
   SOURCE_END_LINE_ATTR,
   SOURCE_LINE_ATTR,
@@ -14,7 +14,7 @@ import {
   blockOffsetTop,
   previewScrollTopForSourceLine,
   sortAnchors,
-} from "@/editor/scrollSync/mapScroll.js";
+} from "@/editor/preview/scrollSync/mapScroll.js";
 
 function parseMarkdown(markdown: string) {
   return new TransformerEngine().parse(markdown);
