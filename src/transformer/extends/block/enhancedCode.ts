@@ -7,14 +7,26 @@
  * 语法高亮由 renderer hydrate 后处理。
  */
 
-import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
+import {BaseBlockParser, ParserOptions} from "@/transformer/core/ParserBase.js";
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import codeParser from "@/transformer/gfm/block/code.js";
 import specialCodeParser from "@/transformer/extends/block/specialCode.js";
+import { renderCodeInnerHtml } from "@/transformer/utils/codeContent.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { unescapeHref } from "@/transformer/utils/linkDestination.js";
 import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
+
+/** 最小高亮接口，避免 transformer → renderer 循环依赖。 */
+export interface CodeHighlighter {
+  highlightCodeHtml(code: string, lang: string): string;
+}
+
+/** `syntaxOptions.code`（增强围栏代码块） */
+export interface CodeOptions extends  ParserOptions{
+  enable?: boolean;
+  highlightJs?: CodeHighlighter;
+}
 
 const SPECIAL_LANGS = new Set(["echarts", "mermaid", "graph"]);
 
@@ -187,12 +199,19 @@ export function renderCodeBlockBodyHtml(
   langClass: string,
   highlightLines: number[] = [],
   collapse: CollapsedCodeAnalysis | null = null,
+  highlighter?: CodeHighlighter,
 ): { html: string; collapse: CollapsedCodeAnalysis; lineCount: number } {
   const analysis = collapse ?? analyzeCollapsedCode(content, {});
   const lines = normalizeCodeLines(content);
   const lineCount = lines.length;
   const gutter = escapeHtml(buildGutterText(lineCount));
-  const codeText = lines.map((line) => escapeHtml(line)).join("\n");
+  const codeText = highlighter
+    ? highlighter.highlightCodeHtml(content, langClass)
+    : lines.map((line) => escapeHtml(line)).join("\n");
+  const codeClass = highlighter
+    ? `language-${langClass} hljs cherry-code-block__highlighted`
+    : `language-${langClass}`;
+  const highlightedAttr = highlighter ? ' data-cherry-highlighted="1"' : "";
   const bodyStyle = buildCodeBodyStyle(
     highlightLines,
     collapse?.enabled ? analysis : null,
@@ -202,7 +221,7 @@ export function renderCodeBlockBodyHtml(
   const html =
     `<div class="cherry-code-block__body"${bodyStyle}>` +
     `<div class="cherry-code-block__gutter" aria-hidden="true">${gutter}</div>` +
-    `<pre class="cherry-code-block__pre"><code class="language-${langClass}" data-cherry-code>${codeText}</code></pre>` +
+    `<pre class="cherry-code-block__pre"><code class="${codeClass}"${highlightedAttr} data-cherry-code>${codeText}</code></pre>` +
     `</div>`;
 
   return { html, collapse: analysis, lineCount };
@@ -342,7 +361,7 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
     return result;
   }
 
-  private renderEnhancedHtml(node: MarkdownNode): string {
+  private renderEnhancedHtml(node: MarkdownNode, ctx: RenderContext): string {
     const props = node.props ?? {};
     const lang = String(props.lang ?? "").trim();
     const title = String(props.title ?? "").trim();
@@ -359,11 +378,13 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
       ? analyzeCollapsedCode(content, collapseOpts)
       : null;
     const langClass = escapeHtml(lang);
+    const opts = this.getOptions() as CodeOptions;
     const { html: codeBody, collapse: collapseAnalysis } = renderCodeBlockBodyHtml(
       content,
       langClass,
       highlightLines,
       collapseForRender,
+      opts.highlightJs,
     );
 
     const copyBtn =
@@ -399,16 +420,29 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
     const titleAttr = title ? ` data-title="${escapeHtml(title)}"` : "";
     const langData = ` data-lang="${langClass}"`;
 
-    return `<div class="cherry-code-block"${titleAttr}${langData}>${panel}</div>`;
+    return `<div class="cherry-code-block"${titleAttr}${langData}${this.sourceLineAttrs(node)}>${panel}</div>`;
+  }
+
+  private renderPlainGfmCode(node: MarkdownNode, ctx: RenderContext): string {
+    const lang = String(node.props?.lang ?? "");
+    const content = node.value ?? "";
+    const classAttr = lang ? ` class="language-${escapeHtml(lang.trim())}"` : "";
+
+    const opts = this.getOptions() as CodeOptions;
+    const inner = renderCodeInnerHtml(content, lang, opts);
+    const hljsClass = opts.highlightJs && content ? " hljs" : "";
+    return `<pre${this.sourceLineAttrs(node)}><code${classAttr}${hljsClass}>${inner}</code></pre>`;
   }
 
   render(node: MarkdownNode, ctx: RenderContext) {
+    const opts = this.getOptions() as CodeOptions;
+    if (!opts.enable) return this.renderPlainGfmCode(node, ctx);
     const lang = String(node.props?.lang ?? "").trim().toLowerCase();
-    if (!lang) return codeParser.render(node);
+    if (!lang) return this.renderPlainGfmCode(node, ctx);
     if (SPECIAL_LANGS.has(lang)) {
       return specialCodeParser.render(node, ctx);
     }
-    return this.renderEnhancedHtml(node);
+    return this.renderEnhancedHtml(node, ctx);
   }
 }
 

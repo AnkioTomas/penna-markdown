@@ -7,7 +7,10 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
+import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import codeParser from "@/transformer/gfm/block/code.js";
+import { escapeHtml } from "@/transformer/utils/escape.js";
 import { unescapeHref } from "@/transformer/utils/linkDestination.js";
 import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
 
@@ -17,8 +20,8 @@ export const ECHARTS_API_HOST = "https://echarts-api.vercel.app";
 /** Mermaid 图表渲染 API 基址。 */
 export const MERMAID_API_HOST = "https://mermaid.ink";
 
-/** `syntaxOptions.code` 可配置项 */
-export interface SpecialCodeOptions {
+/** `syntaxOptions.code`（echarts / mermaid 等特殊语言） */
+export interface SpecialCodeOptions extends Record<string, unknown> {
   echartsApiHost?: string;
   mermaidApiHost?: string;
   echartsWidth?: number;
@@ -139,17 +142,17 @@ class SpecialCodeBlockParser extends BaseBlockParser {
     return `${host}?data=${encodeURIComponent(JSON.stringify(data))}`;
   }
 
-  renderMermaidBlock(content: string, options: MermaidImageOptions = {}): string {
+  renderMermaidBlock(content: string, options: MermaidImageOptions = {}, lineAttrs = ""): string {
     const code = content.trim();
     const src = this.buildMermaidImageSrc(code, options);
     const payload = base64UrlEncode(code);
-    return `<figure data-type="mermaid" class="cherry-mermaid-block"><img class="cherry-mermaid__img" data-mermaid="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></figure>`;
+    return `<figure data-type="mermaid" class="cherry-mermaid-block"${lineAttrs}><img class="cherry-mermaid__img" data-mermaid="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></figure>`;
   }
 
-  renderEchartsBlock(content: string, options: EchartsImageOptions = {}): string {
+  renderEchartsBlock(content: string, options: EchartsImageOptions = {}, lineAttrs = ""): string {
     const src = this.buildEchartsImageSrc(content, options);
     const payload = base64UrlEncode(content.trim());
-    return `<div data-type="echarts" class="cherry-echarts-block"><img class="cherry-echarts__img" data-echarts="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></div>`;
+    return `<div data-type="echarts" class="cherry-echarts-block"${lineAttrs}><img class="cherry-echarts__img" data-echarts="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></div>`;
   }
 
   /** @inheritdoc */
@@ -174,9 +177,19 @@ class SpecialCodeBlockParser extends BaseBlockParser {
     const lang = String(node.props?.lang ?? "").toLowerCase();
     const content = node.value ?? "";
     const theme = ctx.isDark ? ("dark" as const) : undefined;
-    if (lang === "mermaid" || lang === "graph") return this.renderMermaidBlock(content, { theme });
-    if (lang === "echarts") return this.renderEchartsBlock(content, { theme });
-    return codeParser.render(node);
+    const lineAttrs = this.sourceLineAttrs(node);
+    if (lang === "mermaid" || lang === "graph") return this.renderMermaidBlock(content, { theme }, lineAttrs);
+    if (lang === "echarts") return this.renderEchartsBlock(content, { theme }, lineAttrs);
+    return this.renderPlainGfmCode(node, ctx);
+  }
+
+  private renderPlainGfmCode(node: MarkdownNode, ctx: RenderContext): string {
+    const lang = String(node.props?.lang ?? "");
+    const content = node.value ?? "";
+    const classAttr = lang ? ` class="language-${escapeHtml(lang.trim())}"` : "";
+    const suffix = content === "" ? "" : "\n";
+    const inner = `${escapeHtml(content)}${suffix}`;
+    return `<pre${this.sourceLineAttrs(node)}><code${classAttr}>${inner}</code></pre>`;
   }
 }
 
