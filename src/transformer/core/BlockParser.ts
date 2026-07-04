@@ -92,7 +92,7 @@ export class BlockParseEngine {
         return { nextIndex: index + 1, node: null };
     }
 
-    parseBlocks(lines: string[]): MarkdownNode[] {
+    parseBlocks(lines: string[], trackSourceLine = false): MarkdownNode[] {
         const children: MarkdownNode[] = [];
         let index = 0;
 
@@ -108,6 +108,9 @@ export class BlockParseEngine {
                 if (block.length <= 0) {
                     block.length = nextIndex - index;
                 }
+                if (trackSourceLine && !block.props?.invisible && block.type !== "blank_line") {
+                    block.props = { ...block.props, sourceStartLine: index };
+                }
                 children.push(block);
             }
             index = nextIndex;
@@ -117,7 +120,7 @@ export class BlockParseEngine {
     }
 
     parse(lines: string[]): MarkdownNode {
-        const blocks = this.parseBlocks(lines);
+        const blocks = this.parseBlocks(lines, true);
         const root = createNode('root', lines.length, undefined, blocks, {store: null});
         return this.store.finalize(root, this.ctx);
     }

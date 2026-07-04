@@ -3,7 +3,7 @@
  * @module transformer/core/Registry
  */
 
-import type { BaseBlockParser, BaseInlineParser } from "./ParserBase.js";
+import type { BaseBlockParser, BaseInlineParser, SyntaxOptions } from "./ParserBase.js";
 import { gfmBlockSyntax, gfmInlineSyntax } from "@/transformer/gfm/index.js";
 import {extendBlockSyntax, extendInlineSyntax} from "@/transformer/extends";
 
@@ -63,10 +63,16 @@ export class Registry {
     return this._block.find((e) => e.parser.type === type)?.parser;
   }
 
-  setOptions(syntaxOptions: Record<string, Record<string, unknown>>): void {
+  setOptions(syntaxOptions: SyntaxOptions): void {
     for (const [key, options] of Object.entries(syntaxOptions)) {
       this.getInlineParser(key)?.setOptions(options);
       this.getBlockParser(key)?.setOptions(options);
+    }
+  }
+
+  setRenderOptions(renderOptions: Record<string, unknown> = {}): void {
+    for (const entry of this._block) {
+      entry.parser.setOptions(renderOptions);
     }
   }
 }

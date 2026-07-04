@@ -38,9 +38,8 @@ export class TransformerEngine {
                 this.registry.registerBlockParser(parser, Number(pri));
             }
         }
-        if (options.syntaxOptions) {
-            this.registry.setOptions(options.syntaxOptions);
-        }
+        this.registry.setOptions(options.syntaxOptions ?? {});
+        this.registry.setRenderOptions(options.renderOptions ?? {});
     }
 
     parse(markdown: string): MarkdownNode {

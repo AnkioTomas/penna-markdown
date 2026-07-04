@@ -7,6 +7,7 @@ import type {MarkdownNode} from "./MarkdownNode.js";
 import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
 import {RenderContext} from "@/transformer/core/context/RenderContext";
 import {BlockParseContext} from "@/transformer/core/context/BlockParseContext";
+import {formatSourceLineAttrs} from "@/transformer/utils/sourceLine.js";
 
 export interface InlineParseResult {
     node: MarkdownNode;
@@ -18,23 +19,33 @@ export interface BlockParseResult {
     nextIndex: number;
 }
 
+/** 单个 parser 的 options */
+export type ParserOptions = Record<string, unknown>;
+
+/** TransformerEngine.syntaxOptions 分发结构 */
+export type SyntaxOptions = Record<string, ParserOptions>;
+
 /** 行内语法解析器基类 */
 export abstract class BaseInlineParser {
     readonly type: string;
     /** 强打断：emphasis/strong 预读扫描时跳过（默认 true，如 code span） */
     readonly strongBreak: boolean;
-    private options: Record<string, any> = {};
+    private options: ParserOptions = {};
 
     protected constructor(type: string, strongBreak = true) {
         this.type = type;
         this.strongBreak = strongBreak;
     }
 
-    setOptions(options: Record<string, any>): void {
-        this.options = options;
+    setOptions(options: ParserOptions): void {
+        this.options = { ...this.options, ...options };
     }
 
-    getOptions(): Record<string, any> {
+    clearOptions(): void {
+        this.options = {};
+    }
+
+    getOptions(): ParserOptions {
         return this.options;
     }
 
@@ -65,18 +76,18 @@ export abstract class BaseBlockParser {
     readonly type: string;
     /** 强打断：打断段落 / list 行收集等（默认 true） */
     readonly strongBreak: boolean;
-    private options: Record<string, any> = {};
+    private options: ParserOptions = {};
 
     protected constructor(type: string, strongBreak = true) {
         this.type = type;
         this.strongBreak = strongBreak;
     }
 
-    setOptions(options: Record<string, any>): void {
-        this.options = options;
+    setOptions(options: ParserOptions): void {
+        this.options = { ...this.options, ...options };
     }
 
-    getOptions(): Record<string, any> {
+    getOptions(): ParserOptions {
         return this.options;
     }
 
@@ -99,5 +110,10 @@ export abstract class BaseBlockParser {
 
     render(node: MarkdownNode, ctx: RenderContext): string {
         return "";
+    }
+
+    /** 块根元素上的源码行号属性。 */
+    protected sourceLineAttrs(node: MarkdownNode): string {
+        return formatSourceLineAttrs(node, this.getOptions());
     }
 }
