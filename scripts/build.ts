@@ -1,49 +1,71 @@
 /**
  * 构建脚本：
- * - transformer：现代 ESM、传统 IIFE、CJS，及对应 min 产物 + transformer.css
- * - renderer / editor：ESM、CJS、IIFE（开发态，含 sourcemap）
+ * - transformer：现代 ESM、传统 IIFE、CJS，及对应 min 产物
+ * - 主题样式：Vite 编译 SCSS → dist/*.min.css（editor / render 分主题输出）
+ * - renderer / editor / theme：ESM、CJS、IIFE
  */
 
 import * as esbuild from "esbuild";
-import * as sass from "sass";
-import { rmSync, mkdirSync, writeFileSync } from "node:fs";
-import { resolve, dirname } from "node:path";
+import { mkdirSync, readFileSync, rmSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { build as viteBuild } from "vite";
+import REGISTERED_THEMES from "../src/theme/ThemeRegister.js";
 
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = resolve(rootDir, "dist");
-const transformerDir = resolve(rootDir, "src/transformer");
-const styleEntry = resolve(transformerDir, "style/style.scss");
+const themeViteConfig = resolve(rootDir, "scripts/vite.theme.config.ts");
 
 const alias = {
   "@": resolve(rootDir, "src"),
 };
 
-/** @type {import('esbuild').BuildOptions} */
-const base = {
+function cssRawPlugin(): esbuild.Plugin {
+  return {
+    name: "css-raw",
+    setup(build) {
+      build.onResolve({ filter: /\.css\?raw$/ }, (args) =>
+        build
+          .resolve(args.path.replace(/\?raw$/, ""), {
+            resolveDir: args.resolveDir,
+            kind: args.kind,
+            importer: args.importer,
+          })
+          .then((resolved) =>
+            resolved ? { path: resolved.path, namespace: "css-raw" } : null,
+          ),
+      );
+      build.onLoad({ filter: /.*/, namespace: "css-raw" }, (args) => ({
+        contents: readFileSync(args.path, "utf8"),
+        loader: "text",
+      }));
+    },
+  };
+}
+
+const base: esbuild.BuildOptions = {
   bundle: true,
   platform: "browser",
   alias,
+  plugins: [cssRawPlugin()],
+  loader: {
+    ".css": "text",
+  },
 };
 
-/** transformer 入口 */
 const transformerEntry = {
   in: "src/transformer/TransformerEngine.ts",
   name: "transformer",
   globalName: "CherryNextTransformer",
 };
 
-/** 其余子系统入口 */
 const simpleEntries = [
-  { in: "src/renderer/index.ts", name: "renderer", globalName: "CherryNextRenderer" },
-  { in: "src/editor/index.ts", name: "editor", globalName: "CherryNextEditor" },
+  { in: "src/renderer/Renderer.ts", name: "renderer", globalName: "CherryNextRenderer" },
+  { in: "src/editor/Cherry.ts", name: "editor", globalName: "CherryNextEditor" },
+  { in: "src/theme/Theme.ts", name: "theme", globalName: "CherryNextTheme" },
 ];
 
-/**
- * @param {string} entryPath
- * @param {import('esbuild').BuildOptions} options
- */
-async function buildOne(entryPath, options) {
+async function buildOne(entryPath: string, options: esbuild.BuildOptions) {
   await esbuild.build({
     ...base,
     entryPoints: [entryPath],
@@ -51,12 +73,9 @@ async function buildOne(entryPath, options) {
   });
 }
 
-/**
- * @param {{ in: string, name: string, globalName: string }} entry
- */
-async function buildTransformerEntry(entry) {
+async function buildTransformerEntry(entry: typeof transformerEntry) {
   const entryPath = resolve(rootDir, entry.in);
-  const out = (file) => resolve(distDir, file);
+  const out = (file: string) => resolve(distDir, file);
 
   const modernTarget = ["es2020"];
   const traditionalTarget = ["es2015"];
@@ -109,53 +128,28 @@ async function buildTransformerEntry(entry) {
   });
 }
 
-function compileTransformerStyles() {
-  const loadPaths = [transformerDir, resolve(transformerDir, "gfm"), resolve(transformerDir, "extends")];
-
-  const expanded = sass.compile(styleEntry, {
-    loadPaths,
-    style: "expanded",
-    sourceMap: true,
+async function buildThemeStyles() {
+  await viteBuild({
+    configFile: themeViteConfig,
+    logLevel: "info",
   });
-  writeFileSync(resolve(distDir, "transformer.css"), expanded.css);
-  if (expanded.sourceMap) {
-    writeFileSync(
-      resolve(distDir, "transformer.css.map"),
-      JSON.stringify(expanded.sourceMap),
-    );
-  }
-
-  const compressed = sass.compile(styleEntry, {
-    loadPaths,
-    style: "compressed",
-  });
-  writeFileSync(resolve(distDir, "transformer.min.css"), compressed.css);
 }
 
-/**
- * @param {{ in: string, name: string, globalName: string }} entry
- */
-async function buildSimpleEntry(entry) {
+async function buildSimpleEntry(entry: (typeof simpleEntries)[number]) {
   const entryPath = resolve(rootDir, entry.in);
   const target = ["es2018"];
-
-  const simpleOptions = {
-    external: ["shiki"],
-  };
 
   await buildOne(entryPath, {
     outfile: resolve(distDir, `${entry.name}.mjs`),
     format: "esm",
     target,
     sourcemap: true,
-    ...simpleOptions,
   });
   await buildOne(entryPath, {
     outfile: resolve(distDir, `${entry.name}.cjs`),
     format: "cjs",
     target,
     sourcemap: true,
-    ...simpleOptions,
   });
   await buildOne(entryPath, {
     outfile: resolve(distDir, `${entry.name}.iife.js`),
@@ -163,7 +157,6 @@ async function buildSimpleEntry(entry) {
     globalName: entry.globalName,
     target,
     sourcemap: true,
-    ...simpleOptions,
   });
 }
 
@@ -172,12 +165,12 @@ const stylesOnly = process.argv.includes("--styles-only");
 mkdirSync(distDir, { recursive: true });
 
 if (stylesOnly) {
-  compileTransformerStyles();
-  console.log("styles done: transformer.css / transformer.min.css");
+  await buildThemeStyles();
+  console.log(`theme styles done: cherry-editor-base + render/editor for ${REGISTERED_THEMES.join(", ")}`);
 } else {
   rmSync(distDir, { recursive: true, force: true });
   mkdirSync(distDir, { recursive: true });
-  compileTransformerStyles();
+  await buildThemeStyles();
   await buildTransformerEntry(transformerEntry);
 
   for (const entry of simpleEntries) {
@@ -186,5 +179,5 @@ if (stylesOnly) {
 
   const built = [transformerEntry.name, ...simpleEntries.map((e) => e.name)].join(", ");
   console.log("build done:", built);
-  console.log("transformer outputs: js bundles + transformer.css / transformer.min.css");
+  console.log(`theme css (min only): cherry-editor-base + render/editor for ${REGISTERED_THEMES.join(", ")}`);
 }
