@@ -5,11 +5,20 @@
  * ATX 标题（# ~ ######）
  */
 
-import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
+import {BaseBlockParser, ParserOptions, SyntaxOptions} from "@/transformer/core/ParserBase.js";
 import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
-import { isEscaped } from "@/transformer/utils/escape.js";
+import { escapeHtml, isEscaped } from "@/transformer/utils/escape.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
+import { assignSlug, ensureSlugRegistry } from "@/toc/slug.js";
+import { extractHeadingText } from "@/toc/text.js";
+import { SLUG_REGISTRY_KEY } from "@/transformer/utils/sourceLine.js";
+
+/** `syntaxOptions.atx_heading` */
+export interface AtxHeadingOptions extends ParserOptions {
+  slug?: boolean;
+}
 
 /** GFM：可选闭合 `#` 须未被转义，且闭合序列前须有空格。 */
 function trimAtxContent(raw: string): string {
@@ -58,9 +67,17 @@ class HeadingBlockParser extends BaseBlockParser {
         return null;
     }
 
-    render(node: MarkdownNode, ctx: any) {
+    render(node: MarkdownNode, ctx: RenderContext) {
         const level = node.props?.level || 1;
-        return `<h${level}>${ctx.renderInline(node.children)}</h${level}>`;
+        const inner = ctx.renderInline(node.children);
+        if ((this.getOptions() as AtxHeadingOptions).slug) {
+            const id = assignSlug(
+                extractHeadingText(node),
+                ensureSlugRegistry(ctx.store, SLUG_REGISTRY_KEY),
+            );
+            return `<h${level} id="${escapeHtml(id)}"${this.sourceLineAttrs(node)}>${inner}</h${level}>`;
+        }
+        return `<h${level}${this.sourceLineAttrs(node)}>${inner}</h${level}>`;
     }
 }
 
