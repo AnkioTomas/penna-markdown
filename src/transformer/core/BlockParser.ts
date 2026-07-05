@@ -134,9 +134,19 @@ export class BlockParseEngine {
         return (h >>> 0).toString(36);
     }
 
+    private randomString(length = 16) {
+        const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let result = "";
+
+        while (result.length < length) {
+            result += chars[Math.floor(Math.random() * chars.length)];
+        }
+
+        return result.slice(0, length);
+    }
     private hashCode(lines: string[],startLine:number,endLine:number): string {
         let str = lines.slice(startLine, endLine).join('');
-        return this.hash(str)
+        return this.hash(str)+"_" + this.randomString(16);
     }
 
     parse(lines: string[]): MarkdownNode {
