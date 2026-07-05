@@ -1,7 +1,6 @@
 import { Divider } from "@/editor/divider/Divider";
 import { Editor } from "@/editor/editor/Editor";
 import { Preview } from "@/editor/preview/Preview";
-import { ScrollSync } from "@/editor/preview/scrollSync";
 import { SideBar } from "@/editor/sidebar/SideBar";
 import { Toolbar } from "@/editor/toolbar/Toolbar";
 import type { CherryOptions } from "@/editor/CherryOptions";
@@ -40,7 +39,6 @@ export class Cherry {
 
   private readonly preview: Preview;
   private readonly editor: Editor;
-  private readonly scrollSync: ScrollSync | null;
   private readonly toolbar: Toolbar | null;
   private readonly sidebar: SideBar | null;
   private readonly divider: Divider;
@@ -117,9 +115,6 @@ export class Cherry {
     this.divider = new Divider(this.dividerEl, this.theme);
     this.divider.setLayout(initialLayout);
 
-    this.scrollSync = new ScrollSync(this.editor, this.previewEl, this.theme, this.divider.getLayout())
-
-
     if (options.sidebar === false) {
       this.sidebarEl.style.display = "none";
     }
@@ -131,7 +126,7 @@ export class Cherry {
 
     queueMicrotask(() => {
       if (this.destroyed) return;
-      this.theme.emit("editor:ready");
+      this.theme.emit("editor:ready", { id: this.id });
     });
 
     printCherryLogo();
@@ -159,7 +154,6 @@ export class Cherry {
     this.theme.emit("editor:destroy", { id: this.id });
     this.toolbar?.destroy();
     this.sidebar?.destroy();
-    this.scrollSync?.destroy();
     this.divider.destroy();
     this.editor.destroy();
     this.preview.destroy();
