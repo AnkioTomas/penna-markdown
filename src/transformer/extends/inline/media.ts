@@ -14,7 +14,6 @@ import { InlineParseContext } from "@/transformer/core/context/InlineParseContex
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { RenderContext } from "@/transformer/core/context/RenderContext";
 import { escapeHtml, isEscaped } from "@/transformer/utils/escape.js";
-import { formatSourceLineAttrs } from "@/transformer/utils/sourceLine.js";
 import {
   normalizeLinkDestination,
   parseInlineLinkParen,
@@ -133,10 +132,10 @@ function mediaProps(node: MarkdownNode): MediaProps {
 
 function renderMediaHtml(
   node: MarkdownNode,
-  parserOptions: Record<string, unknown>,
+  sourceLineAttrs: string,
   options: { block?: boolean } = {},
 ): string {
-  const lineAttrs = options.block === false ? "" : formatSourceLineAttrs(node, parserOptions);
+  const lineAttrs = sourceLineAttrs;
   const { mediaType, href, title, poster } = mediaProps(node);
   const alt = renderAltText(node.children ?? []);
   const src = escapeHtml(href);
@@ -185,7 +184,7 @@ function renderMediaHtml(
   ].join("");
 }
 
-function renderIframeHtml(node: MarkdownNode, parserOptions: Record<string, unknown>): string {
+function renderIframeHtml(node: MarkdownNode, sourceLineAttrs: string): string {
   const { href, title } = mediaProps(node);
   const alt = renderAltText(node.children ?? []);
   const src = escapeHtml(href);
@@ -206,7 +205,7 @@ function renderIframeHtml(node: MarkdownNode, parserOptions: Record<string, unkn
     ? `<figcaption class="cherry-media__caption">${escapeHtml(alt)}</figcaption>`
     : "";
 
-  return `<figure class="cherry-media cherry-iframe"${formatSourceLineAttrs(node, parserOptions)}>${frame}${caption}</figure>`;
+  return `<figure class="cherry-media cherry-iframe"${sourceLineAttrs}>${frame}${caption}</figure>`;
 }
 
 /** 行内 video / audio 解析器 */
@@ -227,7 +226,7 @@ class MediaInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode, _ctx: RenderContext) {
-    return renderMediaHtml(node, this.getOptions(), { block: false });
+    return renderMediaHtml(node, "", { block: false });
   }
 }
 
@@ -265,7 +264,7 @@ class MediaBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext) {
-    return renderMediaHtml(node, this.getOptions(), { block: true });
+    return renderMediaHtml(node, this.sourceLineAttrs(node), { block: true });
   }
 }
 
@@ -303,7 +302,7 @@ class IframeBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext) {
-    return renderIframeHtml(node, this.getOptions());
+    return renderIframeHtml(node, this.sourceLineAttrs(node));
   }
 }
 
