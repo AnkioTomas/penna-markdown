@@ -6,17 +6,16 @@
 import {BlockParseEngine} from "@/transformer/core/BlockParser.js";
 import {InlineParseEngine} from "@/transformer/core/InlineParser.js";
 
-import {
-  mergeIncrementalChildren,
-  type IncrementalParseRange,
-} from "@/transformer/core/incrementalAst.js";
+
+
 import {ParserStore} from "@/transformer/core/ParserStore.js";
 import {Registry} from "@/transformer/core/Registry.js";
 import {TransformerEngineOptions} from "@/transformer/TransformerEngineOptions";
 import {RenderContext} from "@/transformer/core/context/RenderContext";
 import {MarkdownNode} from "@/transformer/core/MarkdownNode";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
-import type { LineRange } from "@/transformer/core/ParserBase.js";
+import {IncrementalParseRange, IncrementalParseResult} from "@/transformer/core/Incremental/IncrementalParseRange";
+import {IncrementalParser} from "@/transformer/core/Incremental/IncrementalParser";
 /**
  * Markdown 解析与 HTML 渲染核心引擎。
  * 负责调度块级与行内解析器，构建 AST 树，并驱动 HTML 的增量及全量渲染。
@@ -49,6 +48,7 @@ export class TransformerEngine {
         this.registry.clearParserOptions();
         this.registry.setOptions(options.syntaxOptions ?? {});
         this.registry.setRenderOptions(options.renderOptions ?? {});
+
     }
 
 
@@ -66,64 +66,21 @@ export class TransformerEngine {
     }
 
     /**
-     * 增量解析。仅局部重新解析被编辑新文档行的脏区间，然后拼回原 AST。
-     * 调用方负责先通过 needsFullReparse 判断全局状态退化条件。
-     * @param prevAst 上一次渲染保留的旧 AST 根节点
-     * @param markdown 新文本（支持已分割成行的 string[]，避免二次切分）
-     * @param range 0-based 脏区行数映射区间
-     * @returns 合并并调用 finalizer 完成后的新 AST 根节点
+     * 增量解析。按 hash 边界定位变更区，局部 re-parse 后拼回 AST 并原地更新 `prevAst`。
+     *
+     * @param prevAst  上一次渲染保留的旧 AST 根节点（会被原地更新，对象引用不变）
+     * @param markdown 变更区 markdown（支持 `string[]`）；空串/空数组表示删除
+     * @param range    `prevHash` / `nextHash` 锚定未变块边界，见 {@link IncrementalParseRange}
+     * @returns 操作类型与受影响节点（delete → 被删块；create/update → 新 parse 块）
+     * @see IncrementalParser.parse
      */
     parseIncremental(
         prevAst: MarkdownNode,
         markdown: string | string[],
         range: IncrementalParseRange,
-    ): MarkdownNode {
-        const lines = Array.isArray(markdown)
-            ? markdown
-            : normalizeMarkdownLines(markdown);
-        const { blockParser } = this.createBlockParseEngine(lines);
-
-        const parseEndNew = Math.max(range.parseEndNew, range.parseStartNew + 1);
-        const reparsed = blockParser.parseBlocksRange(
-            lines,
-            range.parseStartNew,
-            parseEndNew,
-            true,
-        );
-
-        let root = mergeIncrementalChildren(
-            prevAst,
-            reparsed,
-            range,
-            lines,
-            blockParser.store,
-        );
-        root = blockParser.store.finalize(root, blockParser.ctx);
-        root.props = { store: blockParser.store };
-        return root;
-    }
-
-    /**
-     * 遍历所有块语法解析器，询问当前脏区修改是否会破坏其全局状态。
-     * 若任何解析器返回 true（例如修改了脚注定义、或者在开启 slug 时修改了标题），则必须 fallback 到全量 re-parse。
-     * @param prevLines 旧文档行数组
-     * @param newLines 新文档行数组
-     * @param dirtyOld 旧文档脏区区间
-     * @param dirtyNew 新文档脏区区间
-     * @returns 是否有解析器触发了全局状态拦截
-     */
-    needsFullReparse(
-        prevLines: string[],
-        newLines: string[],
-        dirtyOld: LineRange,
-        dirtyNew: LineRange,
-    ): boolean {
-        for (const parser of this.registry.getBlockParsers()) {
-            if (parser.needsFullReparse(prevLines, newLines, dirtyOld, dirtyNew)) {
-                return true;
-            }
-        }
-        return false;
+    ): IncrementalParseResult {
+        let incrementalParser = new IncrementalParser(this.registry);
+        return incrementalParser.parse(prevAst, markdown, range);
     }
 
     /**

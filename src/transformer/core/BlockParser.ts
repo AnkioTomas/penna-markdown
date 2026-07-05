@@ -92,11 +92,12 @@ export class BlockParseEngine {
         return { nextIndex: index + 1, node: null };
     }
 
-    parseBlocks(lines: string[], trackSourceLine = false): MarkdownNode[] {
+    parseBlocks(lines: string[]): MarkdownNode[] {
         const children: MarkdownNode[] = [];
         let index = 0;
+        const stop = lines.length;
 
-        while (index < lines.length) {
+        while (index < stop) {
             const { nextIndex, node } = this.parseBlockAt(lines, index);
             let block = node;
             if (!block && nextIndex > index) {
@@ -108,9 +109,13 @@ export class BlockParseEngine {
                 if (block.length <= 0) {
                     block.length = nextIndex - index;
                 }
-                if (trackSourceLine && !block.props?.invisible && block.type !== "blank_line") {
-                    block.props = { ...block.props, sourceStartLine: index };
+
+                if(!block.props){
+                    block.props = { };
                 }
+
+                block.props.id = `${this.hashCode(lines,index,nextIndex)}`
+
                 children.push(block);
             }
             index = nextIndex;
@@ -119,8 +124,23 @@ export class BlockParseEngine {
         return children;
     }
 
+    private hash(str:string) {
+        let h = 0;
+
+        for (let i = 0; i < str.length; i++) {
+            h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+        }
+
+        return (h >>> 0).toString(36);
+    }
+
+    private hashCode(lines: string[],startLine:number,endLine:number): string {
+        let str = lines.slice(startLine, endLine).join('');
+        return this.hash(str)
+    }
+
     parse(lines: string[]): MarkdownNode {
-        const blocks = this.parseBlocks(lines, true);
+        const blocks = this.parseBlocks(lines);
         const root = createNode('root', lines.length, undefined, blocks, {store: null});
         return this.store.finalize(root, this.ctx);
     }

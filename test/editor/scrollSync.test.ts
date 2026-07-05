@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { describe, expect, it } from "vitest";
 import { JSDOM } from "jsdom";
 import { TransformerEngine } from "@/transformer/TransformerEngine";
@@ -45,7 +48,26 @@ describe("buildBlockLineAnchors", () => {
 });
 
 describe("scrollSync/measureSyncAnchors", () => {
-  it("reads source line attrs from rendered blocks", () => {
+  it("reads block line map aligned with mount children", () => {
+    const dom = new JSDOM(
+      `<div id="root">
+        <h1>Hello</h1>
+        <p>World</p>
+      </div>`,
+    );
+    const root = dom.window.document.getElementById("root") as HTMLElement;
+    const anchors = measureSyncAnchors(root, [
+      { startLine: 0, endLine: 1 },
+      { startLine: 2, endLine: 3 },
+    ]);
+
+    expect(anchors.length).toBeGreaterThanOrEqual(4);
+    expect(anchors[0]).toMatchObject({ startLine: 0, previewY: 0, type: "block" });
+    expect(anchors.some((a) => a.type === "block-end" && a.startLine === 1)).toBe(true);
+    expect(anchors.some((a) => a.type === "block" && a.startLine === 2)).toBe(true);
+  });
+
+  it("reads source line attrs from rendered blocks when no block map", () => {
     const dom = new JSDOM(
       `<div id="root">
         <h1 ${SOURCE_LINE_ATTR}="0" ${SOURCE_END_LINE_ATTR}="1">Hello</h1>

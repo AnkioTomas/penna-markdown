@@ -43,6 +43,14 @@ describe("extends/frontmatter", () => {
     expect(store?.get("frontMatter")).toEqual({ title: "Hi" });
   });
 
+  it("creates invisible frontmatter ast node for incremental merge", () => {
+    const ast = engine().parse("---\ntitle: Hi\n---\n\nBody");
+    const node = ast.children?.find((child) => child.type === "frontmatter");
+    expect(node?.props?.invisible).toBe(true);
+    expect(node?.props?.parserStore).toEqual({ frontMatter: { title: "Hi" } });
+    expect(node?.length).toBeGreaterThan(0);
+  });
+
   it("formats string arrays as comma-separated text", () => {
     const html = renderMarkdown(
       engine(),

@@ -9,19 +9,16 @@
  * ---
  * ```
  *
- * 仅匹配文档首行；解析结果写入 document.frontMatter，不产生 AST 节点。
+ * 解析结果写入 store.frontMatter，并生成 invisible AST 节点供增量合并。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
+import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { parse as parseYaml } from "yaml";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 
-/**
- * 判断是否为 frontmatter 围栏行。
- *
- * 规则：去除行尾空白后，必须以 `---` 开头，且 `---` 后要么结束要么跟空白字符。
- */
-function isFenceLine(line: string): boolean {
+/** 判断是否为 frontmatter 围栏行。 */
+export function isFrontmatterFenceLine(line: string): boolean {
   const s = (line ?? "").trimEnd();
   if (s.length < 3) return false;
   if (s[0] !== "-" || s[1] !== "-" || s[2] !== "-") return false;
@@ -29,11 +26,15 @@ function isFenceLine(line: string): boolean {
   return next === undefined || next === " " || next === "\t";
 }
 
-/**
- * 将 YAML 文本解析为 plain object。
- *
- * 空文本、解析失败或非 object 结果均返回 `{}`。
- */
+/** 文档含 frontmatter 时返回其结束行（0-based 不含），否则 0。 */
+export function frontmatterEndLine(lines: string[]): number {
+  if (!isFrontmatterFenceLine(lines[0] ?? "")) return 0;
+  for (let i = 1; i < lines.length; i++) {
+    if (isFrontmatterFenceLine(lines[i] ?? "")) return i + 1;
+  }
+  return 0;
+}
+
 function parseFrontmatterYaml(text: string): Record<string, unknown> {
   const trimmed = text.trim();
   if (!trimmed) return {};
@@ -45,42 +46,44 @@ function parseFrontmatterYaml(text: string): Record<string, unknown> {
   }
 }
 
-/**
- * YAML Frontmatter 块解析器。
- *
- * @extends {BaseBlockParser}
- */
 class FrontmatterBlockParser extends BaseBlockParser {
   constructor() {
     super("frontmatter", true);
   }
 
-  /** @inheritdoc */
   canOpenAt(lines: string[], index: number, _ctx: BlockParseContext): boolean {
     if (index !== 0) return false;
-    return isFenceLine(lines[0] ?? "");
+    return isFrontmatterFenceLine(lines[0] ?? "");
   }
 
-  /** @inheritdoc */
   parse(lines: string[], index: number, ctx: BlockParseContext) {
     const contentLines: string[] = [];
     let i = 1;
 
     while (i < lines.length) {
-      if (isFenceLine(lines[i])) {
+      if (isFrontmatterFenceLine(lines[i] ?? "")) {
         const data = parseFrontmatterYaml(contentLines.join("\n"));
         if (Object.keys(data).length === 0) return null;
+
         ctx.store.set("frontMatter", data);
-        return { nextIndex: i + 1 };
+        const lineCount = i + 1 - index;
+        return {
+          nextIndex: i + 1,
+          node: createNode("frontmatter", lineCount, undefined, undefined, {
+            invisible: true,
+            anchorSourceLine: true,
+            sourceStartLine: 0,
+            parserStore: { frontMatter: data },
+          }),
+        };
       }
-      contentLines.push(lines[i]);
+      contentLines.push(lines[i] ?? "");
       i += 1;
     }
 
     return null;
   }
 
-  /** @inheritdoc */
   render() {
     return "";
   }

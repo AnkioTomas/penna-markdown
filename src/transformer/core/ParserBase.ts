@@ -7,7 +7,12 @@ import type {MarkdownNode} from "./MarkdownNode.js";
 import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
 import {RenderContext} from "@/transformer/core/context/RenderContext";
 import {BlockParseContext} from "@/transformer/core/context/BlockParseContext";
-import {formatSourceLineAttrs} from "@/transformer/utils/sourceLine.js";
+
+/** 0-based 半开区间 [startLine, endLine)。 */
+export interface LineRange {
+  startLine: number;
+  endLine: number;
+}
 
 export interface InlineParseResult {
     node: MarkdownNode;
@@ -118,6 +123,12 @@ export abstract class BaseBlockParser {
 
     /** 块根元素上的源码行号属性。 */
     protected sourceLineAttrs(node: MarkdownNode): string {
-        return formatSourceLineAttrs(node, this.getOptions());
+        const options = this.getOptions();
+        if (!options.sourceLineMap) return '';
+        const id = node.props?.id ? String(node.props.id) : ``;
+
+        if(id === '') return '';
+
+        return ` data-hash="${id}"`;
     }
 }

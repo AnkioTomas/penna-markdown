@@ -122,7 +122,10 @@ function finalizeFootnotes(
   }
   root.children = [
     ...(root.children ?? []),
-    createNode("footnotes", 0, undefined, undefined, { sourceStartLine: lineIndex }),
+    createNode("footnotes", 0, undefined, undefined, {
+      sourceStartLine: lineIndex,
+      synthesized: true,
+    }),
   ];
   return root;
 }
