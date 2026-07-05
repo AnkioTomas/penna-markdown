@@ -1,55 +1,109 @@
-import { Renderer } from "@/renderer/Renderer";
-import type { PreviewOptions } from "./PreviewOptions";
+import {Transaction} from "@codemirror/state";
+import {Renderer} from "@/renderer/Renderer";
+import type {PreviewOptions} from "./PreviewOptions";
 import {
-  THEME_EVENT_LIGHT_DARK,
-  THEME_EVENT_SKIN,
-  type Theme,
+    THEME_EVENT_LIGHT_DARK,
+    THEME_EVENT_SKIN,
+    type Theme,
 } from "@/theme/Theme";
+import {CherryChangeLineSet} from "@/renderer/incremental/CherryChangeSet";
 
 export class Preview {
-  private readonly theme: Theme;
-  private readonly renderer: Renderer;
-  private lastMarkdown = "";
-  private readonly offs = new Set<() => void>();
+    private readonly theme: Theme;
+    private readonly renderer: Renderer;
+    private lastMarkdown = "";
+    private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    private readonly debounceMs: number = 50;
+    private readonly offs = new Set<() => void>();
 
-  constructor(
-    mount: HTMLElement,
-    theme: Theme,
-    options: PreviewOptions = {},
-  ) {
-    this.theme = theme;
-    this.renderer = new Renderer({
-      mount,
-      theme,
-      inlineParsers: options.inlineParsers,
-      blockParsers: options.blockParsers,
-    });
+    constructor(
+        mount: HTMLElement,
+        theme: Theme,
+        options: PreviewOptions = {},
+    ) {
+        this.theme = theme;
+        this.renderer = new Renderer({
+            mount,
+            theme,
+            inlineParsers: options.inlineParsers,
+            blockParsers: options.blockParsers,
+        });
 
-    this.offs.add(theme.on("editor:change", (payload) => {
-      this.lastMarkdown = (payload as { markdown: string }).markdown;
-      this.renderFromMarkdown(this.lastMarkdown);
-    }));
-    this.offs.add(theme.on(THEME_EVENT_LIGHT_DARK, () => {
-      if (this.lastMarkdown) this.renderFromMarkdown(this.lastMarkdown);
-    }));
-    this.offs.add(theme.on(THEME_EVENT_SKIN, () => {
-      if (this.lastMarkdown) this.renderFromMarkdown(this.lastMarkdown);
-    }));
-  }
+        this.offs.add(theme.on("editor:change", (payload) => {
+            let {markdown, tr} = payload as { markdown: string, tr: Transaction };
+            this.onEditorChange(markdown, tr);
+        }));
+        this.offs.add(theme.on(THEME_EVENT_LIGHT_DARK, () => {
+            if (this.lastMarkdown) this.onEditorChange(this.lastMarkdown,);
+        }));
+        this.offs.add(theme.on(THEME_EVENT_SKIN, () => {
+            if (this.lastMarkdown) this.onEditorChange(this.lastMarkdown,);
+        }));
+    }
 
-  render(markdown: string): void {
-    this.lastMarkdown = markdown;
-    this.renderFromMarkdown(markdown);
-  }
+    private onEditorChange(markdown: string, tr?: Transaction): void {
+        if (this.debounceTimer) clearTimeout(this.debounceTimer);
 
-  private renderFromMarkdown(markdown: string): void {
-    const { html, ast } = this.renderer.render(markdown);
-    this.theme.emit("preview:rendered", { markdown, html, ast });
-  }
+        const run = (): void => {
+            this.debounceTimer = null;
+            const result = this.renderer.render(
+                markdown,
+                this.convert2CherryChanges(tr),
+            );
+            this.theme.emit("preview:rendered", {
+                markdown,
+                html: result.html,
+                ast: result.ast,
+                blocks: result.blocks,
+                partial: result.partial ?? false,
+                changedStartLines: result.changedStartLines ?? [],
+            });
+        };
 
-  destroy(): void {
-    for (const off of this.offs) off();
-    this.offs.clear();
-    this.renderer.destroy();
-  }
+        if (this.rendererNeedsFirstPaint()) {
+            run();
+            return;
+        }
+
+        this.debounceTimer = setTimeout(run, this.debounceMs);
+    }
+
+    private rendererNeedsFirstPaint(): boolean {
+        return this.renderer.getMount().childElementCount === 0;
+    }
+
+    private convert2CherryChanges(tr?: Transaction): CherryChangeLineSet[] | undefined {
+        if (!tr || !tr.changes) return undefined;
+        const list: CherryChangeLineSet[] = [];
+        tr.changes.iterChanges((fromA, toA, fromB, toB, inserted) => {
+
+            const oldDoc = tr.startState.doc;
+            const newDoc = tr.state.doc;
+
+            const fromLineA = oldDoc.lineAt(fromA).number;
+            const toLineA = oldDoc.lineAt(Math.max(fromA, toA - 1)).number;
+
+            const fromLineB = newDoc.lineAt(fromB).number;
+            const toLineB = newDoc.lineAt(Math.max(fromB, toB - 1)).number;
+
+            let item: CherryChangeLineSet = {
+                fromA:fromLineA,
+                toA: toLineA,
+                fromB:fromLineB,
+                toB:toLineB
+            }
+
+            list.push(item)
+
+        });
+
+        return list;
+    }
+
+    destroy(): void {
+        if (this.debounceTimer) clearTimeout(this.debounceTimer);
+        for (const off of this.offs) off();
+        this.offs.clear();
+        this.renderer.destroy();
+    }
 }
