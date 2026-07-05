@@ -45,10 +45,11 @@ export class Editor {
 
     const updateListener = EditorView.updateListener.of((update) => {
       if (!update.docChanged) return;
-      theme.emit("editor:change", {
+      const payload = {
         markdown: update.state.doc.toString(),
-        changes: update.changes,
-      });
+        tr: update.transactions,
+      };
+      theme.emit("editor:change", payload);
     });
 
     const extensions: Extension[] = [
