@@ -105,7 +105,33 @@ const editor = new Cherry(document.querySelector("#cherry-editor")!!, {
   editor: { value: DOC_SOURCES[initialDoc] },
   preview: {},
   transformer: {},
-  sidebar: false,
+  sidebar: {
+    fetchFiles: async () => {
+      // 模拟一点网络延迟
+      await new Promise(r => setTimeout(r, 400));
+      return [
+        {
+          id: "simple",
+          title: "Cherry 语法速览",
+          updateTime: "刚刚",
+          summary: "完整演示 · 精简篇幅。快速体验 Cherry Markdown Next 的全量基础语法功能。"
+        },
+        {
+          id: "test",
+          title: "压力测试长文档",
+          updateTime: "2小时前",
+          summary: "边界/压力/回归测试文档，包含复杂语法嵌套与海量文本渲染用例。"
+        }
+      ];
+    },
+    onFileClick: (id) => {
+      if (id === "test" || id === "simple") {
+        if (docSelect) docSelect.value = id;
+        setEditorDemoDoc(id);
+        editor.setMarkdown(DOC_SOURCES[id]);
+      }
+    }
+  },
 });
 
 const themeSelect = document.getElementById("editor-theme-select") as HTMLSelectElement | null;

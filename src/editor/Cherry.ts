@@ -34,6 +34,7 @@ export class Cherry {
   private readonly toolbarEl: HTMLElement;
   private readonly bodyEl: HTMLElement;
   private readonly sidebarEl: HTMLElement;
+  private readonly sidebarMaskEl: HTMLElement;
   private readonly editorEl: HTMLElement;
   private readonly dividerEl: HTMLElement;
   private readonly previewEl: HTMLElement;
@@ -71,17 +72,24 @@ export class Cherry {
     this.cherryEl = el("div", "cherry");
     this.toolbarEl = el("div", "cherry-toolbar");
     this.bodyEl = el("div", "cherry-body");
+    this.sidebarMaskEl = el("div", "cherry-sidebar-mask");
     this.sidebarEl = el("div", "cherry-sidebar");
     this.editorEl = el("div", "cherry-editor");
     this.dividerEl = el("div", "cherry-divider");
     this.previewEl = el("div", "cherry-preview");
 
     this.cherryEl.appendChild(this.toolbarEl);
+    this.bodyEl.appendChild(this.sidebarMaskEl);
     this.bodyEl.appendChild(this.sidebarEl);
     this.bodyEl.appendChild(this.editorEl);
     this.bodyEl.appendChild(this.dividerEl);
     this.bodyEl.appendChild(this.previewEl);
     this.cherryEl.appendChild(this.bodyEl);
+    
+    // Mask click closes sidebar
+    this.sidebarMaskEl.addEventListener("click", () => {
+      this.theme.emit("cherry:sidebar", { show: false });
+    });
     
     if (statusbar) {
       this.statusbarEl = el("div", "cherry-statusbar-wrap");
@@ -121,7 +129,11 @@ export class Cherry {
             options: options.toolbar ?? {},
           });
 
-    this.sidebar = new SideBar(this.sidebarEl, this.theme);
+    this.sidebar = new SideBar(
+      this.sidebarEl,
+      this.theme,
+      typeof options.sidebar === "object" ? options.sidebar : {}
+    );
 
     this.divider = new Divider(this.dividerEl, this.theme);
     this.divider.setLayout(initialLayout);
@@ -174,6 +186,7 @@ export class Cherry {
 
   setSidebarVisible(show: boolean): void {
     this.sidebarEl.style.display = show ? "" : "none";
+    this.sidebarMaskEl.classList.toggle("is-active", show);
   }
 
   toggleSidebar(): void {
