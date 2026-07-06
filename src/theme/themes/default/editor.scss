@@ -1,12 +1,12 @@
 /** default 主题编辑器样式 */
 @use "render";
-@use "../../../transformer/style/tokens";
-@use "../../../editor/cherry" as *;
+@use "../../style/common/tokens";
+@use "../../style/editor/cherry" as *;
 
-.cherry-theme-default.cherry {
+.cherry {
   @include tokens.theme-default;
 }
 
-.cherry-dark.cherry-theme-default.cherry {
+.cherry-dark.cherry {
   @include tokens.theme-dark;
 }

@@ -1,0 +1,34 @@
+@use "../../common/rem" as *;
+
+@mixin styles {
+  .cherry-card-masonry {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    margin: rem(16) 0;
+
+    &__item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    [class^="cherry-card-masonry__v-"] {
+      > :first-child {
+        margin-top: 0;
+      }
+
+      > :last-child {
+        margin-bottom: 0;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: rem(8);
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 /** GitHub 主题编辑器样式 */
 @use "render";
 @use "tokens";
-@use "../../../editor/cherry" as *;
+@use "../../style/editor/cherry" as *;
 
 .cherry-theme-github.cherry {
   @include tokens.theme-light;

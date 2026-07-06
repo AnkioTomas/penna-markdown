@@ -1,0 +1,68 @@
+@use "../../common/rem" as *;
+
+@mixin styles {
+  .cherry-steps {
+    margin: rem(16) 0;
+
+    > ol {
+      list-style: none;
+      counter-reset: cherry-step;
+      padding: 0;
+      margin: 0;
+    }
+
+    > ol > li {
+      position: relative;
+      counter-increment: cherry-step;
+      list-style: none;
+      margin: 0 0 0 rem(14);
+      padding: 0 0 rem(24) rem(34);
+      border-left: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+
+      &::before {
+        content: counter(cherry-step);
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: rem(26);
+        height: rem(26);
+        border-radius: 50%;
+        background: var(--cherry-c-bg);
+        border: rem(1.5) solid color-mix(in srgb, var(--cherry-c-brand-2) 50%, transparent);
+        color: var(--cherry-c-brand-1);
+        font-size: rem(12);
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+        letter-spacing: rem(-0.32);
+        box-shadow: 0 0 0 rem(3) var(--cherry-c-bg);
+        z-index: 1;
+      }
+
+      &:last-child {
+        padding-bottom: 0;
+        border-left-color: transparent;
+      }
+
+      > p:first-child {
+        margin: 0 0 rem(8);
+        padding-top: rem(2);
+        font-weight: 600;
+        color: var(--cherry-c-text-1);
+        line-height: rem(22);
+      }
+
+      > :not(p:first-child) {
+        margin-top: 0;
+      }
+
+      > :last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+@use "../../common/rem" as *;
+
+@mixin styles {
+  .cherry-card-grid {
+    --card-grid-cols-sm: 1;
+    --card-grid-cols-md: 2;
+    --card-grid-cols-lg: 2;
+
+    display: grid;
+    grid-template-columns: repeat(var(--card-grid-cols-sm), minmax(0, 1fr));
+    gap: rem(16);
+    margin: rem(16) 0;
+
+    @media (min-width: rem(768)) {
+      grid-template-columns: repeat(var(--card-grid-cols-md), minmax(0, 1fr));
+    }
+
+    @media (min-width: rem(960)) {
+      grid-template-columns: repeat(var(--card-grid-cols-lg), minmax(0, 1fr));
+    }
+  }
+}

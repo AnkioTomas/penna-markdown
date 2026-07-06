@@ -1,0 +1,37 @@
+@use "../../common/rem" as *;
+
+@mixin styles {
+  .cherry-math {
+      line-height: 0;
+  
+      &-latex {
+        border: 0;
+        background: transparent;
+      }
+    }
+  
+    .cherry-math-inline {
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0 rem(2.4);
+  
+      .cherry-math-latex {
+        display: inline-block;
+        vertical-align: middle;
+        max-height: rem(21.6);
+        width: auto;
+      }
+    }
+
+  .cherry-math-block {
+      display: block;
+      margin: rem(16) 0;
+      text-align: center;
+  
+      .cherry-math-latex {
+        display: inline-block;
+        max-width: 100%;
+        height: auto;
+      }
+    }
+}

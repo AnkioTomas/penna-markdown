@@ -1,0 +1,65 @@
+@use "../../common/rem" as *;
+
+@mixin styles {
+  table {
+    --cherry-table-border: color-mix(in srgb, var(--cherry-c-text-3) 32%, transparent);
+    --cherry-table-head-bg: var(--cherry-c-bg-elevated);
+    --cherry-table-row-bg: var(--cherry-c-bg);
+    --cherry-table-stripe-bg: color-mix(in srgb, var(--cherry-c-text-3) 5.5%, var(--cherry-c-bg-elevated));
+
+    width: max-content;
+    max-width: 100%;
+    margin: 0 0 rem(16);
+    border-collapse: collapse;
+    border-spacing: 0;
+    display: block;
+    overflow-x: auto;
+    background: var(--cherry-table-row-bg);
+  }
+
+  thead {
+    tr {
+      background: var(--cherry-table-head-bg);
+    }
+  }
+
+  th,
+  td {
+    padding: rem(6) rem(13);
+    border: rem(1) solid var(--cherry-table-border);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    font-weight: 600;
+    background: var(--cherry-table-head-bg);
+  }
+
+  tbody {
+    tr {
+      background: var(--cherry-table-row-bg);
+
+      &:nth-child(even) {
+        background: var(--cherry-table-stripe-bg);
+      }
+    }
+
+    td {
+      background: inherit;
+    }
+  }
+
+  // 无 thead/tbody 包裹的简易表格
+  table > tr:nth-child(odd) td {
+    background: var(--cherry-table-row-bg);
+  }
+
+  table > tr:nth-child(even) td {
+    background: var(--cherry-table-stripe-bg);
+  }
+
+  table > tr:first-child th {
+    background: var(--cherry-table-head-bg);
+  }
+}

@@ -1,0 +1,44 @@
+@use "../../common/rem" as *;
+
+@mixin styles {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: rem(20) 0 rem(8);
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--cherry-c-text-1);
+  }
+
+  h1 {
+    font-size: rem(32);
+    padding-bottom: rem(9.6);
+    border-bottom: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
+  }
+
+  h2 {
+    font-size: rem(24);
+    padding-bottom: rem(6);
+    border-bottom: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 25%, transparent);
+  }
+
+  h3 {
+    font-size: rem(20);
+  }
+
+  h4 {
+    font-size: rem(16);
+  }
+
+  h5 {
+    font-size: rem(14);
+  }
+
+  h6 {
+    font-size: rem(13.6);
+    color: var(--cherry-c-text-2);
+  }
+}

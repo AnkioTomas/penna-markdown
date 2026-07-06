@@ -1,0 +1,78 @@
+@use "../../common/rem" as *;
+
+// 高亮语法 ==text== / ==text=={.note}
+// 默认：半高荧光条（与 default 一致）；主题可选用 @include wave 切换为波浪下划线
+@mixin _variant-colors {
+  &.note {
+    --cherry-mark-accent: var(--cherry-c-note-mark);
+  }
+
+  &.tip {
+    --cherry-mark-accent: var(--cherry-c-tip-mark);
+  }
+
+  &.warning {
+    --cherry-mark-accent: var(--cherry-c-warning-mark);
+  }
+
+  &.caution {
+    --cherry-mark-accent: var(--cherry-c-caution-mark);
+  }
+
+  &.danger {
+    --cherry-mark-accent: var(--cherry-c-danger-mark);
+  }
+
+  &.important {
+    --cherry-mark-accent: var(--cherry-c-important-mark);
+  }
+}
+
+@mixin styles {
+  .cherry-mark {
+    --cherry-mark-text: currentcolor;
+    --cherry-mark-accent: var(--cherry-c-brand-mark);
+    --cherry-mark-strength: 68%;
+    --cherry-mark-linear-color: color-mix(
+      in srgb,
+      var(--cherry-mark-accent) var(--cherry-mark-strength),
+      transparent
+    );
+    --cherry-mark-bg-height: 42%;
+    --cherry-mark-bg-shift: 100%;
+    --cherry-mark-wave-offset: 0.18em;
+    --cherry-mark-wave-thickness: 0.1em;
+
+    color: var(--cherry-mark-text);
+    padding: rem(1) rem(2);
+    border-radius: rem(2);
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    text-decoration: none;
+    background-color: transparent;
+    background-image: linear-gradient(var(--cherry-mark-linear-color), var(--cherry-mark-linear-color));
+    background-repeat: no-repeat;
+    background-size: 100% var(--cherry-mark-bg-height);
+    background-position: 0 var(--cherry-mark-bg-shift);
+
+    @include _variant-colors;
+  }
+}
+
+// 波浪下划线变体（claude 等文艺风主题可选）
+@mixin wave {
+  .cherry-mark {
+    --cherry-mark-wave-color: color-mix(
+      in srgb,
+      var(--cherry-mark-accent, var(--cherry-c-brand-mark)) 82%,
+      transparent
+    );
+
+    background-image: none;
+    text-decoration-line: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: var(--cherry-mark-wave-color);
+    text-underline-offset: var(--cherry-mark-wave-offset);
+    text-decoration-thickness: var(--cherry-mark-wave-thickness);
+  }
+}

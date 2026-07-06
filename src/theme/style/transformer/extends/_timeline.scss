@@ -1,0 +1,151 @@
+@use "../../common/rem" as *;
+
+@mixin timeline-type($name, $token) {
+  &--#{ $name } {
+    --cherry-timeline-c-line: var(--cherry-c-alert-#{$token}-text);
+    --cherry-timeline-c-point: var(--cherry-c-alert-#{$token}-text);
+  }
+}
+
+@mixin styles {
+  .cherry-timeline {
+    --cherry-timeline-c-line: color-mix(in srgb, var(--cherry-c-text-3) 70%, transparent);
+    --cherry-timeline-c-point: var(--cherry-c-brand-2);
+    --cherry-timeline-c-title: var(--cherry-c-text-1);
+    --cherry-timeline-c-text: var(--cherry-c-text-2);
+    --cherry-timeline-c-time: var(--cherry-c-text-3);
+
+    margin: rem(16) 0;
+  }
+
+  .cherry-timeline-box {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cherry-timeline-item {
+    display: grid;
+    grid-template-columns: rem(24) 1fr;
+    gap: 0 rem(16);
+    padding-bottom: rem(24);
+    color: var(--cherry-timeline-c-text);
+
+    @include timeline-type(info, note);
+    @include timeline-type(tip, tip);
+    @include timeline-type(success, tip);
+    @include timeline-type(warning, warning);
+    @include timeline-type(danger, danger);
+    @include timeline-type(caution, caution);
+    @include timeline-type(important, important);
+
+    &:last-child {
+      padding-bottom: 0;
+
+      .cherry-timeline-line::after {
+        display: none;
+      }
+    }
+  }
+
+  .cherry-timeline-line {
+    position: relative;
+    display: flex;
+    justify-content: center;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: rem(14);
+      bottom: rem(-24);
+      left: 50%;
+      transform: translateX(-50%);
+      width: rem(2);
+      background: var(--cherry-timeline-c-line);
+    }
+  }
+
+  .cherry-timeline-item--line-dashed .cherry-timeline-line::after {
+    width: 0;
+    background: transparent;
+    border-left: rem(2) dashed var(--cherry-timeline-c-line);
+  }
+
+  .cherry-timeline-item--line-dotted .cherry-timeline-line::after {
+    width: 0;
+    background: transparent;
+    border-left: rem(2) dotted var(--cherry-timeline-c-line);
+  }
+
+  .cherry-timeline-point {
+    position: relative;
+    z-index: 1;
+    width: rem(12);
+    height: rem(12);
+    margin-top: rem(4);
+    border-radius: 50%;
+    background: var(--cherry-timeline-c-point);
+    box-shadow: 0 0 0 rem(3) var(--cherry-c-bg-elevated);
+  }
+
+  .cherry-timeline-container {
+    min-width: 0;
+  }
+
+  .cherry-timeline-content {
+    font-size: rem(14);
+    line-height: 1.6;
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .cherry-timeline-title {
+    margin: 0 0 rem(8);
+    font-size: rem(15);
+    font-weight: 600;
+    color: var(--cherry-timeline-c-title);
+    line-height: 1.5;
+  }
+
+  .cherry-timeline-time {
+    margin: rem(8) 0 0;
+    font-size: rem(13);
+    color: var(--cherry-timeline-c-time);
+    line-height: 1.4;
+  }
+
+  .cherry-timeline--placement-right {
+    .cherry-timeline-item {
+      grid-template-columns: 1fr rem(24);
+
+      .cherry-timeline-line {
+        order: 2;
+      }
+
+      .cherry-timeline-container {
+        order: 1;
+        text-align: right;
+      }
+    }
+  }
+
+  .cherry-timeline--placement-between {
+    .cherry-timeline-item--placement-right {
+      grid-template-columns: 1fr rem(24);
+
+      .cherry-timeline-line {
+        order: 2;
+      }
+
+      .cherry-timeline-container {
+        order: 1;
+        text-align: right;
+      }
+    }
+  }
+}

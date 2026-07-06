@@ -1,4 +1,4 @@
-@use "../../../transformer/style/rem" as *;
+@use "../../style/common/rem" as *;
 
 // Claude 排版：衬线标题 + 暖纸感 + 扁平边框（贴近 claude.ai 文档/Artifact 阅读体验）
 @mixin styles {

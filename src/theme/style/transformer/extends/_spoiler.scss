@@ -1,0 +1,38 @@
+@use "../../common/rem" as *;
+
+// 剧透语法 !! text !! / !! text !! {click}
+// 用户通过 {click} 注入的 .click 修饰类保持简短
+@mixin styles {
+  .cherry-spoiler {
+    cursor: default;
+    transition: filter 0.2s ease;
+
+    // 默认：悬浮显示
+    filter: blur(rem(4));
+
+    &:hover {
+      filter: none;
+    }
+
+    // {click}：点击切换显示
+    &.click {
+      cursor: pointer;
+      filter: none;
+
+      .cherry-spoiler__text {
+        filter: blur(rem(4));
+        transition: filter 0.2s ease;
+      }
+
+      &:has(.cherry-spoiler__toggle:checked) .cherry-spoiler__text {
+        filter: none;
+      }
+    }
+  }
+
+  .cherry-spoiler__toggle {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+}

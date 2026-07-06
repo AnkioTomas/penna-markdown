@@ -1,0 +1,41 @@
+@use "../../common/rem" as *;
+
+// 用户通过 {.variant .top} 注入的变体类名保持简短，不加 cherry 前缀
+$badge-variants: note, tip, warning, caution, danger, important;
+
+@mixin styles {
+  .cherry-badge {
+    transition:
+      color 0.25s,
+      background-color 0.25s,
+      border-color 0.25s;
+    border: rem(1) solid transparent;
+    border-radius: rem(12);
+    margin-left: rem(2);
+    padding: 0 rem(10);
+    font-size: rem(12);
+    font-weight: 500;
+    line-height: rem(22);
+    display: inline-block;
+    vertical-align: middle;
+    color: var(--cherry-c-text-2);
+    background-color: var(--cherry-c-bg-elevated);
+    border-color: color-mix(in srgb, var(--cherry-c-text-3) 30%, transparent);
+
+    &.top {
+      vertical-align: top;
+    }
+
+    &.bottom {
+      vertical-align: bottom;
+    }
+
+    @each $name in $badge-variants {
+      &.#{$name} {
+        color: var(--cherry-c-alert-#{$name}-text);
+        background-color: var(--cherry-c-alert-#{$name}-bg);
+        border-color: var(--cherry-c-alert-#{$name}-border);
+      }
+    }
+  }
+}

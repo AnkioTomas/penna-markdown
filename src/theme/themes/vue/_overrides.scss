@@ -1,4 +1,4 @@
-@use "../../../transformer/style/rem" as *;
+@use "../../style/common/rem" as *;
 @use "tokens" as *;
 
 // typora-vue-theme 排版（Vue 绿 + 860px 版心，不改代码块行 metrics）
