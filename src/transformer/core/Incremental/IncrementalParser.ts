@@ -245,7 +245,11 @@ export class IncrementalParser {
   ): void {
     const { before, after } = partition;
     const merged = [...before, ...reparsed, ...after];
-    this.syncParserStoreFromAst(prevAst, merged, store);
+    
+    // 如果没有任何保留的旧块，说明是全文替换，不应当继承旧的 store 状态
+    const isFullReplace = before.length === 0 && after.length === 0;
+    this.syncParserStoreFromAst(prevAst, merged, store, isFullReplace);
+    
     prevAst.children = merged;
     prevAst.length = 0;
   }
@@ -331,8 +335,11 @@ export class IncrementalParser {
     prevAst: MarkdownNode,
     mergedChildren: MarkdownNode[],
     store: ParserStore,
+    isFullReplace: boolean,
   ): void {
     this.applyParserStoreFromNodes(mergedChildren, store);
+
+    if (isFullReplace) return;
 
     const prevStore = prevAst.props?.store as ParserStore | undefined;
     if (!prevStore) return;

@@ -151,6 +151,17 @@ export class IncrementalSession {
       };
     }
 
+    // 如果任何一个 change 表明替换了整个文档，直接降级到全量渲染，不走增量
+    if (changes.some((c) => c.isFullDocument)) {
+      return {
+        ok: false,
+        ast: prevAst,
+        html: "",
+        changedStartLines: [],
+        failReason: "full-replace",
+      };
+    }
+
     const newLines = normalizeMarkdownLines(markdown);
 
     /** markdown 行级未变（如光标移动触发的 noop transaction）→ 跳过 parse/DOM */
@@ -199,6 +210,21 @@ export class IncrementalSession {
     }
 
     const { resolve } = parsed;
+
+    console.log(resolve)
+    
+    // 如果没有找到任何前后锚点，说明整个文档都在脏区内，属于全文替换
+    // 此时继续走增量解析没有意义，直接降级为全量渲染，确保 DOM 和 Store 状态彻底刷新
+    if (!resolve.input.range.prevHash && !resolve.input.range.nextHash) {
+      return {
+        ok: false,
+        ast: prevAst,
+        html: "",
+        changedStartLines: [],
+        failReason: "full-replace",
+      };
+    }
+
     const ast = prevAst;
 
     theme.logD("render:incremental", "dirty", {

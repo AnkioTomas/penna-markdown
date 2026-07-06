@@ -83,21 +83,29 @@ export class Preview {
         for (const transaction of transactions) {
             if (!transaction.docChanged) continue;
 
-            transaction.changes.iterChanges((fromA, toA, fromB, toB) => {
+            transaction.changes.iterChanges((fromA, toA, fromB, toB, inserted) => {
                 const oldDoc = transaction.startState.doc;
                 const newDoc = transaction.state.doc;
 
                 const fromLineA = oldDoc.lineAt(fromA).number;
-                const toLineA = oldDoc.lineAt(Math.max(fromA, toA - 1)).number;
+                const toLineA = oldDoc.lineAt(toA).number;
 
                 const fromLineB = newDoc.lineAt(fromB).number;
-                const toLineB = newDoc.lineAt(Math.max(fromB, toB - 1)).number;
+                const toLineB = newDoc.lineAt(toB).number;
+
+                const deletedLines = toLineA - fromLineA;
+                const insertedLines = toLineB - fromLineB;
+
+                const isFullDocument = fromA === 0 && toA === oldDoc.length;
 
                 list.push({
                     fromA: fromLineA,
                     toA: toLineA,
                     fromB: fromLineB,
                     toB: toLineB,
+                    deletedLines,
+                    insertedLines,
+                    isFullDocument,
                 });
             });
         }

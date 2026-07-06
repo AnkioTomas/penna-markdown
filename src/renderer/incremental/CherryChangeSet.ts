@@ -27,10 +27,16 @@
 export interface CherryChangeLineSet {
   /** 旧文档变更起始行（1-based，含） */
   fromA: number;
-  /** 旧文档变更结束行（1-based，含）；纯插入时 `toA < fromA` */
+  /** 旧文档变更结束行（1-based，含） */
   toA: number;
   /** 新文档变更起始行（1-based，含） */
   fromB: number;
   /** 新文档变更结束行（1-based，含） */
   toB: number;
+  /** 删除的旧行数 */
+  deletedLines: number;
+  /** 插入的新行数 */
+  insertedLines: number;
+  /** 是否替换了整个文档（fromA=0 且 toA=oldDoc.length） */
+  isFullDocument?: boolean;
 }

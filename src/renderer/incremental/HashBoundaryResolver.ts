@@ -110,22 +110,17 @@ export function mapOldLineToNew(
   changes: CherryChangeLineSet[],
   oldLine1: number,
 ): number {
-  let line = oldLine1;
+  let delta = 0;
 
   for (const change of changes) {
-    const deleteCount = change.toA - change.fromA + 1;
-    const insertCount = change.toB - change.fromB + 1;
-    const delta = insertCount - deleteCount;
-
-    if (change.toA < line) {
-      line += delta;
-    } else if (change.fromA <= line && line <= change.toA) {
-      line = change.fromB + (line - change.fromA);
-      break;
+    if (change.toA < oldLine1) {
+      delta += change.insertedLines - change.deletedLines;
+    } else if (change.fromA <= oldLine1 && oldLine1 <= change.toA) {
+      return change.fromB + (oldLine1 - change.fromA);
     }
   }
 
-  return line;
+  return oldLine1 + delta;
 }
 
 /**
@@ -144,52 +139,53 @@ export function dirtyLinesFromChanges(
 
   for (const change of changes) {
     const rawStart = change.fromA - 1;
-    const rawEnd = change.toA >= change.fromA ? change.toA : rawStart;
-    startLine = Math.min(startLine, rawStart);
-    endLine = Math.max(endLine, rawEnd);
+    const rawEnd = change.toA;
+
+    if (rawStart < startLine) startLine = rawStart;
+    if (rawEnd > endLine) endLine = rawEnd;
   }
 
-  if (!Number.isFinite(startLine) || endLine < 0) return undefined;
-  return { startLine, endLine };
+  if (startLine > endLine) return undefined;
+  return { startLine, endLine: endLine + 1 };
 }
 
 /**
- * 将脏区扩展到与相交块相同的完整块边界。
+ * 向上/向下寻找安全的块边界。
  *
- * @param spans     全 AST span 列表
- * @param startLine 原始脏区起始（0-based，含）
- * @param endLine   原始脏区结束（0-based，不含）
+ * @param spans       全 AST span 列表（旧 AST）
+ * @param startLine   初步脏区起始行（0-based）
+ * @param endLine     初步脏区结束行（0-based）
+ * @returns 扩展后的行区间
  */
-function expandDirtyToBlockBounds(
+export function expandDirtyToBlockBounds(
   spans: AstBlockSpan[],
   startLine: number,
   endLine: number,
 ): { startLine: number; endLine: number } {
-  let start = startLine;
-  let end = endLine;
+  let expandedStart = startLine;
+  let expandedEnd = endLine;
 
-  for (const span of spans) {
-    if (!spanOverlapsDirty(span, startLine, endLine)) continue;
-    start = Math.min(start, span.startLine);
-    end = Math.max(end, span.endLine);
+  const affected = findAffectedSpanRange(spans, startLine, endLine);
+  if (affected) {
+    expandedStart = Math.min(startLine, spans[affected.startIdx]!.startLine);
+    expandedEnd = Math.max(endLine, spans[affected.endIdx]!.endLine);
   }
 
-  return { startLine: start, endLine: end };
+  return { startLine: expandedStart, endLine: expandedEnd };
 }
 
 /**
- * 根据脏区计算 `prevHash` / `nextHash` 锚点。
+ * 解析 hash 锚点（prevHash / nextHash）。
  *
- * @param spans    全 AST span 列表
- * @param dirtyOld 扩展后的旧文档脏区
+ * @param spans    全 AST span 列表（旧 AST）
+ * @param expanded 扩展后的脏区
+ * @param affected 与脏区有实质相交的 span 索引区间
  */
 function resolveAnchors(
   spans: AstBlockSpan[],
-  dirtyOld: { startLine: number; endLine: number },
-): { prevHash: string; nextHash: string } {
-  const expanded = expandDirtyToBlockBounds(spans, dirtyOld.startLine, dirtyOld.endLine);
-  const affected = findAffectedSpanRange(spans, expanded.startLine, expanded.endLine);
-
+  expanded: { startLine: number; endLine: number },
+  affected: { startIdx: number; endIdx: number } | null,
+): IncrementalParseRange {
   let prevIdx = -1;
   let nextIdx = -1;
 
@@ -296,7 +292,8 @@ function resolveHashBoundaryInternal(
     };
   }
 
-  const { prevHash, nextHash } = resolveAnchors(spans, expandedOld);
+  const affected = findAffectedSpanRange(spans, expandedOld.startLine, expandedOld.endLine);
+  const { prevHash, nextHash } = resolveAnchors(spans, expandedOld, affected);
   const { sliceStart, sliceEnd } = sliceBounds(
     spans,
     prevHash,
