@@ -43,9 +43,13 @@ export class Preview {
 
     private pendingTransactions: Transaction[] = [];
 
-    private onEditorChange(markdown: string, tr?: Transaction): void {
+    private onEditorChange(markdown: string, tr?: Transaction | readonly Transaction[]): void {
         if (tr) {
-            this.pendingTransactions.push(tr);
+            if (Array.isArray(tr)) {
+                this.pendingTransactions.push(...tr);
+            } else {
+                this.pendingTransactions.push(tr as Transaction);
+            }
         }
 
         if (this.debounceTimer) clearTimeout(this.debounceTimer);
