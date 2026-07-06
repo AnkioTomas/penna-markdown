@@ -8,7 +8,7 @@ import {
   lineNumbers,
 } from "@codemirror/view";
 import { createEditorSyntaxHighlighting } from "./cmSyntax";
-import { CherryInlinesExtension, CherryMathBlockExtension } from "./lezer";
+import { CherryInlinesExtension, CherryMathBlockExtension, codeInfoPlugin } from "./lezer";
 import type { EditorOptions } from "./EditorOptions";
 import type { Theme } from "@/theme/Theme";
 
@@ -58,6 +58,7 @@ export class Editor {
         extensions: [CherryMathBlockExtension, CherryInlinesExtension],
       }),
       createEditorSyntaxHighlighting(),
+      codeInfoPlugin,
       updateListener,
     ];
 

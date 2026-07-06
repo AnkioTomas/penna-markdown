@@ -50,7 +50,14 @@ const GFM_HIGHLIGHT_STYLE = HighlightStyle.define([
   { tag: cherryTags.containerMark, class: "cm-ext-container-mark" },
   { tag: cherryTags.containerType, class: "cm-ext-container-type" },
   { tag: cherryTags.pageLink, class: "cm-ext-page-link" },
-  { tag: cherryTags.atType, class: "cm-ext-at-type" }
+  { tag: cherryTags.atType, class: "cm-ext-at-type" },
+  { tag: cherryTags.frontmatterMark, class: "cm-ext-frontmatter-mark" },
+  { tag: cherryTags.containerKey, class: "cm-ext-container-key" },
+  { tag: cherryTags.containerValue, class: "cm-ext-container-value" },
+  { tag: cherryTags.containerParam, class: "cm-ext-container-param" },
+  { tag: cherryTags.codeInfoKey, class: "cm-ext-codeinfo-key" },
+  { tag: cherryTags.codeInfoValue, class: "cm-ext-codeinfo-value" },
+  { tag: cherryTags.codeInfoFlag, class: "cm-ext-codeinfo-flag" }
 ]);
 
 /** GFM 基础语法高亮 */

@@ -24,5 +24,12 @@ export const cherryTags = {
   iframe: Tag.define(),
   fieldTag: Tag.define(),
   pageLink: Tag.define(),
-  atType: Tag.define()
+  atType: Tag.define(),
+  frontmatterMark: Tag.define(),
+  containerKey: Tag.define(),
+  containerValue: Tag.define(),
+  containerParam: Tag.define(),
+  codeInfoKey: Tag.define(),
+  codeInfoValue: Tag.define(),
+  codeInfoFlag: Tag.define()
 };

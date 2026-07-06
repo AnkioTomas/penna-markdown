@@ -6,6 +6,37 @@ const SpoilerDelim = { resolve: "CherrySpoiler", mark: "CherrySpoilerMark" };
 const CommentDelim = { resolve: "CherryInlineComment", mark: "CherryCommentMark" };
 const MathDelim = { resolve: "CherryMathInline", mark: "CherryMathMark" };
 
+export const FrontmatterParser = {
+  name: "Frontmatter",
+  parse(cx: any, line: any) {
+    if (cx.lineStart === 0 && line.text.startsWith("---")) {
+      const start = cx.lineStart;
+      const firstMarkEnd = start + 3;
+      cx.nextLine();
+      
+      while (cx.lineStart < cx.to) {
+        if (cx.line.text.startsWith("---")) {
+          const end = cx.lineStart + cx.line.text.length;
+          const children = [
+            cx.elt("CherryFrontmatterMark", start, firstMarkEnd)
+          ];
+          if (firstMarkEnd < cx.lineStart) {
+            children.push(cx.elt("Frontmatter", firstMarkEnd, cx.lineStart));
+          }
+          children.push(cx.elt("CherryFrontmatterMark", cx.lineStart, end));
+          
+          cx.addElement(cx.elt("Frontmatter", start, end, children));
+          cx.nextLine();
+          return true;
+        }
+        cx.nextLine();
+      }
+    }
+    return false;
+  },
+  before: "HorizontalRule"
+};
+
 export const CherryInlinesExtension: MarkdownConfig = {
   defineNodes: [
     { name: "CherryHighlight", style: cherryTags.highlight },
@@ -25,8 +56,14 @@ export const CherryInlinesExtension: MarkdownConfig = {
     { name: "CherryIframe", style: cherryTags.iframe },
     { name: "CherryContainerMark", style: cherryTags.containerMark },
     { name: "CherryContainerType", style: cherryTags.containerType },
-    { name: "CherryInlineContainer" }
+    { name: "CherryInlineContainer" },
+    { name: "CherryContainerKey", style: cherryTags.containerKey },
+    { name: "CherryContainerValue", style: cherryTags.containerValue },
+    { name: "CherryContainerParam", style: cherryTags.containerParam },
+    { name: "Frontmatter", style: cherryTags.frontmatter },
+    { name: "CherryFrontmatterMark", style: cherryTags.frontmatterMark }
   ],
+  parseBlock: [FrontmatterParser],
   parseInline: [{
     name: "CherryInlines",
     parse(cx: InlineContext, next: number, pos: number) {
@@ -99,7 +136,7 @@ export const CherryInlinesExtension: MarkdownConfig = {
         }
       }
 
-      // Container Marks (::: tip, :::: collapse, etc)
+            // Container Marks (::: tip, :::: collapse, etc)
       if (next === 58 /* ':' */) {
         const match = /^(:{3,})([^\n]*)/.exec(cx.slice(pos, cx.end));
         // 只匹配独立成行的，或者前面是空格的
@@ -109,8 +146,43 @@ export const CherryInlinesExtension: MarkdownConfig = {
           const children = [cx.elt("CherryContainerMark", pos, pos + markerLen)];
           
           if (typeStr && typeStr.trim().length > 0) {
-            // 将冒号后面的所有内容都作为 type 高亮
-            children.push(cx.elt("CherryContainerType", pos + markerLen, pos + match[0].length));
+            let currentPos = pos + markerLen;
+            const str = match[2];
+            
+            // First token is the type (e.g. card, tip, repo-card)
+            const typeMatch = /^\s*([a-zA-Z0-9_-]+)/.exec(str);
+            if (typeMatch) {
+              const typeStart = currentPos + typeMatch[0].indexOf(typeMatch[1]);
+              const typeEnd = typeStart + typeMatch[1].length;
+              children.push(cx.elt("CherryContainerType", typeStart, typeEnd));
+              
+              let rest = str.slice(typeMatch[0].length);
+              let restPos = typeEnd;
+              
+              // Now parse the rest for keys, values, and params
+              const tokenRegex = /([a-zA-Z0-9_-]+)="([^"]*)"|([^\s]+)/g;
+              let tokenMatch;
+              while ((tokenMatch = tokenRegex.exec(rest)) !== null) {
+                const tokenStart = restPos + tokenMatch.index;
+                if (tokenMatch[1]) {
+                  // Key="Value"
+                  const keyStart = tokenStart;
+                  const keyEnd = keyStart + tokenMatch[1].length;
+                  children.push(cx.elt("CherryContainerKey", keyStart, keyEnd));
+                  
+                  const valStart = keyEnd + 2; // skip ="
+                  const valEnd = valStart + tokenMatch[2].length;
+                  children.push(cx.elt("CherryContainerValue", valStart, valEnd));
+                } else if (tokenMatch[3]) {
+                  // Param
+                  const paramStart = tokenStart;
+                  const paramEnd = paramStart + tokenMatch[3].length;
+                  children.push(cx.elt("CherryContainerParam", paramStart, paramEnd));
+                }
+              }
+            } else {
+               children.push(cx.elt("CherryContainerType", pos + markerLen, pos + match[0].length));
+            }
           }
           
           return cx.addElement(cx.elt("CherryInlineContainer", pos, pos + match[0].length, children));

@@ -456,6 +456,22 @@
   color: var(--cherry-c-text-3);
   background: color-mix(in srgb, var(--cherry-c-border-soft) 40%, transparent);
 }
+.cherry-editor-cm .cm-ext-frontmatter-mark {
+  color: var(--cherry-c-border-soft);
+}
+.cherry-editor-cm .cm-ext-container-key,
+.cherry-editor-cm .cm-ext-codeinfo-key {
+  color: var(--cherry-c-important);
+}
+.cherry-editor-cm .cm-ext-container-value,
+.cherry-editor-cm .cm-ext-codeinfo-value {
+  color: var(--cherry-c-tip);
+}
+.cherry-editor-cm .cm-ext-container-param,
+.cherry-editor-cm .cm-ext-codeinfo-flag {
+  color: var(--cherry-c-warning);
+  font-style: italic;
+}
 .cherry-editor-cm .cm-ext-collapse,
 .cherry-editor-cm .cm-ext-tabs,
 .cherry-editor-cm .cm-ext-steps,

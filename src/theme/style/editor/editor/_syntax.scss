@@ -159,6 +159,26 @@
     background: color-mix(in srgb, var(--cherry-c-border-soft) 40%, transparent);
   }
 
+  .cm-ext-frontmatter-mark {
+    color: var(--cherry-c-border-soft);
+  }
+
+  .cm-ext-container-key,
+  .cm-ext-codeinfo-key {
+    color: var(--cherry-c-important);
+  }
+
+  .cm-ext-container-value,
+  .cm-ext-codeinfo-value {
+    color: var(--cherry-c-tip);
+  }
+
+  .cm-ext-container-param,
+  .cm-ext-codeinfo-flag {
+    color: var(--cherry-c-warning);
+    font-style: italic;
+  }
+
   .cm-ext-collapse,
   .cm-ext-tabs,
   .cm-ext-steps,
