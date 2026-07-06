@@ -19,8 +19,17 @@ function lineChange(
   toA: number,
   fromB: number,
   toB: number,
+  deletedLines?: number,
+  insertedLines?: number,
 ): CherryChangeLineSet {
-  return { fromA, toA, fromB, toB };
+  return {
+    fromA,
+    toA,
+    fromB,
+    toB,
+    deletedLines: deletedLines ?? (toA - fromA),
+    insertedLines: insertedLines ?? (toB - fromB),
+  };
 }
 
 function createRenderer(debug = false) {
@@ -195,7 +204,7 @@ describe("renderer/incremental", () => {
     const { renderer, mount } = createRenderer();
     renderer.render("A\n\nB\n\nC\n\nD");
 
-    const result = renderer.render("A\n\nC\n\nD", [lineChange(3, 3, 3, 2)]);
+    const result = renderer.render("A\n\nC\n\nD", [lineChange(3, 4, 3, 2)]);
     expect(result.partial).toBe(true);
     expect(mount.children.length).toBe(3);
     expect([...mount.children].map((el) => el.textContent?.trim())).toEqual([
@@ -263,11 +272,12 @@ describe("renderer/incremental", () => {
 
   it("reorders blocks via line-based dom sync", () => {
     const { renderer, mount } = createRenderer();
-    renderer.render("A\n\nB\n\nC");
+    renderer.render("Prefix\n\nA\n\nB\n\nC");
 
-    const result = renderer.render("C\n\nB\n\nA", [lineChange(1, 5, 1, 5)]);
+    const result = renderer.render("Prefix\n\nC\n\nB\n\nA", [lineChange(3, 7, 3, 7)]);
     expect(result.partial).toBe(true);
     expect([...mount.children].map((el) => el.textContent?.trim())).toEqual([
+      "Prefix",
       "C",
       "B",
       "A",

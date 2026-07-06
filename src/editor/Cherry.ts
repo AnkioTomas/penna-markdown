@@ -3,6 +3,7 @@ import { Editor } from "@/editor/editor/Editor";
 import { Preview } from "@/editor/preview/Preview";
 import { SideBar } from "@/editor/sidebar/SideBar";
 import { Toolbar } from "@/editor/toolbar/Toolbar";
+import { StatusBar } from "@/editor/statusbar/StatusBar";
 import type { CherryOptions } from "@/editor/CherryOptions";
 import type { EditorLayoutMode } from "@/editor/Layout";
 import { printCherryLogo } from "@/editor/printLogo";
@@ -36,12 +37,14 @@ export class Cherry {
   private readonly editorEl: HTMLElement;
   private readonly dividerEl: HTMLElement;
   private readonly previewEl: HTMLElement;
+  private readonly statusbarEl: HTMLElement | null = null;
 
   private readonly preview: Preview;
   private readonly editor: Editor;
   private readonly toolbar: Toolbar | null;
   private readonly sidebar: SideBar | null;
   private readonly divider: Divider;
+  private readonly statusbar: StatusBar | null = null;
 
   private readonly id: string | undefined;
   private destroyed = false;
@@ -60,6 +63,7 @@ export class Cherry {
       editor: editorOptions = {},
       preview: previewOptions = {},
       transformer = {},
+      statusbar = true,
     } = options;
 
     const initialLayout = options.layout ?? "split";
@@ -78,6 +82,12 @@ export class Cherry {
     this.bodyEl.appendChild(this.dividerEl);
     this.bodyEl.appendChild(this.previewEl);
     this.cherryEl.appendChild(this.bodyEl);
+    
+    if (statusbar) {
+      this.statusbarEl = el("div", "cherry-statusbar-wrap");
+      this.cherryEl.appendChild(this.statusbarEl);
+    }
+    
     this.rootEl.appendChild(this.cherryEl);
 
     this.theme.setTheme(themeId, this.previewEl, this.cherryEl);
@@ -98,6 +108,10 @@ export class Cherry {
       },
     );
 
+    if (statusbar && this.statusbarEl) {
+      this.statusbar = new StatusBar(this.statusbarEl, this.theme);
+    }
+
     this.toolbar =
       options.toolbar === false
         ? null
@@ -110,7 +124,7 @@ export class Cherry {
     this.sidebar =
       options.sidebar === false
         ? null
-        : new SideBar(this.sidebarEl, this.theme, options.sidebar ?? {});
+        : new SideBar(this.sidebarEl, this.theme);
 
     this.divider = new Divider(this.dividerEl, this.theme);
     this.divider.setLayout(initialLayout);
@@ -123,9 +137,18 @@ export class Cherry {
     if (initialMarkdown) {
       this.theme.emit("editor:change", { markdown: initialMarkdown });
     }
+    this.theme.on("cherry:layout", (payload: any) => {
+      this.setLayout(payload.mode);
+    });
+
+    this.theme.on("cherry:sidebar", (payload: any) => {
+      this.setSidebarVisible(payload.show);
+    });
 
     queueMicrotask(() => {
       if (this.destroyed) return;
+      this.theme.emit("cherry:layout", { mode: initialLayout });
+      this.theme.emit("cherry:sidebar", { show: options.sidebar !== false });
       this.theme.emit("editor:ready", { id: this.id });
     });
 
@@ -148,6 +171,19 @@ export class Cherry {
     this.divider.setLayout(mode);
   }
 
+  isSidebarVisible(): boolean {
+    return this.sidebarEl.style.display !== "none";
+  }
+
+  setSidebarVisible(show: boolean): void {
+    if (this.sidebar === null) return;
+    this.sidebarEl.style.display = show ? "" : "none";
+  }
+
+  toggleSidebar(): void {
+    this.setSidebarVisible(!this.isSidebarVisible());
+  }
+
   destroy(): void {
     if (this.destroyed) return;
     this.destroyed = true;
@@ -157,6 +193,7 @@ export class Cherry {
     this.divider.destroy();
     this.editor.destroy();
     this.preview.destroy();
+    this.statusbar?.destroy();
     this.cherryEl.remove();
   }
 }

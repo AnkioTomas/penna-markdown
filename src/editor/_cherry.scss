@@ -4,6 +4,7 @@
 @use "preview/preview";
 @use "editor/cm";
 @use "toolbar/toolbar";
+@use "statusbar/statusbar";
 
 .cherry {
   display: flex;
