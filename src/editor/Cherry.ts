@@ -121,10 +121,7 @@ export class Cherry {
             options: options.toolbar ?? {},
           });
 
-    this.sidebar =
-      options.sidebar === false
-        ? null
-        : new SideBar(this.sidebarEl, this.theme);
+    this.sidebar = new SideBar(this.sidebarEl, this.theme);
 
     this.divider = new Divider(this.dividerEl, this.theme);
     this.divider.setLayout(initialLayout);
@@ -176,7 +173,6 @@ export class Cherry {
   }
 
   setSidebarVisible(show: boolean): void {
-    if (this.sidebar === null) return;
     this.sidebarEl.style.display = show ? "" : "none";
   }
 
