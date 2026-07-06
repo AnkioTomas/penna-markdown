@@ -130,8 +130,17 @@ export class TransformerEngine {
     renderBlock(node: MarkdownNode, ast: MarkdownNode): string {
         const store = ast.props?.store as ParserStore | undefined;
         if (!store) return "";
-        if (node.props?.invisible || node.type === "blank_line") return "";
         const ctx = this.createRenderContext(store);
+        return this.renderBlockWithContext(node, ctx);
+    }
+
+    /**
+     * 在已有渲染上下文中渲染单个块（全量路径复用同一 ctx，避免重复创建）。
+     * @param node 块 AST 节点
+     * @param ctx  共享渲染上下文
+     */
+    renderBlockWithContext(node: MarkdownNode, ctx: RenderContext): string {
+        if (node.props?.invisible || node.type === "blank_line") return "";
         return this.registry.getBlockParser(node.type)?.render(node, ctx) ?? "";
     }
 
