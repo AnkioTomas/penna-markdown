@@ -41,14 +41,24 @@ export class Preview {
         }));
     }
 
+    private pendingTransactions: Transaction[] = [];
+
     private onEditorChange(markdown: string, tr?: Transaction): void {
+        if (tr) {
+            this.pendingTransactions.push(tr);
+        }
+
         if (this.debounceTimer) clearTimeout(this.debounceTimer);
 
         const run = (): void => {
             this.debounceTimer = null;
+            
+            const transactionsToProcess = [...this.pendingTransactions];
+            this.pendingTransactions = [];
+            
             const result = this.renderer.render(
                 markdown,
-                this.convert2CherryChanges(tr),
+                this.convert2CherryChanges(transactionsToProcess.length > 0 ? transactionsToProcess : undefined),
             );
             this.theme.emit("preview:rendered", {
                 markdown,
@@ -78,37 +88,40 @@ export class Preview {
         if (!tr) return undefined;
 
         const transactions = Array.isArray(tr) ? tr : [tr];
-        const list: CherryChangeLineSet[] = [];
+        const validTrs = transactions.filter(t => t.docChanged);
+        if (validTrs.length === 0) return undefined;
 
-        for (const transaction of transactions) {
-            if (!transaction.docChanged) continue;
-
-            transaction.changes.iterChanges((fromA, toA, fromB, toB, inserted) => {
-                const oldDoc = transaction.startState.doc;
-                const newDoc = transaction.state.doc;
-
-                const fromLineA = oldDoc.lineAt(fromA).number;
-                const toLineA = oldDoc.lineAt(toA).number;
-
-                const fromLineB = newDoc.lineAt(fromB).number;
-                const toLineB = newDoc.lineAt(toB).number;
-
-                const deletedLines = toLineA - fromLineA;
-                const insertedLines = toLineB - fromLineB;
-
-                const isFullDocument = fromA === 0 && toA === oldDoc.length;
-
-                list.push({
-                    fromA: fromLineA,
-                    toA: toLineA,
-                    fromB: fromLineB,
-                    toB: toLineB,
-                    deletedLines,
-                    insertedLines,
-                    isFullDocument,
-                });
-            });
+        let mergedChanges = validTrs[0]!.changes;
+        for (let i = 1; i < validTrs.length; i++) {
+            mergedChanges = mergedChanges.compose(validTrs[i]!.changes);
         }
+
+        const list: CherryChangeLineSet[] = [];
+        const oldDoc = validTrs[0]!.startState.doc;
+        const newDoc = validTrs[validTrs.length - 1]!.state.doc;
+
+        mergedChanges.iterChanges((fromA, toA, fromB, toB, inserted) => {
+            const fromLineA = oldDoc.lineAt(fromA).number;
+            const toLineA = oldDoc.lineAt(toA).number;
+
+            const fromLineB = newDoc.lineAt(fromB).number;
+            const toLineB = newDoc.lineAt(toB).number;
+
+            const deletedLines = toLineA - fromLineA;
+            const insertedLines = toLineB - fromLineB;
+
+            const isFullDocument = fromA === 0 && toA === oldDoc.length;
+
+            list.push({
+                fromA: fromLineA,
+                toA: toLineA,
+                fromB: fromLineB,
+                toB: toLineB,
+                deletedLines,
+                insertedLines,
+                isFullDocument,
+            });
+        });
 
         return list.length > 0 ? list : undefined;
     }
