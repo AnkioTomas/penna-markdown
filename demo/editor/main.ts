@@ -126,7 +126,6 @@ const editor = new Cherry(document.querySelector("#cherry-editor")!!, {
     },
     onFileClick: (id) => {
       if (id === "test" || id === "simple") {
-        if (docSelect) docSelect.value = id;
         setEditorDemoDoc(id);
         editor.setMarkdown(DOC_SOURCES[id]);
       }
@@ -136,8 +135,6 @@ const editor = new Cherry(document.querySelector("#cherry-editor")!!, {
 
 const themeSelect = document.getElementById("editor-theme-select") as HTMLSelectElement | null;
 const appearanceSelect = document.getElementById("editor-appearance-select") as HTMLSelectElement | null;
-const themeBtn = document.getElementById("editor-theme-btn") as HTMLButtonElement | null;
-const docSelect = document.getElementById("editor-doc-select") as HTMLSelectElement | null;
 
 function populateThemeSelect() {
   if (!themeSelect) return;
@@ -159,16 +156,8 @@ function syncAppearanceSelect() {
   if (appearanceSelect) appearanceSelect.value = appearance;
 }
 
-function syncThemeButton() {
-  if (!themeBtn) return;
-  const { isDark } = editor.theme.getTheme();
-  themeBtn.textContent = isDark ? "白天模式" : "夜间模式";
-  themeBtn.setAttribute("aria-pressed", isDark ? "true" : "false");
-}
-
 function syncDemoChrome() {
   document.body.classList.toggle("demo-dark", editor.theme.getTheme().isDark);
-  syncThemeButton();
   syncAppearanceSelect();
   syncThemeSelect();
 }
@@ -204,7 +193,6 @@ editor.theme.on(THEME_EVENT_SKIN, syncDemoChrome);
 editor.theme.setLightDark(resolveAppearance(appearance));
 
 populateThemeSelect();
-if (docSelect) docSelect.value = initialDoc;
 syncDemoChrome();
 
 if (themeSelect) {
@@ -215,19 +203,6 @@ if (appearanceSelect) {
   appearanceSelect.addEventListener("change", () => {
     appearance = appearanceSelect.value as AppearanceMode;
     applyResolvedAppearance();
-  });
-}
-
-if (themeBtn) {
-  themeBtn.addEventListener("click", toggleAppearance);
-}
-
-if (docSelect) {
-  docSelect.addEventListener("change", () => {
-    const doc = docSelect.value as EditorDemoDoc;
-    if (doc !== "test" && doc !== "simple") return;
-    setEditorDemoDoc(doc);
-    editor.setMarkdown(DOC_SOURCES[doc]);
   });
 }
 
