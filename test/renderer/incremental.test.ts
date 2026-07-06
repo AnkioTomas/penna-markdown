@@ -2,18 +2,15 @@
  * @vitest-environment jsdom
  */
 import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { JSDOM } from "jsdom";
 import { Theme } from "@/theme/Theme.js";
 import { Renderer } from "@/renderer/Renderer.js";
 import { Preview } from "@/editor/preview/Preview";
-import { BLOCK_DOM_ID_ATTR } from "@/renderer/incremental/BlockCacheEntry.js";
 import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet.js";
-import {
-  dirtyRangeFromLineChanges,
-  expandToBlockStart,
-} from "@/renderer/incremental/dirtyRange.js";
-import { buildBlockEntries } from "@/renderer/incremental/renderCache.js";
+import { dirtyLinesFromChanges, mapOldLineToNew, astBlockSpans, findAffectedSpanRange } from "@/renderer/incremental/HashBoundaryResolver.js";
+import { BlockIndex } from "@/renderer/incremental/BlockIndex.js";
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
 
@@ -55,47 +52,64 @@ describe("renderer/incremental", () => {
       length: 0,
     });
   });
-  it("dirtyRangeFromLineChanges maps line edits to 0-based range", () => {
-    const dirty = dirtyRangeFromLineChanges(
-      [lineChange(3, 3, 3, 3)],
-      "new",
-    );
-    expect(dirty).toEqual({ startLine: 2, endLine: 3 });
-  });
-
-  it("skips renderBlock outside dirty range", () => {
+  it("dirtyLinesFromChanges maps line edits to block bounds", () => {
     const transformer = new TransformerEngine({
       renderOptions: { sourceLineMap: true },
     });
-    const prevMd = "# Title\n\nHello\n\nFooter\n";
-    const nextMd = "# Title\n\nHello world\n\nFooter\n";
-    const prevLines = normalizeMarkdownLines(prevMd);
-    const nextLines = normalizeMarkdownLines(nextMd);
-    const prevAst = transformer.parse(prevMd);
-    const nextAst = transformer.parseIncremental(prevAst, nextMd, {
-      parseStartOld: 2,
-      parseEndOld: 3,
-      parseStartNew: 2,
-      parseEndNew: 3,
-    });
-    const prevBlocks = buildBlockEntries(prevLines, prevAst, [], transformer).blocks;
+    const md = "# Title\n\nHello\n\nFooter\n";
+    const ast = transformer.parse(md);
+    const spans = astBlockSpans(ast);
+    const changes = [lineChange(3, 3, 3, 3)];
 
-    const dirty = expandToBlockStart(
-      dirtyRangeFromLineChanges([lineChange(3, 3, 3, 3)], "new")!,
-      prevBlocks,
+    const raw = dirtyLinesFromChanges(changes)!;
+    const affected = findAffectedSpanRange(spans, raw.startLine, raw.endLine)!;
+    const block = spans[affected.startIdx]!;
+
+    expect(block.startLine).toBe(2);
+    expect(block.endLine).toBe(3);
+    expect(mapOldLineToNew(changes, 3)).toBe(3);
+  });
+
+  it("preserves unchanged block DOM when inserting lines at top", () => {
+    const { renderer, mount } = createRenderer();
+    renderer.render("# Title\n\nHello\n\nFooter");
+
+    const h1 = mount.querySelector("h1")!;
+    const footer = [...mount.querySelectorAll("p")].find(
+      (el) => el.textContent?.trim() === "Footer",
+    )!;
+
+    const result = renderer.render(
+      "prefix\n\n# Title\n\nHello\n\nFooter",
+      [lineChange(1, 0, 1, 2)],
     );
+    expect(result.partial).toBe(true);
+    expect(mount.querySelector("h1")).toBe(h1);
+    expect(
+      [...mount.querySelectorAll("p")].find(
+        (el) => el.textContent?.trim() === "Footer",
+      ),
+    ).toBe(footer);
 
-    const spy = vi.spyOn(transformer, "renderBlock");
-    buildBlockEntries(nextLines, nextAst, prevBlocks, transformer, undefined, dirty);
-    expect(spy.mock.calls.length).toBeGreaterThanOrEqual(1);
-    expect(spy.mock.calls.length).toBeLessThanOrEqual(2);
+    renderer.destroy();
+  });
+
+  it("does not call renderBlock for unchanged blocks on noop edit", () => {
+    const { renderer, mount } = createRenderer();
+    renderer.render("# Title\n\nHello");
+
+    const spy = vi.spyOn(renderer["transformer"], "renderBlock");
+    renderer.render("# Title\n\nHello", [lineChange(3, 3, 3, 3)]);
+    expect(spy).not.toHaveBeenCalled();
     spy.mockRestore();
+
+    renderer.destroy();
   });
 
   it("skips html comment blocks that produce no element root", () => {
     const { renderer, mount } = createRenderer();
     renderer.renderFull("Before\n\n<!-- comment only -->\n\nAfter");
-    expect(mount.childElementCount).toBe(renderer["documentModel"].blocks.length);
+    expect(mount.childElementCount).toBe(renderer["session"].blocks.length);
     expect(mount.childElementCount).toBe(2);
 
     const result = renderer.render(
@@ -110,14 +124,14 @@ describe("renderer/incremental", () => {
     const { renderer, mount } = createRenderer();
     const md = readFileSync("demo/test.md", "utf8");
     renderer.renderFull(md);
-    expect(mount.childElementCount).toBe(renderer["documentModel"].blocks.length);
+    expect(mount.childElementCount).toBe(renderer["session"].blocks.length);
     renderer.destroy();
   });
 
   it("incremental update works when cache matches dom count", () => {
     const { renderer, mount } = createRenderer();
     renderer.renderFull("# Title\n\nHello\n\nFooter");
-    expect(mount.childElementCount).toBe(renderer["documentModel"].blocks.length);
+    expect(mount.childElementCount).toBe(renderer["session"].blocks.length);
 
     const result = renderer.render(
       "# Title\n\nHello world\n\nFooter",
@@ -128,13 +142,13 @@ describe("renderer/incremental", () => {
     renderer.destroy();
   });
 
-  it("ignores empty-html cache entries so dom and blocks stay aligned", () => {
+  it("aborts incremental when blocks index length mismatches dom", () => {
     const { renderer, mount } = createRenderer();
     renderer.renderFull("A\n\nB");
-    const model = renderer["documentModel"];
+    const model = renderer["session"];
     model.blocks = [
       ...model.blocks.slice(0, 1),
-      { ...model.blocks[0]!, html: "   ", domId: "ghost" },
+      model.blocks[0]!,
       ...model.blocks.slice(1),
     ];
     expect(model.blocks.length).toBeGreaterThan(mount.childElementCount);
@@ -143,8 +157,7 @@ describe("renderer/incremental", () => {
       "A\n\nB edited",
       [lineChange(3, 3, 3, 3)],
     );
-    expect(result.partial).toBe(true);
-    expect(mount.childElementCount).toBe(model.blocks.length);
+    expect(result.partial).toBe(false);
     renderer.destroy();
   });
 
@@ -155,7 +168,7 @@ describe("renderer/incremental", () => {
     const h1 = mount.querySelector("h1")!;
     const h1Html = h1.outerHTML;
 
-    const result = renderer.render("# Title\n\nHello world");
+    const result = renderer.render("# Title\n\nHello world", [lineChange(3, 3, 3, 3)]);
     expect(result.partial).toBe(true);
     expect(mount.querySelector("h1")!.outerHTML).toBe(h1Html);
     expect(mount.querySelector("p")!.textContent).toContain("Hello world");
@@ -170,7 +183,7 @@ describe("renderer/incremental", () => {
     const h1 = mount.querySelector("h1")!;
     const h1Html = h1.outerHTML;
 
-    const result = renderer.render("# Title\n\nHello");
+    const result = renderer.render("# Title\n\nHello", [lineChange(3, 3, 3, 3)]);
     expect(result.partial).toBe(true);
     expect(mount.querySelector("h1")!.outerHTML).toBe(h1Html);
     expect(mount.querySelector("p")!.textContent).toBe("Hello");
@@ -182,7 +195,7 @@ describe("renderer/incremental", () => {
     const { renderer, mount } = createRenderer();
     renderer.render("A\n\nB\n\nC\n\nD");
 
-    const result = renderer.render("A\n\nC\n\nD");
+    const result = renderer.render("A\n\nC\n\nD", [lineChange(3, 3, 3, 2)]);
     expect(result.partial).toBe(true);
     expect(mount.children.length).toBe(3);
     expect([...mount.children].map((el) => el.textContent?.trim())).toEqual([
@@ -194,12 +207,12 @@ describe("renderer/incremental", () => {
     renderer.destroy();
   });
 
-  it("falls back to full render when heading slug must regenerate", () => {
+  it("incrementally updates heading when slug option is enabled", () => {
     const { renderer, mount } = createRenderer();
     renderer.render("# Hello\n\nBody");
 
-    const result = renderer.render("# Hello!\n\nBody");
-    expect(result.partial).toBe(false);
+    const result = renderer.render("# Hello!\n\nBody", [lineChange(1, 1, 1, 1)]);
+    expect(result.partial).toBe(true);
     expect(mount.querySelector("h1")!.textContent).toBe("Hello!");
     expect(mount.querySelector("p")!.textContent).toBe("Body");
 
@@ -210,56 +223,37 @@ describe("renderer/incremental", () => {
     const { renderer, mount } = createRenderer();
     renderer.render("line0\n\nline1\n\nline2");
 
-    const result = renderer.render("prefix\n\nline0\n\nline1\n\nline2");
+    const result = renderer.render(
+      "prefix\n\nline0\n\nline1\n\nline2",
+      [lineChange(1, 0, 1, 2)],
+    );
     expect(result.partial).toBe(true);
     expect(mount.children.length).toBe(4);
 
     renderer.destroy();
   });
 
-  it("keeps domId on reused paragraph after incremental patch", () => {
+  it("keeps data-hash on reused paragraph after incremental patch", () => {
     const { renderer, mount } = createRenderer();
     renderer.render("# Title\n\nHello");
     const p = mount.querySelector("p")!;
-    const domId = p.getAttribute(BLOCK_DOM_ID_ATTR);
-    expect(domId).toBeTruthy();
 
-    renderer.render("# Title\n\nHello world");
+    renderer.render("# Title\n\nHello world", [lineChange(3, 3, 3, 3)]);
 
-    expect(mount.querySelector("p")!.getAttribute(BLOCK_DOM_ID_ATTR)).not.toBe(domId);
+    expect(mount.querySelector("p")).not.toBe(p);
     expect(mount.querySelector("p")!.textContent).toContain("Hello world");
 
     renderer.destroy();
   });
 
-  it("does not call renderBlock for unchanged blocks", () => {
-    const { mount, theme } = createRenderer();
-    const transformer = new TransformerEngine({
-      renderOptions: { sourceLineMap: true },
-    });
-    const markdown = "# Title\n\nHello";
-    const lines = normalizeMarkdownLines(markdown);
-    const ast = transformer.parse(markdown);
-    const first = buildBlockEntries(lines, ast, [], transformer);
-
-    const spy = vi.spyOn(transformer, "renderBlock");
-    buildBlockEntries(lines, ast, first.blocks, transformer, undefined, {
-      startLine: 99,
-      endLine: 99,
-    });
-    expect(spy).not.toHaveBeenCalled();
-    spy.mockRestore();
-    theme.setTheme("default", mount);
-  });
-
-  it("preserves DOM node refs when domId is unchanged", () => {
+  it("preserves DOM node refs when hash is unchanged", () => {
     const { renderer, mount } = createRenderer();
     renderer.render("# Title\n\nHello");
 
     const h1 = mount.querySelector("h1");
     const p = mount.querySelector("p");
 
-    const result = renderer.render("# Title\n\nHello");
+    const result = renderer.render("# Title\n\nHello", [lineChange(3, 3, 3, 3)]);
     expect(result.partial).toBe(true);
     expect(mount.querySelector("h1")).toBe(h1);
     expect(mount.querySelector("p")).toBe(p);
@@ -271,7 +265,7 @@ describe("renderer/incremental", () => {
     const { renderer, mount } = createRenderer();
     renderer.render("A\n\nB\n\nC");
 
-    const result = renderer.render("C\n\nB\n\nA");
+    const result = renderer.render("C\n\nB\n\nA", [lineChange(1, 5, 1, 5)]);
     expect(result.partial).toBe(true);
     expect([...mount.children].map((el) => el.textContent?.trim())).toEqual([
       "C",
@@ -287,7 +281,7 @@ describe("renderer/incremental", () => {
     renderer.render("# Hello\n\nBody");
     mount.appendChild(mount.ownerDocument.createElement("div"));
 
-    const result = renderer.render("# Hello\n\nBody\n\nTail");
+    const result = renderer.render("# Hello\n\nBody\n\nTail", [lineChange(5, 5, 5, 7)]);
     expect(result.partial).toBe(false);
     expect(mount.querySelector("p")!.textContent).toBe("Body");
 
@@ -299,7 +293,7 @@ describe("renderer/incremental", () => {
     renderer.render("# Title\n\nHello");
 
     const h1 = mount.querySelector("h1")!;
-    renderer.render("# Title\n\nHello world");
+    renderer.render("# Title\n\nHello world", [lineChange(3, 3, 3, 3)]);
     expect(mount.querySelector("h1")).toBe(h1);
 
     renderer.destroy();
@@ -318,15 +312,16 @@ describe("renderer/incremental", () => {
     renderer.destroy();
   });
 
-  it("falls back to full render when footnotes themselves are modified", () => {
+  it("incrementally updates footnote definition when edited", () => {
     const { renderer, mount } = createRenderer();
-    renderer.renderFull("Before\n\n[^a]: note\n\nAfter");
+    renderer.renderFull("See[^a]\n\n[^a]: note\n\nAfter");
 
     const result = renderer.render(
-      "Before\n\n[^a]: note edited\n\nAfter",
+      "See[^a]\n\n[^a]: note edited\n\nAfter",
       [lineChange(3, 3, 3, 3)],
     );
-    expect(result.partial).toBe(false); // 脚注被修改，必须触发全量渲染
+    expect(result.partial).toBe(true);
+    expect(mount.textContent).toContain("note edited");
     renderer.destroy();
   });
 
@@ -341,6 +336,109 @@ describe("renderer/incremental", () => {
     );
     expect(result.partial).toBe(true);
     expect(mount.querySelector("h1")!.textContent).toBe("Hello");
+    renderer.destroy();
+  });
+
+  it("test.md: editing GFM heading keeps media DOM and block count", () => {
+    const md = readFileSync(resolve(import.meta.dirname, "../../demo/test.md"), "utf8");
+    const lines = normalizeMarkdownLines(md);
+    const gfmLine1 = lines.findIndex((l) => l === "## GFM 标准语法") + 1;
+
+    const { renderer, mount } = createRenderer();
+    renderer.renderFull(md);
+    expect(mount.childElementCount).toBe(renderer.getMountedBlocks().length);
+
+    const videoEl = mount.querySelector("video")!;
+    const blockCountBefore = renderer.getMountedBlocks().length;
+
+    const nextMd = md.replace(
+      "## GFM 标准语法",
+      "## GFM 标准语法杀杀杀杀杀杀杀杀杀杀杀杀杀",
+    );
+    const result = renderer.render(nextMd, [
+      lineChange(gfmLine1, gfmLine1, gfmLine1, gfmLine1),
+    ]);
+
+    expect(result.partial).toBe(true);
+    expect(renderer.getMountedBlocks().length).toBe(blockCountBefore);
+    expect(mount.childElementCount).toBe(blockCountBefore);
+    expect(mount.querySelector("video")).toBe(videoEl);
+
+    renderer.destroy();
+  });
+
+  it("test.md: frontmatter edit keeps media DOM nodes", () => {
+    const md = readFileSync(resolve(import.meta.dirname, "../../demo/test.md"), "utf8");
+    const { renderer, mount } = createRenderer();
+    renderer.renderFull(md);
+
+    const videoEl = mount.querySelector("video")!;
+    const audioEl = mount.querySelector("audio")!;
+    expect(videoEl).toBeTruthy();
+    expect(audioEl).toBeTruthy();
+
+    const nextMd = md.replace("title: Cherry Markdown Next", "title: Cherry Markdown Next X");
+    const result = renderer.render(nextMd, [lineChange(2, 2, 2, 2)]);
+    expect(result.partial).toBe(true);
+    expect(mount.querySelector("h1")!.textContent).toContain("Cherry Markdown Next X");
+    expect(mount.querySelector("video")).toBe(videoEl);
+    expect(mount.querySelector("audio")).toBe(audioEl);
+
+    renderer.destroy();
+  });
+
+  it("preserves iframe DOM when editing unrelated paragraph", () => {
+    const { renderer, mount } = createRenderer();
+    renderer.renderFull("Before\n\n!iframe[Demo](https://example.com)\n\nAfter");
+
+    const iframe = mount.querySelector("iframe")!;
+    expect(iframe).toBeTruthy();
+
+    const result = renderer.render(
+      "Before\n\n!iframe[Demo](https://example.com)\n\nAfter edited",
+      [lineChange(5, 5, 5, 5)],
+    );
+    expect(result.partial).toBe(true);
+    expect(mount.querySelector("iframe")).toBe(iframe);
+
+    renderer.destroy();
+  });
+
+  it("preserves iframe DOM on noop incremental pass", () => {
+    const { renderer, mount } = createRenderer();
+    renderer.renderFull("!iframe[Demo](https://example.com)\n");
+
+    const iframe = mount.querySelector("iframe")!;
+    renderer.render("!iframe[Demo](https://example.com)\n", [lineChange(1, 1, 1, 1)]);
+    expect(mount.querySelector("iframe")).toBe(iframe);
+
+    renderer.destroy();
+  });
+
+  it("incremental update with invisible footnote def anchors via full ast spans", () => {
+    const { renderer, mount } = createRenderer();
+    renderer.renderFull("Before\n\n[^a]: note\n\nAfter");
+
+    const result = renderer.render(
+      "Before edited\n\n[^a]: note\n\nAfter",
+      [lineChange(1, 1, 1, 1)],
+    );
+    expect(result.partial).toBe(true);
+    expect(mount.textContent).toContain("Before edited");
+    expect(renderer.getMountedBlocks().length).toBe(mount.childElementCount);
+    renderer.destroy();
+  });
+
+  it("incremental update with frontmatter invisible block uses ast span anchor", () => {
+    const { renderer, mount } = createRenderer();
+    renderer.renderFull("---\ntitle: Hi\n---\n\nBody");
+
+    const result = renderer.render(
+      "---\ntitle: Hello\n---\n\nBody",
+      [lineChange(2, 2, 2, 2)],
+    );
+    expect(result.partial).toBe(true);
+    expect(mount.textContent).toContain("Body");
     renderer.destroy();
   });
 });
