@@ -1,5 +1,5 @@
 import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
-import { markdown, markdownKeymap } from "@codemirror/lang-markdown";
+import { markdown, markdownKeymap, markdownLanguage } from "@codemirror/lang-markdown";
 import { EditorState, type Extension } from "@codemirror/state";
 import {
   EditorView,
@@ -7,33 +7,26 @@ import {
   keymap,
   lineNumbers,
 } from "@codemirror/view";
-import { createTransformerHighlightExtension } from "./cmDecorations";
-import {
-  createEditorSyntaxHighlighting,
-  type EditorCustomTagHighlight,
-} from "./cmSyntax";
+import { createEditorSyntaxHighlighting } from "./cmSyntax";
+import { CherryInlinesExtension, CherryMathBlockExtension } from "./lezer";
 import type { EditorOptions } from "./EditorOptions";
 import type { Theme } from "@/theme/Theme";
 
-function normalizeExtensions(extensions: Extension | Extension[] = []): Extension[] {
-  return Array.isArray(extensions) ? extensions : [extensions];
-}
 
-function resolveTransformerHighlight(options: EditorOptions): Extension[] {
-  if (options.transformerHighlight === false) return [];
-  const highlightOpts =
-    typeof options.transformerHighlight === "object"
-      ? options.transformerHighlight
-      : {};
-  return [
-    createTransformerHighlightExtension({
-      ...highlightOpts,
-      transformerEngineOptions:
-        highlightOpts.transformerEngineOptions ?? options.transformerEngineOptions,
-    }),
-  ];
-}
 
+
+
+/**
+ * 编辑器核心类，是对 CodeMirror 6 的一层防腐层（Anti-Corruption Layer）封装。
+ * 
+ * 【架构说明】
+ * 为什么要包这一层？
+ * 1. 隔离外部依赖：整个项目中，除了 `src/editor/editor` 目录下的几个文件外，
+ *    其他任何业务模块都不应该直接引用 `@codemirror/*` 里的 API。
+ * 2. 对接事件总线：这个类内部将 CodeMirror 的 `updateListener` 转译为我们的 `theme.emit("editor:change")` 事件。
+ * 3. 动态扩展高亮绑定：在初始化时，会调用 `resolveTransformerHighlight` 把基于 Transformer 的 AST
+ *    高亮同步扩展动态打入 CodeMirror 中。
+ */
 export class Editor {
   private readonly view: EditorView;
 
@@ -41,7 +34,6 @@ export class Editor {
     mount.classList.add("cherry-editor-cm");
 
     const lineNumbersEnabled = options.lineNumbers !== false;
-    const customTags = options.customTagHighlights ?? [];
 
     const updateListener = EditorView.updateListener.of((update) => {
       if (!update.docChanged) return;
@@ -61,11 +53,12 @@ export class Editor {
         ...historyKeymap,
         indentWithTab,
       ]),
-      markdown(),
-      createEditorSyntaxHighlighting(customTags),
-      ...resolveTransformerHighlight(options),
+      markdown({
+        base: markdownLanguage,
+        extensions: [CherryMathBlockExtension, CherryInlinesExtension],
+      }),
+      createEditorSyntaxHighlighting(),
       updateListener,
-      ...normalizeExtensions(options.extensions),
     ];
 
     if (lineNumbersEnabled) {
@@ -100,13 +93,7 @@ export class Editor {
     return this.view.scrollDOM;
   }
 
-  getCustomTagHighlights(): EditorCustomTagHighlight[] {
-    return [];
-  }
 
-  setCustomTagHighlights(_highlights: EditorCustomTagHighlight[]): void {
-    // 动态切换需重建 EditorView，后续按需实现
-  }
 
   focus(): void {
     this.view.focus();

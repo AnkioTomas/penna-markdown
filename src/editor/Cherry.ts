@@ -9,6 +9,7 @@ import type { EditorLayoutMode } from "@/editor/Layout";
 import { printCherryLogo } from "@/editor/printLogo";
 import { Theme } from "@/theme/Theme";
 
+
 export function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   className: string,
@@ -23,9 +24,15 @@ export function el<K extends keyof HTMLElementTagNameMap>(
 }
 
 /**
- * Cherry Markdown 编辑器。
+ * Cherry Markdown 的核心主控类。
  *
- * 在 rootEl 内构建完整 UI，子模块通过 Theme 事件总线通讯。
+ * 【架构说明】
+ * 本类主要起到了“容器”和“协调者”的作用。
+ * 1. 结构编排：在 rootEl 内构建了完整的骨架 UI（包括 toolbar, sidebar, editor, divider, preview 等 DOM 节点）。
+ * 2. 状态通信：通过传入的 `Theme` 实例作为全局的 Event Bus（事件总线）。
+ *    - editor 发生变化时会抛出 `editor:change` 事件。
+ *    - preview 渲染完成后会抛出 `preview:rendered` 事件（侧边栏大纲依赖此事件）。
+ *    - 其它 UI 控件也是通过这种松耦合的方式进行通讯，而不是互相持有实例引用。
  */
 export class Cherry {
   readonly theme: Theme;
@@ -106,15 +113,11 @@ export class Cherry {
       blockParsers: previewOptions.blockParsers ?? transformer.blockParsers,
     });
 
-    this.editor = new Editor(
-      this.editorEl,
-      this.theme,
-      {
-        ...editorOptions,
-        transformerEngineOptions:
-          editorOptions.transformerEngineOptions ?? transformer,
-      },
-    );
+    this.editor = new Editor(this.editorEl, this.theme, {
+      ...editorOptions,
+      transformerEngineOptions:
+        editorOptions.transformerEngineOptions ?? transformer,
+    });
 
     if (statusbar && this.statusbarEl) {
       this.statusbar = new StatusBar(this.statusbarEl, this.theme);

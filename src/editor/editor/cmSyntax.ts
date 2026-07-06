@@ -1,19 +1,8 @@
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import type { Extension } from "@codemirror/state";
-import { Tag, tags as t } from "@lezer/highlight";
+import { tags as t } from "@lezer/highlight";
 
-export interface EditorCustomTagHighlight {
-  tag: Tag;
-  class: string;
-}
-
-let customTagId = 0;
-
-/** 定义自定义 Lezer tag（配合语言扩展 `styleTags` 使用） */
-export function defineEditorTag(): Tag {
-  customTagId += 1;
-  return Tag.define(`cherry-custom-${customTagId}`);
-}
+import { cherryTags } from "./lezer/tags";
 
 const GFM_HIGHLIGHT_STYLE = HighlightStyle.define([
   { tag: t.heading1, class: "cm-h1" },
@@ -37,22 +26,34 @@ const GFM_HIGHLIGHT_STYLE = HighlightStyle.define([
   { tag: t.labelName, class: "cm-label" },
   { tag: t.atom, class: "cm-atom" },
   { tag: t.processingInstruction, class: "cm-mark" },
+  { tag: t.escape, class: "cm-escape" },
+
+  // Blocks
+  { tag: cherryTags.alert, class: "cm-ext-alert" },
+  { tag: cherryTags.container, class: "cm-ext-container" },
+  { tag: cherryTags.mathBlock, class: "cm-ext-math-block" },
+  { tag: cherryTags.footnotes, class: "cm-ext-footnotes" },
+  { tag: cherryTags.frontmatter, class: "cm-ext-frontmatter" },
+
+  // Inlines
+  { tag: cherryTags.highlight, class: "cm-ext-highlight" },
+  { tag: cherryTags.spoiler, class: "cm-ext-spoiler" },
+  { tag: cherryTags.mathInline, class: "cm-ext-math-inline" },
+  { tag: cherryTags.badge, class: "cm-ext-badge" },
+  { tag: cherryTags.inlineComment, class: "cm-ext-inline-comment" },
+  { tag: cherryTags.footnoteRef, class: "cm-ext-footnote-ref" },
+  { tag: cherryTags.frontmatterVar, class: "cm-ext-frontmatter-var" },
+  { tag: cherryTags.htmlAttrs, class: "cm-ext-html-attrs" },
+  { tag: cherryTags.media, class: "cm-ext-media" },
+  { tag: cherryTags.iframe, class: "cm-ext-iframe" },
+  { tag: cherryTags.fieldTag, class: "cm-ext-field-tag" },
+  { tag: cherryTags.containerMark, class: "cm-ext-container-mark" },
+  { tag: cherryTags.containerType, class: "cm-ext-container-type" },
+  { tag: cherryTags.pageLink, class: "cm-ext-page-link" },
+  { tag: cherryTags.atType, class: "cm-ext-at-type" }
 ]);
 
-/** GFM 语法高亮 + 可选自定义 tag class */
-export function createEditorSyntaxHighlighting(
-  customTagHighlights: EditorCustomTagHighlight[] = [],
-): Extension {
-  if (customTagHighlights.length === 0) {
-    return syntaxHighlighting(GFM_HIGHLIGHT_STYLE);
-  }
-
-  const customStyle = HighlightStyle.define(
-    customTagHighlights.map(({ tag, class: className }) => ({
-      tag,
-      class: className,
-    })),
-  );
-
-  return [syntaxHighlighting(GFM_HIGHLIGHT_STYLE), syntaxHighlighting(customStyle)];
+/** GFM 基础语法高亮 */
+export function createEditorSyntaxHighlighting(): Extension {
+  return syntaxHighlighting(GFM_HIGHLIGHT_STYLE);
 }
