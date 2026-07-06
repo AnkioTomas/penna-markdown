@@ -72,32 +72,37 @@ export class Preview {
         return this.renderer.getMount().childElementCount === 0;
     }
 
-    private convert2CherryChanges(tr?: Transaction): CherryChangeLineSet[] | undefined {
-        if (!tr || !tr.changes) return undefined;
+    private convert2CherryChanges(
+        tr?: Transaction | readonly Transaction[],
+    ): CherryChangeLineSet[] | undefined {
+        if (!tr) return undefined;
+
+        const transactions = Array.isArray(tr) ? tr : [tr];
         const list: CherryChangeLineSet[] = [];
-        tr.changes.iterChanges((fromA, toA, fromB, toB, inserted) => {
 
-            const oldDoc = tr.startState.doc;
-            const newDoc = tr.state.doc;
+        for (const transaction of transactions) {
+            if (!transaction.docChanged) continue;
 
-            const fromLineA = oldDoc.lineAt(fromA).number;
-            const toLineA = oldDoc.lineAt(Math.max(fromA, toA - 1)).number;
+            transaction.changes.iterChanges((fromA, toA, fromB, toB) => {
+                const oldDoc = transaction.startState.doc;
+                const newDoc = transaction.state.doc;
 
-            const fromLineB = newDoc.lineAt(fromB).number;
-            const toLineB = newDoc.lineAt(Math.max(fromB, toB - 1)).number;
+                const fromLineA = oldDoc.lineAt(fromA).number;
+                const toLineA = oldDoc.lineAt(Math.max(fromA, toA - 1)).number;
 
-            let item: CherryChangeLineSet = {
-                fromA:fromLineA,
-                toA: toLineA,
-                fromB:fromLineB,
-                toB:toLineB
-            }
+                const fromLineB = newDoc.lineAt(fromB).number;
+                const toLineB = newDoc.lineAt(Math.max(fromB, toB - 1)).number;
 
-            list.push(item)
+                list.push({
+                    fromA: fromLineA,
+                    toA: toLineA,
+                    fromB: fromLineB,
+                    toB: toLineB,
+                });
+            });
+        }
 
-        });
-
-        return list;
+        return list.length > 0 ? list : undefined;
     }
 
     destroy(): void {
