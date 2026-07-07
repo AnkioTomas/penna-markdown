@@ -8,7 +8,7 @@ export const THEME_LABELS: Record<string, string> = {
   morandi: "莫兰迪",
   latex: "LaTeX",
   vue: "Vue",
-  gitbook: "GitBook",
+
   notion: "Notion",
 };
 

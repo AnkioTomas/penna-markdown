@@ -20,7 +20,7 @@ describe("Theme", () => {
       "morandi",
       "latex",
       "vue",
-      "gitbook",
+
       "notion",
     ]);
 
@@ -59,14 +59,8 @@ describe("Theme", () => {
     expect(render.classList.contains("cherry-theme-vue")).toBe(false);
     expect(theme.getTheme().id).toBe("vue");
 
-    theme.setTheme("gitbook", render, root);
-    expect(root.classList.contains("cherry-theme-vue")).toBe(false);
-    expect(root.classList.contains("cherry-theme-gitbook")).toBe(true);
-    expect(render.classList.contains("cherry-theme-gitbook")).toBe(false);
-    expect(theme.getTheme().id).toBe("gitbook");
-
     theme.setTheme("notion", render, root);
-    expect(root.classList.contains("cherry-theme-gitbook")).toBe(false);
+    expect(root.classList.contains("cherry-theme-vue")).toBe(false);
     expect(root.classList.contains("cherry-theme-notion")).toBe(true);
     expect(render.classList.contains("cherry-theme-notion")).toBe(false);
     expect(theme.getTheme().id).toBe("notion");

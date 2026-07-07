@@ -25,7 +25,7 @@ parent: Cherry Markdown Next 设计文档
 `ThemeRegister.ts` 当前内置：
 
 ```
-default · claude · github · morandi · latex · vue · gitbook · notion
+default · claude · github · morandi · latex · vue · notion
 ```
 
 每套主题编译为两份 CSS：
