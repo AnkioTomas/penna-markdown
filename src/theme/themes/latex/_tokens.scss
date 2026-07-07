@@ -23,24 +23,24 @@ $latex-dark-hr: #888888;
 $latex-dark-code-block-bg: #1f1e1e;
 
 $latex-light-semantics: (
-  note: (#2e67d3, #d6e4ff),
-  tip: (#3a6b4a, #d9e8dc),
-  warning: (#8a6b3a, #f0e6d0),
-  caution: (#a84832, #f5ddd6),
-  danger: (#a84832, #f5ddd6),
-  important: (#5a4a72, #e8e0ef),
+  note: (#2e67d3, #add8e6),
+  tip: (#3a6b4a, #98fb98),
+  warning: (#8a6b3a, #ffea7f),
+  caution: (#a84832, #ffb3b3),
+  danger: (#a84832, #ff9999),
+  important: (#5a4a72, #e6ccff),
 );
 
 $latex-dark-semantics: (
-  note: (#8bb1f9, #2a3f66),
-  tip: (#8fa896, #2a3a30),
-  warning: (#d4a15e, #4a3820),
-  caution: (#e89888, #4a2820),
-  danger: (#e89888, #4a2820),
-  important: (#b69acd, #3a3048),
+  note: (#8bb1f9, #58a6ff),
+  tip: (#8fa896, #3fb950),
+  warning: (#d4a15e, #d29922),
+  caution: (#e89888, #f85149),
+  danger: (#e89888, #f85149),
+  important: (#b69acd, #bc8cff),
 );
 
-$latex-dark-mark-mix: 42%;
+$latex-dark-mark-mix: 65%;
 
 @function latex-surface($is-dark) {
   @if $is-dark {
@@ -187,12 +187,20 @@ $latex-dark-mark-mix: 42%;
   --cherry-c-contrast-light: #fff;
   --cherry-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #fff3bf;
+  --cherry-c-brand-mark: #ffea7f;
   --cherry-c-code-fg: #{$latex-code-inline-fg};
   --cherry-c-border-soft: #{$latex-blockquote-border};
   --cherry-c-border-faint: #{color-mix(in srgb, #{$latex-hr} 90%, transparent)};
 
   --latex-code-inline-shadow: #{$latex-code-inline-shadow};
+
+  --cherry-c-hljs-keyword: #d73a49;
+  --cherry-c-hljs-string: #032f62;
+  --cherry-c-hljs-number: #005cc5;
+  --cherry-c-hljs-title: #6f42c1;
+  --cherry-c-hljs-attr: #005cc5;
+  --cherry-c-hljs-comment: #6a737d;
+  --cherry-c-hljs-bg: transparent;
 
   @include generate-semantic-suite($latex-light-semantics, false);
   @include component-tokens(false);
@@ -217,12 +225,20 @@ $latex-dark-mark-mix: 42%;
   --cherry-c-contrast-light: #fff;
   --cherry-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #3d3400;
+  --cherry-c-brand-mark: color-mix(in srgb, #ffea7f #{$latex-dark-mark-mix}, #{$latex-dark-bg});
   --cherry-c-code-fg: #{$latex-dark-code-inline-fg};
   --cherry-c-border-soft: #{$latex-dark-hr};
   --cherry-c-border-faint: #{color-mix(in srgb, #{$latex-dark-hr} 55%, transparent)};
 
   --latex-code-inline-shadow: #{$latex-dark-code-inline-shadow};
+
+  --cherry-c-hljs-keyword: #c792ea;
+  --cherry-c-hljs-string: #c3e88d;
+  --cherry-c-hljs-number: #f77669;
+  --cherry-c-hljs-title: #82b1ff;
+  --cherry-c-hljs-attr: #80cbc4;
+  --cherry-c-hljs-comment: #546e7a;
+  --cherry-c-hljs-bg: transparent;
 
   @include generate-semantic-suite($latex-dark-semantics, true);
   @include component-tokens(true);

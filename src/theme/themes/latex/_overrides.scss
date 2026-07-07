@@ -28,7 +28,7 @@
   h4,
   h5,
   h6 {
-    margin: 1em 0;
+    margin: 0 0 1em;
     padding: 0;
     border: 0;
     font-weight: normal;
@@ -91,7 +91,7 @@
   }
 
   p {
-    margin: 1em 0;
+    margin: 0 0 1em;
     text-align: left;
     line-height: var(--latex-text-leading);
   }
@@ -111,7 +111,7 @@
   }
 
   blockquote {
-    margin: 1em 0;
+    margin: 0 0 1em;
     padding: 1em 2em 1em calc(2em - #{rem(4)});
     border-left: rem(4) solid var(--cherry-c-blockquote-border);
     font-family: var(--latex-font-fangsong), var(--latex-font-serif);
@@ -126,7 +126,7 @@
   }
 
   hr {
-    margin: 1.8em 0;
+    margin: 0 0 1.8em;
     border: 0;
     border-top: rem(1) solid var(--cherry-c-hr-color);
   }
@@ -206,13 +206,13 @@
   }
 
   pre:not(.cherry-code-block__pre) {
-    margin: 1em 0;
+    margin: 0 0 1em;
     padding: rem(12) rem(10);
     font-family: var(--latex-font-mono), var(--latex-font-ui), monospace;
     color: var(--cherry-c-text-1);
     background: var(--cherry-c-bg-elevated);
-    border: 0;
-    border-radius: rem(2);
+    border: rem(1) solid var(--cherry-c-border-faint);
+    border-radius: 0;
     box-shadow: none;
   }
 
@@ -221,8 +221,9 @@
     --cherry-table-head-bg: transparent;
     --cherry-table-row-bg: transparent;
     --cherry-table-stripe-bg: transparent;
-    width: auto;
-    margin: 1em auto;
+    display: table;
+    width: 100%;
+    margin: 0 0 1em;
     border-collapse: collapse;
     border-spacing: rem(6);
     border-top: 1.2pt solid var(--cherry-c-text-1);
@@ -251,35 +252,35 @@
   }
 
   .cherry-alert {
-    margin: 1em 0;
+    margin: 0 0 1em;
     padding: rem(10) rem(14);
     border: rem(1) solid var(--alert-border);
     border-left-width: rem(4);
+    border-radius: 0;
     box-shadow: none;
     background: var(--alert-bg);
     font-size: var(--latex-quote-size);
   }
 
   .cherry-code-block {
-    --cb-radius: #{rem(2)};
-    --cb-border: transparent;
+    --cb-radius: 0;
+    --cb-border: var(--cherry-c-border-faint);
     --cb-shadow: none;
     --cb-header-bg: var(--cherry-c-bg-elevated);
     --cb-code-bg: var(--cherry-c-bg-elevated);
     --cb-lang-fg: var(--cherry-c-text-3);
     --cb-lang-bg: transparent;
     --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 10%, transparent);
-    margin: 1em 0;
+    margin: 0 0 1em;
 
     &__panel {
-      border: 0;
       box-shadow: none;
     }
 
     &__header {
       min-height: rem(28);
       padding: rem(4) rem(10);
-      border-bottom: 0;
+      border-bottom: rem(1) solid var(--cb-border);
     }
 
     &__lang {
@@ -295,20 +296,85 @@
     }
 
     .hljs {
-      background: transparent;
+      background: var(--cherry-c-hljs-bg);
       color: var(--cherry-c-text-1);
+    }
+
+    .hljs-comment,
+    .hljs-quote {
+      color: var(--cherry-c-hljs-comment);
+      font-style: italic;
+    }
+
+    .hljs-keyword,
+    .hljs-selector-tag,
+    .hljs-built_in,
+    .hljs-name {
+      color: var(--cherry-c-hljs-keyword);
+    }
+
+    .hljs-string,
+    .hljs-regexp,
+    .hljs-addition {
+      color: var(--cherry-c-hljs-string);
+    }
+
+    .hljs-number,
+    .hljs-literal {
+      color: var(--cherry-c-hljs-number);
+    }
+
+    .hljs-title,
+    .hljs-title.class_,
+    .hljs-type {
+      color: var(--cherry-c-hljs-title);
+    }
+
+    .hljs-attr,
+    .hljs-attribute,
+    .hljs-variable,
+    .hljs-template-variable {
+      color: var(--cherry-c-hljs-attr);
+    }
+
+    .hljs-meta,
+    .hljs-meta .hljs-keyword {
+      color: var(--cherry-c-text-3);
+    }
+
+    .hljs-function .hljs-title,
+    .hljs-section {
+      color: var(--cherry-c-hljs-title);
     }
   }
 
   .cherry-card,
+  .cherry-image-card,
   .cherry-link-card,
   .cherry-repo-card,
   .cherry-tabs,
   .cherry-collapse {
     border: rem(1) solid var(--cherry-c-border-faint);
-    border-radius: rem(2);
+    border-radius: 0;
     background: var(--cherry-c-bg);
     box-shadow: none;
+  }
+
+  .cherry-image-card__media,
+  .cherry-audio,
+  .cherry-video,
+  .cherry-media__player,
+  .cherry-iframe,
+  .cherry-iframe__frame,
+  .cherry-badge,
+  .cherry-field,
+  .cherry-field-group,
+  .cherry-card-masonry__item {
+    border-radius: 0;
+  }
+
+  .cherry-card-masonry [class^="cherry-card-masonry__v-"] img {
+    border-radius: rem(2);
   }
 
   sup.cherry-footnote-ref {
@@ -330,44 +396,6 @@
 
       &:hover {
         color: var(--cherry-c-brand-1);
-      }
-    }
-  }
-
-  @at-root .cherry-dark.cherry-theme-latex .cherry-render {
-    .cherry-code-block,
-    pre:not(.cherry-code-block__pre) {
-      .hljs-comment {
-        color: #546e7a;
-        font-style: italic;
-      }
-
-      .hljs-keyword {
-        color: #c792ea;
-      }
-
-      .hljs-string {
-        color: #c3e88d;
-      }
-
-      .hljs-number,
-      .hljs-literal {
-        color: #f77669;
-      }
-
-      .hljs-title,
-      .hljs-type,
-      .hljs-built_in {
-        color: #82b1ff;
-      }
-
-      .hljs-variable,
-      .hljs-attribute {
-        color: #80cbc4;
-      }
-
-      .hljs-meta {
-        color: #80cbc4;
       }
     }
   }
