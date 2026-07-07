@@ -24,6 +24,13 @@ export class ScrollSync {
       this.currentBlocks = payload.blocks || [];
     });
 
+    this.theme.on("sidebar:toc-click", (payload: any) => {
+      const target = document.getElementById(payload.id) || this.previewScroll.querySelector(`[data-hash="${payload.id}"]`);
+      if (target) {
+        this.previewScroll.scrollTo({ top: (target as HTMLElement).offsetTop, behavior: "smooth" });
+      }
+    });
+
     this.initListeners();
   }
 
@@ -31,12 +38,17 @@ export class ScrollSync {
     const blocks = this.currentBlocks;
     if (!blocks || blocks.length === 0) return 0;
     
+    let low = 0;
+    let high = blocks.length - 1;
     let bestIndex = 0;
-    for (let i = 0; i < blocks.length; i++) {
-      if (blocks[i].startLine <= targetLine) {
-        bestIndex = i;
+
+    while (low <= high) {
+      const mid = (low + high) >> 1;
+      if (blocks[mid].startLine <= targetLine) {
+        bestIndex = mid;
+        low = mid + 1;
       } else {
-        break;
+        high = mid - 1;
       }
     }
     const el = this.previewScroll.children[bestIndex] as HTMLElement;
@@ -48,25 +60,42 @@ export class ScrollSync {
     if (!blocks || blocks.length === 0) return 1;
     
     const scrollTop = this.previewScroll.scrollTop;
-    let bestLine = 1;
-    for (let i = 0; i < this.previewScroll.children.length; i++) {
-      const el = this.previewScroll.children[i] as HTMLElement;
-      if (el && el.offsetTop <= scrollTop + 10) {
-        bestLine = blocks[i]?.startLine ?? bestLine;
+    let low = 0;
+    let high = this.previewScroll.children.length - 1;
+    let bestIndex = 0;
+
+    while (low <= high) {
+      const mid = (low + high) >> 1;
+      const el = this.previewScroll.children[mid] as HTMLElement;
+      if (!el) break;
+      
+      if (el.offsetTop <= scrollTop + 10) {
+        bestIndex = mid;
+        low = mid + 1;
       } else {
-        break;
+        high = mid - 1;
       }
     }
-    return bestLine;
+    return blocks[bestIndex]?.startLine ?? 1;
   }
+
+  private leftRaf: number | null = null;
+  private rightRaf: number | null = null;
+  private leftTimer: any = null;
+  private rightTimer: any = null;
 
   private initListeners(): void {
     const editorView = this.editor.getView();
 
     this.editorScroll.addEventListener("scroll", () => {
-      if (!this.isSyncingLeft) {
-        this.isSyncingRight = true;
-        
+      if (this.isSyncingLeft) return;
+      
+      this.isSyncingRight = true;
+      clearTimeout(this.rightTimer);
+      this.rightTimer = setTimeout(() => { this.isSyncingRight = false; }, 50);
+
+      if (this.leftRaf !== null) cancelAnimationFrame(this.leftRaf);
+      this.leftRaf = requestAnimationFrame(() => {
         if (this.editorScroll.scrollTop >= this.editorScroll.scrollHeight - this.editorScroll.clientHeight - 5) {
           this.previewScroll.scrollTop = this.previewScroll.scrollHeight;
         } else if (this.editorScroll.scrollTop <= 5) {
@@ -76,14 +105,18 @@ export class ScrollSync {
           const line = editorView.state.doc.lineAt(topBlock.from).number - 1; 
           this.previewScroll.scrollTop = this.getPreviewScrollTopForLine(line);
         }
-      }
-      this.isSyncingLeft = false;
+      });
     }, { passive: true });
 
     this.previewScroll.addEventListener("scroll", () => {
-      if (!this.isSyncingRight) {
-        this.isSyncingLeft = true;
-        
+      if (this.isSyncingRight) return;
+
+      this.isSyncingLeft = true;
+      clearTimeout(this.leftTimer);
+      this.leftTimer = setTimeout(() => { this.isSyncingLeft = false; }, 50);
+
+      if (this.rightRaf !== null) cancelAnimationFrame(this.rightRaf);
+      this.rightRaf = requestAnimationFrame(() => {
         if (this.previewScroll.scrollTop >= this.previewScroll.scrollHeight - this.previewScroll.clientHeight - 5) {
           this.editorScroll.scrollTop = this.editorScroll.scrollHeight;
         } else if (this.previewScroll.scrollTop <= 5) {
@@ -95,8 +128,7 @@ export class ScrollSync {
           const block = editorView.lineBlockAt(lineInfo.from);
           this.editorScroll.scrollTop = block.top;
         }
-      }
-      this.isSyncingRight = false;
+      });
     }, { passive: true });
   }
 }

@@ -145,10 +145,7 @@ export class SideBar {
       el.textContent = item.text;
       
       el.onclick = () => {
-        const target = document.getElementById(item.id) || document.querySelector(`[data-hash="${item.id}"]`);
-        if (target) {
-          target.scrollIntoView({ behavior: "smooth" });
-        }
+        this.theme.emit("sidebar:toc-click", { id: item.id });
       };
       
       parentEl.appendChild(el);
