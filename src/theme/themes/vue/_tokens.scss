@@ -33,24 +33,24 @@ $vue-dark-code-inline: #f3b37f;
 $vue-dark-border: hsl(0, 0%, 11%);
 
 $vue-light-semantics: (
-  note: (#22a2c9, #d6f3fb),
-  tip: (#42b983, #d7f5e8),
-  warning: (#e96900, #ffe8cc),
-  caution: (#b4654d, #f5ddd4),
-  danger: (#b4654d, #f5ddd4),
-  important: (#34495e, #e2e8ef),
+  note: (#22a2c9, #ff0),
+  tip: (#42b983, #39ff14),
+  warning: (#e96900, #fc0),
+  caution: (#b4654d, #f99),
+  danger: (#b4654d, #f66),
+  important: (#34495e, #ccf),
 );
 
 $vue-dark-semantics: (
-  note: (#7f7fe5, #2a2850),
-  tip: (#42b983, #1a4030),
-  warning: (#f3b37f, #4a3828),
-  caution: (#cb8c8c, #402828),
-  danger: (#cb8c8c, #402828),
-  important: (#9088cc, #302850),
+  note: (#7f7fe5, #db0),
+  tip: (#42b983, #4ade80),
+  warning: (#f3b37f, #fbbf24),
+  caution: (#cb8c8c, #fca5a5),
+  danger: (#cb8c8c, #f87171),
+  important: (#9088cc, #a5b4fc),
 );
 
-$vue-dark-mark-mix: 40%;
+$vue-dark-mark-mix: 50%;
 
 @function vue-surface($is-dark) {
   @if $is-dark {
@@ -200,13 +200,23 @@ $vue-dark-mark-mix: 40%;
   --cherry-c-contrast-light: #fff;
   --cherry-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #{$vue-mark};
+  --cherry-c-brand-mark: #{$vue-green};
   --cherry-c-code-fg: #{$vue-code-inline};
   --cherry-c-border-soft: #{$vue-border};
   --cherry-c-border-faint: #{color-mix(in srgb, #{$vue-border} 45%, transparent)};
 
   --vue-h2-rule: #{$vue-h2-rule};
   --vue-code-block-border: #f4f4f4;
+
+  --cherry-c-table-head-bg: #f2f2f2;
+  --cherry-c-table-stripe-bg: #fafafa;
+  --cherry-c-hljs-keyword: #bb7fc3;
+  --cherry-c-hljs-string: #{$vue-link-code};
+  --cherry-c-hljs-number: #88b2a1;
+  --cherry-c-hljs-title: #7f7fff;
+  --cherry-c-hljs-attr: var(--cherry-c-text-1);
+  --cherry-c-hljs-comment: var(--cherry-c-text-3);
+  --cherry-c-hljs-bg: transparent;
 
   @include generate-semantic-suite($vue-light-semantics, false);
   @include component-tokens(false);
@@ -231,13 +241,23 @@ $vue-dark-mark-mix: 40%;
   --cherry-c-contrast-light: #fff;
   --cherry-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #{$vue-mark};
+  --cherry-c-brand-mark: color-mix(in srgb, #{$vue-green} 60%, transparent);
   --cherry-c-code-fg: #{$vue-dark-code-inline};
   --cherry-c-border-soft: #{$vue-dark-border};
   --cherry-c-border-faint: #{color-mix(in srgb, #{$vue-dark-border} 45%, transparent)};
 
   --vue-h2-rule: #{$vue-dark-h2-rule};
   --vue-code-block-border: #{$vue-dark-border};
+
+  --cherry-c-table-head-bg: hsl(0, 0%, 9%);
+  --cherry-c-table-stripe-bg: hsl(0, 0%, 10%);
+  --cherry-c-hljs-keyword: #bb7fc3;
+  --cherry-c-hljs-string: #d48888;
+  --cherry-c-hljs-number: #88b2a1;
+  --cherry-c-hljs-title: #7f7fff;
+  --cherry-c-hljs-attr: #efefef;
+  --cherry-c-hljs-comment: hsl(0, 0%, 35%);
+  --cherry-c-hljs-bg: transparent;
 
   @include generate-semantic-suite($vue-dark-semantics, true);
   @include component-tokens(true);

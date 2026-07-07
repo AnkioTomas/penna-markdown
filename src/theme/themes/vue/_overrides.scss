@@ -23,7 +23,7 @@
   h5,
   h6 {
     position: relative;
-    margin: rem(16) 0;
+    margin: 0 0 rem(16);
     padding: 0;
     border: 0;
     font-weight: 700;
@@ -38,7 +38,7 @@
   }
 
   h2 {
-    margin: rem(35) 0 rem(15);
+    margin: 0 0 rem(15);
     padding-bottom: 0.5em;
     font-size: rem(28);
     line-height: 1.225;
@@ -51,7 +51,7 @@
   }
 
   h3 {
-    margin: rem(20) 0 rem(7);
+    margin: 0 0 rem(7);
     font-size: rem(22);
     line-height: 1.43;
 
@@ -79,7 +79,7 @@
   }
 
   p {
-    margin: 0.8em 0;
+    margin: 0 0 0.8em;
     line-height: var(--vue-text-leading);
   }
 
@@ -105,7 +105,7 @@
   }
 
   blockquote {
-    margin: 0.8em 0;
+    margin: 0 0 0.8em;
     padding: rem(16) rem(15);
     border-left: rem(4) solid var(--cherry-c-blockquote-border);
     color: var(--cherry-c-text-2);
@@ -115,7 +115,7 @@
 
   hr {
     height: rem(2);
-    margin: rem(16) 0;
+    margin: 0 0 rem(16);
     padding: 0;
     border: 0;
     background-color: var(--cherry-c-hr-color);
@@ -124,7 +124,7 @@
 
   ul,
   ol {
-    margin: 0.8em 0;
+    margin: 0 0 0.8em;
     padding-left: rem(30);
   }
 
@@ -149,7 +149,7 @@
   }
 
   pre:not(.cherry-code-block__pre) {
-    margin: 0.8em 0;
+    margin: 0 0 0.8em;
     padding: rem(12);
     font-family: var(--vue-font-mono);
     font-size: 0.85em;
@@ -162,10 +162,10 @@
 
   table {
     --cherry-table-border: var(--cherry-c-table-td-border);
-    --cherry-table-head-bg: #f2f2f2;
+    --cherry-table-head-bg: var(--cherry-c-table-head-bg);
     --cherry-table-row-bg: transparent;
-    --cherry-table-stripe-bg: #fafafa;
-    margin: 0.8em 0;
+    --cherry-table-stripe-bg: var(--cherry-c-table-stripe-bg);
+    margin: 0 0 0.8em;
     word-break: initial;
 
     th,
@@ -195,11 +195,10 @@
   }
 
   .cherry-alert {
-    margin: 0.8em 0;
+    margin: 0 0 0.8em;
     padding: rem(10) rem(15);
     border: rem(1) solid var(--alert-border);
     border-left-width: rem(4);
-    border-left-color: var(--cherry-c-brand-1);
     border-radius: rem(2);
     box-shadow: none;
     background: var(--alert-bg);
@@ -215,7 +214,7 @@
     --cb-lang-fg: var(--cherry-c-brand-3);
     --cb-lang-bg: transparent;
     --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 12%, transparent);
-    margin: 0.8rem 0;
+    margin: 0 0 0.8rem;
 
     &__panel {
       border-color: var(--vue-code-block-border);
@@ -240,37 +239,54 @@
     }
 
     .hljs {
-      background: transparent;
+      background: var(--cherry-c-hljs-bg);
       color: var(--cherry-c-text-1);
     }
 
-    .hljs-comment {
-      color: var(--cherry-c-text-3);
+    .hljs-comment,
+    .hljs-quote {
+      color: var(--cherry-c-hljs-comment);
+    }
+
+    .hljs-keyword,
+    .hljs-selector-tag,
+    .hljs-built_in,
+    .hljs-name {
+      color: var(--cherry-c-hljs-keyword);
     }
 
     .hljs-string,
-    .hljs-regexp {
-      color: #{$vue-link-code};
-    }
-
-    .hljs-keyword {
-      color: #bb7fc3;
+    .hljs-regexp,
+    .hljs-addition {
+      color: var(--cherry-c-hljs-string);
     }
 
     .hljs-number,
     .hljs-literal {
-      color: #88b2a1;
+      color: var(--cherry-c-hljs-number);
     }
 
     .hljs-title,
-    .hljs-type,
-    .hljs-built_in {
-      color: #7f7fff;
+    .hljs-title.class_,
+    .hljs-type {
+      color: var(--cherry-c-hljs-title);
     }
 
+    .hljs-attr,
+    .hljs-attribute,
     .hljs-variable,
-    .hljs-attr {
-      color: var(--cherry-c-text-1);
+    .hljs-template-variable {
+      color: var(--cherry-c-hljs-attr);
+    }
+
+    .hljs-meta,
+    .hljs-meta .hljs-keyword {
+      color: var(--cherry-c-text-3);
+    }
+
+    .hljs-function .hljs-title,
+    .hljs-section {
+      color: var(--cherry-c-hljs-title);
     }
   }
 
@@ -304,60 +320,4 @@
     }
   }
 
-  @at-root .cherry-dark.cherry-theme-vue .cherry-render {
-    h2 {
-      border-bottom-width: rem(2);
-    }
-
-    table {
-      --cherry-table-head-bg: hsl(0, 0%, 9%);
-      --cherry-table-stripe-bg: hsl(0, 0%, 10%);
-      font-family: var(--vue-font-mono);
-      font-size: 0.85em;
-
-      th,
-      td {
-        border-color: transparent;
-      }
-
-      td {
-        border: rem(2) solid #{$vue-dark-surface};
-      }
-    }
-
-    .cherry-code-block {
-      .hljs-keyword {
-        color: #bb7fc3;
-      }
-
-      .hljs-string {
-        color: #d48888;
-      }
-
-      .hljs-number {
-        color: #88b2a1;
-      }
-
-      .hljs-title,
-      .hljs-type {
-        color: #7f7fff;
-      }
-
-      .hljs-variable {
-        color: #efefef;
-      }
-
-      .hljs-built_in {
-        color: #997fd4;
-      }
-
-      .hljs-comment {
-        color: hsl(0, 0%, 35%);
-      }
-
-      .hljs-meta {
-        color: hsl(0, 0%, 33%);
-      }
-    }
-  }
 }
