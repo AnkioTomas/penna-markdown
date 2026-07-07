@@ -60,6 +60,30 @@ describe("extends/code_block", () => {
     expect(html).not.toContain("cherry-code-block");
   });
 
+  it("ignores max-width on enhanced code blocks", () => {
+    const html = renderMarkdown(engine(), "```js max-width=720\nconst a = 1;\n```");
+    expect(html).toContain('class="cherry-code-block"');
+    expect(html).not.toContain('style="max-width:720px"');
+  });
+
+  it("applies max-width on mermaid blocks", () => {
+    const md = "```mermaid max-width=640\nflowchart TD\n    A --> B\n```";
+    const html = renderMarkdown(engine(), md);
+    expect(html).toContain('style="max-width:640px"');
+  });
+
+  it("applies max-width on echarts blocks", () => {
+    const md = "```echarts max-width=50%\n{\"series\":[{\"type\":\"bar\"}]}\n```";
+    const html = renderMarkdown(engine(), md);
+    expect(html).toContain('style="max-width:50%"');
+  });
+
+  it("applies max-width on graph blocks", () => {
+    const md = "```graph max-width=720\nflowchart LR\n  A --> B\n```";
+    const html = renderMarkdown(engine(), md);
+    expect(html).toContain('style="max-width:720px"');
+  });
+
   it("renders line highlights for js{1,4,6-8}", () => {
     const md = [
       "```js{1,4,6-8}",

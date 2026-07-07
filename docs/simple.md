@@ -369,7 +369,9 @@ body { color: inherit; }
 
 ### Mermaid
 
-```mermaid
+`mermaid` / `graph` / `echarts` 围栏支持 `max-width`（纯数字默认 px，也可写 `640px` / `80%`）。
+
+```mermaid max-width=640
 flowchart LR
   MD[Markdown] --> AST[AST] --> HTML[HTML]
 ```
@@ -396,7 +398,7 @@ flowchart TD
 
 ### ECharts
 
-```echarts
+```echarts max-width=80%
 {
   "title": { "text": "柱状图" },
   "xAxis": { "type": "category", "data": ["A", "B", "C"] },

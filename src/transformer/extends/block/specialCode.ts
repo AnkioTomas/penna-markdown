@@ -177,9 +177,17 @@ class SpecialCodeBlockParser extends BaseBlockParser {
     const lang = String(node.props?.lang ?? "").toLowerCase();
     const content = node.value ?? "";
     const theme = ctx.isDark ? ("dark" as const) : undefined;
-    const lineAttrs = this.sourceLineAttrs(node);
-    if (lang === "mermaid" || lang === "graph") return this.renderMermaidBlock(content, { theme }, lineAttrs);
-    if (lang === "echarts") return this.renderEchartsBlock(content, { theme }, lineAttrs);
+    let lineAttrs = this.sourceLineAttrs(node);
+    const maxWidth = node.props?.maxWidth;
+    if (typeof maxWidth === "string" && maxWidth) {
+      lineAttrs += ` style="max-width:${escapeHtml(maxWidth)}"`;
+    }
+    if (lang === "mermaid" || lang === "graph") {
+      return this.renderMermaidBlock(content, { theme }, lineAttrs);
+    }
+    if (lang === "echarts") {
+      return this.renderEchartsBlock(content, { theme }, lineAttrs);
+    }
     return this.renderPlainGfmCode(node, ctx);
   }
 

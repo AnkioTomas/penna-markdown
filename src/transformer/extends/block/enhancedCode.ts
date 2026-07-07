@@ -274,6 +274,10 @@ function parseCollapsedLinesMeta(
   return { collapsedLines: false };
 }
 
+function stripFenceMetaTokens(info: string): string {
+  return info.replace(/\btitle=(?:"[^"]*"|'[^']*'|[^\s]+)/gi, "");
+}
+
 export function parseFenceMeta(line: string): {
   lang: string;
   title: string;
@@ -297,11 +301,8 @@ export function parseFenceMeta(line: string): {
       restInfo = info.slice(tokenIndex + firstToken.length).trim();
     }
   }
-  const infoWithoutTitle = restInfo.replace(
-    /\btitle=(?:"[^"]*"|'[^']*'|[^\s]+)/gi,
-    "",
-  );
-  for (const braceMatch of infoWithoutTitle.matchAll(/\{([0-9,\-\s]+)\}/g)) {
+  const infoWithoutMeta = stripFenceMetaTokens(restInfo);
+  for (const braceMatch of infoWithoutMeta.matchAll(/\{([0-9,\-\s]+)\}/g)) {
     highlightLines = mergeLineHighlightSpecs(
       highlightLines,
       parseLineHighlightSpec(braceMatch[1] ?? ""),
@@ -362,6 +363,11 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
     const lang = meta.lang.toLowerCase();
     if (SPECIAL_LANGS.has(lang)) {
       props.lang = lang;
+      const mw = (lines[index] ?? "").match(/\bmax-width=(?:"([^"]*)"|'([^']*)'|(\S+))/i);
+      if (mw) {
+        const raw = (mw[1] ?? mw[2] ?? mw[3] ?? "").trim();
+        if (raw) props.maxWidth = /^\d+(\.\d+)?$/.test(raw) ? `${raw}px` : raw;
+      }
     }
     result.node.props = props;
 
