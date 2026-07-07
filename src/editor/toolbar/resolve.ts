@@ -29,7 +29,7 @@ function mergeMenuChildren(base: ToolbarMenuItem, patch: ToolbarMenuItem): Toolb
 
 function mergeItem(base: ToolbarItem, patch: ToolbarItem): ToolbarItem {
   if (base.type === "menu" && patch.type === "menu") return mergeMenuChildren(base, patch);
-  return { ...base, ...patch };
+  return { ...base, ...patch } as ToolbarItem;
 }
 
 function mergeItems(defaults: ToolbarItem[], custom?: ToolbarItem[]): ToolbarItem[] {

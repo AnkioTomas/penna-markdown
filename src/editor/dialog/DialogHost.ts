@@ -1,7 +1,16 @@
 import type { Theme } from "@/theme/Theme";
+import { renderAttrDialog } from "./AttrDialog.js";
 import { renderBadgeDialog } from "./BadgeDialog.js";
+import { renderCodeBlockDialog } from "./CodeBlockDialog.js";
+import { renderCollapseDialog } from "./CollapseDialog.js";
+import { renderEmojiDialog } from "./EmojiDialog.js";
+import { renderFootnoteDialog } from "./FootnoteDialog.js";
+import { renderFrontmatterDialog } from "./FrontmatterDialog.js";
 import { renderLinkDialog } from "./LinkDialog.js";
+import { renderMediaDialog } from "./MediaDialog.js";
 import { renderTableDialog } from "./TableDialog.js";
+import { renderTimelineDialog } from "./TimelineDialog.js";
+import type { DialogType } from "./requestDialog.js";
 
 export class DialogHost {
   private readonly root: HTMLElement;
@@ -27,7 +36,7 @@ export class DialogHost {
       theme.on("editor:dialog:open", (payload) => {
         const p = payload as {
           id: string;
-          type: "table" | "link" | "badge";
+          type: DialogType;
           props?: Record<string, unknown>;
         };
         this.show(p.id, p.type, p.props);
@@ -35,7 +44,7 @@ export class DialogHost {
     );
   }
 
-  private show(id: string, type: "table" | "link" | "badge", props?: Record<string, unknown>) {
+  private show(id: string, type: DialogType, props?: Record<string, unknown>) {
     this.dismiss(true);
     this.activeId = id;
     this.root.hidden = false;
@@ -62,22 +71,51 @@ export class DialogHost {
       this.theme.emit("editor:dialog:result", { id: resultId, cancelled, data });
     };
 
-    if (type === "table") {
-      this.cleanupForm = renderTableDialog(body, {
-        onSubmit: (data) => done(false, data),
-        onCancel: () => done(true),
-      });
-    } else if (type === "link") {
-      this.cleanupForm = renderLinkDialog(
-        body,
-        { text: String(props?.text ?? ""), url: String(props?.url ?? "") },
-        { onSubmit: (data) => done(false, data), onCancel: () => done(true) },
-      );
-    } else {
-      this.cleanupForm = renderBadgeDialog(body, {
-        onSubmit: (data) => done(false, data),
-        onCancel: () => done(true),
-      });
+    const cbs = {
+      onSubmit: (data: unknown) => done(false, data),
+      onCancel: () => done(true),
+    };
+
+    switch (type) {
+      case "table":
+        this.cleanupForm = renderTableDialog(body, cbs as never);
+        break;
+      case "link":
+        this.cleanupForm = renderLinkDialog(
+          body,
+          { text: String(props?.text ?? ""), url: String(props?.url ?? "") },
+          cbs as never,
+        );
+        break;
+      case "badge":
+        this.cleanupForm = renderBadgeDialog(body, cbs as never);
+        break;
+      case "media":
+        this.cleanupForm = renderMediaDialog(body, props ?? {}, cbs as never);
+        break;
+      case "emoji":
+        this.cleanupForm = renderEmojiDialog(body, cbs as never);
+        break;
+      case "attr":
+        this.cleanupForm = renderAttrDialog(body, props ?? {}, cbs as never);
+        break;
+      case "footnote":
+        this.cleanupForm = renderFootnoteDialog(body, props ?? {}, cbs as never);
+        break;
+      case "codeBlock":
+        this.cleanupForm = renderCodeBlockDialog(body, props ?? {}, cbs as never);
+        break;
+      case "frontmatter":
+        this.cleanupForm = renderFrontmatterDialog(body, props ?? {}, cbs as never);
+        break;
+      case "collapse":
+        this.cleanupForm = renderCollapseDialog(body, cbs as never);
+        break;
+      case "timeline":
+        this.cleanupForm = renderTimelineDialog(body, props ?? {}, cbs as never);
+        break;
+      default:
+        done(true);
     }
   }
 
@@ -87,16 +125,12 @@ export class DialogHost {
       return;
     }
     const id = this.activeId;
-    
-    // Add closing animation class
     this.root.classList.add("is-closing");
-    
-    // Wait for animation to finish before teardown
     setTimeout(() => {
       this.root.classList.remove("is-closing");
       this.teardown();
       if (silent) this.theme.emit("editor:dialog:result", { id, cancelled: true });
-    }, 200); // 200ms matches the CSS animation duration
+    }, 200);
   }
 
   private teardown() {

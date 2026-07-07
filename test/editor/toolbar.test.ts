@@ -10,60 +10,57 @@ describe("resolveToolbarItems", () => {
   it("returns defaults when no options", () => {
     const items = resolveToolbarItems();
     expect(items.length).toBe(DEFAULT_TOOLBAR_ITEMS.length);
-    expect(items[0]?.id).toBe("bold");
+    expect(items[0]?.id).toBe("textFormat");
   });
 
   it("sorts top-level items by order", () => {
     const items = resolveToolbarItems({
-      order: ["layout", "bold", "italic"],
+      order: ["themeMenu", "textFormat", "insert"],
     });
     expect(items.map((i) => i.id)).toEqual([
-      "layout",
-      "bold",
-      "italic",
-      "strikethrough",
-      "code",
-      "heading",
-      "blockquote",
-      "unorderedList",
-      "orderedList",
-      "taskList",
-      "link",
-      "image",
-      "table",
-      "badge",
-      "codeBlock",
-      "horizontalRule",
+      "themeMenu",
+      "textFormat",
+      "insert",
+      "structure",
+      "blocks",
+      "advanced",
     ]);
   });
 
   it("merges custom items by id", () => {
     const items = resolveToolbarItems({
-      items: [{ id: "bold", label: "Bold", title: "Custom bold" }],
+      items: [{ id: "textFormat", label: "Format", title: "Custom format" }],
     });
-    const bold = items.find((i) => i.id === "bold");
-    expect(bold && "label" in bold && bold.label).toBe("Bold");
+    const format = items.find((i) => i.id === "textFormat");
+    expect(format?.type).toBe("menu");
+    if (format?.type === "menu") {
+      expect(format.label).toBe("Format");
+    }
   });
 
   it("hides items with hidden=true", () => {
     const items = resolveToolbarItems({
-      items: [{ id: "bold", hidden: true, label: "B" }],
+      items: [{ id: "textFormat", hidden: true, label: "格式" }],
     });
-    expect(items.some((i) => i.id === "bold")).toBe(false);
+    expect(items.some((i) => i.id === "textFormat")).toBe(false);
   });
 
   it("sorts menu children via orderMap", () => {
     const items = resolveToolbarItems({
       orderMap: { heading: ["heading3", "heading1", "heading2"] },
     });
-    const heading = items.find((i) => i.id === "heading");
-    expect(heading?.type).toBe("menu");
-    if (heading?.type === "menu") {
-      expect(heading.children.slice(0, 3).map((c) => c.id)).toEqual([
-        "heading3",
-        "heading1",
-        "heading2",
-      ]);
+    const structure = items.find((i) => i.id === "structure");
+    expect(structure?.type).toBe("menu");
+    if (structure?.type === "menu") {
+      const heading = structure.children.find((c) => c.id === "heading");
+      expect(heading?.type).toBe("menu");
+      if (heading?.type === "menu") {
+        expect(heading.children.slice(0, 3).map((c) => c.id)).toEqual([
+          "heading3",
+          "heading1",
+          "heading2",
+        ]);
+      }
     }
   });
 
@@ -78,32 +75,33 @@ describe("resolveToolbarItems", () => {
 describe("groupToolbarItems", () => {
   it("groups items by groups option", () => {
     const items = resolveToolbarItems();
-    const groups = groupToolbarItems(items, [["bold", "italic"], ["link", "table"]]);
-    expect(groups[0]?.map((i) => i.id)).toEqual(["bold", "italic"]);
-    expect(groups[1]?.map((i) => i.id).slice(0, 2)).toEqual(["link", "table"]);
+    const groups = groupToolbarItems(items, [["textFormat", "structure"], ["insert", "blocks"]]);
+    expect(groups[0]?.map((i) => i.id)).toEqual(["textFormat", "structure"]);
+    expect(groups[1]?.map((i) => i.id).slice(0, 2)).toEqual(["insert", "blocks"]);
     expect(groups[1]?.length).toBeGreaterThan(2);
   });
 
   it("appends ungrouped items to the last group", () => {
     const items = resolveToolbarItems();
-    const groups = groupToolbarItems(items, [["bold", "italic"]]);
-    expect(groups[0]?.map((i) => i.id).slice(0, 2)).toEqual(["bold", "italic"]);
-    expect(groups[0]!.length).toBeGreaterThan(2);
+    const groups = groupToolbarItems(items, [["textFormat"]]);
+    expect(groups[0]?.map((i) => i.id).slice(0, 1)).toEqual(["textFormat"]);
+    expect(groups[0]!.length).toBeGreaterThan(1);
   });
 
-  it("excludes layout from grouped rows", () => {
+  it("does not include layout item", () => {
     const items = resolveToolbarItems();
+    expect(items.some((i) => i.type === "layout")).toBe(false);
     const groups = groupToolbarItems(items, DEFAULT_TOOLBAR_GROUPS);
-    expect(items.some((i) => i.type === "layout")).toBe(true);
     expect(groups.flat().some((i) => i.type === "layout")).toBe(false);
   });
 });
 
 describe("resolveToolbarGroups", () => {
-  it("puts layout in its own trailing group", () => {
+  it("returns grouped menus without trailing layout", () => {
     const groups = resolveToolbarGroups();
-    const last = groups[groups.length - 1];
-    expect(last?.items.length).toBe(1);
-    expect(last?.items[0]?.type).toBe("layout");
+    expect(groups.length).toBeGreaterThan(0);
+    const items = groups.flatMap((g) => g.items);
+    expect(items.some((i) => i.type === "layout")).toBe(false);
+    expect(items.some((i) => i.id === "themeMenu")).toBe(true);
   });
 });

@@ -4,10 +4,12 @@ import type { CommandContext } from "./types.js";
 import { insertText } from "./utils.js";
 
 export function buildTableMarkdown(rows: number, cols: number): string {
-  const cell = () => "| " + Array(cols).fill(" ").join(" | ") + " |";
-  const sep = () => "| " + Array(cols).fill("---").join(" | ") + " |";
+  const safeRows = Math.max(2, rows);
+  const safeCols = Math.max(1, cols);
+  const cell = () => "| " + Array(safeCols).fill(" ").join(" | ") + " |";
+  const sep = () => "| " + Array(safeCols).fill("---").join(" | ") + " |";
   const lines = [cell(), sep()];
-  for (let r = 2; r < rows; r++) lines.push(cell());
+  for (let r = 2; r < safeRows; r++) lines.push(cell());
   return lines.join("\n") + "\n";
 }
 
@@ -18,7 +20,7 @@ export async function insertTable(
   if (!ctx?.theme) return false;
   const data = await requestDialog(ctx.theme, "table");
   if (!data) return false;
-  const rows = Math.max(2, Math.min(20, data.rows));
+  const rows = Math.max(1, Math.min(10, data.rows));
   const cols = Math.max(1, Math.min(10, data.cols));
   const text = buildTableMarkdown(rows, cols);
   insertText(view, text, 2, 2);

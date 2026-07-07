@@ -45,3 +45,59 @@ export interface BadgeDialogResult {
   variant: BadgeVariant;
   position?: BadgePosition;
 }
+
+export interface MediaDialogResult {
+  kind: "video" | "audio" | "iframe";
+  label: string;
+  url: string;
+  poster?: string;
+}
+
+export interface EmojiDialogResult {
+  code: string;
+}
+
+export interface AttrDialogResult {
+  attr: string;
+}
+
+export interface FootnoteDialogResult {
+  id: string;
+  content?: string;
+  mode: "ref" | "def" | "both";
+}
+
+export type CodeBlockVariant = "basic" | "title" | "highlight" | "collapse";
+
+export interface CodeBlockDialogResult {
+  variant: CodeBlockVariant;
+  lang: string;
+  code: string;
+  title?: string;
+  highlightLines?: string;
+}
+
+export interface FrontmatterDialogResult {
+  yaml: string;
+}
+
+export interface CollapseDialogResult {
+  title: string;
+  content: string;
+  accordion: boolean;
+  expanded: boolean;
+}
+
+export interface TimelineDialogResult {
+  title: string;
+  time: string;
+  type: string;
+  lineStyle: string;
+  content: string;
+}
+
+export interface ContainerDialogResult {
+  type: string;
+  title: string;
+  body: string;
+}

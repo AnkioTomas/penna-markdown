@@ -8,3 +8,4 @@
 - [构建与分包](build-package.md)
 - [API 参考](api-reference.md)
 - [语法 Cookbook](syntax-extension-cookbook.md)
+[implementation_plan.md](../../../../../../.gemini/antigravity-cli/brain/71b6e9b6-fbc9-4fbd-98e2-d8c8deb2a1e6/implementation_plan.md)

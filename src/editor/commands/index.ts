@@ -1,5 +1,6 @@
 import type { EditorView } from "@codemirror/view";
 import { registerBasicCommands } from "./basic.js";
+import { registerExtendCommands, registerThemeCommand } from "./extends.js";
 import { registerBadgeCommand, applyBadge } from "./badge.js";
 import { registerHeadingCommands, applyHeading } from "./heading.js";
 import { registerLinkCommand, insertLink } from "./link.js";
@@ -8,6 +9,8 @@ import { registerTableCommand, insertTable } from "./table.js";
 import type { CommandContext, EditorCommand } from "./types.js";
 
 registerBasicCommands(registerCommand);
+registerExtendCommands(registerCommand);
+registerThemeCommand(registerCommand);
 registerHeadingCommands(registerCommand);
 registerTableCommand(registerCommand);
 registerLinkCommand(registerCommand);

@@ -92,6 +92,35 @@ describe("editor/commands", () => {
     view.destroy();
   });
 
+  it("alert inserts GFM admonition syntax", () => {
+    const view = createView("");
+    runCommand(view, "alert", { type: "TIP" });
+    expect(view.state.doc.toString()).toBe("> [!TIP]\n> 提示内容\n");
+    view.destroy();
+  });
+
+  it("container inserts triple-colon block", () => {
+    const view = createView("");
+    runCommand(view, "container", { type: "warning", title: "警告" });
+    expect(view.state.doc.toString()).toBe("::: warning 警告\n容器内容\n:::\n");
+    view.destroy();
+  });
+
+  it("comment wraps multiline selection per line", () => {
+    const doc = "line one\nline two";
+    const view = createView(doc, { anchor: 0, head: doc.length });
+    runCommand(view, "comment");
+    expect(view.state.doc.toString()).toBe("%%line one%%\n%%line two%%");
+    view.destroy();
+  });
+
+  it("comment wraps single line with double percent", () => {
+    const view = createView("note", { anchor: 0, head: 4 });
+    runCommand(view, "comment");
+    expect(view.state.doc.toString()).toBe("%%note%%");
+    view.destroy();
+  });
+
   it("badge opens dialog when selection is empty", async () => {
     const view = createView("");
     const theme = new Theme();

@@ -19,7 +19,6 @@ export class Toolbar {
   private readonly offs: (() => void)[] = [];
 
   constructor({ mount, theme, options, focus, getLayout }: ToolbarParams) {
-    const mobileBreakpoint = options.mobileBreakpoint ?? 640;
     this.layoutMode = getLayout?.() ?? "split";
 
     const ctx: ToolbarContext = {
@@ -48,7 +47,6 @@ export class Toolbar {
       groups,
       ctx,
       layoutMode: this.layoutMode,
-      mobileBreakpoint,
       layoutItem,
     });
 

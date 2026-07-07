@@ -5,71 +5,106 @@ export interface TableDialogCallbacks {
   onCancel: () => void;
 }
 
+const GRID_SIZE = 10;
+
 export function renderTableDialog(
   host: HTMLElement,
   callbacks: TableDialogCallbacks,
 ): () => void {
   const form = document.createElement("form");
-  form.className = "cherry-dialog-form";
+  form.className = "cherry-dialog-form cherry-dialog-form--table";
   form.innerHTML = `
-    <label class="cherry-dialog-field">行数<input name="rows" type="number" min="2" max="20" value="3" /></label>
-    <label class="cherry-dialog-field">列数<input name="cols" type="number" min="1" max="10" value="3" /></label>
-    <div class="cherry-dialog-grid" aria-label="表格尺寸"></div>
+    <div class="cherry-dialog-table-head">
+      <span class="cherry-dialog-table-title">插入表格</span>
+      <span class="cherry-dialog-table-size" aria-live="polite">1 × 1</span>
+    </div>
+    <p class="cherry-dialog-table-hint">在网格上拖动或点击选择行列，松手后插入</p>
+    <div class="cherry-dialog-grid cherry-dialog-grid--10" role="grid" aria-label="表格尺寸"></div>
     <div class="cherry-dialog-actions">
       <button type="button" data-action="cancel">取消</button>
-      <button type="submit">插入</button>
     </div>
   `;
 
   const grid = form.querySelector(".cherry-dialog-grid") as HTMLElement;
-  let selRows = 3;
-  let selCols = 3;
+  const sizeLabel = form.querySelector(".cherry-dialog-table-size") as HTMLElement;
+  let selRows = 1;
+  let selCols = 1;
+  let dragging = false;
   const cells: HTMLButtonElement[] = [];
-  for (let r = 1; r <= 3; r++) {
-    for (let c = 1; c <= 3; c++) {
+
+  for (let r = 1; r <= GRID_SIZE; r++) {
+    for (let c = 1; c <= GRID_SIZE; c++) {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "cherry-dialog-grid-cell";
       btn.dataset.rows = String(r);
       btn.dataset.cols = String(c);
+      btn.setAttribute("role", "gridcell");
       btn.title = `${r}×${c}`;
       cells.push(btn);
       grid.appendChild(btn);
     }
   }
-  grid.style.gridTemplateColumns = "repeat(3, 1fr)";
+  grid.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 1fr)`;
 
   const sync = () => {
+    sizeLabel.textContent = `${selRows} × ${selCols}`;
     for (const btn of cells) {
       const r = Number(btn.dataset.rows);
       const c = Number(btn.dataset.cols);
       btn.classList.toggle("is-active", r <= selRows && c <= selCols);
     }
-    (form.elements.namedItem("rows") as HTMLInputElement).value = String(selRows);
-    (form.elements.namedItem("cols") as HTMLInputElement).value = String(selCols);
   };
+
+  const pickCell = (target: HTMLButtonElement) => {
+    selRows = Number(target.dataset.rows);
+    selCols = Number(target.dataset.cols);
+    sync();
+  };
+
+  const submit = () => {
+    callbacks.onSubmit({ rows: selRows, cols: selCols });
+  };
+
+  grid.addEventListener("mousedown", (e) => {
+    const t = (e.target as HTMLElement).closest(".cherry-dialog-grid-cell") as HTMLButtonElement | null;
+    if (!t) return;
+    dragging = true;
+    pickCell(t);
+  });
+
+  grid.addEventListener("mouseover", (e) => {
+    if (!dragging) return;
+    const t = (e.target as HTMLElement).closest(".cherry-dialog-grid-cell") as HTMLButtonElement | null;
+    if (!t) return;
+    pickCell(t);
+  });
+
+  const stopDrag = () => {
+    dragging = false;
+  };
+  window.addEventListener("mouseup", stopDrag);
 
   grid.addEventListener("click", (e) => {
     const t = (e.target as HTMLElement).closest(".cherry-dialog-grid-cell") as HTMLButtonElement | null;
     if (!t) return;
-    selRows = Number(t.dataset.rows);
-    selCols = Number(t.dataset.cols);
-    sync();
-  });
-
-  form.addEventListener("input", () => {
-    selRows = Number((form.elements.namedItem("rows") as HTMLInputElement).value) || 2;
-    selCols = Number((form.elements.namedItem("cols") as HTMLInputElement).value) || 1;
-    sync();
+    e.preventDefault();
+    pickCell(t);
+    submit();
   });
 
   form.querySelector('[data-action="cancel"]')?.addEventListener("click", () => callbacks.onCancel());
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    callbacks.onSubmit({ rows: selRows, cols: selCols });
+    submit();
   });
 
   host.appendChild(form);
   sync();
-  return () => form.remove();
+
+  return () => {
+    window.removeEventListener("mouseup", stopDrag);
+    form.remove();
+  };
 }

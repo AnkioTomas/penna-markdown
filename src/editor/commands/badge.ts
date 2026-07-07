@@ -4,7 +4,7 @@ import type { BadgeDialogResult, CommandContext } from "./types.js";
 import { insertText, wrapSelection } from "./utils.js";
 
 function badgeSuffix(result: BadgeDialogResult): string {
-  const parts = [result.variant];
+  const parts: string[] = [result.variant];
   if (result.position && result.position !== "middle") parts.push(result.position);
   return `{.${parts.join(" ")}}`;
 }
