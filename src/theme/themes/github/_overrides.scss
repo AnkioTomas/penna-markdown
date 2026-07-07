@@ -68,10 +68,6 @@
     color: var(--cherry-c-text-3);
   }
 
-  :first-child {
-    margin-top: 0;
-  }
-
   p {
     margin: 0 0 rem(16);
   }
@@ -155,12 +151,7 @@
     }
 
     tbody tr {
-      background: var(--cherry-c-bg);
       border-top: rem(1) solid var(--cherry-c-table-td-border);
-    }
-
-    tbody tr:nth-child(even) {
-      background: var(--cherry-c-bg-elevated);
     }
   }
 
@@ -170,7 +161,7 @@
   }
 
   .cherry-alert {
-    margin: rem(16) 0;
+    margin: 0 0 rem(16);
     padding: rem(12) rem(16);
     border: rem(1) solid var(--alert-border);
     border-left-width: rem(4);
@@ -193,7 +184,7 @@
     --cb-lang-fg: var(--cherry-c-text-2);
     --cb-lang-bg: transparent;
     --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 12%, transparent);
-    margin: rem(16) 0;
+    margin: 0 0 rem(16);
 
     &__panel {
       border-color: var(--cherry-c-border-soft);
@@ -218,8 +209,6 @@
     }
   }
 
-  @include hljs-github.light;
-
   .cherry-card,
   .cherry-link-card,
   .cherry-repo-card {
@@ -235,7 +224,7 @@
   }
 
   .cherry-tabs {
-    margin: rem(16) 0;
+    margin: 0 0 rem(16);
     border: rem(1) solid var(--cherry-c-border-soft);
     border-radius: rem(6);
     background: var(--cherry-c-bg);

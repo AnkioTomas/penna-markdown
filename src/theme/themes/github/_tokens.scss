@@ -5,7 +5,7 @@
 $github-accent: #0969da;
 $github-accent-hover: #0550ae;
 $github-accent-soft: rgba(9, 105, 218, 0.12);
-$github-mark: #fff8c5;
+$github-mark: #ffea7f;
 
 $github-canvas: #ffffff;
 $github-canvas-subtle: #f6f8fa;
@@ -32,24 +32,24 @@ $github-dark-accent-hover: #3182f6;
 $github-dark-code-fg: #f0f6fc;
 
 $github-light-semantics: (
-  note: (#0969da, #cae8ff),
-  tip: (#1a7f37, #c6f6d5),
-  warning: (#9a6700, #fff8c5),
-  caution: (#cf222e, #ffebe9),
-  danger: (#cf222e, #ffebe9),
-  important: (#8250df, #fbefff),
+  note: (#0969da, #add8e6),
+  tip: (#1a7f37, #98fb98),
+  warning: (#9a6700, #ffea7f),
+  caution: (#cf222e, #ffb3b3),
+  danger: (#cf222e, #ff9999),
+  important: (#8250df, #e6ccff),
 );
 
 $github-dark-semantics: (
-  note: (#4493f8, #264f78),
-  tip: (#3fb950, #1b4721),
-  warning: (#d4a72c, #624710),
-  caution: (#ff8182, #67060c),
-  danger: (#ff8182, #67060c),
-  important: (#ab7df8, #512a97),
+  note: (#4493f8, #58a6ff),
+  tip: (#3fb950, #3fb950),
+  warning: (#d4a72c, #d29922),
+  caution: (#ff8182, #f85149),
+  danger: (#ff8182, #f85149),
+  important: (#ab7df8, #bc8cff),
 );
 
-$github-dark-mark-mix: 42%;
+$github-dark-mark-mix: 65%;
 
 @function github-surface($is-dark) {
   @if $is-dark {
@@ -202,7 +202,7 @@ $github-dark-mark-mix: 42%;
   --cherry-c-contrast-light: #fff;
   --cherry-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #3d3400;
+  --cherry-c-brand-mark: color-mix(in srgb, #{$github-mark} #{$github-dark-mark-mix}, #{$github-dark-canvas});
   --cherry-c-code-fg: #{$github-dark-code-fg};
   --cherry-c-border-soft: #{$github-dark-border};
   --cherry-c-border-faint: #{color-mix(in srgb, #{$github-dark-border} 55%, transparent)};

@@ -343,6 +343,10 @@
     background: var(--cherry-c-bg-elevated);
   }
 
+  .cherry-mark {
+    --cherry-mark-strength: 100%;
+  }
+
   .cherry-code-block,
   pre:not(.cherry-code-block__pre) {
     .hljs {

@@ -5,7 +5,7 @@
 $claude-clay: #d97757;
 $claude-clay-hover: #c6613f;
 $claude-clay-soft: rgba(217, 119, 87, 0.14);
-$claude-mark: #d4b06d;
+$claude-mark: #fbbc04;
 
 $claude-ivory: #faf9f5;
 $claude-ivory-medium: #f0eee6;
@@ -28,24 +28,24 @@ $claude-dark-text-soft: #c2c0b6;
 $claude-dark-muted: #9a9c92;
 
 $claude-light-semantics: (
-  note: (#5d7d9a, #c8e0f4),
-  tip: (#688a5d, #d7eccf),
-  warning: (#ad7837, #f2ddb3),
-  caution: (#b45f51, #f3ccc4),
-  danger: (#b45f51, #f3ccc4),
-  important: (#8b6f9d, #e6d4f2),
+  note: (#5d7d9a, #a8d1ff),
+  tip: (#688a5d, #a2f584),
+  warning: (#ad7837, #ffe28a),
+  caution: (#b45f51, #ffa494),
+  danger: (#b45f51, #ffa494),
+  important: (#8b6f9d, #e3bdff),
 );
 
 $claude-dark-semantics: (
-  note: (#88a9c7, #5f7896),
-  tip: (#91b685, #5f7a57),
-  warning: (#d6a15e, #8f6a34),
-  caution: (#d88678, #8f5348),
-  danger: (#d88678, #8f5348),
-  important: (#b69acd, #7a5f8f),
+  note: (#88a9c7, #66b5ff),
+  tip: (#91b685, #7bed55),
+  warning: (#d6a15e, #ffc954),
+  caution: (#d88678, #ff826e),
+  danger: (#d88678, #ff826e),
+  important: (#b69acd, #d59eff),
 );
 
-$claude-dark-mark-mix: 40%;
+$claude-dark-mark-mix: 100%;
 
 @function claude-surface($is-dark) {
   @if $is-dark {
