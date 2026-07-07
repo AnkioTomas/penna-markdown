@@ -58,7 +58,7 @@
   max-width: 100%;
   padding: 4px 0;
   outline: none;
-  caret-color: var(--cherry-c-text-1);
+  caret-color: transparent;
 }
 
 .cherry-editor-cm .cm-content.cm-lineWrapping {
@@ -100,7 +100,8 @@
 
 .cherry-editor-cm .cm-cursor,
 .cherry-editor-cm .cm-dropCursor {
-  border-left: 3px solid var(--cherry-c-brand-2);
+  border-left: 6px solid var(--cherry-c-brand-1) !important;
+  margin-left: -2px;
 }
 
 .cherry-editor-cm .cm-selectionBackground {
@@ -110,3 +111,13 @@
 .cherry-editor-cm .cm-focused .cm-selectionBackground {
   background: color-mix(in srgb, var(--cherry-c-brand-1) 30%, transparent) !important;
 }
+
+.cherry-editor-cm .cm-activeLine {
+  background: color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
+}
+
+.cherry-editor-cm .cm-activeLineGutter {
+  background: color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
+  color: var(--cherry-c-brand-1);
+}
+

@@ -3,6 +3,7 @@ import { markdown, markdownKeymap, markdownLanguage } from "@codemirror/lang-mar
 import { EditorState, type Extension } from "@codemirror/state";
 import {
   EditorView,
+  highlightActiveLine,
   highlightActiveLineGutter,
   keymap,
   lineNumbers,
@@ -65,6 +66,8 @@ export class Editor {
     if (lineNumbersEnabled) {
       extensions.push(lineNumbers(), highlightActiveLineGutter());
     }
+    
+    extensions.push(highlightActiveLine());
 
     const state = EditorState.create({
       doc: options.value ?? "",

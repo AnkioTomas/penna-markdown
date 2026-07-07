@@ -1,0 +1,29 @@
+@mixin scrollbar-global {
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--cherry-c-text-4);
+    border-radius: 6px;
+    background-clip: padding-box;
+    border: 3px solid transparent;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--cherry-c-text-3);
+    background-clip: padding-box;
+    border: 3px solid transparent;
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--cherry-c-text-4) transparent;
+  }
+}
