@@ -124,7 +124,7 @@ export function renderOverflowMenu(items: ToolbarItem[]) {
   const menu: ToolbarMenuItem = {
     id: "__overflow",
     type: "menu",
-    label: "⋯",
+    label: "更多",
     title: "更多",
     icon: ICON_MORE,
     children: items,

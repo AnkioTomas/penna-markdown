@@ -180,6 +180,16 @@
   margin-left: 4px;
 }
 
+.cherry-toolbar-scroll {
+  > .cherry-toolbar-menu:last-child,
+  > .cherry-toolbar-menu:nth-last-child(2) {
+    > .cherry-toolbar-menu-panel {
+      left: auto;
+      right: 0;
+    }
+  }
+}
+
 /* Click-to-open for top level menus */
 .cherry-toolbar-menu.is-open > .cherry-toolbar-menu-panel {
   display: flex;
@@ -277,6 +287,10 @@
   background: color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
 }
 
+.cherry-toolbar-overflow-menu {
+  display: none;
+}
+
 @media (max-width: 640px) {
   .cherry-toolbar-scroll {
     padding: 6px 8px;
@@ -297,5 +311,13 @@
   .cherry-toolbar-submenu .cherry-toolbar-menu-panel {
     top: calc(100% + 2px);
     left: 0;
+  }
+
+  .cherry-toolbar-desktop-only {
+    display: none !important;
+  }
+
+  .cherry-toolbar-overflow-menu {
+    display: block;
   }
 }

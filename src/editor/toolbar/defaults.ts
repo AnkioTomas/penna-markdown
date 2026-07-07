@@ -201,6 +201,7 @@ export const DEFAULT_TOOLBAR_ITEMS: ToolbarItem[] = [
     label: "组件",
     title: "扩展 UI 区块",
     icon: ICON_BLOCKS,
+    mobileOverflow: true,
     children: [
       {
         id: "alertMenu",
@@ -391,6 +392,7 @@ export const DEFAULT_TOOLBAR_ITEMS: ToolbarItem[] = [
     label: "高级",
     title: "图表与元数据",
     icon: ICON_EXT,
+    mobileOverflow: true,
     children: [
       {
         id: "htmlAttr",
@@ -484,6 +486,7 @@ export const DEFAULT_TOOLBAR_ITEMS: ToolbarItem[] = [
     label: "主题",
     title: "切换渲染主题",
     icon: ICON_THEME,
+    mobileOverflow: true,
     children: buildThemeMenuItems(),
   },
 ];
