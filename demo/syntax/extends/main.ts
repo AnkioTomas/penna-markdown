@@ -1,4 +1,5 @@
 import "../../_common/layout.scss";
+import "../syntax-demo.scss";
 import "@/theme/style/transformer.scss";
 import { Renderer } from "@/renderer/Renderer.js";
 import { Theme } from "@/theme/Theme.js";
