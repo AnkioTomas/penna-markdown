@@ -166,7 +166,7 @@ mkdirSync(distDir, { recursive: true });
 
 if (stylesOnly) {
   await buildThemeStyles();
-  console.log(`theme styles done: cherry-editor-base + render/editor for ${REGISTERED_THEMES.join(", ")}`);
+  console.log(`theme styles done: cherry + transformer + themes for ${REGISTERED_THEMES.join(", ")}`);
 } else {
   rmSync(distDir, { recursive: true, force: true });
   mkdirSync(distDir, { recursive: true });
@@ -179,5 +179,5 @@ if (stylesOnly) {
 
   const built = [transformerEntry.name, ...simpleEntries.map((e) => e.name)].join(", ");
   console.log("build done:", built);
-  console.log(`theme css (min only): cherry-editor-base + render/editor for ${REGISTERED_THEMES.join(", ")}`);
+  console.log(`theme css (min only): cherry + transformer + themes for ${REGISTERED_THEMES.join(", ")}`);
 }

@@ -1,7 +1,5 @@
 /** GitBook 主题编辑器样式 */
-@use "render";
 @use "tokens";
-@use "../../style/editor/cherry" as *;
 
 .cherry-theme-gitbook.cherry {
   @include tokens.theme-light;

@@ -2,79 +2,12 @@
 @use "tokens";
 @use "overrides";
 
-@use "../../style/transformer/gfm/base";
-@use "../../style/transformer/gfm/heading";
-@use "../../style/transformer/gfm/paragraph";
-@use "../../style/transformer/gfm/link";
-@use "../../style/transformer/gfm/emphasis";
-@use "../../style/transformer/gfm/blockquote";
-@use "../../style/transformer/gfm/hr";
-@use "../../style/transformer/gfm/list";
-@use "../../style/transformer/gfm/image";
-@use "../../style/transformer/gfm/code";
-@use "../../style/transformer/gfm/table";
 
-@use "../../style/transformer/extends/highlight";
-@use "../../style/transformer/extends/spoiler";
-@use "../../style/transformer/extends/alert";
-@use "../../style/transformer/extends/tasklist";
-@use "../../style/transformer/extends/badge";
-@use "../../style/transformer/extends/card";
-@use "../../style/transformer/extends/link-card";
-@use "../../style/transformer/extends/image-card";
-@use "../../style/transformer/extends/repo-card";
-@use "../../style/transformer/extends/card-grid";
-@use "../../style/transformer/extends/card-masonry";
-@use "../../style/transformer/extends/steps";
-@use "../../style/transformer/extends/tabs";
-@use "../../style/transformer/extends/field";
-@use "../../style/transformer/extends/timeline";
-@use "../../style/transformer/extends/collapse";
-@use "../../style/transformer/extends/media";
-@use "../../style/transformer/extends/math";
-@use "../../style/transformer/extends/footnote";
-@use "../../style/transformer/extends/code-block";
 
 // 日间：.cherry-theme-morandi .cherry-render
 .cherry-theme-morandi {
   .cherry-render {
-    @include tokens.theme-light;
-
-    @include base.styles;
-    @include heading.styles;
-    @include paragraph.styles;
-    @include link.styles;
-    @include emphasis.styles;
-    @include blockquote.styles;
-    @include hr.styles;
-    @include list.styles;
-    @include image.styles;
-    @include code.styles;
-    @include table.styles;
-
-    @include highlight.styles;
-    @include spoiler.styles;
-    @include alert.styles;
-    @include tasklist.styles;
-    @include badge.styles;
-    @include card.styles;
-    @include link-card.styles;
-    @include image-card.styles;
-    @include repo-card.styles;
-    @include card-grid.styles;
-    @include card-masonry.styles;
-    @include steps.styles;
-    @include tabs.styles;
-    @include field.styles;
-    @include timeline.styles;
-    @include collapse.styles;
-    @include media.styles;
-    @include math.styles;
-    @include footnote.styles;
-    @include code-block.styles;
-
-    @include overrides.styles;
-  }
+    @include tokens.theme-light;  }
 }
 
 // 夜间：.cherry-dark.cherry-theme-morandi .cherry-render

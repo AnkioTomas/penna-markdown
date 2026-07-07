@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue 3 集成演示</title>
+  </head>
+  <body>
+    <div class="header">
+      <a class="back" href="../../index.html">返回入口</a>
+      <div class="title">Vue 3 集成演示</div>
+    </div>
+    <div id="app" class="app-container">
+      <div ref="editorRef" style="flex:1;"></div>
+    </div>
+    <script type="module">
+      import "../../_common/layout.scss";
+      import "@/theme/style/cherry.scss";
+      import "@/theme/style/transformer.scss";
+      import { Cherry } from "@/editor/Cherry.js";
+      import { fetchDocContent } from "../../_common/api.js";
+      import { createApp, ref, onMounted, onBeforeUnmount } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+
+      createApp({
+        setup() {
+          const editorRef = ref(null);
+          let editorInstance = null;
+
+          onMounted(async () => {
+            const initialContent = await fetchDocContent("/docs/simple.md");
+            editorInstance = new Cherry(editorRef.value, {
+              editor: { value: initialContent }
+            });
+          });
+
+          onBeforeUnmount(() => {
+            // TODO: call editorInstance.destroy() if implemented
+          });
+
+          return { editorRef };
+        }
+      }).mount('#app');
+    </script>
+  </body>
+</html>

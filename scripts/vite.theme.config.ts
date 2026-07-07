@@ -17,14 +17,16 @@ const scssLoadPaths = [
 
 function themeStyleInputs(): Record<string, string> {
   const input: Record<string, string> = {
-    "cherry-editor-base": resolve(rootDir, "src/theme/style/editor/base.scss"),
+    "cherry": resolve(rootDir, "src/theme/style/cherry.scss"),
+    "transformer": resolve(rootDir, "src/theme/style/transformer.scss"),
   };
 
   for (const themeId of REGISTERED_THEMES) {
     for (const kind of ["render", "editor"] as const) {
       const entry = resolve(themesDir, themeId, `${kind}.scss`);
       if (existsSync(entry)) {
-        input[`cherry-theme-${themeId}-${kind}`] = entry;
+        const prefix = kind === "editor" ? "cherry-theme" : "transformer-theme";
+        input[`${prefix}-${themeId}`] = entry;
       }
     }
   }

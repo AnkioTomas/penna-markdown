@@ -4,43 +4,89 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cherry Markdown Next · Demo 入口</title>
-    <link rel="stylesheet" href="./home.css" />
+    <style>
+      body { font-family: system-ui, sans-serif; background: #f3f4f6; margin: 0; padding: 2rem; color: #111827; }
+      .wrap { max-width: 900px; margin: 0 auto; }
+      .header { margin-bottom: 2rem; text-align: center; }
+      
+      .section-title {
+        font-size: 1.5rem;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 0.5rem;
+        color: #1f2937;
+      }
+      
+      .cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+      .card { background: #fff; padding: 1.5rem; border-radius: 8px; text-decoration: none; color: inherit; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; }
+      .card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+      .card-title { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; color: #2563eb; }
+      .card-desc { font-size: 0.875rem; color: #4b5563; }
+      .card.disabled { opacity: 0.6; cursor: not-allowed; filter: grayscale(100%); }
+      .card.disabled:hover { transform: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    </style>
   </head>
   <body>
     <div class="wrap">
       <header class="header">
-        <h1>Cherry Markdown Next Demo</h1>
-        <p>选择一个功能开始使用。运行 <code>pnpm demo</code> 启动开发服务。</p>
+        <h1>Cherry Markdown Next</h1>
+        <p>全景演示站</p>
       </header>
 
+      <h2 class="section-title">1. 语法演示 (Syntax)</h2>
       <section class="cards">
-        <a class="card" href="./editor/index.html">
-          <div class="card-title">编辑器</div>
-          <div class="card-desc">Markdown 实时预览；可切换主题/明暗与 test / simple 示例</div>
-        </a>
-        <a class="card" href="./converter/index.html">
-          <div class="card-title">转换器</div>
-          <div class="card-desc">Markdown -> HTML（查看渲染结果与预览）</div>
-        </a>
-        <a class="card" href="./renderer/index.html">
-          <div class="card-title">渲染器</div>
-          <div class="card-desc">createRenderer · TOC · 代码高亮 · 主题切换</div>
-        </a>
-        <a class="card" href="./ast/index.html">
-          <div class="card-title">AST 调试台</div>
-          <div class="card-desc">AST 调试，默认启用全部扩展语法</div>
-        </a>
-        <a class="card" href="./gfm-syntax/index.html">
+        <a class="card" href="./syntax/gfm/index.html">
           <div class="card-title">GFM 语法</div>
-          <div class="card-desc">内置 GFM 语法交互演示（标题、表格、删除线等）</div>
+          <div class="card-desc">展示标准的 GitHub Flavored Markdown 语法效果。</div>
         </a>
-        <a class="card" href="./gfm/index.html">
-          <div class="card-title">GFM 测试</div>
-          <div class="card-desc">GFM 官方用例（按用例 extensions 断言 HTML）</div>
+        <a class="card" href="./syntax/extends/index.html">
+          <div class="card-title">拓展语法</div>
+          <div class="card-desc">Cherry 的特有增强语法（如：高亮、行内属性、容器等）。</div>
         </a>
-        <a class="card" href="./extends/index.html">
-          <div class="card-title">扩展</div>
-          <div class="card-desc">自定义语法扩展</div>
+      </section>
+
+      <h2 class="section-title">2. 测试 (Test)</h2>
+      <section class="cards">
+        <a class="card" href="./test/gfm/index.html">
+          <div class="card-title">GFM 全量测试</div>
+          <div class="card-desc">依据 GFM Spec 进行的大规模用例验证面板。</div>
+        </a>
+      </section>
+
+      <h2 class="section-title">3. 模块使用 (Modules)</h2>
+      <section class="cards">
+        <a class="card" href="./modules/editor/index.html">
+          <div class="card-title">全功能编辑器 (Editor)</div>
+          <div class="card-desc">高度集成的开箱即用编辑器，包含编辑、工具栏与实时预览。</div>
+        </a>
+        <a class="card" href="./modules/renderer/index.html">
+          <div class="card-title">独立渲染器 (Renderer)</div>
+          <div class="card-desc">接收 Markdown，渲染为带高亮、样式的 DOM，适合展示页。</div>
+        </a>
+        <a class="card" href="./modules/transformer/index.html">
+          <div class="card-title">转换器核心 (Transformer)</div>
+          <div class="card-desc">最底层的 AST 与 HTML 源码转换输出面板。</div>
+        </a>
+        <a class="card" href="./modules/ast/index.html">
+          <div class="card-title">AST 语法树 (AST)</div>
+          <div class="card-desc">可视化查看 Markdown 解析出的内部节点结构。</div>
+        </a>
+      </section>
+
+      <h2 class="section-title">4. 框架结合 (Frameworks)</h2>
+      <section class="cards">
+        <a class="card" href="./frameworks/vanilla/index.html">
+          <div class="card-title">Vanilla JS</div>
+          <div class="card-desc">在原生无框架环境下的极简集成示例。</div>
+        </a>
+        <a class="card" href="./frameworks/vue/index.html">
+          <div class="card-title">Vue</div>
+          <div class="card-desc">在 Vue 组件生命周期内挂载使用的最佳实践。</div>
+        </a>
+        <a class="card" href="./frameworks/react/index.html">
+          <div class="card-title">React</div>
+          <div class="card-desc">以 React Hook 方式封装与集成的演示。</div>
         </a>
       </section>
     </div>

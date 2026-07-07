@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>渲染器 · Cherry Markdown Next</title>
+    <style>
+      #preview { padding: 2rem; max-width: 900px; margin: 0 auto; overflow: auto; }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <a class="back" href="../../index.html">返回入口</a>
+      <div class="title">渲染器 (Renderer)</div>
+      <div class="header-controls">
+        <label>
+          文档
+          <select id="doc-select"><option value="">加载中...</option></select>
+        </label>
+        <!-- 我们复用 editor 的主题切换脚本，但是只需给 root 添加 class 即可 -->
+      </div>
+    </div>
+    <div class="app-container" id="preview" class="cherry-theme-default cherry-render">
+      <!-- 渲染内容挂载点 -->
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React 集成演示</title>
+  </head>
+  <body>
+    <div class="header">
+      <a class="back" href="../../index.html">返回入口</a>
+      <div class="title">React 集成演示</div>
+    </div>
+    <div id="app" class="app-container"></div>
+    <script type="module">
+      import "../../_common/layout.scss";
+      import "@/theme/style/cherry.scss";
+      import "@/theme/style/transformer.scss";
+      import { Cherry } from "@/editor/Cherry.js";
+      import { fetchDocContent } from "../../_common/api.js";
+      
+      import React, { useEffect, useRef, useState } from 'https://esm.sh/react@18/?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18/client?dev';
+      import htm from 'https://esm.sh/htm';
+
+      const html = htm.bind(React.createElement);
+
+      function MarkdownEditor() {
+        const editorRef = useRef(null);
+        const editorInstance = useRef(null);
+        
+        useEffect(() => {
+          let mounted = true;
+          fetchDocContent("/docs/simple.md").then(initialContent => {
+            if (!mounted) return;
+            editorInstance.current = new Cherry(editorRef.current, {
+              editor: { value: initialContent }
+            });
+          });
+          
+          return () => {
+            mounted = false;
+            // TODO: Cleanup editor instance
+          };
+        }, []);
+
+        return html`<div ref=${editorRef} style=${{ flex: 1 }}></div>`;
+      }
+
+      const root = createRoot(document.getElementById('app'));
+      root.render(html`<${MarkdownEditor} />`);
+    </script>
+  </body>
+</html>

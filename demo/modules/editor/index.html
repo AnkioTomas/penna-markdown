@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>编辑器 · Cherry Markdown Next</title>
+  </head>
+  <body>
+    <div class="header">
+      <a class="back" href="../../index.html">返回入口</a>
+      <div class="title">编辑器 (Editor)</div>
+      <div class="header-controls">
+        <label>
+          文档
+          <select id="doc-select" aria-label="选择文档"><option value="">加载中...</option></select>
+        </label>
+        <label>
+          主题
+          <select id="theme-select" aria-label="选择渲染主题"></select>
+        </label>
+        <label>
+          明暗
+          <select id="appearance-select" aria-label="选择明暗模式">
+            <option value="light">浅色</option>
+            <option value="dark">深色</option>
+            <option value="auto">跟随系统</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="app-container" id="cherry-editor"></div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
