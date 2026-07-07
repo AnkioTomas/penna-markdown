@@ -35,24 +35,24 @@ $notion-green: #448361;
 $notion-red: #d44c47;
 
 $notion-light-semantics: (
-  note: (#2eaadc, #d6eef8),
-  tip: (#448361, #edf3ec),
-  warning: (#d44c47, #fdebec),
-  caution: (#9a6e3a, #f5ebe0),
-  danger: (#d44c47, #fdebec),
-  important: (#37352f, #e9e9e7),
+  note: (#2eaadc, #00d8ff),
+  tip: (#448361, #39ff14),
+  warning: (#d44c47, #ff3131),
+  caution: (#9a6e3a, #fff01f),
+  danger: (#d44c47, #ff3131),
+  important: (#37352f, #a6a6a6),
 );
 
 $notion-dark-semantics: (
-  note: (#2eaadc, #1a3a4a),
-  tip: (#448361, #2e443a),
-  warning: (#d1949e, #5e3436),
-  caution: (#998066, #4a4030),
-  danger: (#d1949e, #5e3436),
-  important: (#ebebeb, #393c3f),
+  note: (#2eaadc, #00d8ff),
+  tip: (#448361, #39ff14),
+  warning: (#d1949e, #ff3131),
+  caution: (#998066, #fff01f),
+  danger: (#d1949e, #ff3131),
+  important: (#ebebeb, #a6a6a6),
 );
 
-$notion-dark-mark-mix: 40%;
+$notion-dark-mark-mix: 50%;
 
 @function notion-surface($is-dark) {
   @if $is-dark {
@@ -232,6 +232,15 @@ $notion-dark-mark-mix: 40%;
   --notion-footnote-bg: #888884;
   --notion-footnote-fg: #{$notion-light-surface};
 
+  --cherry-c-hljs-comment: #708090;
+  --cherry-c-hljs-keyword: #0277aa;
+  --cherry-c-hljs-string: #669900;
+  --cherry-c-hljs-number: #990055;
+  --cherry-c-hljs-title: #dc4a68;
+  --cherry-c-hljs-attr: #37352f;
+  --cherry-c-hljs-name: #ff5a5a;
+  --cherry-c-hljs-operator: #9a6e3b;
+
   @include generate-semantic-suite($notion-light-semantics, false);
   @include component-tokens(false);
 }
@@ -269,6 +278,15 @@ $notion-dark-mark-mix: 40%;
   --notion-table-b: #{$notion-dark-bg};
   --notion-footnote-bg: #{$notion-dark-border};
   --notion-footnote-fg: #b1b3b4;
+
+  --cherry-c-hljs-comment: #998066;
+  --cherry-c-hljs-keyword: #d1949e;
+  --cherry-c-hljs-string: #bde052;
+  --cherry-c-hljs-number: #d1949e;
+  --cherry-c-hljs-title: #eceded;
+  --cherry-c-hljs-attr: #ebebeb;
+  --cherry-c-hljs-name: #d1949e;
+  --cherry-c-hljs-operator: #f5b83d;
 
   @include generate-semantic-suite($notion-dark-semantics, true);
   @include component-tokens(true);
