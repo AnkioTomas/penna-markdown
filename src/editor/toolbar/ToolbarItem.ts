@@ -1,11 +1,8 @@
 import type { EditorCommand } from "../commands.js";
-import type { EditorLayoutMode } from "../Layout.js";
 
 export interface ToolbarContext {
   execute(command: EditorCommand | string, payload?: unknown): void;
   focus(): void;
-  setLayout(mode: EditorLayoutMode): void;
-  getLayout(): EditorLayoutMode;
 }
 
 export type ToolbarItemType = "button" | "menu" | "separator";

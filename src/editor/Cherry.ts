@@ -137,13 +137,12 @@ export class Cherry {
     this.toolbar =
       options.toolbar === false
         ? null
-        : new Toolbar({
-            mount: this.toolbarEl,
-            theme: this.theme,
-            options: options.toolbar ?? {},
-            focus: () => this.editor.focus(),
-            getLayout: () => this.getLayout(),
-          });
+        : new Toolbar(
+            this.toolbarEl,
+            this.theme,
+            options.toolbar ?? {},
+            () => this.editor.focus(),
+          );
 
     this.sidebar = new SideBar(
       this.sidebarEl,

@@ -1,4 +1,3 @@
-import type { EditorLayoutMode } from "@/editor/Layout";
 import { ICON_MORE, resolveCommandIcon } from "./icons.js";
 import type {
   ToolbarButtonItem,
@@ -7,13 +6,6 @@ import type {
   ToolbarItemBase,
   ToolbarMenuItem,
 } from "./ToolbarItem.js";
-
-const LAYOUT_MODES: EditorLayoutMode[] = ["edit", "split", "preview"];
-const LAYOUT_LABELS: Record<EditorLayoutMode, string> = {
-  edit: "编辑",
-  split: "双屏",
-  preview: "预览",
-};
 
 function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -154,23 +146,9 @@ export function renderOverflowMenu(items: ToolbarItem[]) {
   return menuEl;
 }
 
-export function renderLayoutGroup(ctx: ToolbarContext, group: HTMLElement) {
-  for (const mode of LAYOUT_MODES) {
-    const btn = el("button", "cherry-toolbar-btn cherry-toolbar-layout-btn", {
-      type: "button",
-      "data-layout": mode,
-    }) as HTMLButtonElement;
-    btn.textContent = LAYOUT_LABELS[mode];
-    btn.classList.toggle("is-active", ctx.getLayout() === mode);
-    group.append(btn);
-  }
-}
-
 export interface RenderToolbarParams {
   groups: ToolbarItem[][];
   ctx: ToolbarContext;
-  layoutMode: EditorLayoutMode;
-  showLayoutSwitcher?: boolean;
 }
 
 export function renderToolbar(
@@ -214,22 +192,7 @@ export function renderToolbar(
   const onToolbarClick = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
 
-    const layoutBtn = target.closest(
-      ".cherry-toolbar-layout-btn",
-    ) as HTMLButtonElement;
-    if (layoutBtn) {
-      const mode = layoutBtn.dataset.layout as EditorLayoutMode;
-      if (mode) {
-        params.ctx.setLayout(mode);
-        mount.querySelectorAll(".cherry-toolbar-layout-btn").forEach((el) => {
-          el.classList.toggle(
-            "is-active",
-            (el as HTMLButtonElement).dataset.layout === mode,
-          );
-        });
-      }
-      return;
-    }
+
 
     const trigger = target.closest(
       ".cherry-toolbar-menu-trigger",
@@ -314,11 +277,7 @@ export function renderToolbar(
     scroll.append(groupEl);
   }
 
-  if (params.showLayoutSwitcher) {
-    const layoutGroup = el("div", "cherry-toolbar-group cherry-toolbar-layout");
-    renderLayoutGroup(params.ctx, layoutGroup);
-    scroll.append(layoutGroup);
-  }
+
 
   mount.append(scroll);
 

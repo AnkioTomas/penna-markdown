@@ -14,12 +14,7 @@ describe("Toolbar render", () => {
     const mount = document.createElement("div");
     document.body.appendChild(mount);
     const theme = new Theme();
-    const toolbar = new Toolbar({
-      mount,
-      theme,
-      options: {},
-      getLayout: () => "split",
-    });
+    const toolbar = new Toolbar(mount, theme, {});
 
     expect(mount.querySelector(".cherry-toolbar-scroll")).toBeTruthy();
     expect(
@@ -35,12 +30,7 @@ describe("Toolbar render", () => {
     const mount = document.createElement("div");
     document.body.appendChild(mount);
     const theme = new Theme();
-    const toolbar = new Toolbar({
-      mount,
-      theme,
-      options: {},
-      getLayout: () => "split",
-    });
+    const toolbar = new Toolbar(mount, theme, {});
 
     const structureMenu = mount.querySelector('[data-toolbar-id="structure"]');
     expect(structureMenu).toBeTruthy();
@@ -65,12 +55,7 @@ describe("Toolbar render", () => {
     const mount = document.createElement("div");
     document.body.appendChild(mount);
     const theme = new Theme();
-    const toolbar = new Toolbar({
-      mount,
-      theme,
-      options: {},
-      getLayout: () => "split",
-    });
+    const toolbar = new Toolbar(mount, theme, {});
 
     const formatMenu = mount.querySelector('[data-toolbar-id="textFormat"]');
     const trigger = formatMenu?.querySelector(
@@ -96,12 +81,7 @@ describe("Toolbar render", () => {
     const mount = document.createElement("div");
     document.body.appendChild(mount);
     const theme = new Theme();
-    const toolbar = new Toolbar({
-      mount,
-      theme,
-      options: {},
-      getLayout: () => "split",
-    });
+    const toolbar = new Toolbar(mount, theme, {});
 
     const insertMenu = mount.querySelector('[data-toolbar-id="insert"]');
     (
@@ -124,12 +104,7 @@ describe("Toolbar render", () => {
     theme.on("editor:command", (payload) => {
       command = (payload as { command: string }).command;
     });
-    const toolbar = new Toolbar({
-      mount,
-      theme,
-      options: {},
-      getLayout: () => "split",
-    });
+    const toolbar = new Toolbar(mount, theme, {});
 
     const formatMenu = mount.querySelector('[data-toolbar-id="textFormat"]');
     (
