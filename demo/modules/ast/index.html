@@ -3,30 +3,81 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AST 语法树 · Cherry Markdown Next</title>
-    <style>
-      .layout { display: flex; height: 100%; flex: 1; }
-      .pane { flex: 1; display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #e5e7eb; }
-      .pane-title { background: #f3f4f6; padding: 8px 12px; font-weight: 600; font-size: 13px; color: #4b5563; border-bottom: 1px solid #e5e7eb; }
-      .pane-content { flex: 1; padding: 12px; overflow: auto; margin: 0; font-family: monospace; white-space: pre-wrap; word-wrap: break-word; font-size: 13px; line-height: 1.5; outline: none; }
-      #markdown-input { resize: none; border: none; width: 100%; height: 100%; }
-    </style>
+    <title>AST 调试台 · Cherry Markdown Next</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <div class="header">
-      <a class="back" href="../../index.html">返回入口</a>
-      <div class="title">AST 语法树</div>
-    </div>
+    <header class="header">
+      <a class="back" href="../../index.html">← 返回</a>
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">◈</span>
+        <h1 class="title">AST 调试台</h1>
+      </div>
+      <div id="timing" class="timing">— ms</div>
+    </header>
+
     <div class="layout">
-      <div class="pane" style="flex: 1">
-        <div class="pane-title">Markdown 输入</div>
-        <textarea id="markdown-input" class="pane-content" placeholder="输入 Markdown..."></textarea>
-      </div>
-      <div class="pane" style="flex: 2">
-        <div class="pane-title">JSON AST 结构</div>
-        <pre id="ast-output" class="pane-content"></pre>
-      </div>
+      <section class="panel panel-input">
+        <div class="panel-head">
+          <span class="panel-label">Markdown</span>
+        </div>
+        <textarea id="markdown" class="textarea" spellcheck="false"></textarea>
+        <footer class="panel-foot">
+          <label class="doc-switch">
+            <span class="doc-switch-label">文档</span>
+            <select id="doc-select" class="doc-select" aria-label="切换示例文档">
+              <option value="test">test.md — 完整演示</option>
+              <option value="simple">simple.md — 语法速览</option>
+            </select>
+          </label>
+          <span id="doc-label" class="doc-label">docs/test.md</span>
+        </footer>
+      </section>
+
+      <section class="panel panel-ast">
+        <div class="panel-head panel-head-split">
+          <span class="panel-label">语法树</span>
+          <div class="toolbar">
+            <label class="search-box">
+              <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M8.5 3a5.5 5.5 0 104.227 8.984l3.264 3.265-1.06 1.06-3.265-3.264A5.5 5.5 0 008.5 3zm0 2a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"
+                />
+              </svg>
+              <input
+                id="type-filter"
+                type="search"
+                placeholder="筛选 type"
+                autocomplete="off"
+              />
+            </label>
+            <div class="btn-group" role="group" aria-label="展开深度">
+              <button id="expand-depth-1" class="btn btn-ghost" type="button">1 层</button>
+              <button id="expand-depth-2" class="btn btn-ghost active" type="button">2 层</button>
+              <button id="expand-all" class="btn btn-ghost" type="button">全部</button>
+              <button id="collapse-all" class="btn btn-ghost" type="button">折叠</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="ast-tree" class="tree-wrap"></div>
+
+        <div class="detail-bar">
+          <div class="detail-head">
+            <span class="detail-label">节点 JSON</span>
+            <button id="copy-detail" class="btn btn-ghost btn-sm" type="button">复制</button>
+          </div>
+          <pre id="node-detail" class="node-detail"></pre>
+        </div>
+      </section>
     </div>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

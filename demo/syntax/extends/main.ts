@@ -1,21 +1,25 @@
+import "../../_common/cherry-demo.scss";
 import "../../_common/layout.scss";
 import "../syntax-demo.scss";
-import "@/theme/style/transformer.scss";
 import { Renderer } from "@/renderer/Renderer.js";
 import { Theme } from "@/theme/Theme.js";
-import { EXTENDS_DATA } from "./data.js";
+import { setupPreviewThemeAndAppearance } from "../../_common/theme.js";
+import { requiredEl } from "../../_common/dom.js";
+import { SYNTAX_DATA } from "./data.js";
 
 async function init() {
-  const menuList = document.getElementById("menu-list")!!;
-  const sourcePreview = document.getElementById("source-preview")!!;
-  const htmlPreview = document.getElementById("html-preview")!!;
-  const renderer = new Renderer({ mount: htmlPreview, theme: new Theme() });
+  const menuList = requiredEl<HTMLElement>("#menu-list");
+  const sourcePreview = requiredEl<HTMLElement>("#source-preview");
+  const htmlPreview = requiredEl<HTMLElement>("#html-preview");
+  const themeRoot = requiredEl<HTMLElement>("#theme-root");
+  const theme = new Theme();
+  const renderer = new Renderer({ mount: htmlPreview, theme });
 
-  let activeId = EXTENDS_DATA[0].id;
+  let activeId = SYNTAX_DATA[0].id;
 
   function renderMenu() {
     menuList.innerHTML = "";
-    EXTENDS_DATA.forEach(item => {
+    SYNTAX_DATA.forEach((item) => {
       const el = document.createElement("div");
       el.className = `menu-item ${item.id === activeId ? "active" : ""}`;
       el.textContent = item.name;
@@ -29,12 +33,16 @@ async function init() {
   }
 
   function renderContent() {
-    const item = EXTENDS_DATA.find(i => i.id === activeId);
+    const item = SYNTAX_DATA.find((i) => i.id === activeId);
     if (item) {
       sourcePreview.textContent = item.markdown;
       renderer.render(item.markdown);
     }
   }
+
+  setupPreviewThemeAndAppearance(theme, htmlPreview, themeRoot, {
+    onThemeChange: renderContent,
+  });
 
   renderMenu();
   renderContent();

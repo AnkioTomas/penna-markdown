@@ -9,19 +9,33 @@
     <div class="header">
       <a class="back" href="../../index.html">返回入口</a>
       <div class="title">Vanilla JS 集成演示</div>
+      <div class="header-controls">
+        <label>
+          主题
+          <select id="theme-select" aria-label="选择渲染主题"></select>
+        </label>
+        <label>
+          明暗
+          <select id="appearance-select" aria-label="选择明暗模式">
+            <option value="light">浅色</option>
+            <option value="dark">深色</option>
+            <option value="auto">跟随系统</option>
+          </select>
+        </label>
+      </div>
     </div>
-    <div class="app-container" id="cherry-editor">
-    </div>
+    <div class="app-container" id="cherry-editor"></div>
     <script type="module">
       import "../../_common/layout.scss";
-      import "@/theme/style/cherry.scss";
-      import "@/theme/style/transformer.scss";
+      import "../../_common/cherry-demo.scss";
       import { Cherry } from "@/editor/Cherry.js";
+      import { setupThemeAndAppearance } from "../../_common/theme.js";
       import { fetchDocContent } from "../../_common/api.js";
 
       const editor = new Cherry(document.getElementById("cherry-editor"), {
-        editor: { value: await fetchDocContent("/docs/simple.md") }
+        editor: { value: await fetchDocContent("/docs/simple.md") },
       });
+      setupThemeAndAppearance(editor);
     </script>
   </body>
 </html>

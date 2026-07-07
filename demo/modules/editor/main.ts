@@ -1,5 +1,4 @@
-import "@/theme/style/cherry.scss";
-import "@/theme/style/transformer.scss";
+import "../../_common/cherry-demo.scss";
 import "../../_common/layout.scss";
 
 import { Cherry } from "@/editor/Cherry.js";

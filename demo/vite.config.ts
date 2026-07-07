@@ -2,6 +2,9 @@ import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
 
+const rootDir = path.resolve(__dirname, '..');
+const transformerDir = path.resolve(rootDir, 'src/transformer');
+
 function resolveDirPath(root: string, urlPath: string): string {
   const rel = urlPath.replace(/^\/+/, "").replace(/\/+$/, "") || ".";
   const inRoot = path.join(root, rel);
@@ -21,6 +24,17 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, '../src')
     }
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        loadPaths: [
+          transformerDir,
+          path.resolve(transformerDir, 'gfm'),
+          path.resolve(transformerDir, 'extends'),
+        ],
+      },
+    },
   },
   plugins: [
     {

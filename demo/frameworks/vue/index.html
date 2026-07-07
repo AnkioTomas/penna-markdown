@@ -9,15 +9,29 @@
     <div class="header">
       <a class="back" href="../../index.html">返回入口</a>
       <div class="title">Vue 3 集成演示</div>
+      <div class="header-controls">
+        <label>
+          主题
+          <select id="theme-select" aria-label="选择渲染主题"></select>
+        </label>
+        <label>
+          明暗
+          <select id="appearance-select" aria-label="选择明暗模式">
+            <option value="light">浅色</option>
+            <option value="dark">深色</option>
+            <option value="auto">跟随系统</option>
+          </select>
+        </label>
+      </div>
     </div>
     <div id="app" class="app-container">
       <div ref="editorRef" style="flex:1;"></div>
     </div>
     <script type="module">
       import "../../_common/layout.scss";
-      import "@/theme/style/cherry.scss";
-      import "@/theme/style/transformer.scss";
+      import "../../_common/cherry-demo.scss";
       import { Cherry } from "@/editor/Cherry.js";
+      import { setupThemeAndAppearance } from "../../_common/theme.js";
       import { fetchDocContent } from "../../_common/api.js";
       import { createApp, ref, onMounted, onBeforeUnmount } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
@@ -29,8 +43,9 @@
           onMounted(async () => {
             const initialContent = await fetchDocContent("/docs/simple.md");
             editorInstance = new Cherry(editorRef.value, {
-              editor: { value: initialContent }
+              editor: { value: initialContent },
             });
+            setupThemeAndAppearance(editorInstance);
           });
 
           onBeforeUnmount(() => {

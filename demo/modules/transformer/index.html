@@ -4,33 +4,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>转换器 · Cherry Markdown Next</title>
-    <style>
-      .layout { display: flex; height: 100%; flex: 1; }
-      .pane { flex: 1; display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #e5e7eb; }
-      .pane-title { background: #f3f4f6; padding: 8px 12px; font-weight: 600; font-size: 13px; color: #4b5563; border-bottom: 1px solid #e5e7eb; }
-      .pane-content { flex: 1; padding: 12px; overflow: auto; margin: 0; font-family: monospace; white-space: pre-wrap; word-wrap: break-word; font-size: 13px; line-height: 1.5; outline: none; }
-      #markdown-input { resize: none; border: none; width: 100%; height: 100%; }
-    </style>
   </head>
   <body>
     <div class="header">
       <a class="back" href="../../index.html">返回入口</a>
-      <div class="title">转换器 (Converter)</div>
+      <div class="title">转换器</div>
+      <button id="theme-btn" type="button" class="theme-btn" aria-pressed="false">
+        夜间模式
+      </button>
+      <div id="timing" class="timing" title="parse + render">— ms</div>
     </div>
+
     <div class="layout">
-      <div class="pane">
-        <div class="pane-title">Markdown 输入</div>
-        <textarea id="markdown-input" class="pane-content" placeholder="输入 Markdown..."></textarea>
+      <div class="panel">
+        <div class="panel-title">Markdown 输入</div>
+        <textarea id="markdown" class="textarea"></textarea>
+        <button id="reset-btn" type="button" class="btn">
+          恢复示例
+        </button>
       </div>
-      <div class="pane">
-        <div class="pane-title">HTML 源码输出</div>
-        <pre id="html-output" class="pane-content"></pre>
-      </div>
-      <div class="pane">
-        <div class="pane-title">AST 语法树</div>
-        <pre id="ast-output" class="pane-content"></pre>
+
+      <div class="panel">
+        <div class="panel-title">预览</div>
+        <div id="preview-wrap" class="cherry-theme-default">
+          <div id="preview" class="preview cherry-render"></div>
+        </div>
       </div>
     </div>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

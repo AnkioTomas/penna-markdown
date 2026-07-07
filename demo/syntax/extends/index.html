@@ -9,6 +9,20 @@
     <div class="header">
       <a class="back" href="../../index.html">返回入口</a>
       <div class="title">拓展语法演示</div>
+      <div class="header-controls">
+        <label>
+          主题
+          <select id="theme-select" aria-label="选择渲染主题"></select>
+        </label>
+        <label>
+          明暗
+          <select id="appearance-select" aria-label="选择明暗模式">
+            <option value="light">浅色</option>
+            <option value="dark">深色</option>
+            <option value="auto">跟随系统</option>
+          </select>
+        </label>
+      </div>
     </div>
     <div class="layout">
       <div class="sidebar" id="menu-list">
@@ -19,7 +33,7 @@
           <div class="panel-title">Markdown 源码</div>
           <pre id="source-preview" class="panel-body"></pre>
         </div>
-        <div class="panel">
+        <div class="panel" id="theme-root">
           <div class="panel-title">渲染效果</div>
           <div id="html-preview" class="panel-body cherry-render"></div>
         </div>

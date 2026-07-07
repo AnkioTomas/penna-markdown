@@ -1,0 +1,15 @@
+/** Demo 开发态：注册全部主题皮肤（default 由 cherry/transformer 基础样式覆盖） */
+@import "../../src/theme/themes/claude/render.scss";
+@import "../../src/theme/themes/claude/editor.scss";
+@import "../../src/theme/themes/github/render.scss";
+@import "../../src/theme/themes/github/editor.scss";
+@import "../../src/theme/themes/morandi/render.scss";
+@import "../../src/theme/themes/morandi/editor.scss";
+@import "../../src/theme/themes/latex/render.scss";
+@import "../../src/theme/themes/latex/editor.scss";
+@import "../../src/theme/themes/vue/render.scss";
+@import "../../src/theme/themes/vue/editor.scss";
+@import "../../src/theme/themes/gitbook/render.scss";
+@import "../../src/theme/themes/gitbook/editor.scss";
+@import "../../src/theme/themes/notion/render.scss";
+@import "../../src/theme/themes/notion/editor.scss";
