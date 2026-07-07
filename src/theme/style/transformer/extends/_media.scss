@@ -6,9 +6,6 @@
   border-radius: $radius;
   background: var(--cherry-c-bg-elevated);
   overflow: hidden;
-  box-shadow:
-    0 rem(1) rem(2) color-mix(in srgb, var(--cherry-c-text-1) 6%, transparent),
-    0 rem(8) rem(24) color-mix(in srgb, var(--cherry-c-text-1) 4%, transparent);
 }
 
 @mixin styles {
@@ -45,23 +42,13 @@
     .cherry-media__player {
       aspect-ratio: 16 / 9;
       object-fit: contain;
-      background:
-        radial-gradient(
-          circle at 50% 35%,
-          color-mix(in srgb, var(--cherry-c-brand-2) 18%, transparent),
-          var(--cherry-c-media-shade) 72%
-        );
+      background: var(--cherry-c-media-shade);
     }
   }
 
   .cherry-audio {
     padding: 0;
-    background:
-      linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--cherry-c-brand-2) 14%, var(--cherry-c-bg-elevated)),
-        var(--cherry-c-bg-elevated) 58%
-      );
+    background: var(--cherry-c-bg-elevated);
   }
 
   .cherry-audio-player {
@@ -75,15 +62,7 @@
       width: rem(56);
       height: rem(56);
       border-radius: rem(12);
-      background:
-        linear-gradient(
-          145deg,
-          var(--cherry-c-brand-2),
-          color-mix(in srgb, var(--cherry-c-brand-1) 72%, var(--cherry-c-media-shade))
-        );
-      box-shadow:
-        inset 0 rem(1) 0 color-mix(in srgb, var(--cherry-c-on-brand) 24%, transparent),
-        0 rem(6) rem(16) color-mix(in srgb, var(--cherry-c-brand-1) 28%, transparent);
+      background: var(--cherry-c-brand-2);
       position: relative;
       overflow: hidden;
 
@@ -112,7 +91,6 @@
 
       &--image {
         background: color-mix(in srgb, var(--cherry-c-text-3) 12%, var(--cherry-c-bg-elevated));
-        box-shadow: 0 rem(4) rem(12) color-mix(in srgb, var(--cherry-c-text-1) 10%, transparent);
 
         &::before,
         &::after {

@@ -177,6 +177,14 @@ $claude-dark-mark-mix: 40%;
   --cherry-c-border-soft: #{color-mix(in srgb, #{$claude-linen} 85%, transparent)};
   --cherry-c-border-faint: #{color-mix(in srgb, #{$claude-linen} 55%, transparent)};
 
+  --cherry-c-hljs-keyword: #8a2424;
+  --cherry-c-hljs-string: #6b5a2d;
+  --cherry-c-hljs-number: #ad7837;
+  --cherry-c-hljs-title: #5d4e37;
+  --cherry-c-hljs-attr: #3d3d3a;
+  --cherry-c-hljs-comment: var(--cherry-c-text-3);
+  --cherry-c-hljs-bg: transparent;
+
   @include generate-semantic-suite($claude-light-semantics, false);
   @include component-tokens(false);
 }
@@ -204,6 +212,14 @@ $claude-dark-mark-mix: 40%;
   --cherry-c-code-fg: #{$claude-code-dark};
   --cherry-c-border-soft: #{color-mix(in srgb, #{$claude-linen} 24%, transparent)};
   --cherry-c-border-faint: #{color-mix(in srgb, #{$claude-linen} 12%, transparent)};
+
+  --cherry-c-hljs-keyword: #fe8181;
+  --cherry-c-hljs-string: #d4b06d;
+  --cherry-c-hljs-number: #e6987d;
+  --cherry-c-hljs-title: #c2c0b6;
+  --cherry-c-hljs-attr: #faf9f5;
+  --cherry-c-hljs-comment: var(--cherry-c-text-3);
+  --cherry-c-hljs-bg: transparent;
 
   @include generate-semantic-suite($claude-dark-semantics, true);
   @include component-tokens(true);
