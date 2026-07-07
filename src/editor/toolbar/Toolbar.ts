@@ -23,11 +23,7 @@ export class Toolbar {
 
     const items = resolveToolbarItems(options);
 
-    this.cleanup = renderToolbar(mount, {
-      items,
-      ctx,
-      onClick: options.onClick,
-    });
+    this.cleanup = renderToolbar(mount, items, ctx, options.onClick);
   }
 
   destroy(): void {

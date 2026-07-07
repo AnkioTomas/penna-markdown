@@ -1,3 +1,4 @@
+import { el } from "../Cherry.js";
 import { ICON_MORE, resolveCommandIcon } from "./icons.js";
 import type {
   ToolbarButtonItem,
@@ -6,19 +7,6 @@ import type {
   ToolbarItemBase,
   ToolbarMenuItem,
 } from "./ToolbarItem.js";
-
-function el<K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  className: string,
-  attrs?: Record<string, string>,
-) {
-  const node = document.createElement(tag);
-  node.className = className;
-  if (attrs) {
-    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
-  }
-  return node;
-}
 
 function isButtonItem(item: ToolbarItem): item is ToolbarButtonItem {
   return item.type === "button" || item.type === undefined;
@@ -146,15 +134,11 @@ export function renderOverflowMenu(items: ToolbarItem[]) {
   return menuEl;
 }
 
-export interface RenderToolbarParams {
-  items: ToolbarItem[];
-  ctx: ToolbarContext;
-  onClick?: (id: string, ctx: ToolbarContext) => void;
-}
-
 export function renderToolbar(
   mount: HTMLElement,
-  params: RenderToolbarParams,
+  items: ToolbarItem[],
+  ctx: ToolbarContext,
+  onClick?: (id: string, ctx: ToolbarContext) => void,
 ): () => void {
   mount.classList.add("cherry-toolbar");
   mount.replaceChildren();
@@ -182,18 +166,16 @@ export function renderToolbar(
   document.addEventListener("click", onDocClick);
 
   const itemMap = new Map<string, ToolbarItem>();
-  const collectItems = (items: ToolbarItem[]) => {
-    for (const item of items) {
+  const collectItems = (itemsList: ToolbarItem[]) => {
+    for (const item of itemsList) {
       itemMap.set(item.id, item);
       if (item.type === "menu") collectItems(item.children);
     }
   };
-  collectItems(params.items);
+  collectItems(items);
 
   const onToolbarClick = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-
-
 
     const trigger = target.closest(
       ".cherry-toolbar-menu-trigger",
@@ -246,13 +228,13 @@ export function renderToolbar(
         const item = itemMap.get(id);
         if (item && isButtonItem(item)) {
           if (item.onClick) {
-            item.onClick(params.ctx);
+            item.onClick(ctx);
           } else if (item.command) {
-            params.ctx.execute(item.command, item.payload);
-          } else if (params.onClick) {
-            params.onClick(id, params.ctx);
+            ctx.execute(item.command, item.payload);
+          } else if (onClick) {
+            onClick(id, ctx);
           }
-          params.ctx.focus();
+          ctx.focus();
           closeOpenPanel();
         }
       }
@@ -265,7 +247,7 @@ export function renderToolbar(
 
   const overflow: ToolbarItem[] = [];
 
-  for (const item of params.items) {
+  for (const item of items) {
     if (item.mobileOverflow) overflow.push(item);
     appendToolbarItem(scroll, item, false);
 
@@ -278,8 +260,6 @@ export function renderToolbar(
   if (overflow.length) {
     scroll.append(renderOverflowMenu(overflow));
   }
-
-
 
   mount.append(scroll);
 
