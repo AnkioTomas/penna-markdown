@@ -3,77 +3,69 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AST 调试台 · Cherry Markdown Next</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <title>AST 语法树 · Cherry Markdown Next</title>
   </head>
   <body>
-    <header class="header">
-      <a class="back" href="../../index.html">← 返回</a>
-      <div class="brand">
-        <span class="brand-icon" aria-hidden="true">◈</span>
-        <h1 class="title">AST 调试台</h1>
+    <div class="header">
+      <a class="back" href="../../index.html">返回入口</a>
+      <div class="title">AST 语法树</div>
+      <div class="header-controls">
+        <label>
+          主题
+          <select id="theme-select" aria-label="选择渲染主题"></select>
+        </label>
+        <label>
+          明暗
+          <select id="appearance-select" aria-label="选择明暗模式">
+            <option value="light">浅色</option>
+            <option value="dark">深色</option>
+            <option value="auto">跟随系统</option>
+          </select>
+        </label>
+        <div id="timing" class="ast-timing">— ms</div>
       </div>
-      <div id="timing" class="timing">— ms</div>
-    </header>
+    </div>
 
-    <div class="layout">
-      <section class="panel panel-input">
-        <div class="panel-head">
-          <span class="panel-label">Markdown</span>
-        </div>
-        <textarea id="markdown" class="textarea" spellcheck="false"></textarea>
-        <footer class="panel-foot">
-          <label class="doc-switch">
-            <span class="doc-switch-label">文档</span>
-            <select id="doc-select" class="doc-select" aria-label="切换示例文档">
+    <div class="ast-layout">
+      <section class="ast-panel">
+        <div class="ast-panel-head">Markdown 输入</div>
+        <textarea id="markdown" class="ast-textarea" spellcheck="false"></textarea>
+        <footer class="ast-panel-foot">
+          <label class="ast-doc-switch">
+            <span>文档</span>
+            <select id="doc-select" aria-label="切换示例文档">
               <option value="test">test.md — 完整演示</option>
               <option value="simple">simple.md — 语法速览</option>
             </select>
           </label>
-          <span id="doc-label" class="doc-label">docs/test.md</span>
+          <span id="doc-label" class="ast-doc-label">docs/test.md</span>
         </footer>
       </section>
 
-      <section class="panel panel-ast">
-        <div class="panel-head panel-head-split">
-          <span class="panel-label">语法树</span>
-          <div class="toolbar">
-            <label class="search-box">
-              <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true">
-                <path
-                  fill="currentColor"
-                  d="M8.5 3a5.5 5.5 0 104.227 8.984l3.264 3.265-1.06 1.06-3.265-3.264A5.5 5.5 0 008.5 3zm0 2a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"
-                />
-              </svg>
-              <input
-                id="type-filter"
-                type="search"
-                placeholder="筛选 type"
-                autocomplete="off"
-              />
+      <section class="ast-panel ast-panel-tree">
+        <div class="ast-panel-head ast-panel-head-split">
+          <span>语法树</span>
+          <div class="ast-toolbar">
+            <label class="ast-search">
+              <input id="type-filter" type="search" placeholder="筛选 type" autocomplete="off" />
             </label>
-            <div class="btn-group" role="group" aria-label="展开深度">
-              <button id="expand-depth-1" class="btn btn-ghost" type="button">1 层</button>
-              <button id="expand-depth-2" class="btn btn-ghost active" type="button">2 层</button>
-              <button id="expand-all" class="btn btn-ghost" type="button">全部</button>
-              <button id="collapse-all" class="btn btn-ghost" type="button">折叠</button>
+            <div class="ast-btn-group" role="group" aria-label="展开深度">
+              <button id="expand-depth-1" class="ast-btn" type="button">1 层</button>
+              <button id="expand-depth-2" class="ast-btn active" type="button">2 层</button>
+              <button id="expand-all" class="ast-btn" type="button">全部</button>
+              <button id="collapse-all" class="ast-btn" type="button">折叠</button>
             </div>
           </div>
         </div>
 
-        <div id="ast-tree" class="tree-wrap"></div>
+        <div id="ast-tree" class="ast-tree"></div>
 
-        <div class="detail-bar">
-          <div class="detail-head">
-            <span class="detail-label">节点 JSON</span>
-            <button id="copy-detail" class="btn btn-ghost btn-sm" type="button">复制</button>
+        <div class="ast-detail">
+          <div class="ast-detail-head">
+            <span>节点 JSON</span>
+            <button id="copy-detail" class="ast-btn ast-btn-sm" type="button">复制</button>
           </div>
-          <pre id="node-detail" class="node-detail"></pre>
+          <pre id="node-detail" class="ast-detail-body"></pre>
         </div>
       </section>
     </div>

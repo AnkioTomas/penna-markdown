@@ -1,7 +1,10 @@
+import "../../_common/cherry-demo.scss";
 import "./styles.scss";
 
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
+import { Theme } from "@/theme/Theme.js";
+import { setupPreviewThemeAndAppearance } from "../../_common/theme.js";
 import { requiredEl } from "../../_common/dom.js";
 import { AstTreeView } from "./tree-view.js";
 import { highlightJson } from "./json-highlight.js";
@@ -31,6 +34,12 @@ const collapseAllBtn = requiredEl<HTMLButtonElement>("#collapse-all");
 const filterInput = requiredEl<HTMLInputElement>("#type-filter");
 const docSelect = requiredEl<HTMLSelectElement>("#doc-select");
 const docLabel = requiredEl<HTMLElement>("#doc-label");
+
+const themeMount = document.createElement("div");
+themeMount.hidden = true;
+document.body.appendChild(themeMount);
+const theme = new Theme();
+setupPreviewThemeAndAppearance(theme, themeMount, document.body);
 
 let expandDepth = 2;
 let activeDocId: DocId = "test";
