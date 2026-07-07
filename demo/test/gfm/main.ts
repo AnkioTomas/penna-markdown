@@ -10,14 +10,6 @@ import allCasesJson from "../../../test/fixtures/gfm/cases.json";
 
 const transformer = new TransformerEngine();
 
-const themeMount = document.createElement("div");
-themeMount.hidden = true;
-document.body.appendChild(themeMount);
-const theme = new Theme();
-setupPreviewThemeAndAppearance(theme, themeMount, document.body, {
-  onThemeChange: () => runTests(),
-});
-
 const summaryPass = requiredEl<HTMLElement>("#summary-pass");
 const summaryFail = requiredEl<HTMLElement>("#summary-fail");
 const summarySkip = requiredEl<HTMLElement>("#summary-skip");
@@ -29,6 +21,12 @@ const navRoot = requiredEl<HTMLElement>("#nav");
 const casesRoot = requiredEl<HTMLElement>("#cases");
 const rerunBtn = requiredEl<HTMLButtonElement>("#rerun-btn");
 const statusEl = requiredEl<HTMLElement>("#status");
+
+const themeMount = document.createElement("div");
+themeMount.hidden = true;
+document.body.appendChild(themeMount);
+const theme = new Theme();
+setupPreviewThemeAndAppearance(theme, themeMount, document.body);
 
 let allCases: GfmCase[] = [];
 let sections: string[] = [];
