@@ -112,7 +112,7 @@
 
   blockquote {
     margin: 1em 0;
-    padding: 0 2em 0 calc(2em - #{rem(4)});
+    padding: 1em 2em 1em calc(2em - #{rem(4)});
     border-left: rem(4) solid var(--cherry-c-blockquote-border);
     font-family: var(--latex-font-fangsong), var(--latex-font-serif);
     font-size: var(--latex-quote-size);
