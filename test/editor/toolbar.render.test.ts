@@ -17,9 +17,6 @@ describe("Toolbar render", () => {
     const toolbar = new Toolbar(mount, theme, {});
 
     expect(mount.querySelector(".cherry-toolbar-scroll")).toBeTruthy();
-    expect(
-      mount.querySelectorAll(".cherry-toolbar-group").length,
-    ).toBeGreaterThan(0);
     expect(mount.querySelector(".cherry-toolbar-layout")).toBeFalsy();
     expect(mount.querySelector('[data-toolbar-id="themeMenu"]')).toBeTruthy();
 
@@ -117,6 +114,25 @@ describe("Toolbar render", () => {
     ) as HTMLButtonElement;
     boldBtn?.click();
     expect(command).toBe("bold");
+    toolbar.destroy();
+  });
+
+  it("calls options.onClick when a custom added item without command is clicked", () => {
+    const mount = document.createElement("div");
+    document.body.appendChild(mount);
+    const theme = new Theme();
+    let clickedId = "";
+    const toolbar = new Toolbar(mount, theme, {
+      items: [{ id: "my-custom-btn", label: "Custom" }],
+      onClick: (id) => {
+        clickedId = id;
+      },
+    });
+
+    const btn = mount.querySelector('[data-toolbar-id="my-custom-btn"]') as HTMLButtonElement;
+    expect(btn).toBeTruthy();
+    btn?.click();
+    expect(clickedId).toBe("my-custom-btn");
     toolbar.destroy();
   });
 });

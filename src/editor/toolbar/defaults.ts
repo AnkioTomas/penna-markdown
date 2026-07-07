@@ -487,9 +487,3 @@ export const DEFAULT_TOOLBAR_ITEMS: ToolbarItem[] = [
     children: buildThemeMenuItems(),
   },
 ];
-
-export const DEFAULT_TOOLBAR_GROUPS: string[][] = [
-  ["textFormat", "structure"],
-  ["insert", "components"],
-  ["advanced", "themeMenu"],
-];

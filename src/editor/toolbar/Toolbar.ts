@@ -1,7 +1,7 @@
 import type { ToolbarOptions } from "@/editor/toolbar/ToolbarOptions";
 import type { Theme } from "@/theme/Theme";
 import type { ToolbarContext } from "./ToolbarItem";
-import { resolveToolbarGroups } from "./resolve.js";
+import { resolveToolbarItems } from "./resolve.js";
 import { renderToolbar } from "./renderToolbar.js";
 
 export class Toolbar {
@@ -21,12 +21,12 @@ export class Toolbar {
       focus: () => focus?.(),
     };
 
-    const grouped = resolveToolbarGroups(options);
-    const groups = grouped.map((g) => g.items);
+    const items = resolveToolbarItems(options);
 
     this.cleanup = renderToolbar(mount, {
-      groups,
+      items,
       ctx,
+      onClick: options.onClick,
     });
   }
 

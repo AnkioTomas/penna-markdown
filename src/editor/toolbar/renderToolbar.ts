@@ -147,8 +147,9 @@ export function renderOverflowMenu(items: ToolbarItem[]) {
 }
 
 export interface RenderToolbarParams {
-  groups: ToolbarItem[][];
+  items: ToolbarItem[];
   ctx: ToolbarContext;
+  onClick?: (id: string, ctx: ToolbarContext) => void;
 }
 
 export function renderToolbar(
@@ -187,7 +188,7 @@ export function renderToolbar(
       if (item.type === "menu") collectItems(item.children);
     }
   };
-  for (const group of params.groups) collectItems(group);
+  collectItems(params.items);
 
   const onToolbarClick = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -244,8 +245,13 @@ export function renderToolbar(
       if (id) {
         const item = itemMap.get(id);
         if (item && isButtonItem(item)) {
-          if (item.onClick) item.onClick(params.ctx);
-          else if (item.command) params.ctx.execute(item.command, item.payload);
+          if (item.onClick) {
+            item.onClick(params.ctx);
+          } else if (item.command) {
+            params.ctx.execute(item.command, item.payload);
+          } else if (params.onClick) {
+            params.onClick(id, params.ctx);
+          }
           params.ctx.focus();
           closeOpenPanel();
         }
@@ -257,24 +263,20 @@ export function renderToolbar(
 
   const scroll = el("div", "cherry-toolbar-scroll");
 
-  for (const groupItems of params.groups) {
-    const groupEl = el("div", "cherry-toolbar-group");
-    const overflow: ToolbarItem[] = [];
+  const overflow: ToolbarItem[] = [];
 
-    for (const item of groupItems) {
-      if (item.mobileOverflow) overflow.push(item);
-      appendToolbarItem(groupEl, item, false);
+  for (const item of params.items) {
+    if (item.mobileOverflow) overflow.push(item);
+    appendToolbarItem(scroll, item, false);
 
-      if (item.mobileOverflow) {
-        const lastEl = groupEl.lastElementChild;
-        if (lastEl) lastEl.classList.add("cherry-toolbar-desktop-only");
-      }
+    if (item.mobileOverflow) {
+      const lastEl = scroll.lastElementChild;
+      if (lastEl) lastEl.classList.add("cherry-toolbar-desktop-only");
     }
+  }
 
-    if (overflow.length) {
-      groupEl.append(renderOverflowMenu(overflow));
-    }
-    scroll.append(groupEl);
+  if (overflow.length) {
+    scroll.append(renderOverflowMenu(overflow));
   }
 
 
