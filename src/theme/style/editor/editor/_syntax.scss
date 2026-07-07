@@ -100,7 +100,8 @@
     font-weight: 600;
   }
 
-  .cm-ext-inline-comment {
+  .cm-ext-inline-comment,
+  .cm-ext-comment-block {
     color: var(--cherry-c-text-3);
     font-style: italic;
     opacity: 0.7;
