@@ -28,11 +28,11 @@ parent: Cherry Markdown Next 设计文档
 
 ### 为什么包这一层？
 
-| 原因 | 说明 |
-| --- | --- |
+| 原因     | 说明                                                                   |
+| -------- | ---------------------------------------------------------------------- |
 | 隔离依赖 | 除 `editor/editor/` 与 lezer 扩展外，项目不直接 import `@codemirror/*` |
-| 事件翻译 | CM `updateListener` → `theme.emit("editor:change", { markdown, tr })` |
-| 扩展集中 | Cherry 数学块、行内扩展、code info 插件在此注册 |
+| 事件翻译 | CM `updateListener` → `theme.emit("editor:change", { markdown, tr })`  |
+| 扩展集中 | Cherry 数学块、行内扩展、code info 插件在此注册                        |
 
 ### 默认 CM 扩展
 
@@ -48,8 +48,8 @@ parent: Cherry Markdown Next 设计文档
 
 路径：`src/editor/preview/Preview.ts`
 
-| 参数 | 默认 | 说明 |
-| --- | --- | --- |
+| 参数     | 默认 | 说明                          |
+| -------- | ---- | ----------------------------- |
 | debounce | 50ms | 合并快速输入，减少 parse 次数 |
 
 订阅事件：
@@ -152,9 +152,8 @@ preview scrollTop → 反查 blocks → editor scrollTop
 const cherry = new Cherry(el, options);
 
 // editor:ready 在 microtask 中发射
-cherry.on?. // 通过 cherry.theme.on 订阅
-
-cherry.setMarkdown("# hello");
+cherry.on?.cherry // 通过 cherry.theme.on 订阅
+  .setMarkdown("# hello");
 const md = cherry.getMarkdown();
 cherry.runCommand("bold");
 cherry.destroy(); // 逆序 destroy 子模块，移除 DOM，发射 editor:destroy

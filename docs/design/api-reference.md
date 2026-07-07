@@ -13,21 +13,21 @@ parent: Cherry Markdown Next 设计文档
 
 ## 包入口与导出
 
-| import 路径 | 主要导出 | IIFE 全局名 |
-| --- | --- | --- |
-| `cherry-markdown-next` | `Cherry`, `el` | `CherryNextEditor` |
-| `cherry-markdown-next/renderer` | `Renderer`, `Theme`, `RenderResult`, 主题事件常量 | `CherryNextRenderer` |
-| `cherry-markdown-next/transformer` | `TransformerEngine` | `CherryNextTransformer` |
+| import 路径                        | 主要导出                                          | IIFE 全局名             |
+| ---------------------------------- | ------------------------------------------------- | ----------------------- |
+| `cherry-markdown-next`             | `Cherry`, `el`                                    | `CherryNextEditor`      |
+| `cherry-markdown-next/renderer`    | `Renderer`, `Theme`, `RenderResult`, 主题事件常量 | `CherryNextRenderer`    |
+| `cherry-markdown-next/transformer` | `TransformerEngine`                               | `CherryNextTransformer` |
 
 源码开发（monorepo / 链接 `src`）还可直接引用：
 
-| 模块路径 | 用途 |
-| --- | --- |
-| `@/editor/commands` | `runCommand`, `applyHeading`, `insertTable`, `insertLink`, `applyBadge` |
-| `@/editor/commands/registry` | `registerCommand`, `getCommand`, `listCommands` |
-| `@/transformer/core/ParserBase` | `BaseBlockParser`, `BaseInlineParser` |
-| `@/transformer/core/MarkdownNode` | `createNode`, `MarkdownNode` |
-| `@/editor/dialog/requestDialog` | 对话框 Promise API |
+| 模块路径                          | 用途                                                                    |
+| --------------------------------- | ----------------------------------------------------------------------- |
+| `@/editor/commands`               | `runCommand`, `applyHeading`, `insertTable`, `insertLink`, `applyBadge` |
+| `@/editor/commands/registry`      | `registerCommand`, `getCommand`, `listCommands`                         |
+| `@/transformer/core/ParserBase`   | `BaseBlockParser`, `BaseInlineParser`                                   |
+| `@/transformer/core/MarkdownNode` | `createNode`, `MarkdownNode`                                            |
+| `@/editor/dialog/requestDialog`   | 对话框 Promise API                                                      |
 
 > [!NOTE]
 > 发布包 `dist/cherry.min.*` 仅 bundle 入口依赖链上的符号。**自定义命令注册**需在构建前将 `registerCommand` 打进 bundle，或在应用层通过 `cherry.runCommand("insertText", …)` 间接扩展。
@@ -118,13 +118,13 @@ const cherry = new Cherry(rootEl: HTMLElement, options?: CherryOptions);
 ```typescript
 interface CherryOptions {
   id?: string;
-  layout?: "split" | "edit" | "preview";  // default: "split"
-  appearance?: "light" | "dark";           // default: "light"
-  themeId?: string;                        // default: "default"
-  debug?: boolean;                         // default: false
-  toolbar?: ToolbarOptions | false;        // false = 无工具栏
-  sidebar?: SideBarOptions | boolean;      // false = 隐藏
-  statusbar?: boolean;                     // default: true
+  layout?: "split" | "edit" | "preview"; // default: "split"
+  appearance?: "light" | "dark"; // default: "light"
+  themeId?: string; // default: "default"
+  debug?: boolean; // default: false
+  toolbar?: ToolbarOptions | false; // false = 无工具栏
+  sidebar?: SideBarOptions | boolean; // false = 隐藏
+  statusbar?: boolean; // default: true
   editor?: EditorOptions;
   preview?: PreviewOptions;
   transformer?: TransformerEngineOptions;
@@ -133,27 +133,27 @@ interface CherryOptions {
 
 #### EditorOptions
 
-| 字段 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `value` | `string` | `""` | 初始 Markdown |
-| `lineNumbers` | `boolean` | `true` | 是否显示行号 |
-| `transformerEngineOptions` | `TransformerEngineOptions` | — | 编辑器语法高亮用的解析配置 |
+| 字段                       | 类型                       | 默认   | 说明                       |
+| -------------------------- | -------------------------- | ------ | -------------------------- |
+| `value`                    | `string`                   | `""`   | 初始 Markdown              |
+| `lineNumbers`              | `boolean`                  | `true` | 是否显示行号               |
+| `transformerEngineOptions` | `TransformerEngineOptions` | —      | 编辑器语法高亮用的解析配置 |
 
 #### PreviewOptions
 
-| 字段 | 类型 | 说明 |
-| --- | --- | --- |
+| 字段            | 类型                               | 说明                 |
+| --------------- | ---------------------------------- | -------------------- |
 | `inlineParsers` | `Record<number, BaseInlineParser>` | 覆盖/追加行内 parser |
-| `blockParsers` | `Record<number, BaseBlockParser>` | 覆盖/追加块级 parser |
+| `blockParsers`  | `Record<number, BaseBlockParser>`  | 覆盖/追加块级 parser |
 
 未指定时继承 `CherryOptions.transformer` 中的同名字段。
 
 #### SideBarOptions
 
-| 字段 | 类型 | 说明 |
-| --- | --- | --- |
-| `fetchFiles` | `() => Promise<CherryFileItem[]>` | 提供时显示文件列表 Tab |
-| `onFileClick` | `(fileId: string) => void` | 点击文件回调 |
+| 字段          | 类型                              | 说明                   |
+| ------------- | --------------------------------- | ---------------------- |
+| `fetchFiles`  | `() => Promise<CherryFileItem[]>` | 提供时显示文件列表 Tab |
+| `onFileClick` | `(fileId: string) => void`        | 点击文件回调           |
 
 ```typescript
 interface CherryFileItem {
@@ -166,13 +166,13 @@ interface CherryFileItem {
 
 #### ToolbarOptions
 
-| 字段 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `items` | `ToolbarItem[]` | 内置 defaults | 同 `id` 覆盖默认项 |
-| `order` | `string[]` | — | 顶层按钮 id 排序 |
-| `orderMap` | `Record<string, string[]>` | — | 子菜单内排序 |
-| `groups` | `string[][]` | 内置分组 | 工具栏分组 |
-| `mobileBreakpoint` | `number` | `640` | 移动端「更多」断点 |
+| 字段               | 类型                       | 默认          | 说明               |
+| ------------------ | -------------------------- | ------------- | ------------------ |
+| `items`            | `ToolbarItem[]`            | 内置 defaults | 同 `id` 覆盖默认项 |
+| `order`            | `string[]`                 | —             | 顶层按钮 id 排序   |
+| `orderMap`         | `Record<string, string[]>` | —             | 子菜单内排序       |
+| `groups`           | `string[][]`               | 内置分组      | 工具栏分组         |
+| `mobileBreakpoint` | `number`                   | `640`         | 移动端「更多」断点 |
 
 **ToolbarItem** 类型：`button` | `menu` | `separator` | `layout`
 
@@ -213,33 +213,33 @@ import {
 
 ### 方法
 
-| 方法 | 说明 |
-| --- | --- |
-| `list()` | 返回已注册主题 id 数组 |
-| `setTheme(id, renderEl, rootEl?)` | 切换皮肤；在 render 根加 `cherry-render`，在 root 加 `cherry-theme-{id}` |
-| `getTheme()` | `{ id, mode, isDark, render, root }` |
-| `setLightDark(mode)` | `"light"` / `"dark"`；root  toggles `cherry-dark` |
-| `on(event, handler)` | 订阅；返回取消函数 |
-| `once(event, handler)` | 单次订阅 |
-| `off(event, handler)` | 取消订阅 |
-| `emit(event, payload?)` | 同步广播 |
-| `isDebug()` / `logD` / `logW` / `logE` | 日志 |
+| 方法                                   | 说明                                                                     |
+| -------------------------------------- | ------------------------------------------------------------------------ |
+| `list()`                               | 返回已注册主题 id 数组                                                   |
+| `setTheme(id, renderEl, rootEl?)`      | 切换皮肤；在 render 根加 `cherry-render`，在 root 加 `cherry-theme-{id}` |
+| `getTheme()`                           | `{ id, mode, isDark, render, root }`                                     |
+| `setLightDark(mode)`                   | `"light"` / `"dark"`；root toggles `cherry-dark`                         |
+| `on(event, handler)`                   | 订阅；返回取消函数                                                       |
+| `once(event, handler)`                 | 单次订阅                                                                 |
+| `off(event, handler)`                  | 取消订阅                                                                 |
+| `emit(event, payload?)`                | 同步广播                                                                 |
+| `isDebug()` / `logD` / `logW` / `logE` | 日志                                                                     |
 
 ### 常用事件
 
 完整列表见 [`theme-and-events.md`](./theme-and-events.md)。
 
-| 事件 | 载荷摘要 |
-| --- | --- |
-| `editor:change` | `{ markdown, tr? }` |
-| `editor:ready` | `{ id? }` |
-| `editor:destroy` | `{ id? }` |
-| `preview:rendered` | `{ markdown, html, ast, blocks, partial?, changedStartLines? }` |
-| `cherry:layout` | `{ mode }` |
-| `cherry:sidebar` | `{ show }` |
-| `editor:command` | `{ command, payload? }` |
-| `editor:dialog:open` | `{ id, type, props? }` |
-| `editor:dialog:result` | `{ id, cancelled?, data? }` |
+| 事件                   | 载荷摘要                                                        |
+| ---------------------- | --------------------------------------------------------------- |
+| `editor:change`        | `{ markdown, tr? }`                                             |
+| `editor:ready`         | `{ id? }`                                                       |
+| `editor:destroy`       | `{ id? }`                                                       |
+| `preview:rendered`     | `{ markdown, html, ast, blocks, partial?, changedStartLines? }` |
+| `cherry:layout`        | `{ mode }`                                                      |
+| `cherry:sidebar`       | `{ show }`                                                      |
+| `editor:command`       | `{ command, payload? }`                                         |
+| `editor:dialog:open`   | `{ id, type, props? }`                                          |
+| `editor:dialog:result` | `{ id, cancelled?, data? }`                                     |
 
 ---
 
@@ -306,7 +306,7 @@ interface RenderResult {
   html: string;
   ast: MarkdownNode;
   blocks: BlockIndex[];
-  partial?: boolean;           // true = 增量成功
+  partial?: boolean; // true = 增量成功
   changedStartLines?: number[];
 }
 ```
@@ -350,16 +350,16 @@ interface TransformerEngineOptions {
 
 ### 方法
 
-| 方法 | 说明 |
-| --- | --- |
-| `parse(markdown)` | 全量 parse → AST 根 |
-| `parseIncremental(prevAst, markdown, range)` | 增量 parse，原地更新 AST |
-| `render(ast)` | AST → 完整 HTML 字符串 |
-| `renderBlock(node, ast)` | 单块 HTML（增量 DOM 刷新） |
-| `renderBlockWithContext(node, ctx)` | 在已有 ctx 下渲染单块 |
-| `createRenderContext(store)` | 创建 RenderContext |
-| `registry` | 语法 Registry 只读引用 |
-| `isDark` | 可读写，影响公式/图表主题 |
+| 方法                                         | 说明                       |
+| -------------------------------------------- | -------------------------- |
+| `parse(markdown)`                            | 全量 parse → AST 根        |
+| `parseIncremental(prevAst, markdown, range)` | 增量 parse，原地更新 AST   |
+| `render(ast)`                                | AST → 完整 HTML 字符串     |
+| `renderBlock(node, ast)`                     | 单块 HTML（增量 DOM 刷新） |
+| `renderBlockWithContext(node, ctx)`          | 在已有 ctx 下渲染单块      |
+| `createRenderContext(store)`                 | 创建 RenderContext         |
+| `registry`                                   | 语法 Registry 只读引用     |
+| `isDark`                                     | 可读写，影响公式/图表主题  |
 
 ---
 
@@ -382,28 +382,32 @@ runCommand(
 
 ```typescript
 await cherry.runCommand("bold");
-await cherry.runCommand("insertText", { text: "hello", selectFrom: 0, selectTo: 5 });
+await cherry.runCommand("insertText", {
+  text: "hello",
+  selectFrom: 0,
+  selectTo: 5,
+});
 ```
 
 ### 内置命令一览
 
-| 命令 | payload | 异步 |
-| --- | --- | --- |
-| `bold` / `italic` / `strikethrough` / `code` | — | 否 |
-| `heading1` … `heading6` | — | 否 |
-| `blockquote` / `unorderedList` / `orderedList` / `taskList` | — | 否 |
-| `horizontalRule` / `codeBlock` / `image` | — | 否 |
-| `insertText` | `string` 或 `InsertTextPayload` | 否 |
-| `link` | — | 是（对话框） |
-| `table` | — | 是（对话框） |
-| `badge` | — | 是（对话框） |
+| 命令                                                        | payload                         | 异步         |
+| ----------------------------------------------------------- | ------------------------------- | ------------ |
+| `bold` / `italic` / `strikethrough` / `code`                | —                               | 否           |
+| `heading1` … `heading6`                                     | —                               | 否           |
+| `blockquote` / `unorderedList` / `orderedList` / `taskList` | —                               | 否           |
+| `horizontalRule` / `codeBlock` / `image`                    | —                               | 否           |
+| `insertText`                                                | `string` 或 `InsertTextPayload` | 否           |
+| `link`                                                      | —                               | 是（对话框） |
+| `table`                                                     | —                               | 是（对话框） |
+| `badge`                                                     | —                               | 是（对话框） |
 
 ### InsertTextPayload
 
 ```typescript
 interface InsertTextPayload {
   text: string;
-  selectFrom?: number;  // 插入后选区起点（相对插入文本）
+  selectFrom?: number; // 插入后选区起点（相对插入文本）
   selectTo?: number;
 }
 ```
@@ -411,8 +415,15 @@ interface InsertTextPayload {
 ### 对话框结果类型
 
 ```typescript
-interface TableDialogResult { rows: number; cols: number; }
-interface LinkDialogResult { text: string; url: string; title?: string; }
+interface TableDialogResult {
+  rows: number;
+  cols: number;
+}
+interface LinkDialogResult {
+  text: string;
+  url: string;
+  title?: string;
+}
 interface BadgeDialogResult {
   text: string;
   variant: "note" | "tip" | "important" | "warning" | "caution" | "danger";
@@ -474,15 +485,15 @@ cherry.theme.on("preview:rendered", ({ ast, partial }) => {
 
 ## 类型索引
 
-| 类型 | 定义位置 |
-| --- | --- |
-| `CherryOptions` | `src/editor/CherryOptions.ts` |
-| `EditorLayoutMode` | `src/editor/Layout.ts` |
-| `MarkdownNode` | `src/transformer/core/MarkdownNode.ts` |
-| `BaseBlockParser` / `BaseInlineParser` | `src/transformer/core/ParserBase.ts` |
-| `TocItem` / `TocFlatItem` | `src/renderer/toc/extract.ts` |
-| `BlockIndex` | `src/renderer/incremental/BlockIndex.ts` |
-| `CherryChangeLineSet` | `src/renderer/incremental/CherryChangeSet.ts` |
+| 类型                                   | 定义位置                                      |
+| -------------------------------------- | --------------------------------------------- |
+| `CherryOptions`                        | `src/editor/CherryOptions.ts`                 |
+| `EditorLayoutMode`                     | `src/editor/Layout.ts`                        |
+| `MarkdownNode`                         | `src/transformer/core/MarkdownNode.ts`        |
+| `BaseBlockParser` / `BaseInlineParser` | `src/transformer/core/ParserBase.ts`          |
+| `TocItem` / `TocFlatItem`              | `src/renderer/toc/extract.ts`                 |
+| `BlockIndex`                           | `src/renderer/incremental/BlockIndex.ts`      |
+| `CherryChangeLineSet`                  | `src/renderer/incremental/CherryChangeSet.ts` |
 
 ---
 

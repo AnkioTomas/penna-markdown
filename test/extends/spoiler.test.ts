@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
+import {
+  createEngine,
+  createEngineWithExtensions,
+  renderMarkdown,
+} from "../helpers/engine.js";
 
 describe("extends/spoiler", () => {
   const engine = () => createEngineWithExtensions(["spoiler"]);
@@ -39,7 +43,8 @@ describe("extends/spoiler", () => {
   });
 
   it("renders {click} as checkbox spoiler", () => {
-    const html = renderMarkdown(createEngineWithExtensions(["spoiler", "html_attrs"]),
+    const html = renderMarkdown(
+      createEngineWithExtensions(["spoiler", "html_attrs"]),
       "!! 点击显示 !! {click}\n",
     );
     expect(html).toBe(
@@ -48,7 +53,8 @@ describe("extends/spoiler", () => {
   });
 
   it("renders {.click} as checkbox spoiler", () => {
-    const html = renderMarkdown(createEngineWithExtensions(["spoiler", "html_attrs"]),
+    const html = renderMarkdown(
+      createEngineWithExtensions(["spoiler", "html_attrs"]),
       "!! 点击显示 !! {.click}\n",
     );
     expect(html).toBe(

@@ -5,7 +5,8 @@
   gap: 12px 16px;
   padding: 10px 16px;
   background: var(--cherry-c-bg-elevated);
-  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
   flex-shrink: 0;
 }
 
@@ -29,7 +30,8 @@
     }
 
     &.is-active {
-      outline: 2px solid color-mix(in srgb, var(--cherry-c-danger) 45%, transparent);
+      outline: 2px solid
+        color-mix(in srgb, var(--cherry-c-danger) 45%, transparent);
       border-radius: 4px;
       padding: 0 4px;
     }
@@ -59,7 +61,8 @@
   input[type="search"] {
     width: 180px;
     padding: 6px 10px;
-    border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
     border-radius: 6px;
     background: var(--cherry-c-bg);
     color: var(--cherry-c-text-1);
@@ -67,7 +70,8 @@
 
   select {
     padding: 6px 8px;
-    border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
     border-radius: 6px;
     background: var(--cherry-c-bg);
     color: var(--cherry-c-text-1);
@@ -76,7 +80,8 @@
 
   button {
     padding: 6px 12px;
-    border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
     border-radius: 6px;
     background: var(--cherry-c-bg);
     color: var(--cherry-c-text-1);
@@ -105,7 +110,8 @@
   width: 220px;
   flex-shrink: 0;
   overflow-y: auto;
-  border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  border-right: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
   background: var(--cherry-c-bg-elevated);
   padding: 8px 0;
   font-size: 12px;
@@ -135,7 +141,11 @@
       text-decoration: none;
 
       &:hover {
-        background: color-mix(in srgb, var(--cherry-c-brand-soft) 40%, var(--cherry-c-bg-elevated));
+        background: color-mix(
+          in srgb,
+          var(--cherry-c-brand-soft) 40%,
+          var(--cherry-c-bg-elevated)
+        );
       }
 
       .status.pass {
@@ -170,7 +180,8 @@
     gap: 12px;
     padding: 12px 16px;
     background: var(--cherry-c-bg-elevated);
-    border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+    border-bottom: 1px solid
+      color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
 
     h3 {
       margin: 0 0 4px;
@@ -209,8 +220,10 @@
   }
 
   .panel {
-    border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
-    border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+    border-right: 1px solid
+      color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+    border-bottom: 1px solid
+      color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
     min-width: 0;
 
     &:nth-child(2n) {
@@ -228,7 +241,8 @@
       font-weight: 600;
       color: var(--cherry-c-text-2);
       background: var(--cherry-c-bg-elevated);
-      border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+      border-bottom: 1px solid
+        color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
     }
 
     pre {
@@ -257,7 +271,8 @@
       font-size: 12px;
       color: var(--cherry-c-alert-danger-text);
       background: var(--cherry-c-alert-danger-bg);
-      border-top: 1px solid color-mix(in srgb, var(--cherry-c-danger) 35%, transparent);
+      border-top: 1px solid
+        color-mix(in srgb, var(--cherry-c-danger) 35%, transparent);
     }
   }
 }

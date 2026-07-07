@@ -8,10 +8,8 @@
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
-import {tryParseEntity} from "@/transformer/utils/htmlEntities";
-import {InlineParseContext} from "@/transformer/core/context/InlineParseContext"; // 引入你刚才完善好的转义工具
-
-
+import { tryParseEntity } from "@/transformer/utils/htmlEntities";
+import { InlineParseContext } from "@/transformer/core/context/InlineParseContext"; // 引入你刚才完善好的转义工具
 
 /**
  * HTML 实体行内解析器。

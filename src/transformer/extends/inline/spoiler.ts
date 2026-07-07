@@ -10,9 +10,8 @@ import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
 import { RenderContext } from "@/transformer/core/context/RenderContext";
-import {findAttr} from "@/transformer/extends/inline/html_attrs";
-import {isEscaped} from "@/transformer/utils/escape";
-
+import { findAttr } from "@/transformer/extends/inline/html_attrs";
+import { isEscaped } from "@/transformer/utils/escape";
 
 /**
  * 判断 htmlAttrs 是否启用点击显示模式（class=click 或布尔属性 click）。
@@ -50,7 +49,7 @@ class SpoilerInlineParser extends BaseInlineParser {
         break; // 找到第一个匹配的闭合定界符即可停止
       }
 
-      if(ctx.canStrongBreak(src,i,true)) return null;
+      if (ctx.canStrongBreak(src, i, true)) return null;
     }
 
     if (endIndex === -1) {
@@ -61,20 +60,25 @@ class SpoilerInlineParser extends BaseInlineParser {
     if (inner.length === 0) return null;
     let closeIndex = endIndex + 2;
 
-
     let props = {};
 
     const attr = findAttr(src, closeIndex);
 
-    if(attr.attr!=null) {
-      props['htmlAttrs'] = attr.attr;
-      closeIndex = attr.next
+    if (attr.attr != null) {
+      props["htmlAttrs"] = attr.attr;
+      closeIndex = attr.next;
     }
 
     let matchLength = closeIndex - index;
 
     return {
-      node: createNode(this.type, matchLength, undefined, ctx.parseInline(inner),props),
+      node: createNode(
+        this.type,
+        matchLength,
+        undefined,
+        ctx.parseInline(inner),
+        props,
+      ),
       nextIndex: closeIndex,
     };
   }

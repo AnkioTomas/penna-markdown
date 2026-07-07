@@ -67,7 +67,12 @@ class SubInlineParser extends BaseInlineParser {
     const matchLength = matched.closeIndex - index;
 
     return {
-      node: createNode(this.type, matchLength, undefined, ctx.parseInline(matched.inner)),
+      node: createNode(
+        this.type,
+        matchLength,
+        undefined,
+        ctx.parseInline(matched.inner),
+      ),
       nextIndex: matched.closeIndex,
     };
   }
@@ -100,7 +105,12 @@ class SupInlineParser extends BaseInlineParser {
     const matchLength = matched.closeIndex - index;
 
     return {
-      node: createNode(this.type, matchLength, undefined, ctx.parseInline(matched.inner)),
+      node: createNode(
+        this.type,
+        matchLength,
+        undefined,
+        ctx.parseInline(matched.inner),
+      ),
       nextIndex: matched.closeIndex,
     };
   }

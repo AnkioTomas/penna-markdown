@@ -8,7 +8,10 @@
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { renderSafeAnchor } from "@/transformer/utils/safeUrl.js";
-import { parseInlineLinkParen, scanFailedAngleInlineLinkEnd } from "@/transformer/utils/linkDestination.js";
+import {
+  parseInlineLinkParen,
+  scanFailedAngleInlineLinkEnd,
+} from "@/transformer/utils/linkDestination.js";
 import {
   containsNestedLink,
   findLinkLabelEnd,
@@ -47,12 +50,24 @@ class LinkInlineParser extends BaseInlineParser {
     if (nextIndex < src.length && src[nextIndex] === "(") {
       const inline = parseInlineLinkParen(src, nextIndex);
       if (inline) {
-        return this.createInlineLinkNode(index, inline.next, inline.href, inline.title, children);
+        return this.createInlineLinkNode(
+          index,
+          inline.next,
+          inline.href,
+          inline.title,
+          children,
+        );
       }
       const failedEnd = scanFailedAngleInlineLinkEnd(src, nextIndex);
       if (failedEnd !== -1) {
         return {
-          node: createNode("link", failedEnd - index, src.slice(index, failedEnd), undefined, { literal: true }),
+          node: createNode(
+            "link",
+            failedEnd - index,
+            src.slice(index, failedEnd),
+            undefined,
+            { literal: true },
+          ),
           nextIndex: failedEnd,
         };
       }
@@ -73,7 +88,10 @@ class LinkInlineParser extends BaseInlineParser {
             children,
             {
               refWindow: window,
-              refCandidates: collectFullReferenceCandidates(window, ctx.parseInline.bind(ctx)),
+              refCandidates: collectFullReferenceCandidates(
+                window,
+                ctx.parseInline.bind(ctx),
+              ),
             },
           ),
           nextIndex: windowEnd,
@@ -92,7 +110,10 @@ class LinkInlineParser extends BaseInlineParser {
     children: MarkdownNode[],
   ) {
     return {
-      node: createNode("link", endIndex - startIndex, undefined, children, { href, title }),
+      node: createNode("link", endIndex - startIndex, undefined, children, {
+        href,
+        title,
+      }),
       nextIndex: endIndex,
     };
   }

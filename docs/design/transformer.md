@@ -25,11 +25,11 @@ parent: Cherry Markdown Next 设计文档
 
 ```typescript
 interface MarkdownNode {
-  type: string;           // paragraph | text | code | heading | ...
-  length: number;         // 块级：吞掉的源码行数；行内：字符跨度
-  value?: string;         // 叶子文本
+  type: string; // paragraph | text | code | heading | ...
+  length: number; // 块级：吞掉的源码行数；行内：字符跨度
+  value?: string; // 叶子文本
   children?: MarkdownNode[];
-  props?: Record<string, unknown>;  // href, lang, ordered, noMerge, ...
+  props?: Record<string, unknown>; // href, lang, ordered, noMerge, ...
 }
 ```
 
@@ -44,10 +44,10 @@ interface MarkdownNode {
 
 构造 `TransformerEngine` 时创建 `Registry`，自动注册：
 
-| 来源 | 模块 | 内容 |
-| --- | --- | --- |
-| GFM | `transformer/gfm/index.ts` | 标题、列表、表格、强调、链接、代码块… |
-| Cherry 扩展 | `transformer/extends/index.ts` | Alert、容器、卡片、公式、媒体… |
+| 来源        | 模块                           | 内容                                  |
+| ----------- | ------------------------------ | ------------------------------------- |
+| GFM         | `transformer/gfm/index.ts`     | 标题、列表、表格、强调、链接、代码块… |
+| Cherry 扩展 | `transformer/extends/index.ts` | Alert、容器、卡片、公式、媒体…        |
 
 ### Priority 规则
 
@@ -70,21 +70,21 @@ new TransformerEngine({
 
 ### BaseInlineParser
 
-| 方法 | 作用 |
-| --- | --- |
-| `canOpenAt(src, index, ctx)` | 当前位置是否可由此 parser 打开 |
-| `parse(src, index, ctx)` | 返回 `{ node, nextIndex }` 或 `null` |
-| `render(node, ctx, html)` | AST → HTML |
-| `strongBreak` | 是否打断 emphasis 预扫描（如 code span 默认为 true） |
+| 方法                         | 作用                                                 |
+| ---------------------------- | ---------------------------------------------------- |
+| `canOpenAt(src, index, ctx)` | 当前位置是否可由此 parser 打开                       |
+| `parse(src, index, ctx)`     | 返回 `{ node, nextIndex }` 或 `null`                 |
+| `render(node, ctx, html)`    | AST → HTML                                           |
+| `strongBreak`                | 是否打断 emphasis 预扫描（如 code span 默认为 true） |
 
 ### BaseBlockParser
 
-| 方法 | 作用 |
-| --- | --- |
-| `canOpenAt(lines, index, ctx)` | 当前行是否匹配块语法 |
-| `parse(lines, index, ctx)` | 返回 `{ node?, nextIndex }` |
-| `render(node, ctx)` | 块 AST → HTML |
-| `strongBreak` | 是否参与「强打断」扫描（容器边界检测） |
+| 方法                           | 作用                                   |
+| ------------------------------ | -------------------------------------- |
+| `canOpenAt(lines, index, ctx)` | 当前行是否匹配块语法                   |
+| `parse(lines, index, ctx)`     | 返回 `{ node?, nextIndex }`            |
+| `render(node, ctx)`            | 块 AST → HTML                          |
+| `strongBreak`                  | 是否参与「强打断」扫描（容器边界检测） |
 
 `BlockParseContext` 提供 `parseBlocks` / `parseInline` / 容器深度 `enterContainer` / `exitContainer`，供嵌套块（引用、列表、容器）递归解析。
 
@@ -144,7 +144,7 @@ parseIncremental(
 
 1. 用 hash 在未变块边界定位 `[startLine, endLine)`
 2. 仅对该区间 re-run `BlockParseEngine`
-3.  splice 回 `prevAst.children`，更新受影响节点
+3. splice 回 `prevAst.children`，更新受影响节点
 
 与 Renderer 侧 `HashBoundaryResolver` 配合：CM 变更行 → 计算 dirty range → 引擎增量 parse → DOM reconcile。
 
@@ -153,6 +153,7 @@ parseIncremental(
 ## 内置语法清单
 
 ::: collapse accordion
+
 - GFM 块级
 
   `hr` · `table` · `blockquote` · `html` · `code` · `indented-code` · `link-ref` · `atx-heading` · `list` · `setext-heading` · `paragraph`
@@ -168,7 +169,7 @@ parseIncremental(
 - Cherry 行内扩展
 
   `frontmatter-var` · `math` · `sub` · `sup` · `highlight` · `html-attrs` · `badge` · `emoji` · `spoiler` · `comment` · `footnote-ref` · `media`
-:::
+  :::
 
 语法写法见 [`docs/simple.md`](../simple.md)。
 

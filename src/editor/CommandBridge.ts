@@ -21,7 +21,9 @@ export class CommandBridge {
   }
 
   execute(command: EditorCommand, payload?: unknown): Promise<boolean> {
-    const result = runCommand(this.getView(), command, payload, { theme: this.theme });
+    const result = runCommand(this.getView(), command, payload, {
+      theme: this.theme,
+    });
     return Promise.resolve(result);
   }
 

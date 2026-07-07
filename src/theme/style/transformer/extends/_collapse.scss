@@ -3,13 +3,15 @@
 @mixin styles {
   .cherry-collapse {
     margin: rem(16) 0;
-    border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+    border: rem(1) solid
+      color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
     border-radius: rem(8);
     background: var(--cherry-c-bg-elevated);
     overflow: hidden;
 
     details {
-      border-bottom: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+      border-bottom: rem(1) solid
+        color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
 
       &:last-child {
         border-bottom: none;
@@ -22,7 +24,11 @@
       font-size: rem(14);
       font-weight: 600;
       color: var(--cherry-c-text-1);
-      background: color-mix(in srgb, var(--cherry-c-bg-elevated) 88%, var(--cherry-c-text-3));
+      background: color-mix(
+        in srgb,
+        var(--cherry-c-bg-elevated) 88%,
+        var(--cherry-c-text-3)
+      );
       list-style: none;
       line-height: 1.5;
       user-select: none;

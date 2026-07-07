@@ -13,10 +13,10 @@ parent: Cherry Markdown Next 设计文档
 
 项目 deliberately 拆成三个 esbuild 入口，而不是一个大 bundle：
 
-| 层级 | 入口文件 | 典型使用场景 |
-| --- | --- | --- |
-| **Editor** | `src/editor/Cherry.ts` | 需要完整 WYSIWYG-ish 编辑体验 |
-| **Renderer** | `src/renderer/Renderer.ts` | 静态页、SSR  hydration、只读预览 |
+| 层级            | 入口文件                               | 典型使用场景                       |
+| --------------- | -------------------------------------- | ---------------------------------- |
+| **Editor**      | `src/editor/Cherry.ts`                 | 需要完整 WYSIWYG-ish 编辑体验      |
+| **Renderer**    | `src/renderer/Renderer.ts`             | 静态页、SSR hydration、只读预览    |
 | **Transformer** | `src/transformer/TransformerEngine.ts` | 服务端/CLI 只要 AST 或 HTML 字符串 |
 
 > [!TIP]

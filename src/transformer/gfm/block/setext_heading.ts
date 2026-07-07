@@ -11,24 +11,29 @@ import type { RenderContext } from "@/transformer/core/context/RenderContext.js"
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
 import { isBlankString } from "@/transformer/utils/normalize";
-import { getAtxHeadingOptions, renderHeadingHtml } from "@/transformer/gfm/block/atx_heading.js";
+import {
+  getAtxHeadingOptions,
+  renderHeadingHtml,
+} from "@/transformer/gfm/block/atx_heading.js";
 
-export function getSetextUnderlineInfo(line: string): number  {
+export function getSetextUnderlineInfo(line: string): number {
   let i = skipBlockPrefixSpaces(line);
   if (i >= line.length) return -1;
 
   const char = line[i];
-  if (char !== '=' && char !== '-') return -1;
-  const level = char === '=' ? 1 : 2;
+  if (char !== "=" && char !== "-") return -1;
+  const level = char === "=" ? 1 : 2;
   while (i < line.length && line[i] === char) i += 1;
-  while (i < line.length && (line[i] === ' ' || line[i] === '\t')) i += 1;
+  while (i < line.length && (line[i] === " " || line[i] === "\t")) i += 1;
 
   return i < line.length ? -1 : level;
 }
 
 class SetextHeadingBlockParser extends BaseBlockParser {
   // 优先级必须高于 Paragraph
-  constructor() { super("setext_heading"); }
+  constructor() {
+    super("setext_heading");
+  }
 
   /** @inheritdoc */
   canOpenAt(lines: string[], index: number, ctx: BlockParseContext): boolean {
@@ -65,9 +70,15 @@ class SetextHeadingBlockParser extends BaseBlockParser {
       if (underline > 0) {
         const content = contentLines.join("\n");
 
-        const node = createNode("setext_heading", i + 1 - index, undefined, ctx.parseInline(content), {
-          level: underline
-        });
+        const node = createNode(
+          "setext_heading",
+          i + 1 - index,
+          undefined,
+          ctx.parseInline(content),
+          {
+            level: underline,
+          },
+        );
 
         return { node, nextIndex: i + 1 };
       }
@@ -82,7 +93,7 @@ class SetextHeadingBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext) {
-    const level = node.props?.level as number || 1;
+    const level = (node.props?.level as number) || 1;
     const inner = ctx.renderInline(node.children).trim();
     return renderHeadingHtml(
       node,

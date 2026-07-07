@@ -3,7 +3,9 @@ import { Theme, THEME_EVENT_SKIN } from "@/theme/Theme.js";
 
 describe("Theme", () => {
   async function createRenderTree() {
-    const dom = new (await import("jsdom")).JSDOM(`<div id="root"><div id="render"></div></div>`);
+    const dom = new (await import("jsdom")).JSDOM(
+      `<div id="root"><div id="render"></div></div>`,
+    );
     const root = dom.window.document.getElementById("root")! as HTMLElement;
     const render = dom.window.document.getElementById("render")! as HTMLElement;
     return { root, render };
@@ -138,14 +140,30 @@ describe("Theme", () => {
     theme.setTheme("claude", render, root);
     theme.off(THEME_EVENT_SKIN, handler);
 
-    expect(logSpy).toHaveBeenCalledWith("[cherry]", "event:on", THEME_EVENT_SKIN);
-    expect(logSpy).toHaveBeenCalledWith("[cherry]", "setTheme", { prev: "default", id: "claude" });
-    expect(logSpy).toHaveBeenCalledWith("[cherry]", "event:emit", THEME_EVENT_SKIN, {
+    expect(logSpy).toHaveBeenCalledWith(
+      "[cherry]",
+      "event:on",
+      THEME_EVENT_SKIN,
+    );
+    expect(logSpy).toHaveBeenCalledWith("[cherry]", "setTheme", {
       prev: "default",
       id: "claude",
-      render,
     });
-    expect(logSpy).toHaveBeenCalledWith("[cherry]", "event:off", THEME_EVENT_SKIN);
+    expect(logSpy).toHaveBeenCalledWith(
+      "[cherry]",
+      "event:emit",
+      THEME_EVENT_SKIN,
+      {
+        prev: "default",
+        id: "claude",
+        render,
+      },
+    );
+    expect(logSpy).toHaveBeenCalledWith(
+      "[cherry]",
+      "event:off",
+      THEME_EVENT_SKIN,
+    );
 
     logSpy.mockRestore();
   });

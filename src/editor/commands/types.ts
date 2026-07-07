@@ -31,12 +31,7 @@ export interface LinkDialogResult {
 }
 
 export type BadgeVariant =
-  | "note"
-  | "tip"
-  | "important"
-  | "warning"
-  | "caution"
-  | "danger";
+  "note" | "tip" | "important" | "warning" | "caution" | "danger";
 
 export type BadgePosition = "middle" | "top" | "bottom";
 

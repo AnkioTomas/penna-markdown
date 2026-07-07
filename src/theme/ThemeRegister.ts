@@ -1,1 +1,9 @@
-export default ["default", "claude", "github", "morandi", "latex", "vue", "notion"];
+export default [
+  "default",
+  "claude",
+  "github",
+  "morandi",
+  "latex",
+  "vue",
+  "notion",
+];

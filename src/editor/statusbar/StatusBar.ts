@@ -11,7 +11,7 @@ export class StatusBar {
   private readonly rightEl: HTMLElement;
   private readonly countEl: HTMLElement;
   private readonly offs: Set<() => void> = new Set();
-  
+
   private sidebarVisible = true;
   private layoutMode: "edit" | "preview" | "split" = "split";
 
@@ -86,12 +86,14 @@ export class StatusBar {
       this.theme.on("cherry:layout", (payload) => {
         const mode = (payload as any).mode;
         this.layoutMode = mode;
-        const btns = this.leftEl.querySelectorAll(".cherry-statusbar-btn:not(:first-child)");
-        btns.forEach(b => b.classList.remove("is-active"));
+        const btns = this.leftEl.querySelectorAll(
+          ".cherry-statusbar-btn:not(:first-child)",
+        );
+        btns.forEach((b) => b.classList.remove("is-active"));
         if (mode === "edit") btnEdit.classList.add("is-active");
         else if (mode === "preview") btnPreview.classList.add("is-active");
         else btnSplit.classList.add("is-active");
-      })
+      }),
     );
 
     this.offs.add(
@@ -99,7 +101,7 @@ export class StatusBar {
         const show = (payload as any).show;
         this.sidebarVisible = show;
         btnSidebar.classList.toggle("is-active", show);
-      })
+      }),
     );
   }
 
@@ -110,7 +112,7 @@ export class StatusBar {
     btnRefresh.title = "强制全量刷新渲染";
     btnRefresh.onclick = () => {
       this.theme.emit("preview:force-refresh", {});
-      
+
       const svg = btnRefresh.querySelector("svg");
       if (svg) {
         svg.style.transition = "transform 0.5s ease";
@@ -121,12 +123,15 @@ export class StatusBar {
         }, 500);
       }
     };
-    
+
     // Insert after countEl to be on the right side
     this.rightEl.appendChild(btnRefresh);
   }
 
-  private switchLayout(mode: "edit" | "preview" | "split", _activeBtn: HTMLElement) {
+  private switchLayout(
+    mode: "edit" | "preview" | "split",
+    _activeBtn: HTMLElement,
+  ) {
     if (this.layoutMode === mode) return;
     this.theme.emit("cherry:layout", { mode });
   }
@@ -134,15 +139,18 @@ export class StatusBar {
   private updateStats(text: string): void {
     const charCount = text.length;
     // 简单的字数统计（英文按空格分词，中文粗略按字算）
-    const words = text.trim().split(/\s+/).filter((w) => w.length > 0);
+    const words = text
+      .trim()
+      .split(/\s+/)
+      .filter((w) => w.length > 0);
     let wordCount = 0;
-    
+
     for (const w of words) {
-        // 如果包含中文字符，则中文字符每个算一个字，非中文部分算一个词
-        const cnMatches = w.match(/[\u4e00-\u9fa5]/g);
-        const cnCount = cnMatches ? cnMatches.length : 0;
-        const nonCnPart = w.replace(/[\u4e00-\u9fa5]/g, '').trim();
-        wordCount += cnCount + (nonCnPart.length > 0 ? 1 : 0);
+      // 如果包含中文字符，则中文字符每个算一个字，非中文部分算一个词
+      const cnMatches = w.match(/[\u4e00-\u9fa5]/g);
+      const cnCount = cnMatches ? cnMatches.length : 0;
+      const nonCnPart = w.replace(/[\u4e00-\u9fa5]/g, "").trim();
+      wordCount += cnCount + (nonCnPart.length > 0 ? 1 : 0);
     }
 
     this.countEl.textContent = `${wordCount} 词 · ${charCount} 字符`;

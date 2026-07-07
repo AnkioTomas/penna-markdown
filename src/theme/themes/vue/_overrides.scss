@@ -213,7 +213,11 @@
     --cb-code-bg: var(--cherry-c-bg-elevated);
     --cb-lang-fg: var(--cherry-c-brand-3);
     --cb-lang-bg: transparent;
-    --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 12%, transparent);
+    --cb-line-highlight: color-mix(
+      in srgb,
+      var(--cherry-c-brand-1) 12%,
+      transparent
+    );
     margin: 0 0 0.8rem;
 
     &__panel {
@@ -319,5 +323,4 @@
       color: var(--cherry-c-brand-1);
     }
   }
-
 }

@@ -43,7 +43,8 @@
   font-weight: 600;
   color: var(--cherry-c-text-2);
   background: var(--cherry-c-bg-elevated);
-  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
 }
 
 .ast-panel-head-split {
@@ -60,7 +61,8 @@
   justify-content: space-between;
   gap: 10px;
   padding: 8px 12px;
-  border-top: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  border-top: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
   background: var(--cherry-c-bg-elevated);
 }
 
@@ -74,7 +76,8 @@
   select {
     font: inherit;
     padding: 4px 8px;
-    border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
     border-radius: 6px;
     background: var(--cherry-c-bg);
     color: var(--cherry-c-text-1);
@@ -136,7 +139,8 @@
 .ast-btn {
   margin: 0;
   border: none;
-  border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  border-right: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
   background: var(--cherry-c-bg);
   color: var(--cherry-c-text-2);
   font-size: 12px;
@@ -177,7 +181,8 @@
   display: flex;
   gap: 8px;
   padding: 8px 12px;
-  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
   background: var(--cherry-c-bg-elevated);
 }
 
@@ -406,7 +411,8 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  border-top: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  border-top: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
   background: var(--cherry-c-bg-elevated);
 }
 
@@ -418,7 +424,8 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--cherry-c-text-2);
-  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
 }
 
 .ast-detail-body {

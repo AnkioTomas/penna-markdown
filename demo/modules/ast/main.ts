@@ -52,7 +52,9 @@ type SerializedNode = {
   children?: SerializedNode[];
 };
 
-function serializeProps(props: Record<string, unknown>): Record<string, unknown> {
+function serializeProps(
+  props: Record<string, unknown>,
+): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(props)) {
     if (value === undefined) continue;

@@ -58,7 +58,7 @@ const GFM_HIGHLIGHT_STYLE = HighlightStyle.define([
   { tag: cherryTags.containerParam, class: "cm-ext-container-param" },
   { tag: cherryTags.codeInfoKey, class: "cm-ext-codeinfo-key" },
   { tag: cherryTags.codeInfoValue, class: "cm-ext-codeinfo-value" },
-  { tag: cherryTags.codeInfoFlag, class: "cm-ext-codeinfo-flag" }
+  { tag: cherryTags.codeInfoFlag, class: "cm-ext-codeinfo-flag" },
 ]);
 
 /** GFM 基础语法高亮 */

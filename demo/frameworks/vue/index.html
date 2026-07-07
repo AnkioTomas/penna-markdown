@@ -25,7 +25,7 @@
       </div>
     </div>
     <div id="app" class="app-container">
-      <div ref="editorRef" style="flex:1;"></div>
+      <div ref="editorRef" style="flex: 1"></div>
     </div>
     <script type="module">
       import "../../_common/layout.scss";
@@ -33,7 +33,12 @@
       import { Cherry } from "@/editor/Cherry.js";
       import { setupThemeAndAppearance } from "../../_common/theme.js";
       import { fetchDocContent } from "../../_common/api.js";
-      import { createApp, ref, onMounted, onBeforeUnmount } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+      import {
+        createApp,
+        ref,
+        onMounted,
+        onBeforeUnmount,
+      } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
 
       createApp({
         setup() {
@@ -53,8 +58,8 @@
           });
 
           return { editorRef };
-        }
-      }).mount('#app');
+        },
+      }).mount("#app");
     </script>
   </body>
 </html>

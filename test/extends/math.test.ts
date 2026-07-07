@@ -34,7 +34,10 @@ describe("extends/math", () => {
   });
 
   it("renders block math with dark theme color parameter", () => {
-    const html = renderMarkdown(createEngine({ isDark: true }), "$$\nE=mc^2\n$$");
+    const html = renderMarkdown(
+      createEngine({ isDark: true }),
+      "$$\nE=mc^2\n$$",
+    );
     expect(html).toContain("&color=white");
   });
 

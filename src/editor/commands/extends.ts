@@ -48,7 +48,10 @@ export function registerThemeCommand(
     const theme = ctx.theme;
     if (!theme) return false;
     const { render, root } = theme.getTheme();
-    if (!render || !REGISTERED_THEMES.includes(id as (typeof REGISTERED_THEMES)[number])) {
+    if (
+      !render ||
+      !REGISTERED_THEMES.includes(id as (typeof REGISTERED_THEMES)[number])
+    ) {
       return false;
     }
     theme.setTheme(id, render, root ?? undefined);
@@ -86,14 +89,18 @@ export function registerExtendCommands(
 
   register("htmlAttr", async (view, _payload, ctx) => {
     if (!ctx?.theme) return false;
-    const data = await requestDialog(ctx.theme, "attr", { value: ".highlight" });
+    const data = await requestDialog(ctx.theme, "attr", {
+      value: ".highlight",
+    });
     if (!data) return false;
     appendHtmlAttr(view, data.attr);
     return true;
   });
 
   register("alert", (view, payload) => {
-    const type = String((payload as { type?: string })?.type ?? "NOTE").toUpperCase() as AlertKind;
+    const type = String(
+      (payload as { type?: string })?.type ?? "NOTE",
+    ).toUpperCase() as AlertKind;
     const body = "提示内容";
     const snippet = alertBlock(type, body);
     const start = snippet.indexOf(body);
@@ -147,14 +154,20 @@ export function registerExtendCommands(
   register("image", (view, _p, ctx) => insertMedia(view, ctx, "image"));
 
   register("codeBlock", (view, payload, ctx) =>
-    insertCodeBlockDialog(view, ctx, (payload as { variant?: CodeBlockVariant })?.variant ?? "basic"),
+    insertCodeBlockDialog(
+      view,
+      ctx,
+      (payload as { variant?: CodeBlockVariant })?.variant ?? "basic",
+    ),
   );
 
   register("frontmatter", async (view, _p, ctx) => {
     if (!ctx?.theme) return false;
     const doc = view.state.doc.toString();
     const match = doc.match(/^---\n([\s\S]*?)\n---/);
-    const data = await requestDialog(ctx.theme, "frontmatter", { yaml: match?.[1] ?? undefined });
+    const data = await requestDialog(ctx.theme, "frontmatter", {
+      yaml: match?.[1] ?? undefined,
+    });
     if (!data) return false;
     insertAtDocumentTop(view, frontmatterMarkdown(data.yaml));
     return true;
@@ -169,15 +182,17 @@ export function registerExtendCommands(
   });
 
   register("timeline", async (view, payload, ctx) => {
-    const preset = payload as {
-      title?: string;
-      time?: string;
-      type?: string;
-      lineStyle?: string;
-      containerLine?: string;
-      content?: string;
-      custom?: boolean;
-    } | undefined;
+    const preset = payload as
+      | {
+          title?: string;
+          time?: string;
+          type?: string;
+          lineStyle?: string;
+          containerLine?: string;
+          content?: string;
+          custom?: boolean;
+        }
+      | undefined;
     if (preset?.title && !preset.custom) {
       insertSnippet(
         view,

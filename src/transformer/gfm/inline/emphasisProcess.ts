@@ -79,15 +79,21 @@ export interface EmphasisMatch {
   closeOrig: number;
 }
 
-function isExcluded(pos: number, excluded: readonly [number, number][]): boolean {
+function isExcluded(
+  pos: number,
+  excluded: readonly [number, number][],
+): boolean {
   return excluded.some(([start, end]) => pos >= start && pos < end);
 }
 
-function collectDelimiters(src: string, excluded: readonly [number, number][]): Delimiter | null {
+function collectDelimiters(
+  src: string,
+  excluded: readonly [number, number][],
+): Delimiter | null {
   let head: Delimiter | null = null;
   let tail: Delimiter | null = null;
 
-  for (let i = 0; i < src.length; ) {
+  for (let i = 0; i < src.length;) {
     if (isExcluded(i, excluded)) {
       const skip = excluded.find(([s, e]) => i >= s && i < e);
       i = skip ? skip[1] : i + 1;
@@ -359,7 +365,12 @@ function stitchConsumed(
   allMatches: readonly EmphasisMatch[],
 ): { open: [number, number]; close: [number, number]; end: number } {
   const openUsed = totalUsedDelims(allMatches, m.openPos, m.openOrig, "open");
-  const closeUsed = totalUsedDelims(allMatches, m.closePos, m.closeOrig, "close");
+  const closeUsed = totalUsedDelims(
+    allMatches,
+    m.closePos,
+    m.closeOrig,
+    "close",
+  );
   return {
     open: [m.openPos + m.openOrig - openUsed, m.openPos + m.openOrig],
     close: [m.closePos, m.closePos + closeUsed],
@@ -381,7 +392,9 @@ function topLevelAtConsumeStart(
   matches: readonly EmphasisMatch[],
   openIndex: number,
 ): EmphasisMatch[] {
-  return uniqueTopLevel(matchesActiveInSpan(matches, 0, Number.MAX_SAFE_INTEGER))
+  return uniqueTopLevel(
+    matchesActiveInSpan(matches, 0, Number.MAX_SAFE_INTEGER),
+  )
     .filter((m) => openConsumeStart(m, matches) === openIndex)
     .sort((a, b) => {
       if (a.useDelims !== b.useDelims) return a.useDelims - b.useDelims;
@@ -472,21 +485,24 @@ function stitch(
   parseInline: (text: string) => MarkdownNode[],
   allMatches: readonly EmphasisMatch[] = matches,
 ): MarkdownNode[] {
-  const inRange = uniqueTopLevel(matchesActiveInSpan(matches, lo, hi)).sort((a, b) => {
-    if (a.openPos !== b.openPos) return a.openPos - b.openPos;
-    if (a.useDelims !== b.useDelims) return a.useDelims - b.useDelims;
-    return closeEnd(b) - closeEnd(a);
-  });
+  const inRange = uniqueTopLevel(matchesActiveInSpan(matches, lo, hi)).sort(
+    (a, b) => {
+      if (a.openPos !== b.openPos) return a.openPos - b.openPos;
+      if (a.useDelims !== b.useDelims) return a.useDelims - b.useDelims;
+      return closeEnd(b) - closeEnd(a);
+    },
+  );
 
   if (inRange.length === 0) {
     return materialize(src, lo, hi, parts, consumed);
   }
 
   const m = inRange[0];
-  const { open: openConsumed, close: closeConsumed, end } = stitchConsumed(
-    m,
-    allMatches,
-  );
+  const {
+    open: openConsumed,
+    close: closeConsumed,
+    end,
+  } = stitchConsumed(m, allMatches);
   const ownsDelims = m.openPos >= lo;
   const type = m.useDelims === 1 ? "emphasis" : "strong";
   const nextConsumed = ownsDelims
@@ -505,17 +521,38 @@ function stitch(
   );
 
   const openStart = openConsumeStart(m, allMatches);
-  const beforeEnd = Math.max(lo, Math.min(ownsDelims ? m.openPos : openStart, hi));
+  const beforeEnd = Math.max(
+    lo,
+    Math.min(ownsDelims ? m.openPos : openStart, hi),
+  );
   const afterStart = Math.min(end, hi);
   const spanLen = ownsDelims ? end - m.openPos : innerHi - innerLo;
 
   const nodes: MarkdownNode[] = [];
   nodes.push(
-    ...stitch(src, lo, beforeEnd, rest, parts, nextConsumed, parseInline, allMatches),
+    ...stitch(
+      src,
+      lo,
+      beforeEnd,
+      rest,
+      parts,
+      nextConsumed,
+      parseInline,
+      allMatches,
+    ),
   );
   nodes.push(createNode(type, spanLen, undefined, innerNodes));
   nodes.push(
-    ...stitch(src, afterStart, hi, rest, parts, nextConsumed, parseInline, allMatches),
+    ...stitch(
+      src,
+      afterStart,
+      hi,
+      rest,
+      parts,
+      nextConsumed,
+      parseInline,
+      allMatches,
+    ),
   );
   return nodes;
 }
@@ -573,8 +610,9 @@ export function literalOpenerPrefixLen(
 
   const runStart = delimiterRunStart(src, index);
   const matches = collectEmphasisMatches(src, parts);
-  const candidates = uniqueTopLevel(matchesActiveInSpan(matches, 0, src.length))
-    .filter((m) => m.openPos === runStart);
+  const candidates = uniqueTopLevel(
+    matchesActiveInSpan(matches, 0, src.length),
+  ).filter((m) => m.openPos === runStart);
 
   if (candidates.length === 0) return 0;
 

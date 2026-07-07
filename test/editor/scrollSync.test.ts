@@ -62,9 +62,17 @@ describe("scrollSync/measureSyncAnchors", () => {
     ]);
 
     expect(anchors.length).toBeGreaterThanOrEqual(4);
-    expect(anchors[0]).toMatchObject({ startLine: 0, previewY: 0, type: "block" });
-    expect(anchors.some((a) => a.type === "block-end" && a.startLine === 1)).toBe(true);
-    expect(anchors.some((a) => a.type === "block" && a.startLine === 2)).toBe(true);
+    expect(anchors[0]).toMatchObject({
+      startLine: 0,
+      previewY: 0,
+      type: "block",
+    });
+    expect(
+      anchors.some((a) => a.type === "block-end" && a.startLine === 1),
+    ).toBe(true);
+    expect(anchors.some((a) => a.type === "block" && a.startLine === 2)).toBe(
+      true,
+    );
   });
 
   it("reads source line attrs from rendered blocks when no block map", () => {
@@ -78,9 +86,17 @@ describe("scrollSync/measureSyncAnchors", () => {
     const anchors = measureSyncAnchors(root);
 
     expect(anchors.length).toBeGreaterThanOrEqual(4);
-    expect(anchors[0]).toMatchObject({ startLine: 0, previewY: 0, type: "block" });
-    expect(anchors.some((a) => a.type === "block-end" && a.startLine === 1)).toBe(true);
-    expect(anchors.some((a) => a.type === "block" && a.startLine === 2)).toBe(true);
+    expect(anchors[0]).toMatchObject({
+      startLine: 0,
+      previewY: 0,
+      type: "block",
+    });
+    expect(
+      anchors.some((a) => a.type === "block-end" && a.startLine === 1),
+    ).toBe(true);
+    expect(anchors.some((a) => a.type === "block" && a.startLine === 2)).toBe(
+      true,
+    );
   });
 
   it("inserts media anchors inside blocks with images", () => {
@@ -103,7 +119,9 @@ describe("scrollSync/measureSyncAnchors", () => {
   });
 
   it("blockOffsetTop accounts for scroll position", () => {
-    const dom = new JSDOM(`<div id="scroll" style="height:100px;overflow:auto"><div id="a" style="height:80px"></div><div id="b" style="height:80px"></div></div>`);
+    const dom = new JSDOM(
+      `<div id="scroll" style="height:100px;overflow:auto"><div id="a" style="height:80px"></div><div id="b" style="height:80px"></div></div>`,
+    );
     const scroll = dom.window.document.getElementById("scroll") as HTMLElement;
     const b = dom.window.document.getElementById("b") as HTMLElement;
     scroll.scrollTop = 40;
@@ -112,7 +130,9 @@ describe("scrollSync/measureSyncAnchors", () => {
   });
 
   it("media anchors shift preview scroll for lines after image", () => {
-    const dom = new JSDOM(`<div id="scroll" style="height:300px;overflow:auto"></div>`);
+    const dom = new JSDOM(
+      `<div id="scroll" style="height:300px;overflow:auto"></div>`,
+    );
     const scroll = dom.window.document.getElementById("scroll") as HTMLElement;
     Object.defineProperty(scroll, "scrollHeight", { value: 500 });
     Object.defineProperty(scroll, "clientHeight", { value: 300 });

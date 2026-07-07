@@ -54,11 +54,11 @@ tags: [design, architecture, cherry-markdown-next]
 
 Cherry Markdown Next 是一个 **浏览器端 Markdown 编辑与渲染套件**，由三个可独立引用的子系统组成：
 
-| 包入口 | 全局名（IIFE） | 职责 |
-| --- | --- | --- |
-| `cherry-markdown-next` | `CherryNextEditor` | 完整编辑器 UI（工具栏、侧边栏、编辑区、预览区） |
-| `cherry-markdown-next/renderer` | `CherryNextRenderer` | HTML 渲染 + 增量 DOM 更新 |
-| `cherry-markdown-next/transformer` | `CherryNextTransformer` | Markdown → AST → HTML 字符串 |
+| 包入口                             | 全局名（IIFE）          | 职责                                            |
+| ---------------------------------- | ----------------------- | ----------------------------------------------- |
+| `cherry-markdown-next`             | `CherryNextEditor`      | 完整编辑器 UI（工具栏、侧边栏、编辑区、预览区） |
+| `cherry-markdown-next/renderer`    | `CherryNextRenderer`    | HTML 渲染 + 增量 DOM 更新                       |
+| `cherry-markdown-next/transformer` | `CherryNextTransformer` | Markdown → AST → HTML 字符串                    |
 
 > [!IMPORTANT]
 > **Never break userspace**：三个入口可单独打包引用；编辑器内部复用 Renderer 与 Transformer，但对外 API 保持分包独立。
@@ -149,15 +149,15 @@ flowchart TB
 
 ## 源码目录
 
-| 路径 | 说明 |
-| --- | --- |
-| `src/editor/` | 编辑器 UI、命令、工具栏、对话框、滚动同步 |
-| `src/renderer/` | HTML 渲染、增量会话、TOC 提取、代码/图表运行时 |
-| `src/transformer/` | GFM + Cherry 语法解析器、`TransformerEngine` |
-| `src/theme/` | 主题注册、明暗模式、EventBus |
-| `demo/` | 各模块演示与 GFM/扩展语法测试页 |
-| `test/` | Vitest 单元测试 |
-| `scripts/build.ts` | esbuild + Vite 主题 CSS 构建 |
+| 路径               | 说明                                           |
+| ------------------ | ---------------------------------------------- |
+| `src/editor/`      | 编辑器 UI、命令、工具栏、对话框、滚动同步      |
+| `src/renderer/`    | HTML 渲染、增量会话、TOC 提取、代码/图表运行时 |
+| `src/transformer/` | GFM + Cherry 语法解析器、`TransformerEngine`   |
+| `src/theme/`       | 主题注册、明暗模式、EventBus                   |
+| `demo/`            | 各模块演示与 GFM/扩展语法测试页                |
+| `test/`            | Vitest 单元测试                                |
+| `scripts/build.ts` | esbuild + Vite 主题 CSS 构建                   |
 
 ---
 
@@ -198,4 +198,4 @@ AST 节点：`type`、`length`（块=行数，行内=字符跨度）、`children
 - 语法演示：[`docs/simple.md`](../simple.md)（精简）、[`docs/test.md`](../test.md)（边界/压力）
 - 在线 Demo：`pnpm demo` 启动 `demo/` 站点
 
-*文档路径：`docs/design/` · 使用 Cherry 扩展 Markdown 编写*
+_文档路径：`docs/design/` · 使用 Cherry 扩展 Markdown 编写_

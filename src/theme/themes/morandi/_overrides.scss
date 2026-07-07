@@ -72,7 +72,8 @@
   a {
     color: var(--cherry-c-brand-1);
     text-decoration: none;
-    border-bottom: rem(1) solid color-mix(in srgb, var(--cherry-c-brand-1) 30%, transparent);
+    border-bottom: rem(1) solid
+      color-mix(in srgb, var(--cherry-c-brand-1) 30%, transparent);
 
     &:hover {
       color: var(--cherry-c-brand-2);
@@ -92,12 +93,20 @@
     blockquote {
       margin: 0 0 rem(13);
       border-left-color: var(--morandi-h3-color);
-      background: color-mix(in srgb, var(--morandi-blockquote-bg) 60%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--morandi-blockquote-bg) 60%,
+        transparent
+      );
     }
 
     blockquote blockquote {
       border-left-color: var(--morandi-h4-color);
-      background: color-mix(in srgb, var(--morandi-blockquote-bg) 40%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--morandi-blockquote-bg) 40%,
+        transparent
+      );
     }
   }
 
@@ -206,7 +215,11 @@
     }
 
     tbody tr:hover {
-      background: color-mix(in srgb, var(--morandi-blockquote-bg) 50%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--morandi-blockquote-bg) 50%,
+        transparent
+      );
     }
   }
 
@@ -233,7 +246,11 @@
     --cb-code-bg: var(--cherry-c-bg-elevated);
     --cb-lang-fg: var(--cherry-c-text-3);
     --cb-lang-bg: transparent;
-    --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 10%, transparent);
+    --cb-line-highlight: color-mix(
+      in srgb,
+      var(--cherry-c-brand-1) 10%,
+      transparent
+    );
     margin: 0 0 rem(16);
 
     &__panel {

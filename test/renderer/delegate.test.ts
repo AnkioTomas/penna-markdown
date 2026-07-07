@@ -13,7 +13,9 @@ describe("renderer/delegate", () => {
     const dom = new JSDOM(`<div id="preview" class="preview cherry"></div>`, {
       runScripts: "outside-only",
     });
-    const preview = dom.window.document.getElementById("preview") as HTMLElement;
+    const preview = dom.window.document.getElementById(
+      "preview",
+    ) as HTMLElement;
     const bound = ensurePreviewDelegation(preview);
 
     expect(bound).toBe(preview);
@@ -42,7 +44,9 @@ describe("renderer/delegate", () => {
     const preview = document.getElementById("preview") as HTMLElement;
     ensurePreviewDelegation(preview);
 
-    const btn = preview.querySelector(".cherry-copy-code-button") as HTMLButtonElement;
+    const btn = preview.querySelector(
+      ".cherry-copy-code-button",
+    ) as HTMLButtonElement;
     btn.click();
     await new Promise((r) => setTimeout(r, 0));
 
@@ -63,22 +67,35 @@ describe("renderer/delegate", () => {
     `,
       { runScripts: "outside-only" },
     );
-    const preview = dom.window.document.getElementById("preview") as HTMLElement;
+    const preview = dom.window.document.getElementById(
+      "preview",
+    ) as HTMLElement;
     ensurePreviewDelegation(preview);
 
-    const panel = preview.querySelector(".cherry-code-block__panel") as HTMLElement;
-    const btn = preview.querySelector(".cherry-code-block__expand") as HTMLButtonElement;
+    const panel = preview.querySelector(
+      ".cherry-code-block__panel",
+    ) as HTMLElement;
+    const btn = preview.querySelector(
+      ".cherry-code-block__expand",
+    ) as HTMLButtonElement;
     btn.click();
 
-    expect(panel.classList.contains("cherry-code-block__panel--collapsed")).toBe(true);
+    expect(
+      panel.classList.contains("cherry-code-block__panel--collapsed"),
+    ).toBe(true);
     expect(btn.getAttribute("aria-expanded")).toBe("false");
   });
 
   it("supports custom delegated handlers", () => {
-    const dom = new JSDOM(`<div class="cherry-preview"><button class="custom-action">go</button></div>`, {
-      runScripts: "outside-only",
-    });
-    const preview = dom.window.document.querySelector(".cherry-preview") as HTMLElement;
+    const dom = new JSDOM(
+      `<div class="cherry-preview"><button class="custom-action">go</button></div>`,
+      {
+        runScripts: "outside-only",
+      },
+    );
+    const preview = dom.window.document.querySelector(
+      ".cherry-preview",
+    ) as HTMLElement;
     const handler = vi.fn();
 
     registerPreviewClickDelegation(".custom-action", (_event, target) => {

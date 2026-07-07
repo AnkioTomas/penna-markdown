@@ -19,7 +19,9 @@ describe("renderer/Renderer", () => {
     expect(result.html).toContain('id="Hello"');
     expect(result.html).toContain(BLOCK_HASH_ATTR);
     expect(result.blocks).toHaveLength(2);
-    expect(mount.querySelector("h1")!.getAttribute(BLOCK_HASH_ATTR)).toBeTruthy();
+    expect(
+      mount.querySelector("h1")!.getAttribute(BLOCK_HASH_ATTR),
+    ).toBeTruthy();
     expect(renderer.getTocFlat()).toEqual([
       { level: 1, text: "Hello", id: "Hello" },
       { level: 2, text: "World", id: "World" },
@@ -54,7 +56,9 @@ describe("renderer/Renderer", () => {
     const { html } = renderer.render("# Hello\n");
     expect(html).toContain('id="Hello"');
     expect(html).toContain(BLOCK_HASH_ATTR);
-    expect(mount.querySelector("h1")!.getAttribute(BLOCK_HASH_ATTR)).toBeTruthy();
+    expect(
+      mount.querySelector("h1")!.getAttribute(BLOCK_HASH_ATTR),
+    ).toBeTruthy();
 
     renderer.destroy();
   });

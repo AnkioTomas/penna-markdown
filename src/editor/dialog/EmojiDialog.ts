@@ -56,19 +56,25 @@ export function renderEmojiDialog(
       btn.className = "cherry-emoji-item";
       btn.title = item.code;
       btn.innerHTML = `<span class="cherry-emoji-item-code">${item.code}</span><span class="cherry-emoji-item-label">${item.label}</span>`;
-      btn.addEventListener("click", () => callbacks.onSubmit({ code: item.code }));
+      btn.addEventListener("click", () =>
+        callbacks.onSubmit({ code: item.code }),
+      );
       grid.appendChild(btn);
     }
   };
 
   paint();
   search.addEventListener("input", () => paint(search.value));
-  wrap.querySelector('[data-action="cancel"]')?.addEventListener("click", () => callbacks.onCancel());
-  wrap.querySelector('[data-action="custom"]')?.addEventListener("click", () => {
-    const code = custom.value.trim() || search.value.trim();
-    if (!code) return;
-    callbacks.onSubmit({ code: code.startsWith(":") ? code : `:${code}:` });
-  });
+  wrap
+    .querySelector('[data-action="cancel"]')
+    ?.addEventListener("click", () => callbacks.onCancel());
+  wrap
+    .querySelector('[data-action="custom"]')
+    ?.addEventListener("click", () => {
+      const code = custom.value.trim() || search.value.trim();
+      if (!code) return;
+      callbacks.onSubmit({ code: code.startsWith(":") ? code : `:${code}:` });
+    });
 
   host.appendChild(wrap);
   search.focus();

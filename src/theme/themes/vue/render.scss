@@ -2,8 +2,6 @@
 @use "tokens";
 @use "overrides";
 
-
-
 .cherry-theme-vue {
   .cherry-render {
     @include tokens.theme-light;

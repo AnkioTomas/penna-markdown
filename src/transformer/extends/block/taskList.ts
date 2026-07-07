@@ -67,7 +67,9 @@ function parseTaskMarkerInContent(content: string): TaskInfo | null {
 function isTaskListStart(line: string): boolean {
   const marker = parseListMarkerLine(line, { allowIndented: true });
   if (!marker || marker.ordered) return false;
-  return parseTaskMarkerInContent(expandLinePrefixTabs(marker.content)) !== null;
+  return (
+    parseTaskMarkerInContent(expandLinePrefixTabs(marker.content)) !== null
+  );
 }
 
 /** 从列表 marker 行 content 区剥离任务标记，返回新行 */
@@ -257,7 +259,9 @@ class TaskListBlockParser extends BaseBlockParser {
     const startAttr =
       props.ordered && props.start !== 1 ? ` start="${props.start}"` : "";
     const listLooseFromBetween = Boolean(props.looseFromBetween);
-    const anyItemLoose = (node.children ?? []).some((item) => item.props?.loose);
+    const anyItemLoose = (node.children ?? []).some(
+      (item) => item.props?.loose,
+    );
     const isLoose = listLooseFromBetween || anyItemLoose;
     const itemsHtml = (node.children ?? [])
       .map((item) => renderTaskItem(item, ctx, isLoose))

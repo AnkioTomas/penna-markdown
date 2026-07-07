@@ -35,7 +35,9 @@ describe("extends/collapse", () => {
   正文内容
 :::`;
     const html = renderMarkdown(engine(), md);
-    expect(html).toContain('<div class="cherry-collapse cherry-collapse--expand">');
+    expect(html).toContain(
+      '<div class="cherry-collapse cherry-collapse--expand">',
+    );
     expect(html.match(/<details open>/g)?.length).toBe(2);
   });
 
@@ -50,7 +52,9 @@ describe("extends/collapse", () => {
   正文内容
 :::`;
     const html = renderMarkdown(engine(), md);
-    expect(html).toContain('<div class="cherry-collapse cherry-collapse--accordion">');
+    expect(html).toContain(
+      '<div class="cherry-collapse cherry-collapse--accordion">',
+    );
     expect(html).toContain('name="cherry-collapse-1"');
     expect(html).not.toContain("<details open>");
   });

@@ -4,15 +4,14 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {
+  createNode,
+  type MarkdownNode,
+} from "@/transformer/core/MarkdownNode.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
-import {
-  blockLength,
-  pickAttr,
-  readQuadColonBlock,
-} from "./shared.js";
+import { blockLength, pickAttr, readQuadColonBlock } from "./shared.js";
 
 const OPEN_RE = /^ {0,3}::::(?!:)\s+card-grid(?:\s+(.*))?\s*$/;
 
@@ -92,7 +91,8 @@ class CardGridBlockParser extends BaseBlockParser {
   }
 
   render(node: MarkdownNode, ctx: RenderContext) {
-    const cols = (node.props?.cols as GridCols | undefined) ?? DEFAULT_GRID_COLS;
+    const cols =
+      (node.props?.cols as GridCols | undefined) ?? DEFAULT_GRID_COLS;
     const items = (node.children ?? [])
       .map((child) => ctx.renderBlock([child]))
       .join("\n");

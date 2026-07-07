@@ -18,7 +18,10 @@ export function validateFrontmatterYaml(yaml: string): string | null {
 export function renderFrontmatterDialog(
   host: HTMLElement,
   props: { yaml?: string },
-  callbacks: { onSubmit: (d: FrontmatterDialogResult) => void; onCancel: () => void },
+  callbacks: {
+    onSubmit: (d: FrontmatterDialogResult) => void;
+    onCancel: () => void;
+  },
 ): () => void {
   const form = document.createElement("form");
   form.className = "cherry-dialog-form";
@@ -38,9 +41,12 @@ tags: [demo]</textarea></label>
       <button type="submit" class="is-primary">插入到顶部</button>
     </div>
   `;
-  (form.elements.namedItem("yaml") as HTMLTextAreaElement).value = props.yaml ?? `title: 标题\ndescription: 描述\n`;
+  (form.elements.namedItem("yaml") as HTMLTextAreaElement).value =
+    props.yaml ?? `title: 标题\ndescription: 描述\n`;
   const errEl = form.querySelector(".cherry-dialog-yaml-error") as HTMLElement;
-  form.querySelector('[data-action="cancel"]')?.addEventListener("click", () => callbacks.onCancel());
+  form
+    .querySelector('[data-action="cancel"]')
+    ?.addEventListener("click", () => callbacks.onCancel());
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const yaml = String(new FormData(form).get("yaml") ?? "").trim();

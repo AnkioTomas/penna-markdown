@@ -1,4 +1,7 @@
-import type { CodeBlockDialogResult, CodeBlockVariant } from "@/editor/commands/types.js";
+import type {
+  CodeBlockDialogResult,
+  CodeBlockVariant,
+} from "@/editor/commands/types.js";
 
 const VARIANT_LABELS: Record<CodeBlockVariant, string> = {
   basic: "基础围栏",
@@ -10,7 +13,10 @@ const VARIANT_LABELS: Record<CodeBlockVariant, string> = {
 export function renderCodeBlockDialog(
   host: HTMLElement,
   props: { variant?: CodeBlockVariant; code?: string },
-  callbacks: { onSubmit: (d: CodeBlockDialogResult) => void; onCancel: () => void },
+  callbacks: {
+    onSubmit: (d: CodeBlockDialogResult) => void;
+    onCancel: () => void;
+  },
 ): () => void {
   const variant = props.variant ?? "basic";
   const form = document.createElement("form");
@@ -29,14 +35,22 @@ export function renderCodeBlockDialog(
     </div>
   `;
 
-  const titleField = form.querySelector(".cherry-dialog-field--title") as HTMLElement;
-  const highlightField = form.querySelector(".cherry-dialog-field--highlight") as HTMLElement;
+  const titleField = form.querySelector(
+    ".cherry-dialog-field--title",
+  ) as HTMLElement;
+  const highlightField = form.querySelector(
+    ".cherry-dialog-field--highlight",
+  ) as HTMLElement;
   if (props.code) {
-    (form.elements.namedItem("code") as HTMLTextAreaElement).value = String(props.code);
+    (form.elements.namedItem("code") as HTMLTextAreaElement).value = String(
+      props.code,
+    );
   }
   titleField.hidden = variant !== "title";
   highlightField.hidden = variant !== "highlight";
-  form.querySelector('[data-action="cancel"]')?.addEventListener("click", () => callbacks.onCancel());
+  form
+    .querySelector('[data-action="cancel"]')
+    ?.addEventListener("click", () => callbacks.onCancel());
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const fd = new FormData(form);
@@ -48,7 +62,8 @@ export function renderCodeBlockDialog(
       lang,
       code,
       title: String(fd.get("title") ?? "").trim() || undefined,
-      highlightLines: String(fd.get("highlightLines") ?? "").trim() || undefined,
+      highlightLines:
+        String(fd.get("highlightLines") ?? "").trim() || undefined,
     });
   });
   host.appendChild(form);

@@ -47,7 +47,9 @@ class InlineCommentParser extends BaseInlineParser {
     const matchLength = closeIndex - index;
 
     return {
-      node: createNode(this.type, matchLength, undefined, undefined, { content }),
+      node: createNode(this.type, matchLength, undefined, undefined, {
+        content,
+      }),
       nextIndex: closeIndex,
     };
   }

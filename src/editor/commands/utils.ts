@@ -77,7 +77,7 @@ export function insertBlock(
 ): void {
   const { from, to, empty } = view.state.selection.main;
   const line = view.state.doc.lineAt(from);
-  
+
   let prefix = "";
   let insertAt = from;
   let replaceTo = to;
@@ -104,7 +104,7 @@ export function insertBlock(
     selection: empty
       ? EditorSelection.range(
           insertAt + prefix.length + before.length + 1,
-          insertAt + prefix.length + before.length + 1 + content.length
+          insertAt + prefix.length + before.length + 1 + content.length,
         )
       : undefined,
     scrollIntoView: true,
@@ -140,7 +140,11 @@ export function wrapSelection(
   });
 }
 
-export function replaceLineText(view: EditorView, line: LineInfo, newText: string): void {
+export function replaceLineText(
+  view: EditorView,
+  line: LineInfo,
+  newText: string,
+): void {
   view.dispatch({
     changes: { from: line.from, to: line.to, insert: newText },
     scrollIntoView: true,

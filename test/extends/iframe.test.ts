@@ -5,21 +5,26 @@ describe("extends/iframe", () => {
   const engine = () => createEngine();
 
   it("renders !iframe[title](url) as styled embed", () => {
-    const html = renderMarkdown(engine(), "!iframe[演示](https://example.com)\n");
+    const html = renderMarkdown(
+      engine(),
+      "!iframe[演示](https://example.com)\n",
+    );
     expect(html).toBe(
       '<figure class="cherry-media cherry-iframe"><div class="cherry-iframe__frame"><iframe src="https://example.com" title="演示" loading="lazy" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe></div><figcaption class="cherry-media__caption">演示</figcaption></figure>\n',
     );
   });
 
   it("supports link title attribute", () => {
-    const html = renderMarkdown(engine(),
+    const html = renderMarkdown(
+      engine(),
       '!iframe[演示](https://example.com "页面说明")\n',
     );
     expect(html).toContain('title="页面说明"');
   });
 
   it("supports query strings in url", () => {
-    const html = renderMarkdown(engine(),
+    const html = renderMarkdown(
+      engine(),
       "!iframe[演示](https://example.com/path?q=1&x=2)\n",
     );
     expect(html).toContain('src="https://example.com/path?q=1&amp;x=2"');
@@ -27,12 +32,16 @@ describe("extends/iframe", () => {
   });
 
   it("supports indented iframe line", () => {
-    const html = renderMarkdown(engine(), "  !iframe[演示](https://example.com)\n");
+    const html = renderMarkdown(
+      engine(),
+      "  !iframe[演示](https://example.com)\n",
+    );
     expect(html).toContain('src="https://example.com"');
   });
 
   it("does not treat inline !iframe as block embed", () => {
-    const html = renderMarkdown(engine(),
+    const html = renderMarkdown(
+      engine(),
       "see !iframe[演示](https://example.com) here\n",
     );
     expect(html).not.toContain("<iframe");

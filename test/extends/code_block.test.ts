@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, createEnhancedEngine, renderMarkdown } from "../helpers/engine.js";
+import {
+  createEngine,
+  createEnhancedEngine,
+  renderMarkdown,
+} from "../helpers/engine.js";
 import { buildEchartsImageSrc } from "@/transformer/extends/block/specialCode.js";
 
 const ECHARTS_OPTIONS = '{"series":[{"type":"bar"}]}';
@@ -15,9 +19,11 @@ describe("extends/code_block", () => {
     expect(html).toContain('class="cherry-code-block__header"');
     expect(html).toContain('class="cherry-code-block__meta"');
     expect(html).toContain('class="cherry-code-block__lang">json</span>');
-    expect(html).toContain('class="cherry-code-block__title">package.json</span>');
+    expect(html).toContain(
+      'class="cherry-code-block__title">package.json</span>',
+    );
     expect(html).toContain('class="cherry-copy-code-button"');
-    expect(html).toContain('data-cherry-code');
+    expect(html).toContain("data-cherry-code");
     expect(html).not.toContain("code-block-title-bar");
     expect(html).toContain("{&quot;name&quot;:&quot;plume&quot;}");
   });
@@ -37,7 +43,10 @@ describe("extends/code_block", () => {
   });
 
   it("parses single-quoted and unquoted title", () => {
-    const quoted = renderMarkdown(engine(), "```bash title='run.sh'\necho hi\n```");
+    const quoted = renderMarkdown(
+      engine(),
+      "```bash title='run.sh'\necho hi\n```",
+    );
     expect(quoted).toContain('data-title="run.sh"');
     expect(quoted).toContain('class="cherry-code-block__title">run.sh</span>');
 
@@ -46,7 +55,7 @@ describe("extends/code_block", () => {
   });
 
   it("still renders echarts via specialCode when enhanced code enabled", () => {
-    const md = "```echarts\n{\"series\":[{\"type\":\"bar\"}]}\n```";
+    const md = '```echarts\n{"series":[{"type":"bar"}]}\n```';
     const html = renderMarkdown(engine(), md);
     expect(html).toContain('<div data-type="echarts"');
     expect(html).toContain(buildEchartsImageSrc(ECHARTS_OPTIONS));
@@ -61,7 +70,10 @@ describe("extends/code_block", () => {
   });
 
   it("ignores max-width on enhanced code blocks", () => {
-    const html = renderMarkdown(engine(), "```js max-width=720\nconst a = 1;\n```");
+    const html = renderMarkdown(
+      engine(),
+      "```js max-width=720\nconst a = 1;\n```",
+    );
     expect(html).toContain('class="cherry-code-block"');
     expect(html).not.toContain('style="max-width:720px"');
   });
@@ -73,7 +85,7 @@ describe("extends/code_block", () => {
   });
 
   it("applies max-width on echarts blocks", () => {
-    const md = "```echarts max-width=50%\n{\"series\":[{\"type\":\"bar\"}]}\n```";
+    const md = '```echarts max-width=50%\n{"series":[{"type":"bar"}]}\n```';
     const html = renderMarkdown(engine(), md);
     expect(html).toContain('style="max-width:50%"');
   });

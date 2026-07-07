@@ -21,7 +21,10 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {
+  createNode,
+  type MarkdownNode,
+} from "@/transformer/core/MarkdownNode.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
@@ -138,7 +141,8 @@ class StepsBlockParser extends BaseBlockParser {
     if (steps.length === 0) return "";
 
     const items = steps.map((step) => {
-      const titleNodes = (step.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
+      const titleNodes =
+        (step.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
       const titleHtml = titleNodes.length
         ? `<p>${ctx.renderInline(titleNodes)}</p>`
         : "";

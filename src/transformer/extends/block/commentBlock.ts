@@ -71,7 +71,11 @@ class CommentBlockParser extends BaseBlockParser {
 
     // 如果未闭合，整个剩余部分都作为注释
     return {
-      node: createNode(this.type, lines.length - index, contentLines.join("\n")),
+      node: createNode(
+        this.type,
+        lines.length - index,
+        contentLines.join("\n"),
+      ),
       nextIndex: lines.length,
     };
   }

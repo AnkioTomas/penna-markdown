@@ -31,8 +31,13 @@
     }
 
     &:hover {
-      border-color: color-mix(in srgb, var(--cherry-c-brand-2) 60%, transparent);
-      box-shadow: 0 rem(4) rem(12) color-mix(in srgb, var(--cherry-c-text-1) 8%, transparent);
+      border-color: color-mix(
+        in srgb,
+        var(--cherry-c-brand-2) 60%,
+        transparent
+      );
+      box-shadow: 0 rem(4) rem(12)
+        color-mix(in srgb, var(--cherry-c-text-1) 8%, transparent);
 
       &::after {
         transform: translateY(-50%) translateX(rem(2));
@@ -57,7 +62,11 @@
       height: rem(40);
       border-radius: rem(8);
       object-fit: cover;
-      background: color-mix(in srgb, var(--cherry-c-text-3) 10%, var(--cherry-c-bg-elevated));
+      background: color-mix(
+        in srgb,
+        var(--cherry-c-text-3) 10%,
+        var(--cherry-c-bg-elevated)
+      );
     }
 
     &__main {

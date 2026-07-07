@@ -206,7 +206,8 @@ function resolveAnchors(
 
   return {
     prevHash: prevIdx >= 0 ? spans[prevIdx]!.hash : "",
-    nextHash: nextIdx >= 0 && nextIdx < spans.length ? spans[nextIdx]!.hash : "",
+    nextHash:
+      nextIdx >= 0 && nextIdx < spans.length ? spans[nextIdx]!.hash : "",
   };
 }
 
@@ -226,19 +227,17 @@ function sliceBounds(
   changes: CherryChangeLineSet[],
   newLineCount: number,
 ): { sliceStart: number; sliceEnd: number } {
-  const prevIdx = prevHash
-    ? spans.findIndex((s) => s.hash === prevHash)
-    : -1;
-  const nextIdx = nextHash
-    ? spans.findIndex((s) => s.hash === nextHash)
-    : -1;
+  const prevIdx = prevHash ? spans.findIndex((s) => s.hash === prevHash) : -1;
+  const nextIdx = nextHash ? spans.findIndex((s) => s.hash === nextHash) : -1;
 
-  const sliceStart = prevIdx >= 0
-    ? mapOldLineToNew(changes, spans[prevIdx]!.endLine + 1) - 1
-    : 0;
-  const sliceEnd = nextIdx >= 0
-    ? mapOldLineToNew(changes, spans[nextIdx]!.startLine + 1) - 1
-    : newLineCount;
+  const sliceStart =
+    prevIdx >= 0
+      ? mapOldLineToNew(changes, spans[prevIdx]!.endLine + 1) - 1
+      : 0;
+  const sliceEnd =
+    nextIdx >= 0
+      ? mapOldLineToNew(changes, spans[nextIdx]!.startLine + 1) - 1
+      : newLineCount;
 
   return { sliceStart, sliceEnd };
 }
@@ -262,7 +261,11 @@ function resolveHashBoundaryInternal(
   if (!rawDirty) return undefined;
 
   const spans = astBlockSpans(prevAst);
-  const expandedOld = expandDirtyToBlockBounds(spans, rawDirty.startLine, rawDirty.endLine);
+  const expandedOld = expandDirtyToBlockBounds(
+    spans,
+    rawDirty.startLine,
+    rawDirty.endLine,
+  );
 
   const dirtyNew = {
     startLine: mapOldLineToNew(changes, expandedOld.startLine + 1) - 1,
@@ -276,9 +279,10 @@ function resolveHashBoundaryInternal(
   if (frontmatterEdited) {
     const nextSpanIdx = spans.findIndex((s) => s.startLine >= fmEndPrev);
     const nextHash = nextSpanIdx >= 0 ? spans[nextSpanIdx]!.hash : "";
-    const sliceEnd = nextSpanIdx >= 0
-      ? mapOldLineToNew(changes, spans[nextSpanIdx]!.startLine + 1) - 1
-      : fmEndNew;
+    const sliceEnd =
+      nextSpanIdx >= 0
+        ? mapOldLineToNew(changes, spans[nextSpanIdx]!.startLine + 1) - 1
+        : fmEndNew;
     const slice = newLines.slice(0, Math.max(sliceEnd + 1, fmEndNew));
 
     return {
@@ -292,7 +296,11 @@ function resolveHashBoundaryInternal(
     };
   }
 
-  const affected = findAffectedSpanRange(spans, expandedOld.startLine, expandedOld.endLine);
+  const affected = findAffectedSpanRange(
+    spans,
+    expandedOld.startLine,
+    expandedOld.endLine,
+  );
   const { prevHash, nextHash } = resolveAnchors(spans, expandedOld, affected);
   const { sliceStart, sliceEnd } = sliceBounds(
     spans,
@@ -331,8 +339,15 @@ export function parseWithHashBoundary(
   newLines: string[],
   changes: CherryChangeLineSet[],
   transformer: TransformerEngine,
-): { result: IncrementalParseResult; resolve: HashBoundaryResolveResult } | undefined {
-  const resolved = resolveHashBoundaryInternal(prevAst, prevLines, newLines, changes);
+):
+  | { result: IncrementalParseResult; resolve: HashBoundaryResolveResult }
+  | undefined {
+  const resolved = resolveHashBoundaryInternal(
+    prevAst,
+    prevLines,
+    newLines,
+    changes,
+  );
   if (!resolved) return undefined;
 
   const parseResult = transformer.parseIncremental(

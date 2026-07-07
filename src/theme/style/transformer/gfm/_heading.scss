@@ -17,14 +17,16 @@
     margin-top: rem(32);
     font-size: rem(32);
     padding-bottom: rem(9.6);
-    border-bottom: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
+    border-bottom: rem(1) solid
+      color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
   }
 
   h2 {
     margin-top: rem(28);
     font-size: rem(24);
     padding-bottom: rem(6);
-    border-bottom: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 25%, transparent);
+    border-bottom: rem(1) solid
+      color-mix(in srgb, var(--cherry-c-text-3) 25%, transparent);
   }
 
   h3 {

@@ -5,12 +5,7 @@
 
 import { escapeHtml, htmlAttr } from "@/transformer/utils/escape.js";
 
-const BLOCKED_SCHEMES = new Set([
-  "javascript",
-  "data",
-  "vbscript",
-  "file",
-]);
+const BLOCKED_SCHEMES = new Set(["javascript", "data", "vbscript", "file"]);
 
 /**
  * 判断 URL 是否可安全用于 href / src / poster。
@@ -38,7 +33,11 @@ export function isHttpUrl(url: string): boolean {
 }
 
 /** 渲染安全 `<a>`；不安全 href 时仅输出 inner。 */
-export function renderSafeAnchor(href: string, inner: string, title = ""): string {
+export function renderSafeAnchor(
+  href: string,
+  inner: string,
+  title = "",
+): string {
   if (!isSafeUrl(href)) return inner;
   return `<a href="${escapeHtml(href)}"${htmlAttr("title", title)}>${inner}</a>`;
 }

@@ -2,7 +2,8 @@
 
 @mixin styles {
   .cherry-repo-card {
-    border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 24%, transparent);
+    border: rem(1) solid
+      color-mix(in srgb, var(--cherry-c-text-3) 24%, transparent);
     border-radius: rem(8);
     padding: rem(16);
     margin: rem(16) 0;
@@ -44,7 +45,8 @@
 
     &__visibility {
       padding: rem(2) rem(8);
-      border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 30%, transparent);
+      border: rem(1) solid
+        color-mix(in srgb, var(--cherry-c-text-3) 30%, transparent);
       border-radius: rem(999);
       font-size: rem(12);
       font-weight: 500;
@@ -71,7 +73,8 @@
       gap: rem(8);
       margin-top: rem(4);
       padding-top: rem(12);
-      border-top: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 16%, transparent);
+      border-top: rem(1) solid
+        color-mix(in srgb, var(--cherry-c-text-3) 16%, transparent);
     }
 
     &__shield {

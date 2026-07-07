@@ -28,7 +28,11 @@ class IndentedCodeBlockParser extends BaseBlockParser {
     if (!isIndentedCodeLine(line) || isBlankString(line)) return false;
 
     const prev = lines[index - 1] ?? "";
-    if (index > 0 && !isBlankString(prev) && !ctx.canStrongBreak(lines, index - 1)) {
+    if (
+      index > 0 &&
+      !isBlankString(prev) &&
+      !ctx.canStrongBreak(lines, index - 1)
+    ) {
       return false;
     }
     return true;
@@ -57,7 +61,11 @@ class IndentedCodeBlockParser extends BaseBlockParser {
           pending -= 1;
         }
 
-        contentLines.push(isBlankString(line) ? stripVisualIndent(line) : stripCodeContent(line));
+        contentLines.push(
+          isBlankString(line)
+            ? stripVisualIndent(line)
+            : stripCodeContent(line),
+        );
         i += 1;
         continue;
       }

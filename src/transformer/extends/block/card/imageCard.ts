@@ -4,7 +4,10 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {
+  createNode,
+  type MarkdownNode,
+} from "@/transformer/core/MarkdownNode.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
@@ -29,7 +32,11 @@ function renderCopyright(author: string, date: string): string {
   return `<p class="cherry-image-card__copyright">${parts.join("")}</p>`;
 }
 
-function renderTitle(titleNodes: MarkdownNode[], href: string, ctx: RenderContext): string {
+function renderTitle(
+  titleNodes: MarkdownNode[],
+  href: string,
+  ctx: RenderContext,
+): string {
   if (!titleNodes?.length) return "";
   const html = ctx.renderInline(titleNodes);
   if (href) {
@@ -77,7 +84,8 @@ class ImageCardBlockParser extends BaseBlockParser {
           link: pickAttr(block.attrs, "link") || pickAttr(block.attrs, "href"),
           image: pickAttr(block.attrs, "image"),
           description:
-            pickAttr(block.attrs, "description") || pickAttr(block.attrs, "desc"),
+            pickAttr(block.attrs, "description") ||
+            pickAttr(block.attrs, "desc"),
           author: pickAttr(block.attrs, "author"),
           date: pickAttr(block.attrs, "date"),
         },
@@ -89,7 +97,8 @@ class ImageCardBlockParser extends BaseBlockParser {
   render(node: MarkdownNode, ctx: RenderContext) {
     const image = String(node.props?.image ?? "");
     const title = String(node.props?.title ?? "");
-    const titleNodes = (node.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
+    const titleNodes =
+      (node.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
     const link = String(node.props?.link ?? "");
     const author = String(node.props?.author ?? "");
     const date = String(node.props?.date ?? "");
@@ -110,7 +119,9 @@ class ImageCardBlockParser extends BaseBlockParser {
       `<div class="cherry-image-card"${this.sourceLineAttrs(node)}>`,
       `<div class="cherry-image-card__media">`,
       img,
-      infoParts.length ? `<div class="cherry-image-card__info">${infoParts.join("\n")}</div>` : "",
+      infoParts.length
+        ? `<div class="cherry-image-card__info">${infoParts.join("\n")}</div>`
+        : "",
       `</div>`,
       `</div>`,
     ]

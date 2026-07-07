@@ -26,12 +26,12 @@ parent: Cherry Markdown Next 设计文档
 
 参考实现：
 
-| 复杂度 | 参考文件 | 语法 |
-| --- | --- | --- |
-| 行内简单 | `transformer/extends/inline/highlight.ts` | `==text==` |
-| 行内+GFM 避让 | `transformer/extends/inline/badge.ts` | `[text]{.tip}` |
-| 块级容器 | `transformer/extends/block/alert.ts` | `> [!NOTE]` |
-| 块级围栏 | `transformer/extends/block/container.ts` | `::: tip` |
+| 复杂度        | 参考文件                                  | 语法           |
+| ------------- | ----------------------------------------- | -------------- |
+| 行内简单      | `transformer/extends/inline/highlight.ts` | `==text==`     |
+| 行内+GFM 避让 | `transformer/extends/inline/badge.ts`     | `[text]{.tip}` |
+| 块级容器      | `transformer/extends/block/alert.ts`      | `> [!NOTE]`    |
+| 块级围栏      | `transformer/extends/block/container.ts`  | `::: tip`      |
 
 ---
 
@@ -69,7 +69,9 @@ props.id = "{contentHash}_{random16}"
 启用条件：
 
 ```typescript
-renderOptions: { sourceLineMap: true }
+renderOptions: {
+  sourceLineMap: true;
+}
 ```
 
 ---
@@ -78,15 +80,15 @@ renderOptions: { sourceLineMap: true }
 
 Registry 按 **数字降序** 匹配。内置分层参考：
 
-| 区间 | 典型语法 |
-| --- | --- |
-| 900+ | `hr`, `strikethrough`, 特殊块 |
-| 800 | `table`, `break` |
-| 500–600 | `blockquote`, `entity` |
-| 400–430 | `code`, `html` 块 |
+| 区间    | 典型语法                               |
+| ------- | -------------------------------------- |
+| 900+    | `hr`, `strikethrough`, 特殊块          |
+| 800     | `table`, `break`                       |
+| 500–600 | `blockquote`, `entity`                 |
+| 400–430 | `code`, `html` 块                      |
 | 310–320 | `heading`, `list`, `emphasis`/`strong` |
-| 230 | `image`, `link`, frontmatter 变量 |
-| 0 | `text` / `paragraph` 兜底 |
+| 230     | `image`, `link`, frontmatter 变量      |
+| 0       | `text` / `paragraph` 兜底              |
 
 **规则**：
 
@@ -130,7 +132,12 @@ class MySpoilerInlineParser extends BaseInlineParser {
 
     const totalLength = closeIdx + open.length - index;
     return {
-      node: createNode(this.type, totalLength, undefined, ctx.parseInline(inner)),
+      node: createNode(
+        this.type,
+        totalLength,
+        undefined,
+        ctx.parseInline(inner),
+      ),
       nextIndex: index + totalLength,
     };
   }
@@ -157,7 +164,7 @@ import mySpoiler from "./inline/mySpoiler.js";
 
 export const extendInlineSyntax = {
   // ...existing
-  51: mySpoiler,  // 高于 text(0)，低于 highlight(49) 按需调整
+  51: mySpoiler, // 高于 text(0)，低于 highlight(49) 按需调整
 };
 ```
 
@@ -179,7 +186,9 @@ new Cherry(el, {
   background: var(--cherry-spoiler-bg, #333);
   color: transparent;
   border-radius: 2px;
-  &:hover { color: inherit; }
+  &:hover {
+    color: inherit;
+  }
 }
 ```
 
@@ -307,6 +316,7 @@ Cookbook 范围仅限 Transformer；CM 高亮为进阶话题。
 ## 测试清单
 
 ::: collapse accordion
+
 - Parse 正常路径
 
   输入样例 Markdown → `engine.parse` → 断言 AST `type` / `children` / `length`
@@ -326,7 +336,7 @@ Cookbook 范围仅限 Transformer；CM 高亮为进阶话题。
 - 与 GFM 不打架
 
   边界样例：链接、 emphasis、code span 与定界符相邻
-:::
+  :::
 
 ### Vitest 最小示例
 
@@ -378,12 +388,12 @@ describe("my_spoiler", () => {
 const cherry = new Cherry(el, { debug: true });
 ```
 
-| 现象 | 排查 |
-| --- | --- |
-| 预览不更新 | 看 `editor:change` 是否触发 |
-| 总全量渲染 | 看 `render:full` 的 failReason |
-| AST 不对 | `demo/modules/transformer` 或 `demo/modules/ast` 可视化 |
-| 样式缺失 | 是否加载 `cherry-render` / 主题 render CSS |
+| 现象       | 排查                                                    |
+| ---------- | ------------------------------------------------------- |
+| 预览不更新 | 看 `editor:change` 是否触发                             |
+| 总全量渲染 | 看 `render:full` 的 failReason                          |
+| AST 不对   | `demo/modules/transformer` 或 `demo/modules/ast` 可视化 |
+| 样式缺失   | 是否加载 `cherry-render` / 主题 render CSS              |
 
 ---
 

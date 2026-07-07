@@ -28,21 +28,57 @@ $claude-dark-text-soft: #c2c0b6;
 $claude-dark-muted: #9a9c92;
 
 $claude-light-semantics: (
-  note: (#5d7d9a, #a8d1ff),
-  tip: (#688a5d, #a2f584),
-  warning: (#ad7837, #ffe28a),
-  caution: (#b45f51, #ffa494),
-  danger: (#b45f51, #ffa494),
-  important: (#8b6f9d, #e3bdff),
+  note: (
+    #5d7d9a,
+    #a8d1ff,
+  ),
+  tip: (
+    #688a5d,
+    #a2f584,
+  ),
+  warning: (
+    #ad7837,
+    #ffe28a,
+  ),
+  caution: (
+    #b45f51,
+    #ffa494,
+  ),
+  danger: (
+    #b45f51,
+    #ffa494,
+  ),
+  important: (
+    #8b6f9d,
+    #e3bdff,
+  ),
 );
 
 $claude-dark-semantics: (
-  note: (#88a9c7, #66b5ff),
-  tip: (#91b685, #7bed55),
-  warning: (#d6a15e, #ffc954),
-  caution: (#d88678, #ff826e),
-  danger: (#d88678, #ff826e),
-  important: (#b69acd, #d59eff),
+  note: (
+    #88a9c7,
+    #66b5ff,
+  ),
+  tip: (
+    #91b685,
+    #7bed55,
+  ),
+  warning: (
+    #d6a15e,
+    #ffc954,
+  ),
+  caution: (
+    #d88678,
+    #ff826e,
+  ),
+  danger: (
+    #d88678,
+    #ff826e,
+  ),
+  important: (
+    #b69acd,
+    #d59eff,
+  ),
 );
 
 $claude-dark-mark-mix: 100%;
@@ -80,11 +116,14 @@ $claude-dark-mark-mix: 100%;
 }
 
 @mixin typography-tokens {
-  --claude-font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
+  --claude-font-serif:
+    "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
     "Times New Roman", serif;
-  --claude-font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+  --claude-font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial, sans-serif;
-  --claude-font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas,
+  --claude-font-mono:
+    ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", monospace;
   --claude-text-size: 0.9375rem;
   --claude-text-leading: 1.7;
@@ -102,16 +141,32 @@ $claude-dark-mark-mix: 100%;
 
     --cherry-c-#{$name}: #{$base-color};
     @if $is-dark {
-      --cherry-c-#{$name}-mark: color-mix(in srgb, #{$mark-color} #{$claude-dark-mark-mix}, #{$surface});
+      --cherry-c-#{$name}-mark: color-mix(
+        in srgb,
+        #{$mark-color} #{$claude-dark-mark-mix},
+        #{$surface}
+      );
     } @else {
       --cherry-c-#{$name}-mark: #{$mark-color};
     }
 
-    --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 16%, #{$contrast-color});
+    --cherry-c-#{$name}-on-bg: color-mix(
+      in srgb,
+      #{$base-color} 16%,
+      #{$contrast-color}
+    );
 
     --cherry-c-alert-#{$name}-text: #{$base-color};
-    --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
-    --cherry-c-alert-#{$name}-border: color-mix(in srgb, #{$base-color} #{$border-opacity}, transparent);
+    --cherry-c-alert-#{$name}-bg: color-mix(
+      in srgb,
+      #{$base-color} #{$bg-opacity},
+      transparent
+    );
+    --cherry-c-alert-#{$name}-border: color-mix(
+      in srgb,
+      #{$base-color} #{$border-opacity},
+      transparent
+    );
   }
 }
 
@@ -174,8 +229,16 @@ $claude-dark-mark-mix: 100%;
 
   --cherry-c-brand-mark: #{$claude-mark};
   --cherry-c-code-fg: #{$claude-code-light};
-  --cherry-c-border-soft: #{color-mix(in srgb, #{$claude-linen} 85%, transparent)};
-  --cherry-c-border-faint: #{color-mix(in srgb, #{$claude-linen} 55%, transparent)};
+  --cherry-c-border-soft: #{color-mix(
+      in srgb,
+      #{$claude-linen} 85%,
+      transparent
+    )};
+  --cherry-c-border-faint: #{color-mix(
+      in srgb,
+      #{$claude-linen} 55%,
+      transparent
+    )};
 
   --cherry-c-hljs-keyword: #8a2424;
   --cherry-c-hljs-string: #6b5a2d;
@@ -210,8 +273,16 @@ $claude-dark-mark-mix: 100%;
 
   --cherry-c-brand-mark: #{$claude-mark};
   --cherry-c-code-fg: #{$claude-code-dark};
-  --cherry-c-border-soft: #{color-mix(in srgb, #{$claude-linen} 24%, transparent)};
-  --cherry-c-border-faint: #{color-mix(in srgb, #{$claude-linen} 12%, transparent)};
+  --cherry-c-border-soft: #{color-mix(
+      in srgb,
+      #{$claude-linen} 24%,
+      transparent
+    )};
+  --cherry-c-border-faint: #{color-mix(
+      in srgb,
+      #{$claude-linen} 12%,
+      transparent
+    )};
 
   --cherry-c-hljs-keyword: #fe8181;
   --cherry-c-hljs-string: #d4b06d;

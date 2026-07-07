@@ -13,7 +13,10 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {
+  createNode,
+  type MarkdownNode,
+} from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
@@ -56,7 +59,9 @@ const THEME_TYPES = new Set([
   "info",
 ]);
 
-function parseOpenInfo(raw: string): { containerType: string; title: string } | null {
+function parseOpenInfo(
+  raw: string,
+): { containerType: string; title: string } | null {
   const trimmed = raw.trim();
   if (!trimmed) return null;
 
@@ -122,7 +127,9 @@ class ContainerBlockParser extends BaseBlockParser {
     const block = readContainerInnerLines(lines, index + 1);
     if (!block) return null;
 
-    const innerChildren = ctx.parseBlocks(normalizeInnerLines(block.innerLines));
+    const innerChildren = ctx.parseBlocks(
+      normalizeInnerLines(block.innerLines),
+    );
     const titleNodes = info.title ? ctx.parseInline(info.title) : [];
 
     const node = createNode(
@@ -143,7 +150,8 @@ class ContainerBlockParser extends BaseBlockParser {
   render(node: MarkdownNode, ctx: RenderContext) {
     const containerType = String(node.props?.containerType ?? "note");
     const title = String(node.props?.title ?? "");
-    const titleNodes = (node.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
+    const titleNodes =
+      (node.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
     const body = ctx.renderBlock(node.children ?? []);
 
     if (ALIGN_TYPES.has(containerType)) {
@@ -161,7 +169,9 @@ class ContainerBlockParser extends BaseBlockParser {
     }
 
     const themeType = THEME_TYPES.has(containerType) ? containerType : "note";
-    const parts = [`<div class="cherry-alert cherry-alert--${escapeHtml(themeType)}"${this.sourceLineAttrs(node)}>`];
+    const parts = [
+      `<div class="cherry-alert cherry-alert--${escapeHtml(themeType)}"${this.sourceLineAttrs(node)}>`,
+    ];
     if (title) {
       parts.push(
         `<p class="cherry-alert__title">${ctx.renderInline(titleNodes)}</p>`,

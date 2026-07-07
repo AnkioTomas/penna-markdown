@@ -4,7 +4,10 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {
+  createNode,
+  type MarkdownNode,
+} from "@/transformer/core/MarkdownNode.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
@@ -30,7 +33,10 @@ class LinkCardBlockParser extends BaseBlockParser {
     const block = readTripleColonBlock(lines, index, OPEN_RE);
     if (!block) return null;
 
-    const { title, titleNodes, link, icon } = parseLinkCardOpen(block.attrs, ctx);
+    const { title, titleNodes, link, icon } = parseLinkCardOpen(
+      block.attrs,
+      ctx,
+    );
     const children = ctx.parseBlocks(normalizeInnerLines(block.innerLines));
 
     return {
@@ -49,7 +55,8 @@ class LinkCardBlockParser extends BaseBlockParser {
     const link = String(node.props?.link ?? "");
     const icon = String(node.props?.icon ?? "");
     const title = String(node.props?.title ?? "");
-    const titleNodes = (node.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
+    const titleNodes =
+      (node.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
     const body = ctx.renderBlock(node.children ?? []);
     const href = link
       ? ` href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer"`
@@ -63,7 +70,9 @@ class LinkCardBlockParser extends BaseBlockParser {
       .filter(Boolean)
       .join(" ");
 
-    const parts = [`<a class="${cardClasses}"${href}${this.sourceLineAttrs(node)}>`];
+    const parts = [
+      `<a class="${cardClasses}"${href}${this.sourceLineAttrs(node)}>`,
+    ];
 
     if (icon) {
       parts.push(

@@ -6,7 +6,11 @@ export function alertBlock(kind: AlertKind, body = "提示内容"): string {
   return `> [!${kind}]\n> ${body}\n`;
 }
 
-export function containerBlock(type: string, title: string, body = "容器内容"): string {
+export function containerBlock(
+  type: string,
+  title: string,
+  body = "容器内容",
+): string {
   const head = title ? `::: ${type} ${title}` : `::: ${type}`;
   return `${head}\n${body}\n:::\n`;
 }
@@ -20,10 +24,7 @@ export function quadColonBlock(open: string, body: string, close = ""): string {
 }
 
 export const SNIPPETS = {
-  collapse: tripleColonBlock(
-    "collapse accordion",
-    "- 面板标题\n\n  面板内容",
-  ),
+  collapse: tripleColonBlock("collapse accordion", "- 面板标题\n\n  面板内容"),
   tabs: tripleColonBlock(
     "tabs",
     "@tab 标签 A\nTab A 内容\n@tab 标签 B\nTab B 内容",
@@ -66,19 +67,26 @@ export const SNIPPETS = {
   commentBlock: "%%%\n注释\n%%%\n",
   frontmatter: "---\ntitle: 标题\ndescription: 描述\n---\n\n",
   mermaid: "```mermaid\nflowchart LR\n  A[开始] --> B[结束]\n```\n",
-  mermaidFlowchart: "```mermaid\nflowchart TD\n  A[开始] --> B{判断}\n  B -->|是| C[结束]\n```\n",
-  mermaidSequence: "```mermaid\nsequenceDiagram\n  participant A as 用户\n  participant B as 系统\n  A->>B: 请求\n  B-->>A: 响应\n```\n",
-  mermaidClass: "```mermaid\nclassDiagram\n  Animal <|-- Duck\n  Animal : +int age\n```\n",
-  mermaidState: "```mermaid\nstateDiagram-v2\n  [*] --> Still\n  Still --> Moving\n```\n",
-  mermaidPie: "```mermaid\npie title 占比\n  \"A\" : 45\n  \"B\" : 30\n  \"C\" : 25\n```\n",
-  mermaidGantt: "```mermaid\ngantt\n  title 计划\n  section 阶段\n  任务A :a1, 2024-01-01, 7d\n```\n",
+  mermaidFlowchart:
+    "```mermaid\nflowchart TD\n  A[开始] --> B{判断}\n  B -->|是| C[结束]\n```\n",
+  mermaidSequence:
+    "```mermaid\nsequenceDiagram\n  participant A as 用户\n  participant B as 系统\n  A->>B: 请求\n  B-->>A: 响应\n```\n",
+  mermaidClass:
+    "```mermaid\nclassDiagram\n  Animal <|-- Duck\n  Animal : +int age\n```\n",
+  mermaidState:
+    "```mermaid\nstateDiagram-v2\n  [*] --> Still\n  Still --> Moving\n```\n",
+  mermaidPie:
+    '```mermaid\npie title 占比\n  "A" : 45\n  "B" : 30\n  "C" : 25\n```\n',
+  mermaidGantt:
+    "```mermaid\ngantt\n  title 计划\n  section 阶段\n  任务A :a1, 2024-01-01, 7d\n```\n",
   echarts:
     '```echarts\n{\n  "xAxis": { "type": "category", "data": ["A", "B", "C"] },\n  "yAxis": { "type": "value" },\n  "series": [{ "type": "bar", "data": [12, 20, 15] }]\n}\n```\n',
   echartsLine:
     '```echarts\n{\n  "xAxis": { "type": "category", "data": ["一", "二", "三"] },\n  "yAxis": { "type": "value" },\n  "series": [{ "type": "line", "data": [12, 18, 9] }]\n}\n```\n',
   echartsPie:
     '```echarts\n{\n  "series": [{ "type": "pie", "radius": "60%", "data": [{ "value": 40, "name": "A" }, { "value": 32, "name": "B" }] }]\n}\n```\n',
-  enhancedCode: '```javascript title="example.js"\nconsole.log("hello");\n```\n',
+  enhancedCode:
+    '```javascript title="example.js"\nconsole.log("hello");\n```\n',
   video: "!video[视频标题](https://example.com/video.mp4)\n",
   audio: "!audio[音频标题](https://example.com/audio.mp3)\n",
   iframe: "!iframe[嵌入标题](https://example.com)\n",

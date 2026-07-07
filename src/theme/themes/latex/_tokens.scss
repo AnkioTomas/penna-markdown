@@ -23,21 +23,57 @@ $latex-dark-hr: #888888;
 $latex-dark-code-block-bg: #1f1e1e;
 
 $latex-light-semantics: (
-  note: (#2e67d3, #add8e6),
-  tip: (#3a6b4a, #98fb98),
-  warning: (#8a6b3a, #ffea7f),
-  caution: (#a84832, #ffb3b3),
-  danger: (#a84832, #ff9999),
-  important: (#5a4a72, #e6ccff),
+  note: (
+    #2e67d3,
+    #add8e6,
+  ),
+  tip: (
+    #3a6b4a,
+    #98fb98,
+  ),
+  warning: (
+    #8a6b3a,
+    #ffea7f,
+  ),
+  caution: (
+    #a84832,
+    #ffb3b3,
+  ),
+  danger: (
+    #a84832,
+    #ff9999,
+  ),
+  important: (
+    #5a4a72,
+    #e6ccff,
+  ),
 );
 
 $latex-dark-semantics: (
-  note: (#8bb1f9, #58a6ff),
-  tip: (#8fa896, #3fb950),
-  warning: (#d4a15e, #d29922),
-  caution: (#e89888, #f85149),
-  danger: (#e89888, #f85149),
-  important: (#b69acd, #bc8cff),
+  note: (
+    #8bb1f9,
+    #58a6ff,
+  ),
+  tip: (
+    #8fa896,
+    #3fb950,
+  ),
+  warning: (
+    #d4a15e,
+    #d29922,
+  ),
+  caution: (
+    #e89888,
+    #f85149,
+  ),
+  danger: (
+    #e89888,
+    #f85149,
+  ),
+  important: (
+    #b69acd,
+    #bc8cff,
+  ),
 );
 
 $latex-dark-mark-mix: 65%;
@@ -91,13 +127,18 @@ $latex-dark-mark-mix: 65%;
 }
 
 @mixin typography-tokens {
-  --latex-font-serif: "Latin Modern Roman", "Latin Modern Roman 10", "Times New Roman", "Noto Serif CJK SC",
-    "Songti SC", "STSong", "SimSun", serif;
-  --latex-font-heiti: "STHeiti", "SimHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  --latex-font-serif:
+    "Latin Modern Roman", "Latin Modern Roman 10", "Times New Roman",
+    "Noto Serif CJK SC", "Songti SC", "STSong", "SimSun", serif;
+  --latex-font-heiti:
+    "STHeiti", "SimHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
   --latex-font-kai: "STKaiti", "KaiTi", "FZDocKai", "Noto Serif CJK SC", serif;
   --latex-font-fangsong: "STFangsong", "FangSong", "Noto Serif CJK SC", serif;
-  --latex-font-mono: "Latin Modern Mono", "Latin Modern Mono 10", Consolas, "Courier New", monospace;
-  --latex-font-ui: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --latex-font-mono:
+    "Latin Modern Mono", "Latin Modern Mono 10", Consolas, "Courier New",
+    monospace;
+  --latex-font-ui:
+    "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
 
   --latex-text-size: 9.5pt;
   --latex-text-leading: 1.618em;
@@ -116,16 +157,32 @@ $latex-dark-mark-mix: 65%;
 
     --cherry-c-#{$name}: #{$base-color};
     @if $is-dark {
-      --cherry-c-#{$name}-mark: color-mix(in srgb, #{$mark-color} #{$latex-dark-mark-mix}, #{$surface});
+      --cherry-c-#{$name}-mark: color-mix(
+        in srgb,
+        #{$mark-color} #{$latex-dark-mark-mix},
+        #{$surface}
+      );
     } @else {
       --cherry-c-#{$name}-mark: #{$mark-color};
     }
 
-    --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 16%, #{$contrast-color});
+    --cherry-c-#{$name}-on-bg: color-mix(
+      in srgb,
+      #{$base-color} 16%,
+      #{$contrast-color}
+    );
 
     --cherry-c-alert-#{$name}-text: #{$base-color};
-    --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
-    --cherry-c-alert-#{$name}-border: color-mix(in srgb, #{$base-color} #{$border-opacity}, transparent);
+    --cherry-c-alert-#{$name}-bg: color-mix(
+      in srgb,
+      #{$base-color} #{$bg-opacity},
+      transparent
+    );
+    --cherry-c-alert-#{$name}-border: color-mix(
+      in srgb,
+      #{$base-color} #{$border-opacity},
+      transparent
+    );
   }
 }
 
@@ -225,10 +282,18 @@ $latex-dark-mark-mix: 65%;
   --cherry-c-contrast-light: #fff;
   --cherry-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: color-mix(in srgb, #ffea7f #{$latex-dark-mark-mix}, #{$latex-dark-bg});
+  --cherry-c-brand-mark: color-mix(
+    in srgb,
+    #ffea7f #{$latex-dark-mark-mix},
+    #{$latex-dark-bg}
+  );
   --cherry-c-code-fg: #{$latex-dark-code-inline-fg};
   --cherry-c-border-soft: #{$latex-dark-hr};
-  --cherry-c-border-faint: #{color-mix(in srgb, #{$latex-dark-hr} 55%, transparent)};
+  --cherry-c-border-faint: #{color-mix(
+      in srgb,
+      #{$latex-dark-hr} 55%,
+      transparent
+    )};
 
   --latex-code-inline-shadow: #{$latex-dark-code-inline-shadow};
 

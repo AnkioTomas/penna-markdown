@@ -23,11 +23,17 @@ describe("Strong Emphasis (Stack Approach)", () => {
     const html = renderMarkdown(transformer, "**bold __italic__**");
     expect(html).toBe("<p><strong>bold <strong>italic</strong></strong></p>\n");
   });
-  
+
   it("empty strong should not match", () => {
-    const html = renderMarkdown(transformer, "**** is not an empty strong emphasis");
+    const html = renderMarkdown(
+      transformer,
+      "**** is not an empty strong emphasis",
+    );
     expect(html).toBe("<p>**** is not an empty strong emphasis</p>\n");
-    const html2 = renderMarkdown(transformer, "____ is not an empty strong emphasis");
+    const html2 = renderMarkdown(
+      transformer,
+      "____ is not an empty strong emphasis",
+    );
     expect(html2).toBe("<p>____ is not an empty strong emphasis</p>\n");
   });
 });

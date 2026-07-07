@@ -16,9 +16,7 @@ describe("extends/supsub", () => {
 
   it("renders mixed sup and sub like cherry example", () => {
     const html = renderMarkdown(engine(), "大头 ^儿子^ 和小头 ~爸爸~");
-    expect(html).toBe(
-      "<p>大头 <sup>儿子</sup> 和小头 <sub>爸爸</sub></p>\n",
-    );
+    expect(html).toBe("<p>大头 <sup>儿子</sup> 和小头 <sub>爸爸</sub></p>\n");
   });
 
   it("does not conflict with strikethrough", () => {

@@ -36,18 +36,13 @@ export class Toolbar {
     };
 
     const grouped = resolveToolbarGroups(options);
-    const layoutGroup = grouped[grouped.length - 1];
-    const layoutItem =
-      layoutGroup?.items.length === 1 && layoutGroup.items[0]?.type === "layout"
-        ? layoutGroup.items[0]
-        : undefined;
-    const groups = (layoutItem ? grouped.slice(0, -1) : grouped).map((g) => g.items);
+    const groups = grouped.map((g) => g.items);
 
     this.cleanup = renderToolbar(mount, {
       groups,
       ctx,
       layoutMode: this.layoutMode,
-      layoutItem,
+      showLayoutSwitcher: options.showLayoutSwitcher,
     });
 
     this.offs.push(

@@ -101,7 +101,11 @@
     blockquote {
       margin-top: rem(16);
       padding-right: 0;
-      background: color-mix(in srgb, var(--cherry-c-text-1) 4%, var(--notion-quote-bg));
+      background: color-mix(
+        in srgb,
+        var(--cherry-c-text-1) 4%,
+        var(--notion-quote-bg)
+      );
     }
   }
 
@@ -209,7 +213,11 @@
     --cb-code-bg: var(--cherry-c-code-block-code-bg);
     --cb-lang-fg: var(--cherry-c-text-2);
     --cb-lang-bg: transparent;
-    --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 10%, transparent);
+    --cb-line-highlight: color-mix(
+      in srgb,
+      var(--cherry-c-brand-1) 10%,
+      transparent
+    );
     margin: rem(15) 0;
     color: var(--notion-code-fg);
 

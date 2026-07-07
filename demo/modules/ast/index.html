@@ -29,7 +29,11 @@
     <div class="ast-layout">
       <section class="ast-panel">
         <div class="ast-panel-head">Markdown 输入</div>
-        <textarea id="markdown" class="ast-textarea" spellcheck="false"></textarea>
+        <textarea
+          id="markdown"
+          class="ast-textarea"
+          spellcheck="false"
+        ></textarea>
         <footer class="ast-panel-foot">
           <label class="ast-doc-switch">
             <span>文档</span>
@@ -47,13 +51,26 @@
           <span>语法树</span>
           <div class="ast-toolbar">
             <label class="ast-search">
-              <input id="type-filter" type="search" placeholder="筛选 type" autocomplete="off" />
+              <input
+                id="type-filter"
+                type="search"
+                placeholder="筛选 type"
+                autocomplete="off"
+              />
             </label>
             <div class="ast-btn-group" role="group" aria-label="展开深度">
-              <button id="expand-depth-1" class="ast-btn" type="button">1 层</button>
-              <button id="expand-depth-2" class="ast-btn active" type="button">2 层</button>
-              <button id="expand-all" class="ast-btn" type="button">全部</button>
-              <button id="collapse-all" class="ast-btn" type="button">折叠</button>
+              <button id="expand-depth-1" class="ast-btn" type="button">
+                1 层
+              </button>
+              <button id="expand-depth-2" class="ast-btn active" type="button">
+                2 层
+              </button>
+              <button id="expand-all" class="ast-btn" type="button">
+                全部
+              </button>
+              <button id="collapse-all" class="ast-btn" type="button">
+                折叠
+              </button>
             </div>
           </div>
         </div>
@@ -63,7 +80,9 @@
         <div class="ast-detail">
           <div class="ast-detail-head">
             <span>节点 JSON</span>
-            <button id="copy-detail" class="ast-btn ast-btn-sm" type="button">复制</button>
+            <button id="copy-detail" class="ast-btn ast-btn-sm" type="button">
+              复制
+            </button>
           </div>
           <pre id="node-detail" class="ast-detail-body"></pre>
         </div>

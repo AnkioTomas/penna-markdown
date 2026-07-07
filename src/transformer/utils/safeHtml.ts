@@ -21,7 +21,8 @@ const FORBIDDEN_TAGS = new Set([
   "textarea",
 ]);
 
-const EVENT_ATTR_RE = /\s+on[a-z0-9-]+\s*(?:=\s*(?:"[^"]*"|'[^']*'|[^\s/>]+))?/gi;
+const EVENT_ATTR_RE =
+  /\s+on[a-z0-9-]+\s*(?:=\s*(?:"[^"]*"|'[^']*'|[^\s/>]+))?/gi;
 
 const URL_ATTR_RE =
   /\s+(href|src|poster|xlink:href)\s*=\s*("([^"]*)"|'([^']*)'|([^\s>]+))/gi;
@@ -40,7 +41,9 @@ function sanitizeTag(match: string, body: string): string {
   if (!trimmed || trimmed.startsWith("!")) return "";
 
   const isClose = trimmed.startsWith("/");
-  const nameMatch = (isClose ? trimmed.slice(1) : trimmed).match(/^([a-z][\w-]*)/i);
+  const nameMatch = (isClose ? trimmed.slice(1) : trimmed).match(
+    /^([a-z][\w-]*)/i,
+  );
   const tagName = nameMatch?.[1] ?? "";
   const tagNameLower = tagName.toLowerCase();
   if (tagNameLower && FORBIDDEN_TAGS.has(tagNameLower)) return "";
@@ -50,10 +53,13 @@ function sanitizeTag(match: string, body: string): string {
   }
 
   let tagBody = body.replace(EVENT_ATTR_RE, "");
-  tagBody = tagBody.replace(URL_ATTR_RE, (segment, _attr, _quote, dq, sq, uq) => {
-    const raw = dq ?? sq ?? uq ?? "";
-    return isSafeUrl(raw) ? segment : "";
-  });
+  tagBody = tagBody.replace(
+    URL_ATTR_RE,
+    (segment, _attr, _quote, dq, sq, uq) => {
+      const raw = dq ?? sq ?? uq ?? "";
+      return isSafeUrl(raw) ? segment : "";
+    },
+  );
 
   return `<${tagBody}>`;
 }

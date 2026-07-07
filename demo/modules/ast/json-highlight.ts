@@ -15,16 +15,7 @@ export function highlightJson(data: unknown): string {
       /^(\s*)("(?:[^"\\]|\\.)*")(\s*:)/gm,
       '$1<span class="jk">$2</span>$3',
     )
-    .replace(
-      /(:\s*)("(?:[^"\\]|\\.)*")/g,
-      '$1<span class="js">$2</span>',
-    )
-    .replace(
-      /(:\s*)(-?\d+\.?\d*)/g,
-      '$1<span class="jn">$2</span>',
-    )
-    .replace(
-      /\b(true|false|null)\b/g,
-      '<span class="jl">$1</span>',
-    );
+    .replace(/(:\s*)("(?:[^"\\]|\\.)*")/g, '$1<span class="js">$2</span>')
+    .replace(/(:\s*)(-?\d+\.?\d*)/g, '$1<span class="jn">$2</span>')
+    .replace(/\b(true|false|null)\b/g, '<span class="jl">$1</span>');
 }

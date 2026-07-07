@@ -91,7 +91,9 @@ export class IncrementalSession {
    * @param mount 预览区挂载点
    */
   composeHtml(mount: HTMLElement): string {
-    const parts = [...mount.children].map((el) => (el as HTMLElement).outerHTML);
+    const parts = [...mount.children].map(
+      (el) => (el as HTMLElement).outerHTML,
+    );
     return parts.length > 0 ? `${parts.join("\n")}\n` : "";
   }
 
@@ -166,8 +168,8 @@ export class IncrementalSession {
 
     /** markdown 行级未变（如光标移动触发的 noop transaction）→ 跳过 parse/DOM */
     if (
-      newLines.length === this.lines.length
-      && newLines.every((line, i) => line === this.lines[i])
+      newLines.length === this.lines.length &&
+      newLines.every((line, i) => line === this.lines[i])
     ) {
       return {
         ok: true,
@@ -195,7 +197,8 @@ export class IncrementalSession {
         ast: prevAst,
         html: "",
         changedStartLines: [],
-        failReason: err instanceof Error ? err.message : "parse-incremental-failed",
+        failReason:
+          err instanceof Error ? err.message : "parse-incremental-failed",
       };
     }
 
@@ -211,8 +214,8 @@ export class IncrementalSession {
 
     const { resolve } = parsed;
 
-    console.log(resolve)
-    
+    console.log(resolve);
+
     // 如果没有找到任何前后锚点，说明整个文档都在脏区内，属于全文替换
     // 此时继续走增量解析没有意义，直接降级为全量渲染，确保 DOM 和 Store 状态彻底刷新
     if (!resolve.input.range.prevHash && !resolve.input.range.nextHash) {

@@ -14,16 +14,17 @@ import { isBlankString } from "@/transformer/utils/normalize";
 import { sanitizeRawHtml } from "@/transformer/utils/safeHtml.js";
 
 // --- 预编译正则：剥离了前导空格检测，只用来精确匹配 HTML 语法 ---
-const tagname = '[A-Za-z][A-Za-z0-9-]*';
-const attribute_name = '[a-zA-Z_:][a-zA-Z0-9_.:-]*';
-const attribute_value = '(?:[^"\'=<>` \\t\\r\\n]+|\'[^\']*\'|"[^"]*")';
+const tagname = "[A-Za-z][A-Za-z0-9-]*";
+const attribute_name = "[a-zA-Z_:][a-zA-Z0-9_.:-]*";
+const attribute_value = "(?:[^\"'=<>` \\t\\r\\n]+|'[^']*'|\"[^\"]*\")";
 const attribute = `(?:\\s+${attribute_name}(?:\\s*=\\s*${attribute_value})?)`;
 const open_tag = `<${tagname}${attribute}*\\s*/?>`;
 const close_tag = `</${tagname}\\s*>`;
 
 // Type 6 标签列表正则
-const TYPE_6_RE = /^<\/?(address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?:[\s\/>]+|$)/i;
-const TYPE_7_RE = new RegExp(`^(?:${open_tag}|${close_tag})\\s*$`, 'i');
+const TYPE_6_RE =
+  /^<\/?(address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?:[\s\/>]+|$)/i;
+const TYPE_7_RE = new RegExp(`^(?:${open_tag}|${close_tag})\\s*$`, "i");
 /**
  * 判断 HTML 块是否闭合
  */
@@ -31,17 +32,19 @@ function isHtmlBlockClosed(line: string, type: number): boolean {
   // Types 6 和 7 的闭合条件是遇到空行，不在这里判断
   if (type === 6 || type === 7) return false;
 
-  if (type === 2) return line.includes('-->');
-  if (type === 3) return line.includes('?>');
-  if (type === 4) return line.includes('>');
-  if (type === 5) return line.includes(']]>');
+  if (type === 2) return line.includes("-->");
+  if (type === 3) return line.includes("?>");
+  if (type === 4) return line.includes(">");
+  if (type === 5) return line.includes("]]>");
 
   if (type === 1) {
     const lower = line.toLowerCase();
-    return lower.includes('</script>') ||
-        lower.includes('</pre>') ||
-        lower.includes('</style>') ||
-        lower.includes('</textarea>');
+    return (
+      lower.includes("</script>") ||
+      lower.includes("</pre>") ||
+      lower.includes("</style>") ||
+      lower.includes("</textarea>")
+    );
   }
 
   return false;
@@ -51,7 +54,7 @@ function isHtmlBlockClosed(line: string, type: number): boolean {
  */
 function detectHtmlBlockType(line: string): number | null {
   const i = skipBlockPrefixSpaces(line);
-  if (i >= line.length || line[i] !== '<') return null;
+  if (i >= line.length || line[i] !== "<") return null;
 
   const rest = line.slice(i);
 
@@ -59,16 +62,16 @@ function detectHtmlBlockType(line: string): number | null {
   if (/^<(?:script|pre|style|textarea)(?:\s|>|$)/i.test(rest)) return 1;
 
   // Type 2: <!--
-  if (rest.startsWith('<!--')) return 2;
+  if (rest.startsWith("<!--")) return 2;
 
   // Type 3: <?
-  if (rest.startsWith('<?')) return 3;
+  if (rest.startsWith("<?")) return 3;
 
   // Type 4: <! + uppercase letter
   if (/^<![A-Z]/.test(rest)) return 4;
 
   // Type 5: <![CDATA[
-  if (rest.startsWith('<![CDATA[')) return 5;
+  if (rest.startsWith("<![CDATA[")) return 5;
 
   // Type 6: <address, <article, ...
   if (TYPE_6_RE.test(rest)) return 6;
@@ -134,7 +137,7 @@ class HTMLBlockParser extends BaseBlockParser {
     }
 
     const node = createNode("html_block", i - index, undefined, [], {
-      value: contentLines.join("\n")
+      value: contentLines.join("\n"),
     });
 
     return { node, nextIndex: i };
@@ -144,8 +147,10 @@ class HTMLBlockParser extends BaseBlockParser {
   render(node: MarkdownNode, ctx: RenderContext) {
     const html = sanitizeRawHtml((node.props?.value as string) || "");
 
-    return html.replace(/^<([a-zA-Z][\w-]*)/, `<$1${this.sourceLineAttrs(node)}`);
-
+    return html.replace(
+      /^<([a-zA-Z][\w-]*)/,
+      `<$1${this.sourceLineAttrs(node)}`,
+    );
   }
 }
 

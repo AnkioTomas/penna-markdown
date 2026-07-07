@@ -9,7 +9,7 @@ export interface ToolbarContext {
   onLayoutButton(mode: EditorLayoutMode, btn: HTMLButtonElement): void;
 }
 
-export type ToolbarItemType = "button" | "menu" | "separator" | "layout";
+export type ToolbarItemType = "button" | "menu" | "separator";
 
 export interface ToolbarItemBase {
   /** 全局唯一 id，用于排序与覆盖 */
@@ -45,12 +45,5 @@ export interface ToolbarSeparatorItem extends ToolbarItemBase {
   type: "separator";
 }
 
-export interface ToolbarLayoutItem extends ToolbarItemBase {
-  type: "layout";
-}
-
 export type ToolbarItem =
-  | ToolbarButtonItem
-  | ToolbarMenuItem
-  | ToolbarSeparatorItem
-  | ToolbarLayoutItem;
+  ToolbarButtonItem | ToolbarMenuItem | ToolbarSeparatorItem;

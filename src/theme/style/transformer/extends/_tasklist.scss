@@ -14,7 +14,11 @@
       &.cancelled {
         color: var(--cherry-c-text-3);
         text-decoration: line-through;
-        text-decoration-color: color-mix(in srgb, var(--cherry-c-text-3) 60%, transparent);
+        text-decoration-color: color-mix(
+          in srgb,
+          var(--cherry-c-text-3) 60%,
+          transparent
+        );
       }
 
       &.urgent {

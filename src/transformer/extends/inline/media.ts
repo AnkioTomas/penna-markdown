@@ -46,7 +46,10 @@ function isAllowedIframeUrl(url: string): boolean {
   return isAllowedMediaUrl(url);
 }
 
-function readPoster(src: string, start: number): { poster: string; nextIndex: number } {
+function readPoster(
+  src: string,
+  start: number,
+): { poster: string; nextIndex: number } {
   const match = src.slice(start).match(POSTER_RE);
   if (!match) return { poster: "", nextIndex: start };
   return {

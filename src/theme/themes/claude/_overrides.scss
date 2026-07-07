@@ -88,13 +88,21 @@
   a {
     color: var(--cherry-c-text-1);
     text-decoration: underline;
-    text-decoration-color: color-mix(in srgb, var(--cherry-c-text-1) 28%, transparent);
+    text-decoration-color: color-mix(
+      in srgb,
+      var(--cherry-c-text-1) 28%,
+      transparent
+    );
     text-underline-offset: rem(2);
     text-decoration-thickness: rem(1);
 
     &:hover {
       color: var(--cherry-c-brand-1);
-      text-decoration-color: color-mix(in srgb, var(--cherry-c-brand-1) 70%, transparent);
+      text-decoration-color: color-mix(
+        in srgb,
+        var(--cherry-c-brand-1) 70%,
+        transparent
+      );
     }
   }
 
@@ -206,7 +214,11 @@
     --cb-code-bg: var(--cherry-c-bg);
     --cb-lang-fg: var(--cherry-c-text-3);
     --cb-lang-bg: transparent;
-    --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 8%, transparent);
+    --cb-line-highlight: color-mix(
+      in srgb,
+      var(--cherry-c-brand-1) 8%,
+      transparent
+    );
     margin: 0 0 rem(14);
 
     &__panel {

@@ -4,7 +4,10 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {
+  createNode,
+  type MarkdownNode,
+} from "@/transformer/core/MarkdownNode.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
@@ -14,7 +17,9 @@ import { parseFieldDirectives } from "./shared.js";
 
 const OPEN_RE = /^ {0,3}:::(?!:)\s+field(?:\s+(\S+))?\s*$/;
 
-function resolveFieldStatus(props: Record<string, unknown>): "required" | "optional" | "deprecated" {
+function resolveFieldStatus(
+  props: Record<string, unknown>,
+): "required" | "optional" | "deprecated" {
   if (props.deprecated) return "deprecated";
   if (props.required) return "required";
   return "optional";

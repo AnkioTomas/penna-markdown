@@ -6,9 +6,15 @@
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext";
 import { escapeHtml } from "@/transformer/utils/escape.js";
-import { renderSafeAnchor, renderSafeImage } from "@/transformer/utils/safeUrl.js";
+import {
+  renderSafeAnchor,
+  renderSafeImage,
+} from "@/transformer/utils/safeUrl.js";
 import { unescapeHref } from "@/transformer/utils/linkDestination.js";
-import { findLinkLabelEnd, findLinkTextEnd } from "@/transformer/utils/linkLabel.js";
+import {
+  findLinkLabelEnd,
+  findLinkTextEnd,
+} from "@/transformer/utils/linkLabel.js";
 import { normalizeLinkRefLabel } from "@/transformer/utils/normalize.js";
 
 export interface ReferenceLinkCandidate {
@@ -73,7 +79,9 @@ export function renderReferenceLinkSpan(
   literalFallback: string,
 ): string {
   for (const c of candidates) {
-    const def = ctx.store.get<{ href: string; title: string }>("ref_" + c.refKey);
+    const def = ctx.store.get<{ href: string; title: string }>(
+      "ref_" + c.refKey,
+    );
     if (!def) continue;
     const inner = ctx.renderInline(c.children);
     const title = def.title || "";

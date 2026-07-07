@@ -47,23 +47,29 @@ console.log('Hello World!')
   });
 
   it("does not render as generic container", () => {
-    const html = renderMarkdown(engine(), `::: steps
+    const html = renderMarkdown(
+      engine(),
+      `::: steps
 
 1. 第一步
 
 内容
 
-:::`);
+:::`,
+    );
     expect(html).not.toContain("cherry-alert--note");
     expect(html).toContain("cherry-steps");
   });
 
   it("returns null for empty steps block", () => {
-    const html = renderMarkdown(engine(), `::: steps
+    const html = renderMarkdown(
+      engine(),
+      `::: steps
 
 没有有序列表
 
-:::`);
+:::`,
+    );
     expect(html).not.toContain("cherry-steps");
   });
 });

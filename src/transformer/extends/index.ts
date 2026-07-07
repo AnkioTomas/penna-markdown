@@ -6,7 +6,10 @@
  * 与 gfm/index.ts 结构一致；按扩展名启用子集见 registry.ts。
  */
 
-import type { BaseBlockParser, BaseInlineParser } from "@/transformer/core/ParserBase.js";
+import type {
+  BaseBlockParser,
+  BaseInlineParser,
+} from "@/transformer/core/ParserBase.js";
 
 import htmlAttrsInline from "@/transformer/extends/inline/html_attrs.js";
 import highlightInline from "@/transformer/extends/inline/highlight.js";
@@ -21,7 +24,10 @@ import mediaInline, {
 } from "@/transformer/extends/inline/media.js";
 import inlineComment from "@/transformer/extends/inline/comment.js";
 import badgeInline from "@/transformer/extends/inline/badge.js";
-import { subInlineParser, supInlineParser } from "@/transformer/extends/inline/supsub.js";
+import {
+  subInlineParser,
+  supInlineParser,
+} from "@/transformer/extends/inline/supsub.js";
 
 import alertBlock from "@/transformer/extends/block/alert.js";
 import taskListParser from "@/transformer/extends/block/taskList.js";
@@ -90,4 +96,3 @@ export const extendBlockSyntax: Record<number, BaseBlockParser> = {
   88: tabsBlock,
   82: fieldGroupBlockParser,
 };
-

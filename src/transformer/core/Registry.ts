@@ -3,9 +3,13 @@
  * @module transformer/core/Registry
  */
 
-import type { BaseBlockParser, BaseInlineParser, SyntaxOptions } from "./ParserBase.js";
+import type {
+  BaseBlockParser,
+  BaseInlineParser,
+  SyntaxOptions,
+} from "./ParserBase.js";
 import { gfmBlockSyntax, gfmInlineSyntax } from "@/transformer/gfm/index.js";
-import {extendBlockSyntax, extendInlineSyntax} from "@/transformer/extends";
+import { extendBlockSyntax, extendInlineSyntax } from "@/transformer/extends";
 
 type InlineEntry = { parser: BaseInlineParser; priority: number };
 type BlockEntry = { parser: BaseBlockParser; priority: number };

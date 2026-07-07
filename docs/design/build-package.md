@@ -25,12 +25,12 @@ pnpm demo           # 本地演示站点
 
 ## JS 产物
 
-| 文件 | 格式 | 说明 |
-| --- | --- | --- |
-| `dist/cherry.min.mjs` | ESM | 完整编辑器 |
-| `dist/cherry.min.cjs` | CJS | 同上 |
-| `dist/cherry.min.js` | IIFE | 全局 `CherryNextEditor` |
-| `dist/cherry-render.min.*` | 三种 | 渲染器，全局 `CherryNextRenderer` |
+| 文件                            | 格式 | 说明                                   |
+| ------------------------------- | ---- | -------------------------------------- |
+| `dist/cherry.min.mjs`           | ESM  | 完整编辑器                             |
+| `dist/cherry.min.cjs`           | CJS  | 同上                                   |
+| `dist/cherry.min.js`            | IIFE | 全局 `CherryNextEditor`                |
+| `dist/cherry-render.min.*`      | 三种 | 渲染器，全局 `CherryNextRenderer`      |
 | `dist/cherry-transformer.min.*` | 三种 | 解析引擎，全局 `CherryNextTransformer` |
 
 全部 **minify**，无 sourcemap（ deliberate 减小发布体积）。
@@ -39,12 +39,12 @@ pnpm demo           # 本地演示站点
 
 ## CSS 产物
 
-| 文件 | 用途 |
-| --- | --- |
-| `cherry-editor-base.min.css` | 编辑器布局、工具栏、对话框等 chrome |
-| `cherry-render.min.css` | 渲染内容区基础样式 |
-| `cherry-theme-{id}-editor.min.css` | 各主题编辑器皮肤 |
-| `cherry-theme-{id}-render.min.css` | 各主题渲染皮肤 |
+| 文件                               | 用途                                |
+| ---------------------------------- | ----------------------------------- |
+| `cherry-editor-base.min.css`       | 编辑器布局、工具栏、对话框等 chrome |
+| `cherry-render.min.css`            | 渲染内容区基础样式                  |
+| `cherry-theme-{id}-editor.min.css` | 各主题编辑器皮肤                    |
+| `cherry-theme-{id}-render.min.css` | 各主题渲染皮肤                      |
 
 主题 id 列表与 `ThemeRegister.ts` 一致。
 
@@ -78,8 +78,14 @@ import "cherry-markdown-next/cherry-theme-github-render.min.css";
 
 ```html
 <div id="editor"></div>
-<link rel="stylesheet" href="node_modules/cherry-markdown-next/dist/cherry-editor-base.min.css" />
-<link rel="stylesheet" href="node_modules/cherry-markdown-next/dist/cherry-theme-default-editor.min.css" />
+<link
+  rel="stylesheet"
+  href="node_modules/cherry-markdown-next/dist/cherry-editor-base.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="node_modules/cherry-markdown-next/dist/cherry-theme-default-editor.min.css"
+/>
 <script type="module">
   import { Cherry } from "cherry-markdown-next";
 
@@ -126,16 +132,16 @@ const ast = engine.parse(markdown);
 
 `demo/` 为 Vite 多页应用：
 
-| 路径 | 内容 |
-| --- | --- |
-| `demo/modules/editor` | 完整编辑器 |
-| `demo/modules/renderer` | 独立渲染 |
-| `demo/modules/transformer` | AST 可视化 |
-| `demo/modules/ast` | 语法树调试 |
-| `demo/syntax/gfm` | GFM 语法 |
-| `demo/syntax/extends` | Cherry 扩展语法 |
-| `demo/test/gfm` | GFM 规范用例 |
-| `demo/frameworks/*` | React / Vue / Vanilla 集成草图 |
+| 路径                       | 内容                           |
+| -------------------------- | ------------------------------ |
+| `demo/modules/editor`      | 完整编辑器                     |
+| `demo/modules/renderer`    | 独立渲染                       |
+| `demo/modules/transformer` | AST 可视化                     |
+| `demo/modules/ast`         | 语法树调试                     |
+| `demo/syntax/gfm`          | GFM 语法                       |
+| `demo/syntax/extends`      | Cherry 扩展语法                |
+| `demo/test/gfm`            | GFM 规范用例                   |
+| `demo/frameworks/*`        | React / Vue / Vanilla 集成草图 |
 
 ---
 

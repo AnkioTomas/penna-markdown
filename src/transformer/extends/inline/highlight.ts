@@ -16,7 +16,7 @@ import { InlineParseContext } from "@/transformer/core/context/InlineParseContex
  */
 class HighlightInlineParser extends BaseInlineParser {
   constructor() {
-    super("highlight",true);
+    super("highlight", true);
   }
 
   canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {
@@ -36,7 +36,7 @@ class HighlightInlineParser extends BaseInlineParser {
         break; // 找到第一个匹配的闭合定界符即可停止
       }
 
-      if(ctx.canStrongBreak(src,i,true)) return null;
+      if (ctx.canStrongBreak(src, i, true)) return null;
     }
 
     // 如果遍历到字符串末尾也没有找到闭合的 '=='，则解析失败
@@ -57,10 +57,10 @@ class HighlightInlineParser extends BaseInlineParser {
 
     return {
       node: createNode(
-          this.type,
-          totalLength,
-          undefined,
-          ctx.parseInline(content)
+        this.type,
+        totalLength,
+        undefined,
+        ctx.parseInline(content),
       ),
       nextIndex: index + totalLength,
     };

@@ -7,12 +7,17 @@ import { EditorView } from "@codemirror/view";
 import { runCommand, applyHeading } from "@/editor/commands/index.js";
 import { Theme } from "@/theme/Theme.js";
 
-function createView(doc: string, selection?: { anchor: number; head?: number }) {
+function createView(
+  doc: string,
+  selection?: { anchor: number; head?: number },
+) {
   const parent = document.createElement("div");
   document.body.append(parent);
   const state = EditorState.create({
     doc,
-    selection: selection ? { anchor: selection.anchor, head: selection.head ?? selection.anchor } : undefined,
+    selection: selection
+      ? { anchor: selection.anchor, head: selection.head ?? selection.anchor }
+      : undefined,
   });
   return new EditorView({ state, parent });
 }

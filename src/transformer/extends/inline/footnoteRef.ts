@@ -7,7 +7,10 @@
  * parse 只建节点；finalize 编号；render 再查 store（无定义则回退字面量）。
  */
 
-import { BaseInlineParser, InlineParseResult } from "@/transformer/core/ParserBase.js";
+import {
+  BaseInlineParser,
+  InlineParseResult,
+} from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
 import { RenderContext } from "@/transformer/core/context/RenderContext";
@@ -15,7 +18,9 @@ import { isEscaped } from "@/transformer/utils/escape.js";
 import { findLinkTextEnd } from "@/transformer/utils/linkLabel.js";
 
 function footnoteRefId(num: number, refIndex: number): string {
-  return refIndex === 1 ? `footnote-ref-${num}` : `footnote-ref-${num}-${refIndex}`;
+  return refIndex === 1
+    ? `footnote-ref-${num}`
+    : `footnote-ref-${num}-${refIndex}`;
 }
 
 class FootnoteRefInlineParser extends BaseInlineParser {
@@ -29,7 +34,11 @@ class FootnoteRefInlineParser extends BaseInlineParser {
   }
 
   /** @inheritdoc */
-  parse(src: string, index: number, ctx: InlineParseContext): InlineParseResult | null {
+  parse(
+    src: string,
+    index: number,
+    ctx: InlineParseContext,
+  ): InlineParseResult | null {
     const labelEnd = findLinkTextEnd(src, index + 1);
     if (labelEnd === -1) return null;
 
@@ -42,7 +51,9 @@ class FootnoteRefInlineParser extends BaseInlineParser {
     if (src[nextIndex] === ":") return null;
 
     return {
-      node: createNode(this.type, nextIndex - index, undefined, undefined, { id }),
+      node: createNode(this.type, nextIndex - index, undefined, undefined, {
+        id,
+      }),
       nextIndex,
     };
   }

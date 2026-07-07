@@ -93,9 +93,9 @@ export class IncrementalParser {
    * 1. {@link partitionAstByHash} — 按 prevHash/nextHash 拆分旧 AST
    * 2. {@link detectOp} — 判定 create / update / delete
    * 3. `BlockParseEngine.parseBlocks` — 仅 parse 变更区 markdown（delete 时跳过）
- * 4. {@link mergeChildren} — 拼接、合并 ParserStore，写回 prevAst
- * 5. `ParserStore.finalize` — 运行 finalizer（脚注列表等），原地修改 prevAst
- * 6. 更新 prevAst.props.store
+   * 4. {@link mergeChildren} — 拼接、合并 ParserStore，写回 prevAst
+   * 5. `ParserStore.finalize` — 运行 finalizer（脚注列表等），原地修改 prevAst
+   * 6. 更新 prevAst.props.store
    *
    * @param prevAst  上次 parse 的 root 节点；会被原地修改，对象引用不变
    * @param markdown 变更区 markdown 文本；支持已分行的 `string[]` 以避免二次切分；
@@ -125,9 +125,7 @@ export class IncrementalParser {
     const type = this.detectOp(isDelete, partition.middle.length);
 
     const { blockParser } = this.createBlockParseEngine(lines);
-    const reparsed = type === "delete"
-      ? []
-      : blockParser.parseBlocks(lines);
+    const reparsed = type === "delete" ? [] : blockParser.parseBlocks(lines);
 
     this.mergeChildren(prevAst, reparsed, partition, blockParser.store);
     blockParser.store.finalize(prevAst, blockParser.ctx);
@@ -163,8 +161,12 @@ export class IncrementalParser {
       return { before: [], middle: [...children], after: [] };
     }
 
-    const prevIdx = hasPrev ? this.findBlockIndexByHash(children, prevHash) : -1;
-    const nextIdx = hasNext ? this.findBlockIndexByHash(children, nextHash) : -1;
+    const prevIdx = hasPrev
+      ? this.findBlockIndexByHash(children, prevHash)
+      : -1;
+    const nextIdx = hasNext
+      ? this.findBlockIndexByHash(children, nextHash)
+      : -1;
 
     if (hasPrev && prevIdx < 0) {
       throw new Error(`partitionAstByHash: prevHash not found: ${prevHash}`);
@@ -245,11 +247,11 @@ export class IncrementalParser {
   ): void {
     const { before, after } = partition;
     const merged = [...before, ...reparsed, ...after];
-    
+
     // 如果没有任何保留的旧块，说明是全文替换，不应当继承旧的 store 状态
     const isFullReplace = before.length === 0 && after.length === 0;
     this.syncParserStoreFromAst(prevAst, merged, store, isFullReplace);
-    
+
     prevAst.children = merged;
     prevAst.length = 0;
   }
@@ -262,13 +264,13 @@ export class IncrementalParser {
    * @param lines 变更区源码行数组，用于初始化 ParserStore 及块级 parse
    * @returns 配置完毕的 BlockParseEngine 实例
    */
-  private createBlockParseEngine(lines: string[]): { blockParser: BlockParseEngine } {
+  private createBlockParseEngine(lines: string[]): {
+    blockParser: BlockParseEngine;
+  } {
     const store = new ParserStore(lines);
     const inlineParser = new InlineParseEngine(this.registry, store);
-    const blockParser = new BlockParseEngine(
-      this.registry,
-      store,
-      (text) => inlineParser.parse(text),
+    const blockParser = new BlockParseEngine(this.registry, store, (text) =>
+      inlineParser.parse(text),
     );
     return { blockParser };
   }

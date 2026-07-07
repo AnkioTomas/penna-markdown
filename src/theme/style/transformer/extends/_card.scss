@@ -3,7 +3,8 @@
 @mixin styles {
   .cherry-card {
     margin: 0 0 rem(16);
-    border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 24%, transparent);
+    border: rem(1) solid
+      color-mix(in srgb, var(--cherry-c-text-3) 24%, transparent);
     border-radius: rem(8);
     padding: rem(16);
     background-color: var(--cherry-c-bg-elevated);

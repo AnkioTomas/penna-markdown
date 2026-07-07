@@ -10,10 +10,10 @@
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
-import { createNode, MarkdownNode} from "@/transformer/core/MarkdownNode.js";
-import {escapeHtml} from "@/transformer/utils/escape.js";
-import {InlineParseContext} from "@/transformer/core/context/InlineParseContext.js";
-import {RenderContext} from "@/transformer/core/context/RenderContext";
+import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import { escapeHtml } from "@/transformer/utils/escape.js";
+import { InlineParseContext } from "@/transformer/core/context/InlineParseContext.js";
+import { RenderContext } from "@/transformer/core/context/RenderContext";
 
 /** `[content]`，不含 `[[` 与链接后缀 */
 const BADGE_RE = /^\[([^\]\n]+)\]/;
@@ -46,7 +46,7 @@ class BadgeInlineParser extends BaseInlineParser {
     if (src[nextIndex] !== "{") return null;
 
     return {
-      node: createNode(this.type, match[0].length, content,),
+      node: createNode(this.type, match[0].length, content),
       nextIndex,
     };
   }

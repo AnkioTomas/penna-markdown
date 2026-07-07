@@ -29,7 +29,10 @@ import images from "@/transformer/gfm/inline/images.js";
 import rawhtmlInline from "@/transformer/gfm/inline/html.js";
 import rawhtmlBlock from "@/transformer/gfm/block/html.js";
 import strong from "@/transformer/gfm/inline/strong";
-import type { BaseBlockParser, BaseInlineParser } from "@/transformer/core/ParserBase.js";
+import type {
+  BaseBlockParser,
+  BaseInlineParser,
+} from "@/transformer/core/ParserBase.js";
 
 /** 默认行内语法 */
 export const gfmInlineSyntax: Record<number, BaseInlineParser> = {

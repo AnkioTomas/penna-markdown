@@ -11,11 +11,11 @@ export class ScrollSync {
   constructor(
     private readonly editor: Editor,
     previewEl: HTMLElement,
-    private readonly theme: Theme
+    private readonly theme: Theme,
   ) {
     this.editorScroll = editor.getView().scrollDOM;
     this.previewScroll = previewEl;
-    
+
     if (!this.editorScroll || !this.previewScroll) return;
 
     this.previewScroll.style.position = "relative";
@@ -25,9 +25,14 @@ export class ScrollSync {
     });
 
     this.theme.on("sidebar:toc-click", (payload: any) => {
-      const target = document.getElementById(payload.id) || this.previewScroll.querySelector(`[data-hash="${payload.id}"]`);
+      const target =
+        document.getElementById(payload.id) ||
+        this.previewScroll.querySelector(`[data-hash="${payload.id}"]`);
       if (target) {
-        this.previewScroll.scrollTo({ top: (target as HTMLElement).offsetTop, behavior: "smooth" });
+        this.previewScroll.scrollTo({
+          top: (target as HTMLElement).offsetTop,
+          behavior: "smooth",
+        });
       }
     });
 
@@ -37,7 +42,7 @@ export class ScrollSync {
   private getPreviewScrollTopForLine(targetLine: number): number {
     const blocks = this.currentBlocks;
     if (!blocks || blocks.length === 0) return 0;
-    
+
     let low = 0;
     let high = blocks.length - 1;
     let bestIndex = 0;
@@ -58,7 +63,7 @@ export class ScrollSync {
   private getLineForPreviewScroll(): number {
     const blocks = this.currentBlocks;
     if (!blocks || blocks.length === 0) return 1;
-    
+
     const scrollTop = this.previewScroll.scrollTop;
     let low = 0;
     let high = this.previewScroll.children.length - 1;
@@ -68,7 +73,7 @@ export class ScrollSync {
       const mid = (low + high) >> 1;
       const el = this.previewScroll.children[mid] as HTMLElement;
       if (!el) break;
-      
+
       if (el.offsetTop <= scrollTop + 10) {
         bestIndex = mid;
         low = mid + 1;
@@ -87,48 +92,73 @@ export class ScrollSync {
   private initListeners(): void {
     const editorView = this.editor.getView();
 
-    this.editorScroll.addEventListener("scroll", () => {
-      if (this.isSyncingLeft) return;
-      
-      this.isSyncingRight = true;
-      clearTimeout(this.rightTimer);
-      this.rightTimer = setTimeout(() => { this.isSyncingRight = false; }, 50);
+    this.editorScroll.addEventListener(
+      "scroll",
+      () => {
+        if (this.isSyncingLeft) return;
 
-      if (this.leftRaf !== null) cancelAnimationFrame(this.leftRaf);
-      this.leftRaf = requestAnimationFrame(() => {
-        if (this.editorScroll.scrollTop >= this.editorScroll.scrollHeight - this.editorScroll.clientHeight - 5) {
-          this.previewScroll.scrollTop = this.previewScroll.scrollHeight;
-        } else if (this.editorScroll.scrollTop <= 5) {
-          this.previewScroll.scrollTop = 0;
-        } else {
-          const topBlock = editorView.lineBlockAtHeight(this.editorScroll.scrollTop);
-          const line = editorView.state.doc.lineAt(topBlock.from).number - 1; 
-          this.previewScroll.scrollTop = this.getPreviewScrollTopForLine(line);
-        }
-      });
-    }, { passive: true });
+        this.isSyncingRight = true;
+        clearTimeout(this.rightTimer);
+        this.rightTimer = setTimeout(() => {
+          this.isSyncingRight = false;
+        }, 50);
 
-    this.previewScroll.addEventListener("scroll", () => {
-      if (this.isSyncingRight) return;
+        if (this.leftRaf !== null) cancelAnimationFrame(this.leftRaf);
+        this.leftRaf = requestAnimationFrame(() => {
+          if (
+            this.editorScroll.scrollTop >=
+            this.editorScroll.scrollHeight - this.editorScroll.clientHeight - 5
+          ) {
+            this.previewScroll.scrollTop = this.previewScroll.scrollHeight;
+          } else if (this.editorScroll.scrollTop <= 5) {
+            this.previewScroll.scrollTop = 0;
+          } else {
+            const topBlock = editorView.lineBlockAtHeight(
+              this.editorScroll.scrollTop,
+            );
+            const line = editorView.state.doc.lineAt(topBlock.from).number - 1;
+            this.previewScroll.scrollTop =
+              this.getPreviewScrollTopForLine(line);
+          }
+        });
+      },
+      { passive: true },
+    );
 
-      this.isSyncingLeft = true;
-      clearTimeout(this.leftTimer);
-      this.leftTimer = setTimeout(() => { this.isSyncingLeft = false; }, 50);
+    this.previewScroll.addEventListener(
+      "scroll",
+      () => {
+        if (this.isSyncingRight) return;
 
-      if (this.rightRaf !== null) cancelAnimationFrame(this.rightRaf);
-      this.rightRaf = requestAnimationFrame(() => {
-        if (this.previewScroll.scrollTop >= this.previewScroll.scrollHeight - this.previewScroll.clientHeight - 5) {
-          this.editorScroll.scrollTop = this.editorScroll.scrollHeight;
-        } else if (this.previewScroll.scrollTop <= 5) {
-          this.editorScroll.scrollTop = 0;
-        } else {
-          const targetLine = this.getLineForPreviewScroll();
-          const maxLine = editorView.state.doc.lines;
-          const lineInfo = editorView.state.doc.line(Math.min(targetLine + 1, maxLine));
-          const block = editorView.lineBlockAt(lineInfo.from);
-          this.editorScroll.scrollTop = block.top;
-        }
-      });
-    }, { passive: true });
+        this.isSyncingLeft = true;
+        clearTimeout(this.leftTimer);
+        this.leftTimer = setTimeout(() => {
+          this.isSyncingLeft = false;
+        }, 50);
+
+        if (this.rightRaf !== null) cancelAnimationFrame(this.rightRaf);
+        this.rightRaf = requestAnimationFrame(() => {
+          if (
+            this.previewScroll.scrollTop >=
+            this.previewScroll.scrollHeight -
+              this.previewScroll.clientHeight -
+              5
+          ) {
+            this.editorScroll.scrollTop = this.editorScroll.scrollHeight;
+          } else if (this.previewScroll.scrollTop <= 5) {
+            this.editorScroll.scrollTop = 0;
+          } else {
+            const targetLine = this.getLineForPreviewScroll();
+            const maxLine = editorView.state.doc.lines;
+            const lineInfo = editorView.state.doc.line(
+              Math.min(targetLine + 1, maxLine),
+            );
+            const block = editorView.lineBlockAt(lineInfo.from);
+            this.editorScroll.scrollTop = block.top;
+          }
+        });
+      },
+      { passive: true },
+    );
   }
 }

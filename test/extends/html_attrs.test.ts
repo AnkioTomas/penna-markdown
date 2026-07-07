@@ -35,12 +35,19 @@ describe("html_attrs extension", () => {
   });
 
   it("supports combined simplified and traditional syntax", () => {
-    const html = renderMarkdown(transformer, "**bold**{#id .class data-x=\"1\"}");
-    expect(html).toBe('<p><strong id="id" data-x="1" class="class">bold</strong></p>\n');
+    const html = renderMarkdown(transformer, '**bold**{#id .class data-x="1"}');
+    expect(html).toBe(
+      '<p><strong id="id" data-x="1" class="class">bold</strong></p>\n',
+    );
   });
 
   it("parses traditional syntax still works", () => {
-    const html = renderMarkdown(transformer, '**bold**{class="highlight" data-a="1"}');
-    expect(html).toBe('<p><strong data-a="1" class="highlight">bold</strong></p>\n');
+    const html = renderMarkdown(
+      transformer,
+      '**bold**{class="highlight" data-a="1"}',
+    );
+    expect(html).toBe(
+      '<p><strong data-a="1" class="highlight">bold</strong></p>\n',
+    );
   });
 });

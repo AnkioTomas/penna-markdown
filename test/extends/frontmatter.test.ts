@@ -65,7 +65,10 @@ tags:
   });
 
   it("does not resolve variables inside inline code", () => {
-    const html = renderMarkdown(engine(), "---\nversion: 0.1.0\n---\n\n`[[version]]`\n");
+    const html = renderMarkdown(
+      engine(),
+      "---\nversion: 0.1.0\n---\n\n`[[version]]`\n",
+    );
     expect(html).toBe("<p><code>[[version]]</code></p>\n");
   });
 });

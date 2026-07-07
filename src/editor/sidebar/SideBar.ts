@@ -14,7 +14,7 @@ export class SideBar {
   constructor(
     private readonly mount: HTMLElement,
     private readonly theme: Theme,
-    private readonly options: SideBarOptions = {}
+    private readonly options: SideBarOptions = {},
   ) {
     this.mount.replaceChildren();
 
@@ -41,7 +41,7 @@ export class SideBar {
 
     this.filePanelEl = document.createElement("div");
     this.filePanelEl.className = "cherry-sidebar-panel cherry-sidebar-file";
-    
+
     this.tocPanelEl = document.createElement("div");
     this.tocPanelEl.className = "cherry-sidebar-panel cherry-sidebar-toc";
 
@@ -55,7 +55,7 @@ export class SideBar {
       this.mount.appendChild(this.tabsEl);
       this.loadFiles();
     }
-    
+
     this.mount.appendChild(panelsEl);
     this.switchTab(this.options.fetchFiles ? "file" : "toc");
 
@@ -67,7 +67,7 @@ export class SideBar {
           const toc = extractToc(ast);
           this.renderToc(toc);
         }
-      })
+      }),
     );
   }
 
@@ -83,12 +83,14 @@ export class SideBar {
 
   private async loadFiles() {
     if (!this.options.fetchFiles) return;
-    this.filePanelEl.innerHTML = '<div class="cherry-sidebar-loading">加载中...</div>';
+    this.filePanelEl.innerHTML =
+      '<div class="cherry-sidebar-loading">加载中...</div>';
     try {
       const files = await this.options.fetchFiles();
       this.renderFiles(files);
     } catch (e) {
-      this.filePanelEl.innerHTML = '<div class="cherry-sidebar-error">加载失败</div>';
+      this.filePanelEl.innerHTML =
+        '<div class="cherry-sidebar-error">加载失败</div>';
     }
   }
 
@@ -132,9 +134,10 @@ export class SideBar {
 
   private renderToc(toc: TocItem[]) {
     this.tocPanelEl.replaceChildren();
-    
+
     if (toc.length === 0) {
-      this.tocPanelEl.innerHTML = '<div class="cherry-sidebar-empty">暂无大纲</div>';
+      this.tocPanelEl.innerHTML =
+        '<div class="cherry-sidebar-empty">暂无大纲</div>';
       return;
     }
 
@@ -143,11 +146,11 @@ export class SideBar {
       el.className = "cherry-toc-item";
       el.style.paddingLeft = `${(item.level - 1) * 12 + 16}px`;
       el.textContent = item.text;
-      
+
       el.onclick = () => {
         this.theme.emit("sidebar:toc-click", { id: item.id });
       };
-      
+
       parentEl.appendChild(el);
       for (const child of item.children) {
         renderNode(child, parentEl);
@@ -161,7 +164,9 @@ export class SideBar {
 
   setActiveFile(fileId: string): void {
     this.activeFileId = fileId;
-    for (const el of this.filePanelEl.querySelectorAll<HTMLElement>(".cherry-file-item")) {
+    for (const el of this.filePanelEl.querySelectorAll<HTMLElement>(
+      ".cherry-file-item",
+    )) {
       el.classList.toggle("is-active", el.dataset.fileId === fileId);
     }
   }

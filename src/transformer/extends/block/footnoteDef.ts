@@ -24,7 +24,10 @@ function footnoteStoreKey(id: string): string {
   return `fn_${id}`;
 }
 
-function walkNodes(nodes: MarkdownNode[], fn: (node: MarkdownNode) => void): void {
+function walkNodes(
+  nodes: MarkdownNode[],
+  fn: (node: MarkdownNode) => void,
+): void {
   for (const node of nodes) {
     fn(node);
     if (node.children?.length) walkNodes(node.children, fn);
@@ -111,7 +114,8 @@ function finalizeFootnotes(
   const items: FootnoteItem[] = [...idToNum.entries()]
     .sort((a, b) => a[1] - b[1])
     .map(([id, n]) => {
-      const children = ctx.store.get<MarkdownNode[]>(footnoteStoreKey(id)) ?? [];
+      const children =
+        ctx.store.get<MarkdownNode[]>(footnoteStoreKey(id)) ?? [];
       return { id, num: n, children };
     });
 
@@ -139,7 +143,9 @@ function ensureFootnoteFinalizer(store: ParserStore): void {
   store.registerFinalizer(FOOTNOTE_FINALIZER, finalizeFootnotes);
 }
 
-function parseFootnoteHeader(line: string): { id: string; content: string } | null {
+function parseFootnoteHeader(
+  line: string,
+): { id: string; content: string } | null {
   if (!line) return null;
 
   let i = 0;
@@ -212,7 +218,11 @@ class FootnotesSectionBlockParser extends BaseBlockParser {
     super("footnotes", false);
   }
 
-  canOpenAt(_lines: string[], _index: number, _ctx: BlockParseContext): boolean {
+  canOpenAt(
+    _lines: string[],
+    _index: number,
+    _ctx: BlockParseContext,
+  ): boolean {
     return false;
   }
 

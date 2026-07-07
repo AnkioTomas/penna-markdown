@@ -62,7 +62,10 @@ describe("transformer/IncrementalParser", () => {
     const md = "# A\n\nB\n\nC";
     const prev = eng.parse("# X\n\nY");
 
-    const result = eng.parseIncremental(prev, md, { prevHash: "", nextHash: "" });
+    const result = eng.parseIncremental(prev, md, {
+      prevHash: "",
+      nextHash: "",
+    });
 
     expect(result.type).toBe("update");
     expect(eng.render(prev)).toContain("A");
@@ -115,15 +118,24 @@ describe("transformer/IncrementalParser", () => {
           globalThis.window = dom.window as any;
         }
 
-        const { BlockIndex } = await import("@/renderer/incremental/BlockIndex.js");
+        const { BlockIndex } =
+          await import("@/renderer/incremental/BlockIndex.js");
         expect(BlockIndex.isMountedHtml("<p>Hello</p>")).toBe(true);
-        expect(BlockIndex.isMountedHtml("  <div><span>Hi</span></div> ")).toBe(true);
+        expect(BlockIndex.isMountedHtml("  <div><span>Hi</span></div> ")).toBe(
+          true,
+        );
         expect(BlockIndex.isMountedHtml("plain text")).toBe(false);
-        expect(BlockIndex.isMountedHtml("<div>A</div><div>B</div>")).toBe(false);
+        expect(BlockIndex.isMountedHtml("<div>A</div><div>B</div>")).toBe(
+          false,
+        );
 
-        const imgHtml = '<figure class="cherry-image-card"><img src="https://example.com/a.jpg" alt="" /></figure>';
+        const imgHtml =
+          '<figure class="cherry-image-card"><img src="https://example.com/a.jpg" alt="" /></figure>';
         expect(BlockIndex.isMountedHtml(imgHtml)).toBe(true);
-        const parsed = BlockIndex.parseSingleRootHtml(globalThis.document, imgHtml);
+        const parsed = BlockIndex.parseSingleRootHtml(
+          globalThis.document,
+          imgHtml,
+        );
         expect(parsed?.tagName).toBe("FIGURE");
         expect(parsed?.isConnected).toBe(false);
       } finally {

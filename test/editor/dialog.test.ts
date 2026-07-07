@@ -9,7 +9,9 @@ import { validateFrontmatterYaml } from "@/editor/dialog/FrontmatterDialog.js";
 
 describe("validateFrontmatterYaml", () => {
   it("accepts simple yaml", () => {
-    expect(validateFrontmatterYaml("title: 标题\ndescription: 描述")).toBeNull();
+    expect(
+      validateFrontmatterYaml("title: 标题\ndescription: 描述"),
+    ).toBeNull();
   });
 
   it("rejects invalid line", () => {

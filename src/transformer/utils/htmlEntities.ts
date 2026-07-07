@@ -9,12 +9,16 @@ import { decodeHTMLStrict } from "entities";
 
 // 1. 修复正则：必须以 ^ 开头，且绝对不能有 /g 全局标志！
 // 命名实体规则：以字母开头，后跟 0-31 个字母或数字。
-const ENTITY_START_RE = /^&(?:#[xX][0-9a-fA-F]{1,6}|#[0-9]{1,7}|[A-Za-z][A-Za-z0-9]{0,31});/;
+const ENTITY_START_RE =
+  /^&(?:#[xX][0-9a-fA-F]{1,6}|#[0-9]{1,7}|[A-Za-z][A-Za-z0-9]{0,31});/;
 
 /**
  * 从 src[index] 起尝试匹配并解码 HTML 实体。
  */
-export function tryParseEntity(src: string, index: number): { value: string; length: number; } | null {
+export function tryParseEntity(
+  src: string,
+  index: number,
+): { value: string; length: number } | null {
   // 第一重快筛
   if (src[index] !== "&") return null;
 
@@ -39,7 +43,8 @@ export function tryParseEntity(src: string, index: number): { value: string; len
 /**
  * 全局解码工具（用于在某些特殊块级语法里全文替换实体）
  */
-const ENTITY_GLOBAL_RE = /&(?:#[xX][0-9a-fA-F]{1,6}|#[0-9]{1,7}|[A-Za-z][A-Za-z0-9]{0,31});/g;
+const ENTITY_GLOBAL_RE =
+  /&(?:#[xX][0-9a-fA-F]{1,6}|#[0-9]{1,7}|[A-Za-z][A-Za-z0-9]{0,31});/g;
 
 export function decodeHtmlEntities(text: string): string {
   return text.replace(ENTITY_GLOBAL_RE, (match) => {

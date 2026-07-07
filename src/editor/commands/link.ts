@@ -26,7 +26,10 @@ export async function insertLink(
 }
 
 export function registerLinkCommand(
-  register: (name: string, handler: import("./types.js").CommandHandler) => void,
+  register: (
+    name: string,
+    handler: import("./types.js").CommandHandler,
+  ) => void,
 ): void {
   register("link", (view, _payload, ctx) => insertLink(view, ctx));
 }

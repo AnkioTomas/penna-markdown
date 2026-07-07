@@ -5,7 +5,8 @@ describe("extends/media", () => {
   const engine = () => createEngine();
 
   it("renders !video[alt](url) as styled figure", () => {
-    const html = renderMarkdown(engine(),
+    const html = renderMarkdown(
+      engine(),
       "!video[演示](https://example.com/demo.mp4)\n",
     );
     expect(html).toBe(
@@ -14,7 +15,8 @@ describe("extends/media", () => {
   });
 
   it("renders !audio[alt](url) as styled player", () => {
-    const html = renderMarkdown(engine(),
+    const html = renderMarkdown(
+      engine(),
       "!audio[背景音乐](https://example.com/a.mp3)\n",
     );
     expect(html).toBe(
@@ -23,7 +25,8 @@ describe("extends/media", () => {
   });
 
   it("supports video poster attribute", () => {
-    const html = renderMarkdown(engine(),
+    const html = renderMarkdown(
+      engine(),
       "!video[带封面](https://example.com/demo.mp4){poster=https://example.com/poster.png}\n",
     );
     expect(html).toContain('poster="https://example.com/poster.png"');
@@ -31,24 +34,29 @@ describe("extends/media", () => {
   });
 
   it("supports audio poster as player cover", () => {
-    const html = renderMarkdown(engine(),
+    const html = renderMarkdown(
+      engine(),
       "!audio[背景音乐](https://example.com/a.mp3){poster=https://example.com/cover.png}\n",
     );
-    expect(html).toContain('class="cherry-audio-player__cover cherry-audio-player__cover--image"');
+    expect(html).toContain(
+      'class="cherry-audio-player__cover cherry-audio-player__cover--image"',
+    );
     expect(html).toContain(
       '<img class="cherry-audio-player__cover-img" src="https://example.com/cover.png" alt="" loading="lazy" />',
     );
   });
 
   it("supports link title on media", () => {
-    const html = renderMarkdown(engine(),
+    const html = renderMarkdown(
+      engine(),
       '!video[演示](https://example.com/demo.mp4 "说明")\n',
     );
     expect(html).toContain('title="说明"');
   });
 
   it("does not conflict with standard image syntax", () => {
-    const html = renderMarkdown(engine(),
+    const html = renderMarkdown(
+      engine(),
       "![img](https://example.com/a.png)\n",
     );
     expect(html).toBe(

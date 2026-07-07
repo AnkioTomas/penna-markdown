@@ -58,7 +58,10 @@ class MathInlineParser extends BaseInlineParser {
   render(node: MarkdownNode, ctx: RenderContext) {
     const latex = (node.value ?? "").trim();
     const color = ctx.isDark ? "white" : undefined;
-    const src = mathBlockParser.buildMathImageSrc(latex, { inline: true, color });
+    const src = mathBlockParser.buildMathImageSrc(latex, {
+      inline: true,
+      color,
+    });
     if (!src) return "";
     const alt = escapeHtml(latex);
     const attrs = `class="cherry-math-latex" data-latex="${alt}" data-inline="true" alt="${alt}"`;

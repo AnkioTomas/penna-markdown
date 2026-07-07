@@ -4,7 +4,10 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {
+  createNode,
+  type MarkdownNode,
+} from "@/transformer/core/MarkdownNode.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
@@ -48,7 +51,11 @@ function shieldsRepoBadge(repo: string, metric: ShieldMetric): string {
   return `https://img.shields.io/github/${config.path}/${slug}?style=flat`;
 }
 
-function renderRepoShield(repo: string, metric: ShieldMetric, repoBase: string): string {
+function renderRepoShield(
+  repo: string,
+  metric: ShieldMetric,
+  repoBase: string,
+): string {
   const config = SHIELD_METRICS[metric];
   const src = shieldsRepoBadge(repo, metric);
   const alt = escapeHtml(config.label);
@@ -93,7 +100,8 @@ class RepoCardBlockParser extends BaseBlockParser {
   render(node: MarkdownNode, ctx: RenderContext) {
     const repo = String(node.props?.repo ?? "");
     const href =
-      String(node.props?.link ?? "") || (repo ? `https://github.com/${repo}` : "");
+      String(node.props?.link ?? "") ||
+      (repo ? `https://github.com/${repo}` : "");
     const repoBase = repo ? `https://github.com/${repo}` : "";
     const visibility = String(node.props?.visibility ?? "Public");
     const bodyHtml = ctx.renderBlock(node.children ?? []);
@@ -102,19 +110,27 @@ class RepoCardBlockParser extends BaseBlockParser {
       ? `<div class="cherry-repo-card__desc">${bodyHtml}</div>`
       : "";
 
-    const parts = [`<div class="cherry-repo-card"${this.sourceLineAttrs(node)}>`];
+    const parts = [
+      `<div class="cherry-repo-card"${this.sourceLineAttrs(node)}>`,
+    ];
 
     parts.push(`<p class="cherry-repo-card__name">`);
-    parts.push(`<span class="cherry-repo-card__icon" aria-hidden="true"></span>`);
+    parts.push(
+      `<span class="cherry-repo-card__icon" aria-hidden="true"></span>`,
+    );
     if (href && repo) {
       parts.push(
         `<span class="cherry-repo-card__link"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(repo)}">${escapeHtml(repo)}</a></span>`,
       );
     } else if (repo) {
-      parts.push(`<span class="cherry-repo-card__link">${escapeHtml(repo)}</span>`);
+      parts.push(
+        `<span class="cherry-repo-card__link">${escapeHtml(repo)}</span>`,
+      );
     }
     if (visibility) {
-      parts.push(`<span class="cherry-repo-card__visibility">${escapeHtml(visibility)}</span>`);
+      parts.push(
+        `<span class="cherry-repo-card__visibility">${escapeHtml(visibility)}</span>`,
+      );
     }
     parts.push(`</p>`);
 

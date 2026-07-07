@@ -32,21 +32,57 @@ $github-dark-accent-hover: #3182f6;
 $github-dark-code-fg: #f0f6fc;
 
 $github-light-semantics: (
-  note: (#0969da, #add8e6),
-  tip: (#1a7f37, #98fb98),
-  warning: (#9a6700, #ffea7f),
-  caution: (#cf222e, #ffb3b3),
-  danger: (#cf222e, #ff9999),
-  important: (#8250df, #e6ccff),
+  note: (
+    #0969da,
+    #add8e6,
+  ),
+  tip: (
+    #1a7f37,
+    #98fb98,
+  ),
+  warning: (
+    #9a6700,
+    #ffea7f,
+  ),
+  caution: (
+    #cf222e,
+    #ffb3b3,
+  ),
+  danger: (
+    #cf222e,
+    #ff9999,
+  ),
+  important: (
+    #8250df,
+    #e6ccff,
+  ),
 );
 
 $github-dark-semantics: (
-  note: (#4493f8, #58a6ff),
-  tip: (#3fb950, #3fb950),
-  warning: (#d4a72c, #d29922),
-  caution: (#ff8182, #f85149),
-  danger: (#ff8182, #f85149),
-  important: (#ab7df8, #bc8cff),
+  note: (
+    #4493f8,
+    #58a6ff,
+  ),
+  tip: (
+    #3fb950,
+    #3fb950,
+  ),
+  warning: (
+    #d4a72c,
+    #d29922,
+  ),
+  caution: (
+    #ff8182,
+    #f85149,
+  ),
+  danger: (
+    #ff8182,
+    #f85149,
+  ),
+  important: (
+    #ab7df8,
+    #bc8cff,
+  ),
 );
 
 $github-dark-mark-mix: 65%;
@@ -84,9 +120,11 @@ $github-dark-mark-mix: 65%;
 }
 
 @mixin typography-tokens {
-  --github-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial,
-    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  --github-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+  --github-font-sans:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --github-font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
     monospace;
   --github-text-size: 1rem;
   --github-text-leading: 1.5;
@@ -104,16 +142,32 @@ $github-dark-mark-mix: 65%;
 
     --cherry-c-#{$name}: #{$base-color};
     @if $is-dark {
-      --cherry-c-#{$name}-mark: color-mix(in srgb, #{$mark-color} #{$github-dark-mark-mix}, #{$surface});
+      --cherry-c-#{$name}-mark: color-mix(
+        in srgb,
+        #{$mark-color} #{$github-dark-mark-mix},
+        #{$surface}
+      );
     } @else {
       --cherry-c-#{$name}-mark: #{$mark-color};
     }
 
-    --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 16%, #{$contrast-color});
+    --cherry-c-#{$name}-on-bg: color-mix(
+      in srgb,
+      #{$base-color} 16%,
+      #{$contrast-color}
+    );
 
     --cherry-c-alert-#{$name}-text: #{$base-color};
-    --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
-    --cherry-c-alert-#{$name}-border: color-mix(in srgb, #{$base-color} #{$border-opacity}, transparent);
+    --cherry-c-alert-#{$name}-bg: color-mix(
+      in srgb,
+      #{$base-color} #{$bg-opacity},
+      transparent
+    );
+    --cherry-c-alert-#{$name}-border: color-mix(
+      in srgb,
+      #{$base-color} #{$border-opacity},
+      transparent
+    );
   }
 }
 
@@ -177,7 +231,11 @@ $github-dark-mark-mix: 65%;
   --cherry-c-brand-mark: #{$github-mark};
   --cherry-c-code-fg: #{$github-code-fg};
   --cherry-c-border-soft: #{$github-border};
-  --cherry-c-border-faint: #{color-mix(in srgb, #{$github-border} 55%, transparent)};
+  --cherry-c-border-faint: #{color-mix(
+      in srgb,
+      #{$github-border} 55%,
+      transparent
+    )};
 
   @include generate-semantic-suite($github-light-semantics, false);
   @include component-tokens(false);
@@ -202,10 +260,18 @@ $github-dark-mark-mix: 65%;
   --cherry-c-contrast-light: #fff;
   --cherry-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: color-mix(in srgb, #{$github-mark} #{$github-dark-mark-mix}, #{$github-dark-canvas});
+  --cherry-c-brand-mark: color-mix(
+    in srgb,
+    #{$github-mark} #{$github-dark-mark-mix},
+    #{$github-dark-canvas}
+  );
   --cherry-c-code-fg: #{$github-dark-code-fg};
   --cherry-c-border-soft: #{$github-dark-border};
-  --cherry-c-border-faint: #{color-mix(in srgb, #{$github-dark-border} 55%, transparent)};
+  --cherry-c-border-faint: #{color-mix(
+      in srgb,
+      #{$github-dark-border} 55%,
+      transparent
+    )};
 
   @include generate-semantic-suite($github-dark-semantics, true);
   @include component-tokens(true);

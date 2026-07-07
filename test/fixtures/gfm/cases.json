@@ -1977,9 +1977,7 @@
     "start_line": 3326,
     "end_line": 3345,
     "section": "Tables (extension)",
-    "extensions": [
-      "table"
-    ]
+    "extensions": ["table"]
   },
   {
     "id": 199,
@@ -1989,9 +1987,7 @@
     "start_line": 3350,
     "end_line": 3369,
     "section": "Tables (extension)",
-    "extensions": [
-      "table"
-    ]
+    "extensions": ["table"]
   },
   {
     "id": 200,
@@ -2001,9 +1997,7 @@
     "start_line": 3374,
     "end_line": 3395,
     "section": "Tables (extension)",
-    "extensions": [
-      "table"
-    ]
+    "extensions": ["table"]
   },
   {
     "id": 201,
@@ -2013,9 +2007,7 @@
     "start_line": 3400,
     "end_line": 3423,
     "section": "Tables (extension)",
-    "extensions": [
-      "table"
-    ]
+    "extensions": ["table"]
   },
   {
     "id": 202,
@@ -2025,9 +2017,7 @@
     "start_line": 3425,
     "end_line": 3452,
     "section": "Tables (extension)",
-    "extensions": [
-      "table"
-    ]
+    "extensions": ["table"]
   },
   {
     "id": 203,
@@ -2037,9 +2027,7 @@
     "start_line": 3457,
     "end_line": 3465,
     "section": "Tables (extension)",
-    "extensions": [
-      "table"
-    ]
+    "extensions": ["table"]
   },
   {
     "id": 204,
@@ -2049,9 +2037,7 @@
     "start_line": 3471,
     "end_line": 3495,
     "section": "Tables (extension)",
-    "extensions": [
-      "table"
-    ]
+    "extensions": ["table"]
   },
   {
     "id": 205,
@@ -2061,9 +2047,7 @@
     "start_line": 3499,
     "end_line": 3511,
     "section": "Tables (extension)",
-    "extensions": [
-      "table"
-    ]
+    "extensions": ["table"]
   },
   {
     "id": 206,
@@ -4903,9 +4887,7 @@
     "start_line": 7714,
     "end_line": 7718,
     "section": "Strikethrough (extension)",
-    "extensions": [
-      "strikethrough"
-    ]
+    "extensions": ["strikethrough"]
   },
   {
     "id": 492,
@@ -4915,9 +4897,7 @@
     "start_line": 7723,
     "end_line": 7730,
     "section": "Strikethrough (extension)",
-    "extensions": [
-      "strikethrough"
-    ]
+    "extensions": ["strikethrough"]
   },
   {
     "id": 493,
@@ -6207,9 +6187,7 @@
     "start_line": 9213,
     "end_line": 9217,
     "section": "Autolinks (extension)",
-    "extensions": [
-      "autolink"
-    ]
+    "extensions": ["autolink"]
   },
   {
     "id": 622,
@@ -6219,9 +6197,7 @@
     "start_line": 9221,
     "end_line": 9225,
     "section": "Autolinks (extension)",
-    "extensions": [
-      "autolink"
-    ]
+    "extensions": ["autolink"]
   },
   {
     "id": 623,
@@ -6231,9 +6207,7 @@
     "start_line": 9233,
     "end_line": 9240,
     "section": "Autolinks (extension)",
-    "extensions": [
-      "autolink"
-    ]
+    "extensions": ["autolink"]
   },
   {
     "id": 624,
@@ -6243,9 +6217,7 @@
     "start_line": 9247,
     "end_line": 9260,
     "section": "Autolinks (extension)",
-    "extensions": [
-      "autolink"
-    ]
+    "extensions": ["autolink"]
   },
   {
     "id": 625,
@@ -6255,9 +6227,7 @@
     "start_line": 9266,
     "end_line": 9270,
     "section": "Autolinks (extension)",
-    "extensions": [
-      "autolink"
-    ]
+    "extensions": ["autolink"]
   },
   {
     "id": 626,
@@ -6267,9 +6237,7 @@
     "start_line": 9277,
     "end_line": 9284,
     "section": "Autolinks (extension)",
-    "extensions": [
-      "autolink"
-    ]
+    "extensions": ["autolink"]
   },
   {
     "id": 627,
@@ -6279,9 +6247,7 @@
     "start_line": 9288,
     "end_line": 9292,
     "section": "Autolinks (extension)",
-    "extensions": [
-      "autolink"
-    ]
+    "extensions": ["autolink"]
   },
   {
     "id": 628,
@@ -6291,9 +6257,7 @@
     "start_line": 9299,
     "end_line": 9309,
     "section": "Autolinks (extension)",
-    "extensions": [
-      "autolink"
-    ]
+    "extensions": ["autolink"]
   },
   {
     "id": 629,
@@ -6303,9 +6267,7 @@
     "start_line": 9325,
     "end_line": 9329,
     "section": "Autolinks (extension)",
-    "extensions": [
-      "autolink"
-    ]
+    "extensions": ["autolink"]
   },
   {
     "id": 630,
@@ -6315,9 +6277,7 @@
     "start_line": 9333,
     "end_line": 9337,
     "section": "Autolinks (extension)",
-    "extensions": [
-      "autolink"
-    ]
+    "extensions": ["autolink"]
   },
   {
     "id": 631,
@@ -6327,9 +6287,7 @@
     "start_line": 9343,
     "end_line": 9356,
     "section": "Autolinks (extension)",
-    "extensions": [
-      "autolink"
-    ]
+    "extensions": ["autolink"]
   },
   {
     "id": 632,
@@ -6539,9 +6497,7 @@
     "start_line": 9647,
     "end_line": 9658,
     "section": "Disallowed Raw HTML (extension)",
-    "extensions": [
-      "tagfilter"
-    ]
+    "extensions": ["tagfilter"]
   },
   {
     "id": 653,

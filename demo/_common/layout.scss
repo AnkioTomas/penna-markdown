@@ -16,7 +16,11 @@ body {
   flex-direction: column;
   background: var(--cherry-c-bg);
   color: var(--cherry-c-text-1);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
 }
 
 body.demo-dark {
@@ -29,7 +33,8 @@ body.demo-dark {
   gap: 16px;
   padding: 12px 18px;
   background: var(--cherry-c-bg-elevated);
-  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
   flex-shrink: 0;
 }
 

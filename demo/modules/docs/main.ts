@@ -2,7 +2,10 @@ import "./styles.scss";
 import "../../_common/render-demo.scss";
 import "../../_common/layout.scss";
 
-import { createDemoTheme, setupPreviewThemeAndAppearance } from "../../_common/theme.js";
+import {
+  createDemoTheme,
+  setupPreviewThemeAndAppearance,
+} from "../../_common/theme.js";
 import { Renderer } from "@/renderer/Renderer.js";
 import { requiredEl } from "../../_common/dom.js";
 import {
@@ -55,13 +58,19 @@ function createFileLink(file: DocTreeFile): HTMLLIElement {
   btn.className = "doc-tree-link";
   btn.dataset.href = file.href;
   btn.textContent = file.name;
-  btn.classList.toggle("is-active", normalizeDocHref(file.href) === normalizeDocHref(activeHref));
+  btn.classList.toggle(
+    "is-active",
+    normalizeDocHref(file.href) === normalizeDocHref(activeHref),
+  );
   btn.addEventListener("click", () => void loadDoc(file.href));
   li.appendChild(btn);
   return li;
 }
 
-function appendDocTreeNodes(nodes: DocTreeNode[], list: HTMLUListElement): void {
+function appendDocTreeNodes(
+  nodes: DocTreeNode[],
+  list: HTMLUListElement,
+): void {
   for (const node of nodes) {
     if (node.kind === "file") {
       list.appendChild(createFileLink(node));
@@ -108,9 +117,14 @@ function renderDocTree(nodes: DocTreeNode[], container: HTMLElement): void {
 
 function syncActiveTree(): void {
   const active = normalizeDocHref(activeHref);
-  docTreeEl.querySelectorAll<HTMLButtonElement>(".doc-tree-link").forEach((btn) => {
-    btn.classList.toggle("is-active", normalizeDocHref(btn.dataset.href ?? "") === active);
-  });
+  docTreeEl
+    .querySelectorAll<HTMLButtonElement>(".doc-tree-link")
+    .forEach((btn) => {
+      btn.classList.toggle(
+        "is-active",
+        normalizeDocHref(btn.dataset.href ?? "") === active,
+      );
+    });
 }
 
 function getScrollTop(el: HTMLElement, container: HTMLElement): number {
@@ -120,7 +134,9 @@ function getScrollTop(el: HTMLElement, container: HTMLElement): number {
 }
 
 function updateActiveToc(): void {
-  const links = [...tocEl.querySelectorAll<HTMLAnchorElement>(".docs-toc-link")];
+  const links = [
+    ...tocEl.querySelectorAll<HTMLAnchorElement>(".docs-toc-link"),
+  ];
   if (links.length === 0) return;
 
   const pos = previewWrap.scrollTop + SCROLL_OFFSET;
@@ -233,7 +249,9 @@ function handlePreviewClick(event: MouseEvent): void {
 }
 
 tocEl.addEventListener("click", (event) => {
-  const link = (event.target as Element).closest<HTMLAnchorElement>(".docs-toc-link");
+  const link = (event.target as Element).closest<HTMLAnchorElement>(
+    ".docs-toc-link",
+  );
   if (!link?.hash) return;
   const id = decodeURIComponent(link.hash.slice(1));
   const target = document.getElementById(id);
@@ -245,12 +263,16 @@ tocEl.addEventListener("click", (event) => {
     behavior: "smooth",
   });
 
-  tocEl.querySelectorAll(".docs-toc-link").forEach((el) => el.classList.remove("is-active"));
+  tocEl
+    .querySelectorAll(".docs-toc-link")
+    .forEach((el) => el.classList.remove("is-active"));
   link.classList.add("is-active");
 });
 
 preview.addEventListener("click", handlePreviewClick);
-previewWrap.addEventListener("scroll", () => updateActiveToc(), { passive: true });
+previewWrap.addEventListener("scroll", () => updateActiveToc(), {
+  passive: true,
+});
 
 async function boot(): Promise<void> {
   setupPreviewThemeAndAppearance(theme, preview, previewWrap, {

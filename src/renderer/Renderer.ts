@@ -24,8 +24,8 @@ import { RenderOption } from "@/renderer/RenderOption";
 import { IncrementalSession } from "@/renderer/incremental/IncrementalSession.js";
 import { BlockIndex } from "@/renderer/incremental/BlockIndex.js";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
-import type {CherryChangeLineSet} from "@/renderer/incremental/CherryChangeSet";
-import {ParserStore} from "@/transformer/core/ParserStore";
+import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
+import { ParserStore } from "@/transformer/core/ParserStore";
 
 export interface RenderResult {
   html: string;
@@ -43,12 +43,19 @@ export class Renderer {
   private lastAst: MarkdownNode | null = null;
   private codeListener: CodeListener | null = null;
 
-  private readonly onLightDarkChanged = ({ isDark }: ThemeLightDarkEvent): void => {
+  private readonly onLightDarkChanged = ({
+    isDark,
+  }: ThemeLightDarkEvent): void => {
     this.transformer.isDark = isDark;
     replaceGraph(this.mount, isDark);
   };
 
-  constructor({ mount, theme, inlineParsers = {}, blockParsers = {} }: RenderOption) {
+  constructor({
+    mount,
+    theme,
+    inlineParsers = {},
+    blockParsers = {},
+  }: RenderOption) {
     if (!mount) {
       throw new Error("渲染器需要 mount 元素");
     }
@@ -83,7 +90,8 @@ export class Renderer {
 
   private highlightCodeHtml(code: string, lang: string): string {
     if (lang && hljs.getLanguage(lang)) {
-      return hljs.highlight(code, { language: lang, ignoreIllegals: true }).value;
+      return hljs.highlight(code, { language: lang, ignoreIllegals: true })
+        .value;
     }
     if (code) {
       return hljs.highlightAuto(code).value;
@@ -95,10 +103,7 @@ export class Renderer {
     this.transformer.isDark = this.theme.getTheme().isDark;
   }
 
-  render(
-    markdown: string,
-    changes?: CherryChangeLineSet[],
-  ): RenderResult {
+  render(markdown: string, changes?: CherryChangeLineSet[]): RenderResult {
     if (this.session.blocks.length === 0) {
       this.theme.logD("render:full", "no-cache");
       return this.renderFull(markdown);
@@ -111,7 +116,7 @@ export class Renderer {
       markdown,
       this.transformer,
       this.theme,
-      changes
+      changes,
     );
 
     if (!incremental.ok) {
@@ -150,7 +155,9 @@ export class Renderer {
     );
 
     this.session.adoptFullParse(lines, ast, mountedBlocks);
-    this.theme.logD("render:full", "done", { blockCount: mountedBlocks.length });
+    this.theme.logD("render:full", "done", {
+      blockCount: mountedBlocks.length,
+    });
     return { html, ast, blocks: this.getMountedBlocks(), partial: false };
   }
 

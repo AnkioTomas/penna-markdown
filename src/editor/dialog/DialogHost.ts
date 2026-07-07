@@ -68,7 +68,11 @@ export class DialogHost {
       if (!this.activeId) return;
       const resultId = this.activeId;
       this.teardown();
-      this.theme.emit("editor:dialog:result", { id: resultId, cancelled, data });
+      this.theme.emit("editor:dialog:result", {
+        id: resultId,
+        cancelled,
+        data,
+      });
     };
 
     const cbs = {
@@ -100,19 +104,35 @@ export class DialogHost {
         this.cleanupForm = renderAttrDialog(body, props ?? {}, cbs as never);
         break;
       case "footnote":
-        this.cleanupForm = renderFootnoteDialog(body, props ?? {}, cbs as never);
+        this.cleanupForm = renderFootnoteDialog(
+          body,
+          props ?? {},
+          cbs as never,
+        );
         break;
       case "codeBlock":
-        this.cleanupForm = renderCodeBlockDialog(body, props ?? {}, cbs as never);
+        this.cleanupForm = renderCodeBlockDialog(
+          body,
+          props ?? {},
+          cbs as never,
+        );
         break;
       case "frontmatter":
-        this.cleanupForm = renderFrontmatterDialog(body, props ?? {}, cbs as never);
+        this.cleanupForm = renderFrontmatterDialog(
+          body,
+          props ?? {},
+          cbs as never,
+        );
         break;
       case "collapse":
         this.cleanupForm = renderCollapseDialog(body, cbs as never);
         break;
       case "timeline":
-        this.cleanupForm = renderTimelineDialog(body, props ?? {}, cbs as never);
+        this.cleanupForm = renderTimelineDialog(
+          body,
+          props ?? {},
+          cbs as never,
+        );
         break;
       default:
         done(true);
@@ -129,7 +149,8 @@ export class DialogHost {
     setTimeout(() => {
       this.root.classList.remove("is-closing");
       this.teardown();
-      if (silent) this.theme.emit("editor:dialog:result", { id, cancelled: true });
+      if (silent)
+        this.theme.emit("editor:dialog:result", { id, cancelled: true });
     }, 200);
   }
 

@@ -66,7 +66,11 @@ export function parseRepoCardOpen(attrs: string) {
   };
 }
 
-export function blockLength(_lines: string[], start: number, end: number): number {
+export function blockLength(
+  _lines: string[],
+  start: number,
+  end: number,
+): number {
   return end - start;
 }
 

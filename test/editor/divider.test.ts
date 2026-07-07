@@ -49,9 +49,18 @@ function createDividerTree(bodyWidth = 1000, sidebarWidth = 200) {
     height: 600,
     toJSON: () => ({}),
   } as DOMRect);
-  Object.defineProperty(sidebar, "offsetWidth", { configurable: true, value: sidebarWidth });
-  Object.defineProperty(sidebar, "offsetParent", { configurable: true, value: body });
-  Object.defineProperty(dividerEl, "offsetWidth", { configurable: true, value: 4 });
+  Object.defineProperty(sidebar, "offsetWidth", {
+    configurable: true,
+    value: sidebarWidth,
+  });
+  Object.defineProperty(sidebar, "offsetParent", {
+    configurable: true,
+    value: body,
+  });
+  Object.defineProperty(dividerEl, "offsetWidth", {
+    configurable: true,
+    value: 4,
+  });
   dividerEl.setPointerCapture = vi.fn();
   dividerEl.releasePointerCapture = vi.fn();
   dividerEl.hasPointerCapture = vi.fn().mockReturnValue(true);
@@ -155,9 +164,15 @@ describe("Divider", () => {
     divider.setSplit(0.5);
 
     dividerEl.dispatchEvent(
-      new PointerEvent("pointerdown", { bubbles: true, button: 0, clientX: 900 }),
+      new PointerEvent("pointerdown", {
+        bubbles: true,
+        button: 0,
+        clientX: 900,
+      }),
     );
-    document.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, button: 0 }));
+    document.dispatchEvent(
+      new PointerEvent("pointerup", { bubbles: true, button: 0 }),
+    );
 
     expect(divider.getSplit()).toBe(0.5);
     divider.destroy();
@@ -167,12 +182,22 @@ describe("Divider", () => {
     const { divider, dividerEl } = createDividerTree(1000, 200);
 
     dividerEl.dispatchEvent(
-      new PointerEvent("pointerdown", { bubbles: true, button: 0, clientX: 600 }),
+      new PointerEvent("pointerdown", {
+        bubbles: true,
+        button: 0,
+        clientX: 600,
+      }),
     );
     document.dispatchEvent(
-      new PointerEvent("pointermove", { bubbles: true, button: 0, clientX: 700 }),
+      new PointerEvent("pointermove", {
+        bubbles: true,
+        button: 0,
+        clientX: 700,
+      }),
     );
-    document.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, button: 0 }));
+    document.dispatchEvent(
+      new PointerEvent("pointerup", { bubbles: true, button: 0 }),
+    );
 
     expect(localStorage.getItem(SPLIT_STORAGE_KEY)).not.toBeNull();
     divider.destroy();

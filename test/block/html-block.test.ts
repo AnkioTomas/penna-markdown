@@ -4,7 +4,10 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const gfmCases = JSON.parse(
-  readFileSync(resolve(import.meta.dirname, "../fixtures/gfm/cases.json"), "utf8"),
+  readFileSync(
+    resolve(import.meta.dirname, "../fixtures/gfm/cases.json"),
+    "utf8",
+  ),
 );
 
 function gfmCase(id) {

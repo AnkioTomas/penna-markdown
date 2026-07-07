@@ -4,15 +4,14 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {
+  createNode,
+  type MarkdownNode,
+} from "@/transformer/core/MarkdownNode.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
-import {
-  blockLength,
-  pickAttr,
-  readQuadColonBlock,
-} from "./shared.js";
+import { blockLength, pickAttr, readQuadColonBlock } from "./shared.js";
 
 const OPEN_RE = /^ {0,3}::::(?!:)\s+card-masonry(?:\s+(.*))?\s*$/;
 
@@ -20,7 +19,10 @@ const DEFAULT_MASONRY_COLS = 3;
 const DEFAULT_MASONRY_GAP = 16;
 const MAX_MASONRY_COLS = 3;
 
-function parseMasonryCols(raw: string, fallback = DEFAULT_MASONRY_COLS): number {
+function parseMasonryCols(
+  raw: string,
+  fallback = DEFAULT_MASONRY_COLS,
+): number {
   const trimmed = String(raw ?? "").trim();
   if (!/^\d+$/.test(trimmed)) return fallback;
   const n = Number.parseInt(trimmed, 10);
@@ -36,10 +38,8 @@ function parseMasonryGap(raw: string): number {
 }
 
 function distributeMasonryItems(items: MarkdownNode[], cols: number) {
-  const columns: Array<Array<{ index: number; node: MarkdownNode }>> = Array.from(
-    { length: cols },
-    () => [],
-  );
+  const columns: Array<Array<{ index: number; node: MarkdownNode }>> =
+    Array.from({ length: cols }, () => []);
   items.forEach((node, index) => {
     columns[index % cols].push({ index, node });
   });

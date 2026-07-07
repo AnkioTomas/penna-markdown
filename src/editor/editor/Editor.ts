@@ -1,5 +1,14 @@
-import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
-import { markdown, markdownKeymap, markdownLanguage } from "@codemirror/lang-markdown";
+import {
+  defaultKeymap,
+  history,
+  historyKeymap,
+  indentWithTab,
+} from "@codemirror/commands";
+import {
+  markdown,
+  markdownKeymap,
+  markdownLanguage,
+} from "@codemirror/lang-markdown";
 import { EditorState, type Extension } from "@codemirror/state";
 import {
   EditorView,
@@ -10,17 +19,18 @@ import {
   drawSelection,
 } from "@codemirror/view";
 import { createEditorSyntaxHighlighting } from "./cmSyntax";
-import { CherryInlinesExtension, CherryMathBlockExtension, CherryCommentBlockExtension, codeInfoPlugin } from "./lezer/index.js";
+import {
+  CherryInlinesExtension,
+  CherryMathBlockExtension,
+  CherryCommentBlockExtension,
+  codeInfoPlugin,
+} from "./lezer/index.js";
 import type { EditorOptions } from "./EditorOptions";
 import type { Theme } from "@/theme/Theme";
 
-
-
-
-
 /**
  * 编辑器核心类，是对 CodeMirror 6 的一层防腐层（Anti-Corruption Layer）封装。
- * 
+ *
  * 【架构说明】
  * 为什么要包这一层？
  * 1. 隔离外部依赖：整个项目中，除了 `src/editor/editor` 目录下的几个文件外，
@@ -57,7 +67,11 @@ export class Editor {
       ]),
       markdown({
         base: markdownLanguage,
-        extensions: [CherryMathBlockExtension, CherryCommentBlockExtension, CherryInlinesExtension],
+        extensions: [
+          CherryMathBlockExtension,
+          CherryCommentBlockExtension,
+          CherryInlinesExtension,
+        ],
       }),
       createEditorSyntaxHighlighting(),
       codeInfoPlugin,
@@ -67,7 +81,7 @@ export class Editor {
     if (lineNumbersEnabled) {
       extensions.push(lineNumbers(), highlightActiveLineGutter());
     }
-    
+
     extensions.push(highlightActiveLine(), drawSelection());
 
     const state = EditorState.create({
@@ -97,8 +111,6 @@ export class Editor {
   getScrollDOM(): HTMLElement {
     return this.view.scrollDOM;
   }
-
-
 
   focus(): void {
     this.view.focus();

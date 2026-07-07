@@ -13,17 +13,24 @@ import { RenderContext } from "@/transformer/core/context/RenderContext";
 import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
 import { canGenericLazyContinue } from "@/transformer/utils/lazyContinuation.js";
 import { isBlankString } from "@/transformer/utils/normalize";
-import { expandLinePrefixTabs, expandListItemContent, getIndent, isIndentedCodeLine, listsMatch, parseListMarkerLine } from "@/transformer/utils/tabs.js";
+import {
+  expandLinePrefixTabs,
+  expandListItemContent,
+  getIndent,
+  isIndentedCodeLine,
+  listsMatch,
+  parseListMarkerLine,
+} from "@/transformer/utils/tabs.js";
 
 interface ListMarkerInfo {
   isOrdered: boolean;
   bulletChar?: string;
   delimiter?: string;
   start?: number;
-  indent: number;           // 前置缩进 (0-3)
-  contentStart: number;     // 文本内容真实开始的字符索引
-  contentStartCol: number;  // 文本内容开始的视觉列（Tab 按 4 列展开）
-  isBlank: boolean;         // 标记后是否全为空白
+  indent: number; // 前置缩进 (0-3)
+  contentStart: number; // 文本内容真实开始的字符索引
+  contentStartCol: number; // 文本内容开始的视觉列（Tab 按 4 列展开）
+  isBlank: boolean; // 标记后是否全为空白
 }
 
 /** 有序列表在非段落上下文可开启（GFM #282：前一行是 list marker 时允许 start≠1） */
@@ -36,7 +43,11 @@ function canOrderedListOpenAt(
     const prevLine = lines[index - 1] ?? "";
     if (!isBlankString(prevLine)) {
       if (marker.isBlank) return false;
-      if (marker.isOrdered && marker.start !== 1 && !getListMarkerInfo(prevLine)) {
+      if (
+        marker.isOrdered &&
+        marker.start !== 1 &&
+        !getListMarkerInfo(prevLine)
+      ) {
         return false;
       }
     }
@@ -149,7 +160,10 @@ class ListBlockParser extends BaseBlockParser {
       // 剥去内容起始的缩进
       const firstLine = lines[i];
       const rawMarker = parseListMarkerLine(firstLine);
-      let firstContent = expandListItemContent(firstLine, itemMarker.contentStart);
+      let firstContent = expandListItemContent(
+        firstLine,
+        itemMarker.contentStart,
+      );
       // GFM 规则 #2：marker 行以 4+ 空格缩进代码开头（不含 tab 场景，见 Example 7）
       if (rawMarker && /^ {4,}/.test(rawMarker.content)) {
         firstContent = expandLinePrefixTabs(rawMarker.content);
@@ -169,7 +183,11 @@ class ListBlockParser extends BaseBlockParser {
       let inFence = false;
       let fenceChar = "";
 
-      ({ inFence, fenceChar } = updateFenceState(firstContent, inFence, fenceChar));
+      ({ inFence, fenceChar } = updateFenceState(
+        firstContent,
+        inFence,
+        fenceChar,
+      ));
 
       // 消费 List Item 的内部行
       while (i < lines.length) {
@@ -183,7 +201,10 @@ class ListBlockParser extends BaseBlockParser {
             } else {
               const nextIndent = getNextNonBlankIndent(lines, i + 1);
               // GFM #305：空行在嵌套 sublist 之后、同级内容之前，仍算本 item 内空行
-              if (nextIndent !== null && nextIndent < deepestNestedContentStartCol) {
+              if (
+                nextIndent !== null &&
+                nextIndent < deepestNestedContentStartCol
+              ) {
                 itemHadBlankLine = true;
               }
             }
@@ -199,11 +220,13 @@ class ListBlockParser extends BaseBlockParser {
         }
 
         // B. 遇到新的 Marker
-        const nextMarker = getListMarkerInfo(currentLine, { allowIndented: true });
+        const nextMarker = getListMarkerInfo(currentLine, {
+          allowIndented: true,
+        });
         if (nextMarker) {
           if (
-            listsMatch(nextMarker, initialMarker)
-            && nextMarker.indent > initialMarker.indent
+            listsMatch(nextMarker, initialMarker) &&
+            nextMarker.indent > initialMarker.indent
           ) {
             seenNestedMarkerInItem = true;
             deepestNestedContentStartCol = Math.max(
@@ -211,28 +234,40 @@ class ListBlockParser extends BaseBlockParser {
               nextMarker.contentStartCol,
             );
           }
-          if (listsMatch(nextMarker, initialMarker) && nextMarker.indent <= initialMarker.indent) {
+          if (
+            listsMatch(nextMarker, initialMarker) &&
+            nextMarker.indent <= initialMarker.indent
+          ) {
             break;
           }
-          if (!listsMatch(nextMarker, initialMarker) && getIndent(currentLine) < itemMarker.contentStartCol) {
+          if (
+            !listsMatch(nextMarker, initialMarker) &&
+            getIndent(currentLine) < itemMarker.contentStartCol
+          ) {
             break;
           }
         }
 
         // B-2. 非强打断块：缩进足够时仍不得收进行缓冲
         if (
-          getIndent(currentLine) >= itemMarker.contentStartCol
-          && !getListMarkerInfo(currentLine, { allowIndented: true })
-          && ctx.canStrongBreak(lines, i, false)
+          getIndent(currentLine) >= itemMarker.contentStartCol &&
+          !getListMarkerInfo(currentLine, { allowIndented: true }) &&
+          ctx.canStrongBreak(lines, i, false)
         ) {
           break;
         }
 
         // C. 检查缩进（Tab 按 4 列制表位计入视觉列）
         if (getIndent(currentLine) >= itemMarker.contentStartCol) {
-          const slice = expandLinePrefixTabs(currentLine).slice(itemMarker.contentStartCol);
+          const slice = expandLinePrefixTabs(currentLine).slice(
+            itemMarker.contentStartCol,
+          );
           itemLines.push(slice);
-          ({ inFence, fenceChar } = updateFenceState(slice, inFence, fenceChar));
+          ({ inFence, fenceChar } = updateFenceState(
+            slice,
+            inFence,
+            fenceChar,
+          ));
           i++;
           continue;
         }
@@ -249,12 +284,11 @@ class ListBlockParser extends BaseBlockParser {
         }
 
         // 规则 2：使用通用探针评估深层 AST
-        if (canGenericLazyContinue(
-            ctx,
-            itemLines,
-            currentLine,
-            (probeLines) => ctx.parseBlocks(probeLines)
-        )) {
+        if (
+          canGenericLazyContinue(ctx, itemLines, currentLine, (probeLines) =>
+            ctx.parseBlocks(probeLines),
+          )
+        ) {
           // 惰性延续行无需剥离前缀，直接塞入
           itemLines.push(currentLine);
           i++;
@@ -273,16 +307,24 @@ class ListBlockParser extends BaseBlockParser {
       }
 
       // 移除尾部多余的空行，并标记遇到了空行
-      while (itemLines.length > 0 && isBlankString(itemLines[itemLines.length - 1])) {
+      while (
+        itemLines.length > 0 &&
+        isBlankString(itemLines[itemLines.length - 1])
+      ) {
         itemLines.pop();
         hadBlankLineBetweenItems = true;
       }
 
       // 列表项内部仍含空行 → 仅该 item loose（GFM #287 / #299）
-      const itemLoose = itemHadBlankLine && itemLines.some((l) => isBlankString(l));
+      const itemLoose =
+        itemHadBlankLine && itemLines.some((l) => isBlankString(l));
 
       const itemChildren = ctx.parseBlocks(itemLines);
-      listItems.push(createNode("list_item", i - itemStart, undefined, itemChildren, { loose: itemLoose }));
+      listItems.push(
+        createNode("list_item", i - itemStart, undefined, itemChildren, {
+          loose: itemLoose,
+        }),
+      );
     }
 
     const node = createNode("list", i - index, undefined, listItems, {
@@ -323,7 +365,8 @@ class ListBlockParser extends BaseBlockParser {
     });
 
     const lead = item.children[0].type !== "paragraph" ? "\n" : "";
-    const tail = item.children[item.children.length - 1].type === "paragraph" ? "" : "\n";
+    const tail =
+      item.children[item.children.length - 1].type === "paragraph" ? "" : "\n";
     return `<li>${lead}${parts.join("\n")}${tail}</li>`;
   }
 
@@ -331,14 +374,17 @@ class ListBlockParser extends BaseBlockParser {
   render(node: MarkdownNode, ctx: RenderContext) {
     const props = node.props || {};
     const tag = props.ordered ? "ol" : "ul";
-    const startAttr = props.ordered && props.start !== 1 ? ` start="${props.start}"` : "";
+    const startAttr =
+      props.ordered && props.start !== 1 ? ` start="${props.start}"` : "";
     const listLooseFromBetween = props.looseFromBetween as boolean;
-    const anyItemLoose = (node.children || []).some((item) => item.props?.loose);
+    const anyItemLoose = (node.children || []).some(
+      (item) => item.props?.loose,
+    );
     const listLoose = listLooseFromBetween || anyItemLoose;
 
     const itemsHtml = (node.children || [])
-        .map((item) => this.renderListItem(item, ctx, listLoose))
-        .join("\n");
+      .map((item) => this.renderListItem(item, ctx, listLoose))
+      .join("\n");
 
     return `<${tag}${startAttr}${this.sourceLineAttrs(node)}>\n${itemsHtml}\n</${tag}>`;
   }

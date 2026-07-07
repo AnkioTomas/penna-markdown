@@ -3,7 +3,11 @@ import "../../_common/cherry-demo.scss";
 import "../../_common/layout.scss";
 
 import { createDemoTheme } from "../../_common/theme.js";
-import { Theme, THEME_EVENT_LIGHT_DARK, THEME_EVENT_SKIN } from "@/theme/Theme.js";
+import {
+  Theme,
+  THEME_EVENT_LIGHT_DARK,
+  THEME_EVENT_SKIN,
+} from "@/theme/Theme.js";
 import { Renderer } from "@/renderer/Renderer.js";
 import { requiredEl } from "../../_common/dom.js";
 import example from "../../../docs/test.md?raw";
@@ -20,7 +24,9 @@ function readAppearance(): AppearanceMode {
 
 function resolveAppearance(mode: AppearanceMode): "light" | "dark" {
   if (mode === "auto") {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
   }
   return mode;
 }
@@ -42,7 +48,9 @@ const theme = createDemoTheme();
 function readThemeId(): string {
   const saved = localStorage.getItem(THEME_KEY);
   const available = theme.list();
-  return saved && available.includes(saved as (typeof available)[number]) ? saved : "default";
+  return saved && available.includes(saved as (typeof available)[number])
+    ? saved
+    : "default";
 }
 
 theme.setTheme(readThemeId(), preview, previewWrap);
@@ -183,7 +191,9 @@ markdownInput.addEventListener("input", () => {
 });
 
 tocEl.addEventListener("click", (event) => {
-  const link = (event.target as Element).closest<HTMLAnchorElement>("a.toc-item");
+  const link = (event.target as Element).closest<HTMLAnchorElement>(
+    "a.toc-item",
+  );
   if (!link?.hash) return;
   const id = decodeURIComponent(link.hash.slice(1));
   const target = document.getElementById(id);
@@ -205,10 +215,12 @@ function boot(): void {
   theme.setLightDark(resolveAppearance(appearance));
   renderNow();
 
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-    if (appearance !== "auto") return;
-    theme.setLightDark(resolveAppearance("auto"));
-  });
+  window
+    .matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", () => {
+      if (appearance !== "auto") return;
+      theme.setLightDark(resolveAppearance("auto"));
+    });
 }
 
 boot();

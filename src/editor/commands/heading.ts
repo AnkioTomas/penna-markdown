@@ -7,7 +7,10 @@ export function applyHeading(view: EditorView, level: number): boolean {
 }
 
 export function registerHeadingCommands(
-  register: (name: string, handler: import("./types.js").CommandHandler) => void,
+  register: (
+    name: string,
+    handler: import("./types.js").CommandHandler,
+  ) => void,
 ): void {
   for (let level = 1; level <= 6; level++) {
     const n = level;

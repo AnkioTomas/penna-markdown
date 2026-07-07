@@ -8,7 +8,7 @@
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
-import {InlineParseContext} from "@/transformer/core/context/InlineParseContext"; // 或对应的 InlineParseContext
+import { InlineParseContext } from "@/transformer/core/context/InlineParseContext"; // 或对应的 InlineParseContext
 
 /**
  * 删除线行内解析器。
@@ -21,13 +21,13 @@ class StrikethroughInlineParser extends BaseInlineParser {
   }
 
   canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {
-    return src[index] === '~' && src[index+1] === '~';
+    return src[index] === "~" && src[index + 1] === "~";
   }
 
   /** @inheritdoc */
   parse(src: string, index: number, ctx: any) {
     // 1. 极速快筛：不以 `~~` 开头，直接原路返回，0 内存分配
-    if (src[index] !== '~' || src[index + 1] !== '~') {
+    if (src[index] !== "~" || src[index + 1] !== "~") {
       return null;
     }
 
@@ -39,13 +39,13 @@ class StrikethroughInlineParser extends BaseInlineParser {
     while (i < src.length) {
       // 核心修复：遇到反斜杠转义，直接跳过后面的字符
       // 这样 `~~foo\~~bar~~` 就能完美被识别为删除线，且内容包含 `\~`
-      if (src[i] === '\\' && i + 1 < src.length) {
+      if (src[i] === "\\" && i + 1 < src.length) {
         i += 2;
         continue;
       }
 
       // 找到闭合标志
-      if (src[i] === '~' && src[i + 1] === '~') {
+      if (src[i] === "~" && src[i + 1] === "~") {
         innerEnd = i;
         closed = true;
         break;
@@ -65,7 +65,7 @@ class StrikethroughInlineParser extends BaseInlineParser {
     const children = ctx.parseInline(innerText);
 
     // 计算在源码中占据的绝对长度
-    const totalLength = (innerEnd + 2) - index;
+    const totalLength = innerEnd + 2 - index;
 
     // 4. 构建标准化 AST 节点
     const node = createNode("strikethrough", totalLength, undefined, children);

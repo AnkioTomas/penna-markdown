@@ -6,7 +6,10 @@
  */
 
 import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
-import { skipInlineWhitespace, type SkipInlineWhitespaceOptions } from "@/transformer/utils/normalize.js";
+import {
+  skipInlineWhitespace,
+  type SkipInlineWhitespaceOptions,
+} from "@/transformer/utils/normalize.js";
 
 /** 行内链接 destination / title 之间的空白（可含单个换行）。 */
 export const INLINE_LINK_WS: SkipInlineWhitespaceOptions = {
@@ -49,9 +52,9 @@ export function normalizeLinkDestination(href: string): string {
   let out = "";
   for (let i = 0; i < decoded.length; i += 1) {
     if (
-      decoded[i] === "%"
-      && i + 2 < decoded.length
-      && /^[0-9A-Fa-f]{2}$/.test(decoded.slice(i + 1, i + 3))
+      decoded[i] === "%" &&
+      i + 2 < decoded.length &&
+      /^[0-9A-Fa-f]{2}$/.test(decoded.slice(i + 1, i + 3))
     ) {
       out += decoded.slice(i, i + 3);
       i += 2;
@@ -79,7 +82,10 @@ export function normalizeLinkTitle(title: string): string {
 /**
  * 解析 `<...>` destination；闭合 `>` 必须未转义。
  */
-export function findUnescapedAngleClose(src: string, openIndex: number): number {
+export function findUnescapedAngleClose(
+  src: string,
+  openIndex: number,
+): number {
   let k = openIndex + 1;
   while (k < src.length) {
     if (src[k] === "\n") return -1;
@@ -134,7 +140,14 @@ export function parsePlainDestination(
     else if (char === ")") {
       if (pLevel === 0) break;
       pLevel -= 1;
-    } else if (char === " " || char === "\t" || char === "\n" || char === "\r" || char === "\v" || char === "\f") {
+    } else if (
+      char === " " ||
+      char === "\t" ||
+      char === "\n" ||
+      char === "\r" ||
+      char === "\v" ||
+      char === "\f"
+    ) {
       break;
     }
     k += 1;
@@ -151,7 +164,10 @@ export interface ParsedLinkTitle {
 /**
  * 从 opener 字符起解析 link title（`"`、`'` 或 `(`）。
  */
-export function parseLinkTitle(src: string, start: number): ParsedLinkTitle | null {
+export function parseLinkTitle(
+  src: string,
+  start: number,
+): ParsedLinkTitle | null {
   if (start >= src.length) return null;
   const opener = src[start];
   if (opener !== '"' && opener !== "'" && opener !== "(") return null;
@@ -187,7 +203,10 @@ export interface ParsedInlineLink {
 }
 
 /** angle destination 内因换行导致解析失败。 */
-export function isAngleDestinationBrokenByNewline(src: string, openIndex: number): boolean {
+export function isAngleDestinationBrokenByNewline(
+  src: string,
+  openIndex: number,
+): boolean {
   if (src[openIndex] !== "<") return false;
   let k = openIndex + 1;
   while (k < src.length) {
@@ -220,7 +239,10 @@ function findAngleCloseRelaxed(src: string, openIndex: number): number {
  * @param src 源文本
  * @param parenStart `(` 的位置
  */
-export function scanFailedAngleInlineLinkEnd(src: string, parenStart: number): number {
+export function scanFailedAngleInlineLinkEnd(
+  src: string,
+  parenStart: number,
+): number {
   if (src[parenStart] !== "(") return -1;
 
   let j = skipInlineWhitespace(src, parenStart + 1, INLINE_LINK_WS);

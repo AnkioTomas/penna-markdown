@@ -11,11 +11,19 @@
     --cb-lang-fg: var(--cherry-c-brand-1);
     --cb-title-fg: var(--cherry-c-text-2);
     --cb-shadow: var(--cherry-c-code-block-shadow);
-    --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 14%, transparent);
+    --cb-line-highlight: color-mix(
+      in srgb,
+      var(--cherry-c-brand-1) 14%,
+      transparent
+    );
 
     @include tokens.when-dark {
       --cb-border: color-mix(in srgb, var(--cherry-c-text-3) 28%, transparent);
-      --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 22%, transparent);
+      --cb-line-highlight: color-mix(
+        in srgb,
+        var(--cherry-c-brand-1) 22%,
+        transparent
+      );
     }
 
     margin: rem(20) 0;
@@ -51,7 +59,8 @@
     &__lang {
       flex-shrink: 0;
       padding: rem(2) rem(8);
-      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      font-family:
+        ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
       font-size: rem(11);
       font-weight: 600;
       line-height: 1.6;
@@ -84,7 +93,9 @@
       }
     }
 
-    &__meta > .cherry-code-block__lang:first-child + .cherry-code-block__title::before {
+    &__meta
+      > .cherry-code-block__lang:first-child
+      + .cherry-code-block__title::before {
       display: inline-block;
     }
 
@@ -102,25 +113,31 @@
       align-items: stretch;
       overflow: auto;
       padding: var(--cb-body-pad-y) var(--cb-body-pad-x);
-      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
-        monospace;
+      font-family:
+        ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+        "Liberation Mono", monospace;
       font-size: rem(13);
       line-height: var(--cb-line-height);
       color: var(--cherry-c-text-1);
       background-image: var(--cherry-line-highlight-bg, none);
       background-repeat: no-repeat;
       background-size: 100%
-        calc(var(--cb-body-pad-y) * 2 + var(--cherry-line-count, 1) * var(--cb-line-step));
+        calc(
+          var(--cb-body-pad-y) * 2 + var(--cherry-line-count, 1) *
+            var(--cb-line-step)
+        );
     }
 
     &__panel--collapsed .cherry-code-block__body {
       max-height: calc(
-        var(--cb-body-pad-y) * 2 + var(--cherry-collapsed-visible, 10) * var(--cb-line-step)
+        var(--cb-body-pad-y) * 2 + var(--cherry-collapsed-visible, 10) *
+          var(--cb-line-step)
       );
       overflow: hidden;
     }
 
-    &__panel--collapsible:not(.cherry-code-block__panel--collapsed) .cherry-code-block__body {
+    &__panel--collapsible:not(.cherry-code-block__panel--collapsed)
+      .cherry-code-block__body {
       max-height: none;
       overflow: auto;
     }
@@ -201,7 +218,11 @@
 
       &:hover {
         color: var(--cherry-c-brand-1);
-        background: color-mix(in srgb, var(--cherry-c-brand-1) 8%, var(--cb-header-bg));
+        background: color-mix(
+          in srgb,
+          var(--cherry-c-brand-1) 8%,
+          var(--cb-header-bg)
+        );
       }
     }
 
@@ -216,7 +237,8 @@
       transition: transform 0.2s ease;
     }
 
-    &__panel--collapsible:not(.cherry-code-block__panel--collapsed) .cherry-code-block__expand-icon {
+    &__panel--collapsible:not(.cherry-code-block__panel--collapsed)
+      .cherry-code-block__expand-icon {
       transform: rotate(180deg);
     }
   }
@@ -254,12 +276,19 @@
     &:hover {
       color: var(--cherry-c-text-1);
       background: color-mix(in srgb, var(--cherry-c-text-3) 10%, transparent);
-      border-color: var(--cb-border, color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent));
+      border-color: var(
+        --cb-border,
+        color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent)
+      );
     }
 
     &.is-copied {
       color: var(--cherry-c-brand-1);
-      border-color: color-mix(in srgb, var(--cherry-c-brand-1) 35%, transparent);
+      border-color: color-mix(
+        in srgb,
+        var(--cherry-c-brand-1) 35%,
+        transparent
+      );
 
       &::before {
         mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");

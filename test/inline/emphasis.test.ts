@@ -28,7 +28,7 @@ describe("Emphasis (Stack Approach)", () => {
   it("mixed emphasis and strong", () => {
     const html = renderMarkdown(transformer, "*italic **bold***");
     expect(html).toBe("<p><em>italic <strong>bold</strong></em></p>\n");
-    
+
     const html2 = renderMarkdown(transformer, "**bold *italic***");
     expect(html2).toBe("<p><strong>bold <em>italic</em></strong></p>\n");
   });

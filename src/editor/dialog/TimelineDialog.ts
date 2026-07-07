@@ -3,7 +3,10 @@ import type { TimelineDialogResult } from "@/editor/commands/types.js";
 export function renderTimelineDialog(
   host: HTMLElement,
   props: Partial<TimelineDialogResult>,
-  callbacks: { onSubmit: (d: TimelineDialogResult) => void; onCancel: () => void },
+  callbacks: {
+    onSubmit: (d: TimelineDialogResult) => void;
+    onCancel: () => void;
+  },
 ): () => void {
   const form = document.createElement("form");
   form.className = "cherry-dialog-form";
@@ -30,9 +33,14 @@ export function renderTimelineDialog(
       <button type="submit" class="is-primary">插入</button>
     </div>
   `;
-  if (props.type) (form.elements.namedItem("type") as HTMLSelectElement).value = props.type;
-  if (props.lineStyle) (form.elements.namedItem("lineStyle") as HTMLSelectElement).value = props.lineStyle;
-  form.querySelector('[data-action="cancel"]')?.addEventListener("click", () => callbacks.onCancel());
+  if (props.type)
+    (form.elements.namedItem("type") as HTMLSelectElement).value = props.type;
+  if (props.lineStyle)
+    (form.elements.namedItem("lineStyle") as HTMLSelectElement).value =
+      props.lineStyle;
+  form
+    .querySelector('[data-action="cancel"]')
+    ?.addEventListener("click", () => callbacks.onCancel());
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const fd = new FormData(form);
@@ -50,8 +58,15 @@ export function renderTimelineDialog(
   return () => form.remove();
 }
 
-export function timelineMarkdown(data: TimelineDialogResult, containerLine = ""): string {
-  const attrs = [`time=${data.time}`, data.type ? `type=${data.type}` : "", data.lineStyle ? `line=${data.lineStyle}` : ""]
+export function timelineMarkdown(
+  data: TimelineDialogResult,
+  containerLine = "",
+): string {
+  const attrs = [
+    `time=${data.time}`,
+    data.type ? `type=${data.type}` : "",
+    data.lineStyle ? `line=${data.lineStyle}` : "",
+  ]
     .filter(Boolean)
     .join(" ");
   const open = containerLine ? `::: timeline ${containerLine}` : "::: timeline";

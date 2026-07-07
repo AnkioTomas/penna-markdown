@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { assignSlug, createSlugRegistry, slugify } from "@/transformer/gfm/block/atx_heading.js";
+import {
+  assignSlug,
+  createSlugRegistry,
+  slugify,
+} from "@/transformer/gfm/block/atx_heading.js";
 
 describe("transformer/atx_heading slug", () => {
   it("replaces illegal characters with dashes", () => {

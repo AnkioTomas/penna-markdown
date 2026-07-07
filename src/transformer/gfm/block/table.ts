@@ -19,12 +19,20 @@ type Alignment = "left" | "center" | "right" | "none";
  * 处理了 GFM 表格特有的转义管道符 `\|` 以及首尾的边界条件。
  * @returns 包含单元格数组与是否含有未转义管道符的标志
  */
-export function parseTableRow(line: string): { cells: string[]; hasUnescapedPipe: boolean } | null {
+export function parseTableRow(
+  line: string,
+): { cells: string[]; hasUnescapedPipe: boolean } | null {
   let start = skipBlockPrefixSpaces(line);
 
   let end = line.length;
   // 2. 忽略尾随的空白符
-  while (end > start && (line[end - 1] === ' ' || line[end - 1] === '\t' || line[end - 1] === '\n' || line[end - 1] === '\r')) {
+  while (
+    end > start &&
+    (line[end - 1] === " " ||
+      line[end - 1] === "\t" ||
+      line[end - 1] === "\n" ||
+      line[end - 1] === "\r")
+  ) {
     end--;
   }
 
@@ -34,7 +42,7 @@ export function parseTableRow(line: string): { cells: string[]; hasUnescapedPipe
   let i = start;
 
   // 3. 检查起始的管道符 (GFM 中行首的 | 是可选的)
-  if (line[i] === '|') {
+  if (line[i] === "|") {
     hasUnescapedPipe = true;
     i++;
   }
@@ -44,10 +52,10 @@ export function parseTableRow(line: string): { cells: string[]; hasUnescapedPipe
 
   // 4. 逐字符扫描，遇到未转义的 | 进行切分
   while (i < end) {
-    if (line[i] === '\\' && i + 1 < end && line[i + 1] === '|') {
-      currentCell += '|'; // 还原被转义的管道符
+    if (line[i] === "\\" && i + 1 < end && line[i + 1] === "|") {
+      currentCell += "|"; // 还原被转义的管道符
       i += 2;
-    } else if (line[i] === '|') {
+    } else if (line[i] === "|") {
       hasUnescapedPipe = true;
       cells.push(currentCell.trim()); // 表格规范允许清空前后的空格
       currentCell = "";
@@ -61,11 +69,11 @@ export function parseTableRow(line: string): { cells: string[]; hasUnescapedPipe
   // 5. 检查并处理结尾的边界条件
   // 如果最后不是以未转义的管道符结尾，则把最后收集到的文本算作一个格子
   let isTrailingPipe = false;
-  if (end > start && line[end - 1] === '|') {
+  if (end > start && line[end - 1] === "|") {
     // 检查是不是被转义的尾管 (如 `\\|`)
     let backslashCount = 0;
     let k = end - 2;
-    while (k >= start && line[k] === '\\') {
+    while (k >= start && line[k] === "\\") {
       backslashCount++;
       k--;
     }
@@ -95,8 +103,8 @@ function parseDelimiterRow(line: string): Alignment[] | null {
     const cell = parsed.cells[i];
     if (cell.length === 0) return null;
 
-    const isLeft = cell[0] === ':';
-    const isRight = cell[cell.length - 1] === ':';
+    const isLeft = cell[0] === ":";
+    const isRight = cell[cell.length - 1] === ":";
 
     const start = isLeft ? 1 : 0;
     const end = isRight ? cell.length - 1 : cell.length;
@@ -106,7 +114,7 @@ function parseDelimiterRow(line: string): Alignment[] | null {
 
     // 中间必须全部是破折号
     for (let j = start; j < end; j++) {
-      if (cell[j] !== '-') return null;
+      if (cell[j] !== "-") return null;
     }
 
     if (isLeft && isRight) alignments.push("center");
@@ -143,8 +151,6 @@ class TableBlockParser extends BaseBlockParser {
 
     // 3. 列数必须一致
     return headerParsed.cells.length === align.length;
-
-
   }
 
   /** @inheritdoc */
@@ -162,16 +168,28 @@ class TableBlockParser extends BaseBlockParser {
 
     const numCols = align.length;
 
-    const headerRow = createNode("table_row", 1, undefined,
-        headerParsed.cells.map((text, col) =>
-            createNode("table_cell", text.length, undefined, ctx.parseInline(text), {
-              align: align[col],
-              isHeader: true
-            })
-        ), { isHeader: true },
+    const headerRow = createNode(
+      "table_row",
+      1,
+      undefined,
+      headerParsed.cells.map((text, col) =>
+        createNode(
+          "table_cell",
+          text.length,
+          undefined,
+          ctx.parseInline(text),
+          {
+            align: align[col],
+            isHeader: true,
+          },
+        ),
+      ),
+      { isHeader: true },
     );
 
-    const delimRow = createNode("table_delim", 1, undefined, undefined, { align });
+    const delimRow = createNode("table_delim", 1, undefined, undefined, {
+      align,
+    });
 
     const bodyRows: MarkdownNode[] = [];
     let i = index + 2;
@@ -201,28 +219,37 @@ class TableBlockParser extends BaseBlockParser {
       while (rowCells.length < numCols) rowCells.push("");
 
       bodyRows.push(
-          createNode("table_row", 1, undefined,
-              rowCells.map((text, j) =>
-                  createNode("table_cell", text.length, undefined, ctx.parseInline(text), {
-                    align: align[j],
-                    isHeader: false
-                  })
-              ), { isHeader: false },
+        createNode(
+          "table_row",
+          1,
+          undefined,
+          rowCells.map((text, j) =>
+            createNode(
+              "table_cell",
+              text.length,
+              undefined,
+              ctx.parseInline(text),
+              {
+                align: align[j],
+                isHeader: false,
+              },
+            ),
           ),
+          { isHeader: false },
+        ),
       );
 
       i++;
     }
 
-    const children = [createNode("table_head", 2, undefined, [headerRow, delimRow])];
+    const children = [
+      createNode("table_head", 2, undefined, [headerRow, delimRow]),
+    ];
 
     if (bodyRows.length > 0) {
-      children.push(createNode(
-        "table_body",
-        bodyRows.length,
-        undefined,
-        bodyRows,
-      ));
+      children.push(
+        createNode("table_body", bodyRows.length, undefined, bodyRows),
+      );
     }
 
     const node = createNode("table", i - index, undefined, children, { align });
@@ -263,11 +290,13 @@ class TableBlockParser extends BaseBlockParser {
     const isHeader = row.props?.isHeader;
     const tag = isHeader ? "th" : "td";
 
-    const cellsHtml = (row.children || []).map((cell) => {
-      const align = cell.props?.align;
-      const alignAttr = (align && align !== "none") ? ` align="${align}"` : "";
-      return `<${tag}${alignAttr}>${ctx.renderInline(cell.children)}</${tag}>`;
-    }).join("\n");
+    const cellsHtml = (row.children || [])
+      .map((cell) => {
+        const align = cell.props?.align;
+        const alignAttr = align && align !== "none" ? ` align="${align}"` : "";
+        return `<${tag}${alignAttr}>${ctx.renderInline(cell.children)}</${tag}>`;
+      })
+      .join("\n");
 
     return `<tr>\n${cellsHtml}\n</tr>`;
   }

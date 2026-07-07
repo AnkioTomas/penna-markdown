@@ -82,7 +82,8 @@ function renderCase(item: GfmCase, result: GfmCaseResult): HTMLElement {
   requiredEl<HTMLPreElement>(".source", section).textContent = item.markdown;
   requiredEl<HTMLElement>(".preview", section).innerHTML = result.actualHtml;
   requiredEl<HTMLPreElement>(".expected", section).textContent = item.html;
-  requiredEl<HTMLPreElement>(".actual", section).textContent = result.actualHtml;
+  requiredEl<HTMLPreElement>(".actual", section).textContent =
+    result.actualHtml;
   if (!result.ok) {
     requiredEl<HTMLElement>(".fail-msg", section).textContent =
       result.message ?? "与期望 HTML 不一致";
@@ -105,7 +106,10 @@ function buildNav(
   visibleResults: { item: GfmCase; result: GfmCaseResult }[],
 ): void {
   navRoot.innerHTML = "";
-  const bySection = new Map<string, { item: GfmCase; result: GfmCaseResult }[]>();
+  const bySection = new Map<
+    string,
+    { item: GfmCase; result: GfmCaseResult }[]
+  >();
   for (const entry of visibleResults) {
     const list = bySection.get(entry.item.section) ?? [];
     list.push(entry);

@@ -79,9 +79,7 @@ function syncHashAttr(el: HTMLElement, hash: string): void {
 }
 
 /** 将 `prevBlocks` 转为 hash → BlockIndex 映射（仅精确 hash）。 */
-function prevBlockByHash(
-  prevBlocks: BlockIndex[],
-): Map<string, BlockIndex> {
+function prevBlockByHash(prevBlocks: BlockIndex[]): Map<string, BlockIndex> {
   const map = new Map<string, BlockIndex>();
   for (const block of prevBlocks) {
     if (block.hash) map.set(block.hash, block);
@@ -90,7 +88,10 @@ function prevBlockByHash(
 }
 
 /** 判断 mount 子元素顺序是否与目标序列一致（引用相等）。 */
-function mountOrderMatches(mount: HTMLElement, ordered: HTMLElement[]): boolean {
+function mountOrderMatches(
+  mount: HTMLElement,
+  ordered: HTMLElement[],
+): boolean {
   if (mount.childElementCount !== ordered.length) return false;
   for (let i = 0; i < ordered.length; i++) {
     if (mount.children[i] !== ordered[i]) return false;
@@ -139,10 +140,7 @@ export function reconcileDom(
   transformer: TransformerEngine,
   options: DomReconcileOptions = {},
 ): DomReconcileResult {
-  const {
-    frontmatterEdited = false,
-    prevBlocks = [],
-  } = options;
+  const { frontmatterEdited = false, prevBlocks = [] } = options;
 
   const pool = buildDomPool(mount);
   const prevByHash = prevBlockByHash(prevBlocks);
@@ -162,8 +160,8 @@ export function reconcileDom(
         const prev = lookupByHashPrefix(prevByHash, hash);
         syncHashAttr(reused, hash);
         if (
-          prev
-          && (prev.startLine !== block.startLine || prev.endLine !== block.endLine)
+          prev &&
+          (prev.startLine !== block.startLine || prev.endLine !== block.endLine)
         ) {
           changedStartLines.push(block.startLine);
         }

@@ -2,7 +2,8 @@
 
 @mixin media-shell($radius: rem(10)) {
   margin: rem(16) 0;
-  border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent);
+  border: rem(1) solid
+    color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent);
   border-radius: $radius;
   background: var(--cherry-c-bg-elevated);
   overflow: hidden;
@@ -30,7 +31,8 @@
     &__caption {
       margin: 0;
       padding: rem(10) rem(14) rem(12);
-      border-top: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+      border-top: rem(1) solid
+        color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
       color: var(--cherry-c-text-2);
       font-size: rem(13);
       line-height: 1.5;
@@ -73,7 +75,8 @@
         margin: auto;
         width: rem(18);
         height: rem(18);
-        border: rem(2) solid color-mix(in srgb, var(--cherry-c-on-brand) 88%, transparent);
+        border: rem(2) solid
+          color-mix(in srgb, var(--cherry-c-on-brand) 88%, transparent);
         border-radius: 50%;
       }
 
@@ -84,13 +87,21 @@
         left: 50%;
         width: rem(10);
         height: rem(14);
-        background: color-mix(in srgb, var(--cherry-c-on-brand) 92%, transparent);
+        background: color-mix(
+          in srgb,
+          var(--cherry-c-on-brand) 92%,
+          transparent
+        );
         clip-path: polygon(0 0, 100% 50%, 0 100%);
         transform: translate(-34%, -50%);
       }
 
       &--image {
-        background: color-mix(in srgb, var(--cherry-c-text-3) 12%, var(--cherry-c-bg-elevated));
+        background: color-mix(
+          in srgb,
+          var(--cherry-c-text-3) 12%,
+          var(--cherry-c-bg-elevated)
+        );
 
         &::before,
         &::after {
@@ -168,7 +179,11 @@
     &__frame {
       position: relative;
       aspect-ratio: 16 / 9;
-      background: color-mix(in srgb, var(--cherry-c-text-3) 8%, var(--cherry-c-bg-elevated));
+      background: color-mix(
+        in srgb,
+        var(--cherry-c-text-3) 8%,
+        var(--cherry-c-bg-elevated)
+      );
 
       iframe {
         position: absolute;

@@ -10,7 +10,8 @@
   width: 240px;
   flex-shrink: 0;
   background: var(--cherry-c-bg-elevated);
-  border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  border-right: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
   overflow-y: auto;
 }
 
@@ -19,15 +20,24 @@
   cursor: pointer;
   color: var(--cherry-c-text-2);
   font-size: 14px;
-  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
   transition: background 0.2s;
 
   &:hover {
-    background: color-mix(in srgb, var(--cherry-c-brand-soft) 45%, var(--cherry-c-bg-elevated));
+    background: color-mix(
+      in srgb,
+      var(--cherry-c-brand-soft) 45%,
+      var(--cherry-c-bg-elevated)
+    );
   }
 
   &.active {
-    background: color-mix(in srgb, var(--cherry-c-brand-soft) 70%, var(--cherry-c-bg-elevated));
+    background: color-mix(
+      in srgb,
+      var(--cherry-c-brand-soft) 70%,
+      var(--cherry-c-bg-elevated)
+    );
     color: var(--cherry-c-brand-1);
     font-weight: 600;
     border-right: 3px solid var(--cherry-c-brand-1);
@@ -48,7 +58,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  border-right: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
 
   &:last-child {
     border-right: none;
@@ -62,7 +73,8 @@
   font-weight: 600;
   color: var(--cherry-c-text-2);
   flex-shrink: 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
 }
 
 .panel-body {

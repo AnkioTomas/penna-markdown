@@ -6,7 +6,9 @@
   .cherry-spoiler {
     // 修复 Safari 悬浮 Bug：如果不设置 pointer，Safari 会因为元素“不可点击”而拒绝触发 :hover 状态
     cursor: pointer;
-    transition: color 0.2s ease, text-shadow 0.2s ease;
+    transition:
+      color 0.2s ease,
+      text-shadow 0.2s ease;
 
     // 默认：悬浮显示
     color: transparent;
@@ -29,7 +31,9 @@
       .cherry-spoiler__text {
         color: transparent;
         text-shadow: 0 0 rem(6) var(--cherry-c-text-1);
-        transition: color 0.2s ease, text-shadow 0.2s ease;
+        transition:
+          color 0.2s ease,
+          text-shadow 0.2s ease;
       }
 
       &:has(.cherry-spoiler__toggle:checked) .cherry-spoiler__text {

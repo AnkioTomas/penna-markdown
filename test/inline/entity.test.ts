@@ -4,7 +4,10 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const allCases = JSON.parse(
-  readFileSync(resolve(import.meta.dirname, "../fixtures/gfm/cases.json"), "utf8"),
+  readFileSync(
+    resolve(import.meta.dirname, "../fixtures/gfm/cases.json"),
+    "utf8",
+  ),
 );
 
 const ENTITY_CASES = allCases.filter((c) => c.id >= 321 && c.id <= 337);

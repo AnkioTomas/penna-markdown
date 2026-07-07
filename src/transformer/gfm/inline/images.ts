@@ -10,9 +10,18 @@ import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { isEscaped } from "@/transformer/utils/escape.js";
 import { renderSafeImage } from "@/transformer/utils/safeUrl.js";
 import { parseInlineLinkParen } from "@/transformer/utils/linkDestination.js";
-import { findLinkLabelEnd, findLinkTextEnd } from "@/transformer/utils/linkLabel.js";
-import { flattenImageAlt, renderReferenceImage } from "@/transformer/utils/linkReference.js";
-import { normalizeLinkRefLabel, skipInlineWhitespace } from "@/transformer/utils/normalize.js";
+import {
+  findLinkLabelEnd,
+  findLinkTextEnd,
+} from "@/transformer/utils/linkLabel.js";
+import {
+  flattenImageAlt,
+  renderReferenceImage,
+} from "@/transformer/utils/linkReference.js";
+import {
+  normalizeLinkRefLabel,
+  skipInlineWhitespace,
+} from "@/transformer/utils/normalize.js";
 import type { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
 import type { RenderContext } from "@/transformer/core/context/RenderContext";
 
@@ -43,7 +52,13 @@ class ImageInlineParser extends BaseInlineParser {
     if (j < src.length && src[j] === "(") {
       const inline = parseInlineLinkParen(src, j);
       if (inline) {
-        return this.createInlineImageNode(index, inline.next, inline.href, inline.title, children);
+        return this.createInlineImageNode(
+          index,
+          inline.next,
+          inline.href,
+          inline.title,
+          children,
+        );
       }
       return null;
     }
@@ -79,7 +94,10 @@ class ImageInlineParser extends BaseInlineParser {
     children: MarkdownNode[],
   ) {
     return {
-      node: createNode("image", endIndex - startIndex, undefined, children, { href, title }),
+      node: createNode("image", endIndex - startIndex, undefined, children, {
+        href,
+        title,
+      }),
       nextIndex: endIndex,
     };
   }

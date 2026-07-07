@@ -48,8 +48,9 @@
 }
 
 .timing {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-    monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
   font-size: 12px;
   font-weight: 500;
   color: var(--cherry-c-brand-on-bg);
@@ -72,8 +73,9 @@
   padding: 14px;
   outline: none;
   font-size: 13px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-    monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
   resize: none;
   background: var(--cherry-c-bg);
   color: var(--cherry-c-text-1);
@@ -104,7 +106,8 @@
 }
 
 .panel-title-sub {
-  border-top: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+  border-top: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
 }
 
 .stats {
@@ -125,8 +128,9 @@
 
   dd {
     margin: 0;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-      monospace;
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
     font-size: 12px;
     word-break: break-all;
     color: var(--cherry-c-text-1);
@@ -158,12 +162,29 @@
   }
 }
 
-.toc-h1 { padding-left: 8px; font-weight: 600; }
-.toc-h2 { padding-left: 16px; }
-.toc-h3 { padding-left: 24px; color: var(--cherry-c-text-2); }
-.toc-h4 { padding-left: 32px; color: var(--cherry-c-text-3); }
-.toc-h5 { padding-left: 40px; color: var(--cherry-c-text-3); }
-.toc-h6 { padding-left: 48px; color: var(--cherry-c-text-3); }
+.toc-h1 {
+  padding-left: 8px;
+  font-weight: 600;
+}
+.toc-h2 {
+  padding-left: 16px;
+}
+.toc-h3 {
+  padding-left: 24px;
+  color: var(--cherry-c-text-2);
+}
+.toc-h4 {
+  padding-left: 32px;
+  color: var(--cherry-c-text-3);
+}
+.toc-h5 {
+  padding-left: 40px;
+  color: var(--cherry-c-text-3);
+}
+.toc-h6 {
+  padding-left: 48px;
+  color: var(--cherry-c-text-3);
+}
 
 .sidebar-empty {
   margin: 0;

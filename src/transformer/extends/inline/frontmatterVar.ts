@@ -23,7 +23,7 @@ const FRONTMATTER_VAR_RE = /^\[\[([\w.-]+)\]\]/;
  */
 function resolveFrontmatterVar(
   vars: Record<string, unknown> | null | undefined,
-  path: string
+  path: string,
 ): unknown {
   if (!vars || !path) return undefined;
   let current: unknown = vars;
@@ -45,7 +45,8 @@ function resolveFrontmatterVar(
 function formatFrontmatterValue(value: unknown): string | null {
   if (value === null || value === undefined) return null;
   if (typeof value === "string") return value;
-  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (typeof value === "number" || typeof value === "boolean")
+    return String(value);
   if (Array.isArray(value)) {
     const items = value
       .map((item) => formatFrontmatterValue(item))
@@ -88,7 +89,9 @@ class FrontmatterVarInlineParser extends BaseInlineParser {
     const formatted = formatFrontmatterValue(value);
 
     // 变量未定义：保留原始字面量 `[[name]]`，不要吞掉文本
-    return escapeHtml(formatted ?? (node.props?.raw as string) ?? node.value ?? "");
+    return escapeHtml(
+      formatted ?? (node.props?.raw as string) ?? node.value ?? "",
+    );
   }
 }
 

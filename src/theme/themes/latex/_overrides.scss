@@ -54,7 +54,7 @@
     font-family: var(--latex-font-heiti), var(--latex-font-serif);
     font-size: 1.25em;
     line-height: 1.25em;
-    @include heading-counter(h3, "counter(heading-h2) \".\" counter(heading-h3)");
+    @include heading-counter(h3, 'counter(heading-h2) "." counter(heading-h3)');
   }
 
   h4 {
@@ -62,7 +62,10 @@
     font-family: var(--latex-font-kai), var(--latex-font-serif);
     font-size: 1.15em;
     line-height: 1.15em;
-    @include heading-counter(h4, "counter(heading-h2) \".\" counter(heading-h3) \".\" counter(heading-h4)");
+    @include heading-counter(
+      h4,
+      'counter(heading-h2) "." counter(heading-h3) "." counter(heading-h4)'
+    );
   }
 
   h5 {
@@ -72,7 +75,7 @@
     line-height: 1.1em;
     @include heading-counter(
       h5,
-      "counter(heading-h2) \".\" counter(heading-h3) \".\" counter(heading-h4) \".\" counter(heading-h5)"
+      'counter(heading-h2) "." counter(heading-h3) "." counter(heading-h4) "." counter(heading-h5)'
     );
   }
 
@@ -82,7 +85,7 @@
     line-height: 1.1em;
     @include heading-counter(
       h6,
-      "counter(heading-h2) \".\" counter(heading-h3) \".\" counter(heading-h4) \".\" counter(heading-h5) \".\" counter(heading-h6)"
+      'counter(heading-h2) "." counter(heading-h3) "." counter(heading-h4) "." counter(heading-h5) "." counter(heading-h6)'
     );
   }
 
@@ -270,7 +273,11 @@
     --cb-code-bg: var(--cherry-c-bg-elevated);
     --cb-lang-fg: var(--cherry-c-text-3);
     --cb-lang-bg: transparent;
-    --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 10%, transparent);
+    --cb-line-highlight: color-mix(
+      in srgb,
+      var(--cherry-c-brand-1) 10%,
+      transparent
+    );
     margin: 0 0 1em;
 
     &__panel {

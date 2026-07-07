@@ -11,4 +11,6 @@ export interface ToolbarOptions {
   groups?: string[][];
   /** 移动端断点（px），默认 640 */
   mobileBreakpoint?: number;
+  /** 是否显示布局切换器，默认 false */
+  showLayoutSwitcher?: boolean;
 }

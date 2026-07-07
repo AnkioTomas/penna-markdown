@@ -17,19 +17,25 @@ const APPEARANCE_STORAGE_KEY = "cherry-demo-appearance";
 type AppearanceMode = "light" | "dark" | "auto";
 
 function readAppearance(): AppearanceMode {
-  return (localStorage.getItem(APPEARANCE_STORAGE_KEY) as AppearanceMode) || "light";
+  return (
+    (localStorage.getItem(APPEARANCE_STORAGE_KEY) as AppearanceMode) || "light"
+  );
 }
 
 function resolveAppearance(mode: AppearanceMode): "light" | "dark" {
   if (mode === "auto") {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
   }
   return mode;
 }
 
 function readThemeId(): string {
   const saved = localStorage.getItem(THEME_STORAGE_KEY);
-  return saved && (REGISTERED_THEMES as readonly string[]).includes(saved) ? saved : "default";
+  return saved && (REGISTERED_THEMES as readonly string[]).includes(saved)
+    ? saved
+    : "default";
 }
 
 export interface ThemeControlOptions {
@@ -38,7 +44,10 @@ export interface ThemeControlOptions {
 }
 
 /** 编辑器 Demo：主题 + 明暗切换 */
-export function setupThemeAndAppearance(editor: Cherry, options: ThemeControlOptions = {}): void {
+export function setupThemeAndAppearance(
+  editor: Cherry,
+  options: ThemeControlOptions = {},
+): void {
   bindThemeControls(editor.theme, () => editor.theme.getTheme(), options);
 }
 
@@ -60,8 +69,12 @@ function bindThemeControls(
   getSnapshot: () => ReturnType<Theme["getTheme"]>,
   options: ThemeControlOptions,
 ): void {
-  const themeSelect = document.getElementById("theme-select") as HTMLSelectElement | null;
-  const appearanceSelect = document.getElementById("appearance-select") as HTMLSelectElement | null;
+  const themeSelect = document.getElementById(
+    "theme-select",
+  ) as HTMLSelectElement | null;
+  const appearanceSelect = document.getElementById(
+    "appearance-select",
+  ) as HTMLSelectElement | null;
 
   let currentAppearance = readAppearance();
 
@@ -100,9 +113,11 @@ function bindThemeControls(
     });
   }
 
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-    if (currentAppearance === "auto") applyAppearance();
-  });
+  window
+    .matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", () => {
+      if (currentAppearance === "auto") applyAppearance();
+    });
 
   theme.on(THEME_EVENT_SKIN, () => options.onThemeChange?.());
   theme.on(THEME_EVENT_LIGHT_DARK, () => options.onThemeChange?.());

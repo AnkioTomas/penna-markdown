@@ -1,1 +1,1 @@
-**bold** *italic* ~~strike~~
+**bold** _italic_ ~~strike~~

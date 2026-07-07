@@ -18,8 +18,11 @@ export function renderAttrDialog(
       <button type="submit" class="is-primary">追加</button>
     </div>
   `;
-  (form.elements.namedItem("attr") as HTMLInputElement).value = props.value ?? ".highlight";
-  form.querySelector('[data-action="cancel"]')?.addEventListener("click", () => callbacks.onCancel());
+  (form.elements.namedItem("attr") as HTMLInputElement).value =
+    props.value ?? ".highlight";
+  form
+    .querySelector('[data-action="cancel"]')
+    ?.addEventListener("click", () => callbacks.onCancel());
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const attr = String(new FormData(form).get("attr") ?? "").trim();

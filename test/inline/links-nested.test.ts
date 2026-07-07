@@ -21,7 +21,9 @@ describe("inline/links nested precedence", () => {
   it("Example 528: nested links in image alt", () => {
     const markdown = "![[[foo](uri1)](uri2)](uri3)\n";
     const html = renderMarkdown(transformer, markdown);
-    expect(html).toBe('<p><img src="uri3" alt="[foo](uri2)" loading="lazy" /></p>\n');
+    expect(html).toBe(
+      '<p><img src="uri3" alt="[foo](uri2)" loading="lazy" /></p>\n',
+    );
   });
 
   it("Example 529: link text binds tighter than emphasis", () => {

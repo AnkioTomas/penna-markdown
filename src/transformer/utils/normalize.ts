@@ -29,8 +29,8 @@ export function isWhitespace(ch: string): boolean {
   return ch === " " || ch === "\t";
 }
 
-export function isBlank(char:string) {
-  return char == ' ' || char == '\t' || char == '\n' || char == '\r';
+export function isBlank(char: string) {
+  return char == " " || char == "\t" || char == "\n" || char == "\r";
 }
 
 /**
@@ -40,7 +40,7 @@ export function isBlank(char:string) {
 export function isBlankString(str: string): boolean {
   for (let i = 0; i < str.length; i++) {
     const char = str[i];
-    if (char !== ' ' && char !== '\t' && char !== '\n' && char !== '\r') {
+    if (char !== " " && char !== "\t" && char !== "\n" && char !== "\r") {
       return false;
     }
   }
@@ -51,7 +51,14 @@ export function isBlankString(str: string): boolean {
  * 行内空白（含 form feed / vertical tab）。
  */
 export function isInlineWhitespace(ch: string): boolean {
-  return ch === " " || ch === "\t" || ch === "\n" || ch === "\r" || ch === "\v" || ch === "\f";
+  return (
+    ch === " " ||
+    ch === "\t" ||
+    ch === "\n" ||
+    ch === "\r" ||
+    ch === "\v" ||
+    ch === "\f"
+  );
 }
 
 /**

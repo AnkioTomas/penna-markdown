@@ -45,7 +45,7 @@ describe("block/list", () => {
     const input = "1. foo\n2. bar\n3) baz\n";
     const html = renderMarkdown(createEngine(), input);
     expect(html).toBe(
-      "<ol>\n<li>foo</li>\n<li>bar</li>\n</ol>\n<ol start=\"3\">\n<li>baz</li>\n</ol>\n",
+      '<ol>\n<li>foo</li>\n<li>bar</li>\n</ol>\n<ol start="3">\n<li>baz</li>\n</ol>\n',
     );
   });
 
@@ -106,12 +106,18 @@ describe("block/list", () => {
   });
 
   it("Example 269: Lazy continuation in indented ordered list item", () => {
-    const html = renderMarkdown(createEngine(), "  1.  A paragraph\n    with two lines.\n");
+    const html = renderMarkdown(
+      createEngine(),
+      "  1.  A paragraph\n    with two lines.\n",
+    );
     expect(html).toBe("<ol>\n<li>A paragraph\nwith two lines.</li>\n</ol>\n");
   });
 
   it("Example 270: Lazy continuation in nested blockquote inside list in blockquote", () => {
-    const html = renderMarkdown(createEngine(), "> 1. > Blockquote\ncontinued here.\n");
+    const html = renderMarkdown(
+      createEngine(),
+      "> 1. > Blockquote\ncontinued here.\n",
+    );
     expect(html).toBe(
       "<blockquote>\n<ol>\n<li>\n<blockquote>\n<p>Blockquote\ncontinued here.</p>\n</blockquote>\n</li>\n</ol>\n</blockquote>\n",
     );
@@ -136,7 +142,9 @@ describe("block/list", () => {
   it("Example 292: Marker indented more than three spaces is paragraph continuation", () => {
     const input = "- a\n - b\n  - c\n   - d\n    - e\n";
     const html = renderMarkdown(createEngine(), input);
-    expect(html).toBe("<ul>\n<li>a</li>\n<li>b</li>\n<li>c</li>\n<li>d\n- e</li>\n</ul>\n");
+    expect(html).toBe(
+      "<ul>\n<li>a</li>\n<li>b</li>\n<li>c</li>\n<li>d\n- e</li>\n</ul>\n",
+    );
   });
 
   it("Example 251: Marker line with space-indented code block", () => {
@@ -164,7 +172,8 @@ describe("block/list", () => {
   });
 
   it("Example 284: Ordered list with start != 1 cannot interrupt paragraph", () => {
-    const md = "The number of windows in my house is\n14.  The number of doors is 6.\n";
+    const md =
+      "The number of windows in my house is\n14.  The number of doors is 6.\n";
     const html = renderMarkdown(createEngine(), md);
     expect(html).toBe(
       "<p>The number of windows in my house is\n14.  The number of doors is 6.</p>\n",
@@ -194,7 +203,10 @@ describe("block/list", () => {
   });
 
   it("Example 298: Tight list with fenced code block containing blank lines", () => {
-    const html = renderMarkdown(createEngine(), "- a\n- ```\n  b\n\n\n  ```\n- c\n");
+    const html = renderMarkdown(
+      createEngine(),
+      "- a\n- ```\n  b\n\n\n  ```\n- c\n",
+    );
     expect(html).toBe(
       "<ul>\n<li>a</li>\n<li>\n<pre><code>b\n\n\n</code></pre>\n</li>\n<li>c</li>\n</ul>\n",
     );
@@ -233,12 +245,15 @@ describe("block/list", () => {
   it("Example 275: Three spaces is not enough to nest under wide ordered marker", () => {
     const html = renderMarkdown(createEngine(), "10) foo\n   - bar\n");
     expect(html).toBe(
-      "<ol start=\"10\">\n<li>foo</li>\n</ol>\n<ul>\n<li>bar</li>\n</ul>\n",
+      '<ol start="10">\n<li>foo</li>\n</ol>\n<ul>\n<li>bar</li>\n</ul>\n',
     );
   });
 
   it("Example 278: List item with heading and setext continuation", () => {
-    const html = renderMarkdown(createEngine(), "- # Foo\n- Bar\n  ---\n  baz\n");
+    const html = renderMarkdown(
+      createEngine(),
+      "- # Foo\n- Bar\n  ---\n  baz\n",
+    );
     expect(html).toBe(
       "<ul>\n<li>\n<h1>Foo</h1>\n</li>\n<li>\n<h2>Bar</h2>\nbaz</li>\n</ul>\n",
     );

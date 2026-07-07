@@ -9,7 +9,11 @@
 
 @mixin styles {
   .cherry-timeline {
-    --cherry-timeline-c-line: color-mix(in srgb, var(--cherry-c-text-3) 70%, transparent);
+    --cherry-timeline-c-line: color-mix(
+      in srgb,
+      var(--cherry-c-text-3) 70%,
+      transparent
+    );
     --cherry-timeline-c-point: var(--cherry-c-brand-2);
     --cherry-timeline-c-title: var(--cherry-c-text-1);
     --cherry-timeline-c-text: var(--cherry-c-text-2);

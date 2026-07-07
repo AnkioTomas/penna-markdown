@@ -29,7 +29,9 @@ describe("block/blockquote", () => {
   });
 
   it("renders empty blockquote (CommonMark #241-242)", () => {
-    expect(renderMarkdown(createEngine(), ">\n")).toBe("<blockquote>\n</blockquote>\n");
+    expect(renderMarkdown(createEngine(), ">\n")).toBe(
+      "<blockquote>\n</blockquote>\n",
+    );
     expect(renderMarkdown(createEngine(), ">\n>  \n> \n")).toBe(
       "<blockquote>\n</blockquote>\n",
     );
@@ -63,9 +65,7 @@ describe("block/blockquote", () => {
 
   it("Example 216: four-space line can lazy continue blockquote paragraph", () => {
     const html = renderMarkdown(createEngine(), "> foo\n    - bar\n");
-    expect(html).toBe(
-      "<blockquote>\n<p>foo\n- bar</p>\n</blockquote>\n",
-    );
+    expect(html).toBe("<blockquote>\n<p>foo\n- bar</p>\n</blockquote>\n");
   });
 
   it("Example 220: blank line separates block quotes", () => {
@@ -77,16 +77,12 @@ describe("block/blockquote", () => {
 
   it("Example 226: blank line ends blockquote before paragraph", () => {
     const html = renderMarkdown(createEngine(), "> bar\n\nbaz\n");
-    expect(html).toBe(
-      "<blockquote>\n<p>bar</p>\n</blockquote>\n<p>baz</p>\n",
-    );
+    expect(html).toBe("<blockquote>\n<p>bar</p>\n</blockquote>\n<p>baz</p>\n");
   });
 
   it("Example 227: empty > line ends blockquote when next line has no marker", () => {
     const html = renderMarkdown(createEngine(), "> bar\n>\nbaz\n");
-    expect(html).toBe(
-      "<blockquote>\n<p>bar</p>\n</blockquote>\n<p>baz</p>\n",
-    );
+    expect(html).toBe("<blockquote>\n<p>bar</p>\n</blockquote>\n<p>baz</p>\n");
   });
 
   it("Example 238: list in nested blockquote ends before insufficiently indented content", () => {

@@ -2,8 +2,6 @@
 @use "tokens";
 @use "overrides";
 
-
-
 .cherry-theme-latex {
   .cherry-render {
     @include tokens.theme-light;

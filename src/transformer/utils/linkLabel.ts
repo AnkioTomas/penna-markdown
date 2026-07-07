@@ -17,7 +17,7 @@ import {
 const HTML_TAG_RE = (() => {
   const tagname = "[A-Za-z][A-Za-z0-9-]*";
   const attribute_name = "[a-zA-Z_:][a-zA-Z0-9_.:-]*";
-  const attribute_value = '(?:[^"\'=<>` \\t\\r\\n]+|\'[^\']*\'|"[^"]*")';
+  const attribute_value = "(?:[^\"'=<>` \\t\\r\\n]+|'[^']*'|\"[^\"]*\")";
   const attribute = `(?:\\s+${attribute_name}(?:\\s*=\\s*${attribute_value})?)`;
   const open_tag = `<${tagname}${attribute}*\\s*/?>`;
   const close_tag = `</${tagname}\\s*>`;
@@ -346,7 +346,8 @@ export function containsNestedLink(nodes: MarkdownNode[]): boolean {
 export function containsNestedLinkOrImage(nodes: MarkdownNode[]): boolean {
   for (const n of nodes) {
     if (n.type === "link" || n.type === "image") return true;
-    if (n.children?.length && containsNestedLinkOrImage(n.children)) return true;
+    if (n.children?.length && containsNestedLinkOrImage(n.children))
+      return true;
   }
   return false;
 }

@@ -114,7 +114,13 @@ export class BlockIndex {
   static fromAst(ast: MarkdownNode): BlockIndex[] {
     const entries: BlockIndex[] = [];
 
-    for (const { node, hash, startLine, endLine, childIndex } of iterateTopLevelLines(ast)) {
+    for (const {
+      node,
+      hash,
+      startLine,
+      endLine,
+      childIndex,
+    } of iterateTopLevelLines(ast)) {
       if (node.props?.invisible || node.type === "blank_line") continue;
       entries.push(new BlockIndex(hash, startLine, endLine, node.type, node));
     }

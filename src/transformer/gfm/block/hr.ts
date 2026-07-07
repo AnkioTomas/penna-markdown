@@ -6,9 +6,9 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, MarkdownNode} from "@/transformer/core/MarkdownNode.js";
-import {BlockParseContext} from "@/transformer/core/context/BlockParseContext";
-import {RenderContext} from "@/transformer/core/context/RenderContext";
+import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
+import { RenderContext } from "@/transformer/core/context/RenderContext";
 
 /**
  * GFM thematic break：0–3 列缩进，同一字符 (-、*、_) 重复 ≥3 次，中间可有空格或 tab。
@@ -41,7 +41,7 @@ class ThematicBreakParser extends BaseBlockParser {
     if (!isThematicBreakLine(line)) return null;
 
     const node = createNode(this.type, 1);
-    return {node, nextIndex: index + 1};
+    return { node, nextIndex: index + 1 };
   }
 
   /** @inheritdoc */

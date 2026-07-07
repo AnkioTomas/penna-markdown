@@ -9,7 +9,9 @@ describe("block/code", () => {
 
   it("renders fenced code block with language", () => {
     const html = renderMarkdown(createEngine(), "```js\nconst a = 1;\n```");
-    expect(html).toBe('<pre><code class="language-js">const a = 1;\n</code></pre>\n');
+    expect(html).toBe(
+      '<pre><code class="language-js">const a = 1;\n</code></pre>\n',
+    );
   });
 
   it("renders fenced code block with ~~~", () => {
@@ -92,7 +94,9 @@ describe("block/code", () => {
   it("Example 110: code block interrupts paragraph", () => {
     const input = "foo\n```\nbar\n```\nbaz";
     const html = renderMarkdown(createEngine(), input);
-    expect(html).toBe("<p>foo</p>\n<pre><code>bar\n</code></pre>\n<p>baz</p>\n");
+    expect(html).toBe(
+      "<p>foo</p>\n<pre><code>bar\n</code></pre>\n<p>baz</p>\n",
+    );
   });
 
   it("Example 1: Tab at start of line for indented code", () => {
@@ -130,7 +134,9 @@ describe("block/code", () => {
   it("Example 6: Blockquote with tab code block", () => {
     const input = ">\t\tfoo";
     const html = renderMarkdown(createEngine(), input);
-    expect(html).toBe("<blockquote>\n<pre><code>  foo\n</code></pre>\n</blockquote>\n");
+    expect(html).toBe(
+      "<blockquote>\n<pre><code>  foo\n</code></pre>\n</blockquote>\n",
+    );
   });
 
   it("Example 8: Indented code lines with tabs", () => {
@@ -150,6 +156,8 @@ describe("block/code", () => {
   it("Example 320: backslash escape in fenced code info string", () => {
     const input = "``` foo\\+bar\nfoo\n```\n";
     const html = renderMarkdown(createEngine(), input);
-    expect(html).toBe('<pre><code class="language-foo+bar">foo\n</code></pre>\n');
+    expect(html).toBe(
+      '<pre><code class="language-foo+bar">foo\n</code></pre>\n',
+    );
   });
 });

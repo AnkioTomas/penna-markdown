@@ -26,7 +26,9 @@ export function renderTableDialog(
   `;
 
   const grid = form.querySelector(".cherry-dialog-grid") as HTMLElement;
-  const sizeLabel = form.querySelector(".cherry-dialog-table-size") as HTMLElement;
+  const sizeLabel = form.querySelector(
+    ".cherry-dialog-table-size",
+  ) as HTMLElement;
   let selRows = 1;
   let selCols = 1;
   let dragging = false;
@@ -67,7 +69,9 @@ export function renderTableDialog(
   };
 
   grid.addEventListener("mousedown", (e) => {
-    const t = (e.target as HTMLElement).closest(".cherry-dialog-grid-cell") as HTMLButtonElement | null;
+    const t = (e.target as HTMLElement).closest(
+      ".cherry-dialog-grid-cell",
+    ) as HTMLButtonElement | null;
     if (!t) return;
     dragging = true;
     pickCell(t);
@@ -75,7 +79,9 @@ export function renderTableDialog(
 
   grid.addEventListener("mouseover", (e) => {
     if (!dragging) return;
-    const t = (e.target as HTMLElement).closest(".cherry-dialog-grid-cell") as HTMLButtonElement | null;
+    const t = (e.target as HTMLElement).closest(
+      ".cherry-dialog-grid-cell",
+    ) as HTMLButtonElement | null;
     if (!t) return;
     pickCell(t);
   });
@@ -86,14 +92,18 @@ export function renderTableDialog(
   window.addEventListener("mouseup", stopDrag);
 
   grid.addEventListener("click", (e) => {
-    const t = (e.target as HTMLElement).closest(".cherry-dialog-grid-cell") as HTMLButtonElement | null;
+    const t = (e.target as HTMLElement).closest(
+      ".cherry-dialog-grid-cell",
+    ) as HTMLButtonElement | null;
     if (!t) return;
     e.preventDefault();
     pickCell(t);
     submit();
   });
 
-  form.querySelector('[data-action="cancel"]')?.addEventListener("click", () => callbacks.onCancel());
+  form
+    .querySelector('[data-action="cancel"]')
+    ?.addEventListener("click", () => callbacks.onCancel());
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();

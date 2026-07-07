@@ -4,12 +4,18 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {
+  createNode,
+  type MarkdownNode,
+} from "@/transformer/core/MarkdownNode.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { stripBlockquoteMarker } from "@/transformer/utils/tabs.js";
 import { isThematicBreakLine } from "@/transformer/gfm/block/hr.js";
 import { withBlockquoteFrame } from "@/transformer/gfm/block/blockquote.js";
-import { isBlankString, normalizeInnerLines } from "@/transformer/utils/normalize.js";
+import {
+  isBlankString,
+  normalizeInnerLines,
+} from "@/transformer/utils/normalize.js";
 import { canGenericLazyContinue } from "@/transformer/utils/lazyContinuation.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
@@ -119,7 +125,8 @@ class AlertBlockParser extends BaseBlockParser {
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext) {
     const alertType = String(node.props?.alertType ?? "note");
-    const title = ALERT_TYPES[alertType as keyof typeof ALERT_TYPES] ?? alertType;
+    const title =
+      ALERT_TYPES[alertType as keyof typeof ALERT_TYPES] ?? alertType;
     const inner = ctx.renderBlock(node.children ?? []);
     const parts: string[] = [
       `<div class="cherry-alert cherry-alert--${escapeHtml(alertType)}"${this.sourceLineAttrs(node)}>`,

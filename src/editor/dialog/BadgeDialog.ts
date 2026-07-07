@@ -17,7 +17,12 @@ const POSITION_LABELS: Record<BadgePosition, string> = {
 
 export function renderBadgeDialog(
   host: HTMLElement,
-  callbacks: { onSubmit: (d: import("@/editor/commands/types.js").BadgeDialogResult) => void; onCancel: () => void },
+  callbacks: {
+    onSubmit: (
+      d: import("@/editor/commands/types.js").BadgeDialogResult,
+    ) => void;
+    onCancel: () => void;
+  },
 ): () => void {
   const form = document.createElement("form");
   form.className = "cherry-dialog-form";
@@ -39,7 +44,9 @@ export function renderBadgeDialog(
       <button type="submit" class="is-primary">插入</button>
     </div>
   `;
-  form.querySelector('[data-action="cancel"]')?.addEventListener("click", () => callbacks.onCancel());
+  form
+    .querySelector('[data-action="cancel"]')
+    ?.addEventListener("click", () => callbacks.onCancel());
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const fd = new FormData(form);

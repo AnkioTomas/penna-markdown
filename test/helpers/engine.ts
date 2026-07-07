@@ -1,6 +1,8 @@
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 
-export function createEngine(options?: ConstructorParameters<typeof TransformerEngine>[0]) {
+export function createEngine(
+  options?: ConstructorParameters<typeof TransformerEngine>[0],
+) {
   return new TransformerEngine(options);
 }
 

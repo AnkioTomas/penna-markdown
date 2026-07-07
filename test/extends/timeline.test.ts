@@ -23,7 +23,9 @@ describe("extends/timeline", () => {
 
   it("renders timeline items with title, time and type", () => {
     const html = renderMarkdown(engine(), sample);
-    expect(html).toContain('<div class="cherry-timeline cherry-timeline--placement-left">');
+    expect(html).toContain(
+      '<div class="cherry-timeline cherry-timeline--placement-left">',
+    );
     expect(html).toContain('<div class="cherry-timeline-box">');
     expect(html).toContain(
       '<div class="cherry-timeline-item cherry-timeline-item--success cherry-timeline-item--line-solid cherry-timeline-item--placement-left">',
@@ -62,7 +64,9 @@ describe("extends/timeline", () => {
   正文内容
 :::`;
     const html = renderMarkdown(engine(), md);
-    expect(html).toContain('class="cherry-timeline cherry-timeline--placement-right"');
+    expect(html).toContain(
+      'class="cherry-timeline cherry-timeline--placement-right"',
+    );
   });
 
   it("supports between placement with item placement", () => {
@@ -73,7 +77,9 @@ describe("extends/timeline", () => {
   正文内容
 :::`;
     const html = renderMarkdown(engine(), md);
-    expect(html).toContain('class="cherry-timeline cherry-timeline--placement-between"');
+    expect(html).toContain(
+      'class="cherry-timeline cherry-timeline--placement-between"',
+    );
     expect(html).toContain(
       '<div class="cherry-timeline-item cherry-timeline-item--info cherry-timeline-item--line-solid cherry-timeline-item--placement-right">',
     );
@@ -87,7 +93,9 @@ describe("extends/timeline", () => {
   正文内容
 :::`;
     const html = renderMarkdown(engine(), md);
-    expect(html).toContain('class="cherry-timeline cherry-timeline--placement-left"');
+    expect(html).toContain(
+      'class="cherry-timeline cherry-timeline--placement-left"',
+    );
     expect(html).toContain(
       '<div class="cherry-timeline-item cherry-timeline-item--info cherry-timeline-item--line-dashed cherry-timeline-item--placement-left">',
     );
@@ -125,9 +133,15 @@ describe("extends/timeline", () => {
   性能优化。
 :::`;
     const html = renderMarkdown(engine(), md);
-    expect(html).toContain('<p class="cherry-timeline-title">v0.1.0 首次发布</p>');
-    expect(html).toContain('<p class="cherry-timeline-title">v0.2.0 计划中</p>');
-    expect(html).not.toContain('<p class="cherry-timeline-title">[x] GFM 完整支持</p>');
+    expect(html).toContain(
+      '<p class="cherry-timeline-title">v0.1.0 首次发布</p>',
+    );
+    expect(html).toContain(
+      '<p class="cherry-timeline-title">v0.2.0 计划中</p>',
+    );
+    expect(html).not.toContain(
+      '<p class="cherry-timeline-title">[x] GFM 完整支持</p>',
+    );
     expect(html).toContain('<ul class="task-list">');
     expect(html).toContain('class="task-item done"');
     expect(html).toContain('class="task-item todo"');

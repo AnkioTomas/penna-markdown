@@ -28,7 +28,10 @@ export async function insertTable(
 }
 
 export function registerTableCommand(
-  register: (name: string, handler: import("./types.js").CommandHandler) => void,
+  register: (
+    name: string,
+    handler: import("./types.js").CommandHandler,
+  ) => void,
 ): void {
   register("table", (view, _payload, ctx) => insertTable(view, ctx));
 }

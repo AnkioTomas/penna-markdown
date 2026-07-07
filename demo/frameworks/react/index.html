@@ -31,27 +31,31 @@
       import { Cherry } from "@/editor/Cherry.js";
       import { setupThemeAndAppearance } from "../../_common/theme.js";
       import { fetchDocContent } from "../../_common/api.js";
-      
-      import React, { useEffect, useRef, useState } from 'https://esm.sh/react@18/?dev';
-      import { createRoot } from 'https://esm.sh/react-dom@18/client?dev';
-      import htm from 'https://esm.sh/htm';
+
+      import React, {
+        useEffect,
+        useRef,
+        useState,
+      } from "https://esm.sh/react@18/?dev";
+      import { createRoot } from "https://esm.sh/react-dom@18/client?dev";
+      import htm from "https://esm.sh/htm";
 
       const html = htm.bind(React.createElement);
 
       function MarkdownEditor() {
         const editorRef = useRef(null);
         const editorInstance = useRef(null);
-        
+
         useEffect(() => {
           let mounted = true;
-          fetchDocContent("/docs/simple.md").then(initialContent => {
+          fetchDocContent("/docs/simple.md").then((initialContent) => {
             if (!mounted) return;
             editorInstance.current = new Cherry(editorRef.current, {
               editor: { value: initialContent },
             });
             setupThemeAndAppearance(editorInstance.current);
           });
-          
+
           return () => {
             mounted = false;
             // TODO: Cleanup editor instance
@@ -61,7 +65,7 @@
         return html`<div ref=${editorRef} style=${{ flex: 1 }}></div>`;
       }
 
-      const root = createRoot(document.getElementById('app'));
+      const root = createRoot(document.getElementById("app"));
       root.render(html`<${MarkdownEditor} />`);
     </script>
   </body>

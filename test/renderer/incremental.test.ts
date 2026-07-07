@@ -9,7 +9,12 @@ import { Theme } from "@/theme/Theme.js";
 import { Renderer } from "@/renderer/Renderer.js";
 import { Preview } from "@/editor/preview/Preview";
 import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet.js";
-import { dirtyLinesFromChanges, mapOldLineToNew, astBlockSpans, findAffectedSpanRange } from "@/renderer/incremental/HashBoundaryResolver.js";
+import {
+  dirtyLinesFromChanges,
+  mapOldLineToNew,
+  astBlockSpans,
+  findAffectedSpanRange,
+} from "@/renderer/incremental/HashBoundaryResolver.js";
 import { BlockIndex } from "@/renderer/incremental/BlockIndex.js";
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
@@ -27,8 +32,8 @@ function lineChange(
     toA,
     fromB,
     toB,
-    deletedLines: deletedLines ?? (toA - fromA),
-    insertedLines: insertedLines ?? (toB - fromB),
+    deletedLines: deletedLines ?? toA - fromA,
+    insertedLines: insertedLines ?? toB - fromB,
   };
 }
 
@@ -88,10 +93,9 @@ describe("renderer/incremental", () => {
       (el) => el.textContent?.trim() === "Footer",
     )!;
 
-    const result = renderer.render(
-      "prefix\n\n# Title\n\nHello\n\nFooter",
-      [lineChange(1, 0, 1, 2)],
-    );
+    const result = renderer.render("prefix\n\n# Title\n\nHello\n\nFooter", [
+      lineChange(1, 0, 1, 2),
+    ]);
     expect(result.partial).toBe(true);
     expect(mount.querySelector("h1")).toBe(h1);
     expect(
@@ -142,10 +146,9 @@ describe("renderer/incremental", () => {
     renderer.renderFull("# Title\n\nHello\n\nFooter");
     expect(mount.childElementCount).toBe(renderer["session"].blocks.length);
 
-    const result = renderer.render(
-      "# Title\n\nHello world\n\nFooter",
-      [lineChange(3, 3, 3, 3)],
-    );
+    const result = renderer.render("# Title\n\nHello world\n\nFooter", [
+      lineChange(3, 3, 3, 3),
+    ]);
     expect(result.partial).toBe(true);
     expect(mount.querySelector("p")!.textContent).toContain("Hello world");
     renderer.destroy();
@@ -162,10 +165,7 @@ describe("renderer/incremental", () => {
     ];
     expect(model.blocks.length).toBeGreaterThan(mount.childElementCount);
 
-    const result = renderer.render(
-      "A\n\nB edited",
-      [lineChange(3, 3, 3, 3)],
-    );
+    const result = renderer.render("A\n\nB edited", [lineChange(3, 3, 3, 3)]);
     expect(result.partial).toBe(false);
     renderer.destroy();
   });
@@ -177,7 +177,9 @@ describe("renderer/incremental", () => {
     const h1 = mount.querySelector("h1")!;
     const h1Html = h1.outerHTML;
 
-    const result = renderer.render("# Title\n\nHello world", [lineChange(3, 3, 3, 3)]);
+    const result = renderer.render("# Title\n\nHello world", [
+      lineChange(3, 3, 3, 3),
+    ]);
     expect(result.partial).toBe(true);
     expect(mount.querySelector("h1")!.outerHTML).toBe(h1Html);
     expect(mount.querySelector("p")!.textContent).toContain("Hello world");
@@ -192,7 +194,9 @@ describe("renderer/incremental", () => {
     const h1 = mount.querySelector("h1")!;
     const h1Html = h1.outerHTML;
 
-    const result = renderer.render("# Title\n\nHello", [lineChange(3, 3, 3, 3)]);
+    const result = renderer.render("# Title\n\nHello", [
+      lineChange(3, 3, 3, 3),
+    ]);
     expect(result.partial).toBe(true);
     expect(mount.querySelector("h1")!.outerHTML).toBe(h1Html);
     expect(mount.querySelector("p")!.textContent).toBe("Hello");
@@ -220,7 +224,9 @@ describe("renderer/incremental", () => {
     const { renderer, mount } = createRenderer();
     renderer.render("# Hello\n\nBody");
 
-    const result = renderer.render("# Hello!\n\nBody", [lineChange(1, 1, 1, 1)]);
+    const result = renderer.render("# Hello!\n\nBody", [
+      lineChange(1, 1, 1, 1),
+    ]);
     expect(result.partial).toBe(true);
     expect(mount.querySelector("h1")!.textContent).toBe("Hello!");
     expect(mount.querySelector("p")!.textContent).toBe("Body");
@@ -232,10 +238,9 @@ describe("renderer/incremental", () => {
     const { renderer, mount } = createRenderer();
     renderer.render("line0\n\nline1\n\nline2");
 
-    const result = renderer.render(
-      "prefix\n\nline0\n\nline1\n\nline2",
-      [lineChange(1, 0, 1, 2)],
-    );
+    const result = renderer.render("prefix\n\nline0\n\nline1\n\nline2", [
+      lineChange(1, 0, 1, 2),
+    ]);
     expect(result.partial).toBe(true);
     expect(mount.children.length).toBe(4);
 
@@ -262,7 +267,9 @@ describe("renderer/incremental", () => {
     const h1 = mount.querySelector("h1");
     const p = mount.querySelector("p");
 
-    const result = renderer.render("# Title\n\nHello", [lineChange(3, 3, 3, 3)]);
+    const result = renderer.render("# Title\n\nHello", [
+      lineChange(3, 3, 3, 3),
+    ]);
     expect(result.partial).toBe(true);
     expect(mount.querySelector("h1")).toBe(h1);
     expect(mount.querySelector("p")).toBe(p);
@@ -274,7 +281,9 @@ describe("renderer/incremental", () => {
     const { renderer, mount } = createRenderer();
     renderer.render("Prefix\n\nA\n\nB\n\nC");
 
-    const result = renderer.render("Prefix\n\nC\n\nB\n\nA", [lineChange(3, 7, 3, 7)]);
+    const result = renderer.render("Prefix\n\nC\n\nB\n\nA", [
+      lineChange(3, 7, 3, 7),
+    ]);
     expect(result.partial).toBe(true);
     expect([...mount.children].map((el) => el.textContent?.trim())).toEqual([
       "Prefix",
@@ -291,7 +300,9 @@ describe("renderer/incremental", () => {
     renderer.render("# Hello\n\nBody");
     mount.appendChild(mount.ownerDocument.createElement("div"));
 
-    const result = renderer.render("# Hello\n\nBody\n\nTail", [lineChange(5, 5, 5, 7)]);
+    const result = renderer.render("# Hello\n\nBody\n\nTail", [
+      lineChange(5, 5, 5, 7),
+    ]);
     expect(result.partial).toBe(false);
     expect(mount.querySelector("p")!.textContent).toBe("Body");
 
@@ -313,10 +324,9 @@ describe("renderer/incremental", () => {
     const { renderer, mount } = createRenderer();
     renderer.renderFull("Before\n\n[^a]: note\n\nAfter");
 
-    const result = renderer.render(
-      "Before edited\n\n[^a]: note\n\nAfter",
-      [lineChange(1, 1, 1, 1)],
-    );
+    const result = renderer.render("Before edited\n\n[^a]: note\n\nAfter", [
+      lineChange(1, 1, 1, 1),
+    ]);
     expect(result.partial).toBe(true); // 优化后，无关区域的修改不再退化为全量渲染！
     expect(mount.textContent).toContain("Before edited");
     renderer.destroy();
@@ -326,10 +336,9 @@ describe("renderer/incremental", () => {
     const { renderer, mount } = createRenderer();
     renderer.renderFull("See[^a]\n\n[^a]: note\n\nAfter");
 
-    const result = renderer.render(
-      "See[^a]\n\n[^a]: note edited\n\nAfter",
-      [lineChange(3, 3, 3, 3)],
-    );
+    const result = renderer.render("See[^a]\n\n[^a]: note edited\n\nAfter", [
+      lineChange(3, 3, 3, 3),
+    ]);
     expect(result.partial).toBe(true);
     expect(mount.textContent).toContain("note edited");
     renderer.destroy();
@@ -340,17 +349,19 @@ describe("renderer/incremental", () => {
     renderer.renderFull("---\ntitle: Hi\n---\n\n# [[title]]");
     expect(mount.querySelector("h1")!.textContent).toBe("Hi");
 
-    const result = renderer.render(
-      "---\ntitle: Hello\n---\n\n# [[title]]",
-      [lineChange(2, 2, 2, 2)],
-    );
+    const result = renderer.render("---\ntitle: Hello\n---\n\n# [[title]]", [
+      lineChange(2, 2, 2, 2),
+    ]);
     expect(result.partial).toBe(true);
     expect(mount.querySelector("h1")!.textContent).toBe("Hello");
     renderer.destroy();
   });
 
   it("test.md: editing GFM heading keeps media DOM and block count", () => {
-    const md = readFileSync(resolve(import.meta.dirname, "../../demo/test.md"), "utf8");
+    const md = readFileSync(
+      resolve(import.meta.dirname, "../../demo/test.md"),
+      "utf8",
+    );
     const lines = normalizeMarkdownLines(md);
     const gfmLine1 = lines.findIndex((l) => l === "## GFM 标准语法") + 1;
 
@@ -378,7 +389,10 @@ describe("renderer/incremental", () => {
   });
 
   it("test.md: frontmatter edit keeps media DOM nodes", () => {
-    const md = readFileSync(resolve(import.meta.dirname, "../../demo/test.md"), "utf8");
+    const md = readFileSync(
+      resolve(import.meta.dirname, "../../demo/test.md"),
+      "utf8",
+    );
     const { renderer, mount } = createRenderer();
     renderer.renderFull(md);
 
@@ -387,10 +401,15 @@ describe("renderer/incremental", () => {
     expect(videoEl).toBeTruthy();
     expect(audioEl).toBeTruthy();
 
-    const nextMd = md.replace("title: Cherry Markdown Next", "title: Cherry Markdown Next X");
+    const nextMd = md.replace(
+      "title: Cherry Markdown Next",
+      "title: Cherry Markdown Next X",
+    );
     const result = renderer.render(nextMd, [lineChange(2, 2, 2, 2)]);
     expect(result.partial).toBe(true);
-    expect(mount.querySelector("h1")!.textContent).toContain("Cherry Markdown Next X");
+    expect(mount.querySelector("h1")!.textContent).toContain(
+      "Cherry Markdown Next X",
+    );
     expect(mount.querySelector("video")).toBe(videoEl);
     expect(mount.querySelector("audio")).toBe(audioEl);
 
@@ -399,7 +418,9 @@ describe("renderer/incremental", () => {
 
   it("preserves iframe DOM when editing unrelated paragraph", () => {
     const { renderer, mount } = createRenderer();
-    renderer.renderFull("Before\n\n!iframe[Demo](https://example.com)\n\nAfter");
+    renderer.renderFull(
+      "Before\n\n!iframe[Demo](https://example.com)\n\nAfter",
+    );
 
     const iframe = mount.querySelector("iframe")!;
     expect(iframe).toBeTruthy();
@@ -419,7 +440,9 @@ describe("renderer/incremental", () => {
     renderer.renderFull("!iframe[Demo](https://example.com)\n");
 
     const iframe = mount.querySelector("iframe")!;
-    renderer.render("!iframe[Demo](https://example.com)\n", [lineChange(1, 1, 1, 1)]);
+    renderer.render("!iframe[Demo](https://example.com)\n", [
+      lineChange(1, 1, 1, 1),
+    ]);
     expect(mount.querySelector("iframe")).toBe(iframe);
 
     renderer.destroy();
@@ -429,10 +452,9 @@ describe("renderer/incremental", () => {
     const { renderer, mount } = createRenderer();
     renderer.renderFull("Before\n\n[^a]: note\n\nAfter");
 
-    const result = renderer.render(
-      "Before edited\n\n[^a]: note\n\nAfter",
-      [lineChange(1, 1, 1, 1)],
-    );
+    const result = renderer.render("Before edited\n\n[^a]: note\n\nAfter", [
+      lineChange(1, 1, 1, 1),
+    ]);
     expect(result.partial).toBe(true);
     expect(mount.textContent).toContain("Before edited");
     expect(renderer.getMountedBlocks().length).toBe(mount.childElementCount);
@@ -443,10 +465,9 @@ describe("renderer/incremental", () => {
     const { renderer, mount } = createRenderer();
     renderer.renderFull("---\ntitle: Hi\n---\n\nBody");
 
-    const result = renderer.render(
-      "---\ntitle: Hello\n---\n\nBody",
-      [lineChange(2, 2, 2, 2)],
-    );
+    const result = renderer.render("---\ntitle: Hello\n---\n\nBody", [
+      lineChange(2, 2, 2, 2),
+    ]);
     expect(result.partial).toBe(true);
     expect(mount.textContent).toContain("Body");
     renderer.destroy();

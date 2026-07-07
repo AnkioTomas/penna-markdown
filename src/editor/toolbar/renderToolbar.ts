@@ -29,14 +29,20 @@ function el<K extends keyof HTMLElementTagNameMap>(
 }
 
 export function isButtonItem(item: ToolbarItem): item is ToolbarButtonItem {
-  return item.type !== "menu" && item.type !== "separator" && item.type !== "layout";
+  return item.type === "button" || item.type === undefined;
 }
 
-function resolveIcon(item: ToolbarItemBase & { command?: string; icon?: string }): string {
+function resolveIcon(
+  item: ToolbarItemBase & { command?: string; icon?: string },
+): string {
   return item.icon ?? resolveCommandIcon(item.command);
 }
 
-function setBtnContent(btn: HTMLElement, item: ToolbarButtonItem, inMenu: boolean) {
+function setBtnContent(
+  btn: HTMLElement,
+  item: ToolbarButtonItem,
+  inMenu: boolean,
+) {
   btn.replaceChildren();
   btn.insertAdjacentHTML("afterbegin", resolveIcon(item));
   btn.classList.add("has-icon");
@@ -49,7 +55,11 @@ function setBtnContent(btn: HTMLElement, item: ToolbarButtonItem, inMenu: boolea
   }
 }
 
-function setMenuTriggerContent(trigger: HTMLElement, item: ToolbarMenuItem, nested: boolean) {
+function setMenuTriggerContent(
+  trigger: HTMLElement,
+  item: ToolbarMenuItem,
+  nested: boolean,
+) {
   trigger.replaceChildren();
   trigger.insertAdjacentHTML("afterbegin", resolveIcon(item));
   trigger.classList.add("has-icon");
@@ -58,41 +68,54 @@ function setMenuTriggerContent(trigger: HTMLElement, item: ToolbarMenuItem, nest
   span.className = "cherry-toolbar-btn-label";
   span.textContent = item.label;
   trigger.append(span);
-  trigger.append(el("span", "cherry-toolbar-menu-caret", { "aria-hidden": "true" }));
+  trigger.append(
+    el("span", "cherry-toolbar-menu-caret", { "aria-hidden": "true" }),
+  );
 
   trigger.classList.toggle("cherry-toolbar-menu-trigger--nested", nested);
 }
 
 export function renderButton(item: ToolbarButtonItem, inMenu: boolean) {
-  const btn = el("button", inMenu ? "cherry-toolbar-menu-item" : "cherry-toolbar-btn", {
-    type: "button",
-    "data-toolbar-id": item.id,
-  }) as HTMLButtonElement;
+  const btn = el(
+    "button",
+    inMenu ? "cherry-toolbar-menu-item" : "cherry-toolbar-btn",
+    {
+      type: "button",
+      "data-toolbar-id": item.id,
+    },
+  ) as HTMLButtonElement;
   if (item.title) btn.title = item.title;
   setBtnContent(btn, item, inMenu);
   return btn;
 }
 
 export function renderMenu(item: ToolbarMenuItem, nested: boolean) {
-  const wrap = el("div", nested ? "cherry-toolbar-submenu" : "cherry-toolbar-menu");
+  const wrap = el(
+    "div",
+    nested ? "cherry-toolbar-submenu" : "cherry-toolbar-menu",
+  );
   wrap.dataset.toolbarId = item.id;
 
-  const trigger = el("button", "cherry-toolbar-btn cherry-toolbar-menu-trigger", {
-    type: "button",
-    "aria-haspopup": "true",
-    "aria-expanded": "false",
-  }) as HTMLButtonElement;
+  const trigger = el(
+    "button",
+    "cherry-toolbar-btn cherry-toolbar-menu-trigger",
+    {
+      type: "button",
+      "aria-haspopup": "true",
+      "aria-expanded": "false",
+    },
+  ) as HTMLButtonElement;
   if (item.title) trigger.title = item.title;
   setMenuTriggerContent(trigger, item, nested);
 
   const panel = el("div", "cherry-toolbar-menu-panel", { role: "menu" });
-  
+
   if (item.title) {
     const header = el("div", "cherry-toolbar-menu-header");
     header.textContent = item.title;
     panel.append(header);
   }
-  
+
   for (const child of item.children) appendToolbarItem(panel, child, true);
 
   wrap.append(trigger, panel);
@@ -105,7 +128,9 @@ export function appendToolbarItem(
   inMenu: boolean,
 ) {
   if (item.type === "separator") {
-    parent.append(el("span", inMenu ? "cherry-toolbar-menu-sep" : "cherry-toolbar-sep"));
+    parent.append(
+      el("span", inMenu ? "cherry-toolbar-menu-sep" : "cherry-toolbar-sep"),
+    );
     return;
   }
   if (item.type === "menu") {
@@ -146,20 +171,25 @@ export interface RenderToolbarParams {
   groups: ToolbarItem[][];
   ctx: ToolbarContext;
   layoutMode: EditorLayoutMode;
-  layoutItem?: ToolbarItem;
+  showLayoutSwitcher?: boolean;
 }
 
-export function renderToolbar(mount: HTMLElement, params: RenderToolbarParams): () => void {
+export function renderToolbar(
+  mount: HTMLElement,
+  params: RenderToolbarParams,
+): () => void {
   mount.classList.add("cherry-toolbar");
   mount.replaceChildren();
 
   let openPanel: HTMLElement | null = null;
   const closeOpenPanel = () => {
     if (!openPanel) return;
-    mount.querySelectorAll(".is-open").forEach((el) => el.classList.remove("is-open"));
-    mount.querySelectorAll('.cherry-toolbar-menu-trigger[aria-expanded="true"]').forEach((el) =>
-      el.setAttribute("aria-expanded", "false"),
-    );
+    mount
+      .querySelectorAll(".is-open")
+      .forEach((el) => el.classList.remove("is-open"));
+    mount
+      .querySelectorAll('.cherry-toolbar-menu-trigger[aria-expanded="true"]')
+      .forEach((el) => el.setAttribute("aria-expanded", "false"));
     openPanel = null;
   };
 
@@ -185,21 +215,30 @@ export function renderToolbar(mount: HTMLElement, params: RenderToolbarParams): 
   const onToolbarClick = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
 
-    const layoutBtn = target.closest(".cherry-toolbar-layout-btn") as HTMLButtonElement;
+    const layoutBtn = target.closest(
+      ".cherry-toolbar-layout-btn",
+    ) as HTMLButtonElement;
     if (layoutBtn) {
       const mode = layoutBtn.dataset.layout as EditorLayoutMode;
       if (mode) {
         params.ctx.setLayout(mode);
         mount.querySelectorAll(".cherry-toolbar-layout-btn").forEach((el) => {
-          el.classList.toggle("is-active", (el as HTMLButtonElement).dataset.layout === mode);
+          el.classList.toggle(
+            "is-active",
+            (el as HTMLButtonElement).dataset.layout === mode,
+          );
         });
       }
       return;
     }
 
-    const trigger = target.closest(".cherry-toolbar-menu-trigger") as HTMLButtonElement;
+    const trigger = target.closest(
+      ".cherry-toolbar-menu-trigger",
+    ) as HTMLButtonElement;
     if (trigger) {
-      const wrap = trigger.closest(".cherry-toolbar-menu, .cherry-toolbar-submenu");
+      const wrap = trigger.closest(
+        ".cherry-toolbar-menu, .cherry-toolbar-submenu",
+      );
       if (wrap) {
         const isNested = wrap.classList.contains("cherry-toolbar-submenu");
         if (!isNested) {
@@ -220,10 +259,14 @@ export function renderToolbar(mount: HTMLElement, params: RenderToolbarParams): 
             // 关闭同级的其他二级菜单
             const parentPanel = wrap.closest(".cherry-toolbar-menu-panel");
             if (parentPanel) {
-              parentPanel.querySelectorAll(".cherry-toolbar-submenu.is-open").forEach((sib) => {
-                sib.classList.remove("is-open");
-                sib.querySelector(".cherry-toolbar-menu-trigger")?.setAttribute("aria-expanded", "false");
-              });
+              parentPanel
+                .querySelectorAll(".cherry-toolbar-submenu.is-open")
+                .forEach((sib) => {
+                  sib.classList.remove("is-open");
+                  sib
+                    .querySelector(".cherry-toolbar-menu-trigger")
+                    ?.setAttribute("aria-expanded", "false");
+                });
             }
             wrap.classList.add("is-open");
             trigger.setAttribute("aria-expanded", "true");
@@ -255,24 +298,24 @@ export function renderToolbar(mount: HTMLElement, params: RenderToolbarParams): 
   for (const groupItems of params.groups) {
     const groupEl = el("div", "cherry-toolbar-group");
     const overflow: ToolbarItem[] = [];
-    
+
     for (const item of groupItems) {
       if (item.mobileOverflow) overflow.push(item);
       appendToolbarItem(groupEl, item, false);
-      
+
       if (item.mobileOverflow) {
         const lastEl = groupEl.lastElementChild;
         if (lastEl) lastEl.classList.add("cherry-toolbar-desktop-only");
       }
     }
-    
+
     if (overflow.length) {
       groupEl.append(renderOverflowMenu(overflow));
     }
     scroll.append(groupEl);
   }
 
-  if (params.layoutItem) {
+  if (params.showLayoutSwitcher) {
     const layoutGroup = el("div", "cherry-toolbar-group cherry-toolbar-layout");
     renderLayoutGroup(params.ctx, layoutGroup);
     scroll.append(layoutGroup);

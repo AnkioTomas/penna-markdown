@@ -12,8 +12,6 @@ const TAB_WIDTH = 4;
 /** 缩进代码块 / 块结构分界（CommonMark 规范） */
 export const CODE_INDENT = 4;
 
-
-
 /**
  * 计算字符串在 index 处的视觉列位置。
  *
@@ -107,7 +105,10 @@ export function isIndentedCodeLine(line: string): boolean {
  * @param {number} [spaces=CODE_INDENT]
  * @returns {string}
  */
-export function stripVisualIndent(line: string, spaces: number = CODE_INDENT): string {
+export function stripVisualIndent(
+  line: string,
+  spaces: number = CODE_INDENT,
+): string {
   return line.slice(findIndexAtColumn(line, spaces));
 }
 
@@ -131,27 +132,28 @@ export function stripCodeContent(text) {
 export function stripBlockquoteMarker(line) {
   const m = line.match(/^( {0,3})>/);
   if (!m) return line;
-  
+
   let offset = m[0].length;
   let column = visualColumn(m[1]) + 1;
-  
+
   // 按照 CommonMark 规范，如果 > 后紧跟空格或 tab，则消耗掉一个视觉上的空格
   if (offset < line.length && (line[offset] === " " || line[offset] === "\t")) {
     const ch = line[offset];
     if (ch === " ") {
-        offset += 1;
-        column += 1;
+      offset += 1;
+      column += 1;
     } else {
-        // Tab 展开，消耗掉 1 个视觉空格，剩下 3 个（如果 tab 宽 4）
-        const toTab = TAB_WIDTH - (column % TAB_WIDTH);
-        if (toTab > 1) {
-            // 如果 tab 还没结束，我们需要手动展开它
-            const expandedRemainder = " ".repeat(toTab - 1) + expandLinePrefixTabs(line.slice(offset + 1));
-            return expandedRemainder;
-        } else {
-            offset += 1;
-            column += toTab;
-        }
+      // Tab 展开，消耗掉 1 个视觉空格，剩下 3 个（如果 tab 宽 4）
+      const toTab = TAB_WIDTH - (column % TAB_WIDTH);
+      if (toTab > 1) {
+        // 如果 tab 还没结束，我们需要手动展开它
+        const expandedRemainder =
+          " ".repeat(toTab - 1) + expandLinePrefixTabs(line.slice(offset + 1));
+        return expandedRemainder;
+      } else {
+        offset += 1;
+        column += toTab;
+      }
     }
   }
   return expandLinePrefixTabs(line.slice(offset));
@@ -213,7 +215,9 @@ export function expandListItemContent(line, contentOffset) {
     }
     const toTab = TAB_WIDTH - (column % TAB_WIDTH);
     if (toTab > 1) {
-      return " ".repeat(toTab - 1) + expandLinePrefixTabs(line.slice(offset + 1));
+      return (
+        " ".repeat(toTab - 1) + expandLinePrefixTabs(line.slice(offset + 1))
+      );
     }
     offset += 1;
   }
@@ -246,7 +250,10 @@ const ORDERED = /^(\d{1,9})([.)])/;
 export function parseListMarkerLine(line, { allowIndented = false } = {}) {
   let offset = 0;
   let column = 0;
-  while (offset < line.length && (line[offset] === " " || line[offset] === "\t")) {
+  while (
+    offset < line.length &&
+    (line[offset] === " " || line[offset] === "\t")
+  ) {
     if (line[offset] === "\t") column += TAB_WIDTH - (column % TAB_WIDTH);
     else column += 1;
     offset += 1;
@@ -303,7 +310,10 @@ export function parseListMarkerLine(line, { allowIndented = false } = {}) {
     offset = spacesStartOffset;
     column = spacesStartCol;
     contentStartCol = column;
-    if (offset < line.length && (line[offset] === " " || line[offset] === "\t")) {
+    if (
+      offset < line.length &&
+      (line[offset] === " " || line[offset] === "\t")
+    ) {
       ({ offset, column } = advanceInLine(line, offset, column, 1, true));
       contentStartCol = column;
     } else if (blank) {
@@ -337,7 +347,10 @@ interface ListMarkerLike {
 /**
  * 判断两个列表 marker 是否属于同一列表类型。
  */
-export function listsMatch(a: ListMarkerLike | null, b: ListMarkerLike | null): boolean {
+export function listsMatch(
+  a: ListMarkerLike | null,
+  b: ListMarkerLike | null,
+): boolean {
   if (!a || !b) return false;
   const aOrdered = a.ordered ?? a.isOrdered;
   const bOrdered = b.ordered ?? b.isOrdered;

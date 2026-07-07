@@ -15,7 +15,6 @@ import type { EditorCommand } from "@/editor/commands.js";
 import type { EditorView } from "@codemirror/view";
 import { Theme } from "@/theme/Theme";
 
-
 export function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   className: string,
@@ -101,17 +100,17 @@ export class Cherry {
     this.bodyEl.appendChild(this.dividerEl);
     this.bodyEl.appendChild(this.previewEl);
     this.cherryEl.appendChild(this.bodyEl);
-    
+
     // Mask click closes sidebar
     this.sidebarMaskEl.addEventListener("click", () => {
       this.theme.emit("cherry:sidebar", { show: false });
     });
-    
+
     if (statusbar) {
       this.statusbarEl = el("div", "cherry-statusbar-wrap");
       this.cherryEl.appendChild(this.statusbarEl);
     }
-    
+
     this.rootEl.appendChild(this.cherryEl);
 
     this.theme.setTheme(themeId, this.previewEl, this.cherryEl);
@@ -149,7 +148,7 @@ export class Cherry {
     this.sidebar = new SideBar(
       this.sidebarEl,
       this.theme,
-      typeof options.sidebar === "object" ? options.sidebar : {}
+      typeof options.sidebar === "object" ? options.sidebar : {},
     );
 
     if (options.sidebar === false) {
@@ -159,7 +158,9 @@ export class Cherry {
     this.scrollSync = new ScrollSync(this.editor, this.previewEl, this.theme);
 
     this.dialogHost = new DialogHost(this.cherryEl, this.theme);
-    this.commandBridge = new CommandBridge(this.theme, () => this.editor.getView());
+    this.commandBridge = new CommandBridge(this.theme, () =>
+      this.editor.getView(),
+    );
 
     const initialMarkdown = editorOptions.value ?? "";
     if (initialMarkdown) {
@@ -223,8 +224,13 @@ export class Cherry {
     return this.editor.getView();
   }
 
-  runCommand(command: EditorCommand | string, payload?: unknown): boolean | Promise<boolean> {
-    return executeCommand(this.editor.getView(), command, payload, { theme: this.theme });
+  runCommand(
+    command: EditorCommand | string,
+    payload?: unknown,
+  ): boolean | Promise<boolean> {
+    return executeCommand(this.editor.getView(), command, payload, {
+      theme: this.theme,
+    });
   }
 
   destroy(): void {

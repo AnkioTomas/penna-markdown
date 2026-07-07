@@ -29,7 +29,7 @@ export class Theme {
   private render: HTMLElement | null = null;
   private root: HTMLElement | null = null;
 
-  constructor(private readonly  debug = false) {}
+  constructor(private readonly debug = false) {}
 
   /** 是否处于调试模式 */
   isDebug(): boolean {
@@ -71,7 +71,11 @@ export class Theme {
 
     if (prev !== id) {
       this.logD("setTheme", { prev, id });
-      this.emit(THEME_EVENT_SKIN, { prev, id, render } satisfies ThemeSkinEvent);
+      this.emit(THEME_EVENT_SKIN, {
+        prev,
+        id,
+        render,
+      } satisfies ThemeSkinEvent);
     }
   }
 
@@ -90,7 +94,10 @@ export class Theme {
     this.mode = mode;
     this.applyAppearanceClass();
     this.logD("setLightDark", { mode });
-    this.emit(THEME_EVENT_LIGHT_DARK, { mode, isDark: mode === "dark" } satisfies ThemeLightDarkEvent);
+    this.emit(THEME_EVENT_LIGHT_DARK, {
+      mode,
+      isDark: mode === "dark",
+    } satisfies ThemeLightDarkEvent);
   }
 
   on<T = unknown>(event: string, handler: EventHandler<T>): () => void {

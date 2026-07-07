@@ -5,12 +5,18 @@ describe("extends/commentBlock", () => {
   const engine = () => createEngine();
 
   it("removes single line %%% comment %%% from rendered HTML", () => {
-    const html = renderMarkdown(engine(), "1\n\n%%% this is a comment %%%\n\n2");
+    const html = renderMarkdown(
+      engine(),
+      "1\n\n%%% this is a comment %%%\n\n2",
+    );
     expect(html).toBe("<p>1</p>\n<p>2</p>\n");
   });
 
   it("removes multi-line comment block", () => {
-    const html = renderMarkdown(engine(), "1\n\n%%%\nthis is a comment\nacross multiple lines\n%%%\n\n2");
+    const html = renderMarkdown(
+      engine(),
+      "1\n\n%%%\nthis is a comment\nacross multiple lines\n%%%\n\n2",
+    );
     expect(html).toBe("<p>1</p>\n<p>2</p>\n");
   });
 

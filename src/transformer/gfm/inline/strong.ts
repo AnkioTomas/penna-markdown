@@ -17,7 +17,10 @@ class StrongInlineParser extends BaseInlineParser {
   }
 
   /** @inheritdoc */
-  render(node: MarkdownNode, ctx: { renderInline(nodes?: MarkdownNode[]): string }) {
+  render(
+    node: MarkdownNode,
+    ctx: { renderInline(nodes?: MarkdownNode[]): string },
+  ) {
     return `<strong>${ctx.renderInline(node.children)}</strong>`;
   }
 }

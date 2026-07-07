@@ -3,7 +3,10 @@ import type { FootnoteDialogResult } from "@/editor/commands/types.js";
 export function renderFootnoteDialog(
   host: HTMLElement,
   props: { id?: string; mode?: FootnoteDialogResult["mode"] },
-  callbacks: { onSubmit: (d: FootnoteDialogResult) => void; onCancel: () => void },
+  callbacks: {
+    onSubmit: (d: FootnoteDialogResult) => void;
+    onCancel: () => void;
+  },
 ): () => void {
   const form = document.createElement("form");
   form.className = "cherry-dialog-form";
@@ -24,7 +27,9 @@ export function renderFootnoteDialog(
       <button type="submit" class="is-primary">插入</button>
     </div>
   `;
-  form.querySelector('[data-action="cancel"]')?.addEventListener("click", () => callbacks.onCancel());
+  form
+    .querySelector('[data-action="cancel"]')
+    ?.addEventListener("click", () => callbacks.onCancel());
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const fd = new FormData(form);

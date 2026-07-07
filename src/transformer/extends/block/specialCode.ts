@@ -49,7 +49,10 @@ export function parseEchartsJson(src: string): Record<string, unknown> {
     return JSON.parse(trimmed) as Record<string, unknown>;
   } catch {
     try {
-      return Function(`"use strict"; return ${trimmed}`)() as Record<string, unknown>;
+      return Function(`"use strict"; return ${trimmed}`)() as Record<
+        string,
+        unknown
+      >;
     } catch {
       return {};
     }
@@ -116,7 +119,9 @@ class SpecialCodeBlockParser extends BaseBlockParser {
     const trimmed = code.trim();
     if (!trimmed) return "";
     const host = apiHost ?? this.cfg().mermaidApiHost ?? MERMAID_API_HOST;
-    const payload = base64UrlEncode(JSON.stringify({ code: trimmed ,mermaid:{"theme":"default"}}));
+    const payload = base64UrlEncode(
+      JSON.stringify({ code: trimmed, mermaid: { theme: "default" } }),
+    );
     let url = `${host}/svg/${payload}`;
     if (theme === "dark") url += "?theme=dark";
     return url;
@@ -142,26 +147,42 @@ class SpecialCodeBlockParser extends BaseBlockParser {
     return `${host}?data=${encodeURIComponent(JSON.stringify(data))}`;
   }
 
-  renderMermaidBlock(content: string, options: MermaidImageOptions = {}, lineAttrs = ""): string {
+  renderMermaidBlock(
+    content: string,
+    options: MermaidImageOptions = {},
+    lineAttrs = "",
+  ): string {
     const code = content.trim();
     const src = this.buildMermaidImageSrc(code, options);
     const payload = base64UrlEncode(code);
     return `<figure data-type="mermaid" class="cherry-mermaid-block"${lineAttrs}><img class="cherry-mermaid__img" data-mermaid="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></figure>`;
   }
 
-  renderEchartsBlock(content: string, options: EchartsImageOptions = {}, lineAttrs = ""): string {
+  renderEchartsBlock(
+    content: string,
+    options: EchartsImageOptions = {},
+    lineAttrs = "",
+  ): string {
     const src = this.buildEchartsImageSrc(content, options);
     const payload = base64UrlEncode(content.trim());
     return `<div data-type="echarts" class="cherry-echarts-block"${lineAttrs}><img class="cherry-echarts__img" data-echarts="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></div>`;
   }
 
   /** @inheritdoc */
-  canOpenAt(lines: string[], index: number, ctx: Parameters<BaseBlockParser["canOpenAt"]>[2]) {
+  canOpenAt(
+    lines: string[],
+    index: number,
+    ctx: Parameters<BaseBlockParser["canOpenAt"]>[2],
+  ) {
     return codeParser.canOpenAt(lines, index, ctx);
   }
 
   /** @inheritdoc */
-  parse(lines: string[], index: number, ctx: Parameters<BaseBlockParser["parse"]>[2]) {
+  parse(
+    lines: string[],
+    index: number,
+    ctx: Parameters<BaseBlockParser["parse"]>[2],
+  ) {
     const result = codeParser.parse(lines, index, ctx);
     if (result) {
       const lang = parseFenceLang(lines[index] ?? "");
@@ -173,7 +194,10 @@ class SpecialCodeBlockParser extends BaseBlockParser {
   }
 
   /** @inheritdoc */
-  render(node: Parameters<BaseBlockParser["render"]>[0], ctx: Parameters<BaseBlockParser["render"]>[1]) {
+  render(
+    node: Parameters<BaseBlockParser["render"]>[0],
+    ctx: Parameters<BaseBlockParser["render"]>[1],
+  ) {
     const lang = String(node.props?.lang ?? "").toLowerCase();
     const content = node.value ?? "";
     const theme = ctx.isDark ? ("dark" as const) : undefined;
@@ -194,7 +218,9 @@ class SpecialCodeBlockParser extends BaseBlockParser {
   private renderPlainGfmCode(node: MarkdownNode, ctx: RenderContext): string {
     const lang = String(node.props?.lang ?? "");
     const content = node.value ?? "";
-    const classAttr = lang ? ` class="language-${escapeHtml(lang.trim())}"` : "";
+    const classAttr = lang
+      ? ` class="language-${escapeHtml(lang.trim())}"`
+      : "";
     const suffix = content === "" ? "" : "\n";
     const inner = `${escapeHtml(content)}${suffix}`;
     return `<pre${this.sourceLineAttrs(node)}><code${classAttr}>${inner}</code></pre>`;

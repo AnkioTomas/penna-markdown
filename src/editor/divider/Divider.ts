@@ -107,13 +107,23 @@ export class Divider {
   private applySplit(): void {
     const editorRatio = Math.round(this.split * 10000);
     const previewRatio = Math.round((1 - this.split) * 10000);
-    
+
     this.bodyEl.style.setProperty("--cherry-editor-ratio", String(editorRatio));
-    this.bodyEl.style.setProperty("--cherry-preview-ratio", String(previewRatio));
-    this.mount.setAttribute("aria-valuenow", String(Math.round(this.split * 100)));
+    this.bodyEl.style.setProperty(
+      "--cherry-preview-ratio",
+      String(previewRatio),
+    );
+    this.mount.setAttribute(
+      "aria-valuenow",
+      String(Math.round(this.split * 100)),
+    );
   }
 
-  private getTrackMetrics(): { bodyWidth: number; track: number; sidebarWidth: number } {
+  private getTrackMetrics(): {
+    bodyWidth: number;
+    track: number;
+    sidebarWidth: number;
+  } {
     const bodyWidth = this.bodyEl.getBoundingClientRect().width;
     const sidebarWidth =
       this.sidebarEl && this.sidebarEl.offsetParent !== null

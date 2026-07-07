@@ -4,7 +4,8 @@
   gap: 16px;
   padding: 16px 18px;
   background: var(--cherry-c-bg-elevated);
-  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
 }
 
 .back {
@@ -42,7 +43,8 @@
 
 .panel-title {
   padding: 12px 14px;
-  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
   font-size: 13px;
   color: var(--cherry-c-text-2);
   font-weight: 600;

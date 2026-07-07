@@ -13,14 +13,14 @@ parent: Cherry Markdown Next 设计文档
 
 `Renderer` 将 Markdown 渲染为 **挂载在 DOM 上的 HTML 块序列**，并维护增量会话状态：
 
-| 能力 | 说明 |
-| --- | --- |
-| 全量渲染 | `renderFull` — parse + 清空 mount + 逐块挂载 |
+| 能力     | 说明                                                      |
+| -------- | --------------------------------------------------------- |
+| 全量渲染 | `renderFull` — parse + 清空 mount + 逐块挂载              |
 | 增量渲染 | `render` — 有 cache 时尝试 `IncrementalSession.tryUpdate` |
-| TOC | `getToc` / `getTocFlat` 从 `lastAst` 提取 |
-| 代码高亮 | highlight.js，在 Transformer `code` parser 回调中调用 |
-| 图表 | Mermaid / ECharts 在 mount 后由 `replaceGraph` 初始化 |
-| 主题响应 | 订阅 `theme:ld`，更新 `transformer.isDark` 并重绘图表 |
+| TOC      | `getToc` / `getTocFlat` 从 `lastAst` 提取                 |
+| 代码高亮 | highlight.js，在 Transformer `code` parser 回调中调用     |
+| 图表     | Mermaid / ECharts 在 mount 后由 `replaceGraph` 初始化     |
+| 主题响应 | 订阅 `theme:ld`，更新 `transformer.isDark` 并重绘图表     |
 
 ---
 
@@ -28,10 +28,10 @@ parent: Cherry Markdown Next 设计文档
 
 ```typescript
 interface RenderResult {
-  html: string;              // 拼接的 outerHTML
+  html: string; // 拼接的 outerHTML
   ast: MarkdownNode;
-  blocks: BlockIndex[];      // 与 mount.children 一一对应
-  partial?: boolean;         // true = 增量成功
+  blocks: BlockIndex[]; // 与 mount.children 一一对应
+  partial?: boolean; // true = 增量成功
   changedStartLines?: number[];
 }
 ```
@@ -83,15 +83,15 @@ DomReconciler.reconcileDom                 →  hash 对齐 DOM + 刷新 BlockIn
 
 ### tryUpdate 失败原因
 
-| failReason | 含义 |
-| --- | --- |
-| `no-cache` | 首次渲染，无 session |
-| `no-changes` | 变更集为空 |
-| `dom-cache-mismatch` | DOM 子元素数与 blocks 不一致 |
-| `no-dirty-range` | 无法定位 dirty 区间 |
-| `parse-incremental-failed` | 引擎增量 parse 失败 |
-| `dom-sync-failed` | DOM reconcile 失败 |
-| `dom-blocks-mismatch` | reconcile 后块索引仍不一致 |
+| failReason                 | 含义                         |
+| -------------------------- | ---------------------------- |
+| `no-cache`                 | 首次渲染，无 session         |
+| `no-changes`               | 变更集为空                   |
+| `dom-cache-mismatch`       | DOM 子元素数与 blocks 不一致 |
+| `no-dirty-range`           | 无法定位 dirty 区间          |
+| `parse-incremental-failed` | 引擎增量 parse 失败          |
+| `dom-sync-failed`          | DOM reconcile 失败           |
+| `dom-blocks-mismatch`      | reconcile 后块索引仍不一致   |
 
 任一失败 → `Renderer.render` 调用 `renderFull` **静默降级**。
 

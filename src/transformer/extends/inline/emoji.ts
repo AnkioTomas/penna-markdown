@@ -6,10 +6,10 @@
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
-import { createNode, MarkdownNode} from "@/transformer/core/MarkdownNode.js";
+import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import emojiFull from "@/transformer/extends/inline/emoji/full.js";
-import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
-import {RenderContext} from "@/transformer/core/context/RenderContext";
+import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
+import { RenderContext } from "@/transformer/core/context/RenderContext";
 
 /** 短码名正则：字母/数字/下划线/连字符/加号，支持中文等 Unicode */
 const SHORTCODE_RE = /^:([\p{L}\p{N}_+-]+):/u;
@@ -37,8 +37,7 @@ class EmojiInlineParser extends BaseInlineParser {
   }
 
   canOpenAt(src: string, index: number, ctx: InlineParseContext) {
-    return src[index] === ":" ;
-
+    return src[index] === ":";
   }
 
   /** @inheritdoc */

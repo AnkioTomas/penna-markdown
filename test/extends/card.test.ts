@@ -163,21 +163,25 @@ Official plugins and themes for VuePress2
 :::`;
     const html = renderMarkdown(engine(), md);
     expect(html).toContain('class="cherry-repo-card"');
-    expect(html).toContain(
-      '<a href="https://github.com/vuepress/ecosystem"',
-    );
+    expect(html).toContain('<a href="https://github.com/vuepress/ecosystem"');
     expect(html).toContain("vuepress/ecosystem");
-    expect(html).toContain('<span class="cherry-repo-card__visibility">Public</span>');
+    expect(html).toContain(
+      '<span class="cherry-repo-card__visibility">Public</span>',
+    );
     expect(html).toContain(
       '<div class="cherry-repo-card__desc"><p>Official plugins and themes for VuePress2</p></div>',
     );
-    expect(html).toContain('class="cherry-repo-card__shield cherry-repo-card__shield--stars"');
+    expect(html).toContain(
+      'class="cherry-repo-card__shield cherry-repo-card__shield--stars"',
+    );
     expect(html).toContain(
       "img.shields.io/github/languages/top/vuepress%2Fecosystem",
     );
     expect(html).toContain("img.shields.io/github/stars/vuepress%2Fecosystem");
     expect(html).toContain("img.shields.io/github/forks/vuepress%2Fecosystem");
-    expect(html).toContain("img.shields.io/github/license/vuepress%2Fecosystem");
+    expect(html).toContain(
+      "img.shields.io/github/license/vuepress%2Fecosystem",
+    );
     expect(html).toContain("/vuepress/ecosystem/graphs/languages");
     expect(html).toContain('class="cherry-repo-card__shield-img"');
     expect(html).toContain("style=flat");
@@ -205,7 +209,9 @@ Official plugins and themes for VuePress2
     expect(html).toContain(
       'class="cherry-card-masonry cherry-card-masonry--cols-3" style="gap: 16px; --card-masonry-cols: 3;"',
     );
-    expect(html).toContain('class="cherry-card-masonry__item" style="gap: 16px;"');
+    expect(html).toContain(
+      'class="cherry-card-masonry__item" style="gap: 16px;"',
+    );
     expect(html).toContain('class="cherry-card-masonry__v-6-0"');
     expect(html).toContain('class="cherry-card-masonry__v-6-3"');
     expect(html).toContain('class="cherry-card-masonry__v-6-5"');
@@ -228,7 +234,9 @@ Official plugins and themes for VuePress2
 
 ::::`;
     const html = renderMarkdown(engine(), md);
-    expect(html).toContain('class="cherry-card-masonry cherry-card-masonry--cols-2"');
+    expect(html).toContain(
+      'class="cherry-card-masonry cherry-card-masonry--cols-2"',
+    );
     expect(html).toContain('class="cherry-card-masonry__v-3-0"');
     expect(html).toContain('<p class="cherry-card__title">卡片1</p>');
     expect(html).toContain('<p class="cherry-card__title">卡片3</p>');

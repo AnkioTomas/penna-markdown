@@ -68,7 +68,11 @@ export function toggleInlinePerLine(
         insert: part.slice(before.length, part.length - after.length),
       });
     } else {
-      changes.push({ from: sliceFrom, to: sliceTo, insert: `${before}${part}${after}` });
+      changes.push({
+        from: sliceFrom,
+        to: sliceTo,
+        insert: `${before}${part}${after}`,
+      });
     }
   }
 
@@ -107,7 +111,11 @@ export function insertAtDocumentTop(view: EditorView, text: string): void {
   const fm = doc.match(/^---\n[\s\S]*?\n---\n*/);
   if (fm) {
     view.dispatch({
-      changes: { from: 0, to: fm[0].length, insert: text.endsWith("\n") ? text : `${text}\n` },
+      changes: {
+        from: 0,
+        to: fm[0].length,
+        insert: text.endsWith("\n") ? text : `${text}\n`,
+      },
       selection: EditorSelection.cursor(0),
       scrollIntoView: true,
     });

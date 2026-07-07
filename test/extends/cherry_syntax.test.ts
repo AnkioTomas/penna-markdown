@@ -24,16 +24,20 @@ describe("extends/cherry_syntax", () => {
 
   it("buildEchartsImageSrc and buildMermaidImageSrc omit theme by default", () => {
     expect(buildEchartsImageSrc(ECHARTS_OPTIONS)).not.toContain('"theme"');
-    expect(decodeURIComponent(buildEchartsImageSrc(ECHARTS_OPTIONS, { theme: "dark" }))).toContain(
-      '"theme":"dark"',
-    );
+    expect(
+      decodeURIComponent(
+        buildEchartsImageSrc(ECHARTS_OPTIONS, { theme: "dark" }),
+      ),
+    ).toContain('"theme":"dark"');
     const mermaid = "flowchart TD\n    A --> B";
     expect(buildMermaidImageSrc(mermaid)).not.toContain("theme=");
-    expect(buildMermaidImageSrc(mermaid, { theme: "dark" })).toContain("?theme=dark");
+    expect(buildMermaidImageSrc(mermaid, { theme: "dark" })).toContain(
+      "?theme=dark",
+    );
   });
 
   it("renders ```echarts with dark theme when isDark option is true", () => {
-    const md = "```echarts\n{\"series\":[{\"type\":\"bar\"}]}\n```";
+    const md = '```echarts\n{"series":[{"type":"bar"}]}\n```';
     const html = renderMarkdown(createEngine({ isDark: true }), md);
     expect(html).toContain("%22theme%22%3A%22dark%22");
   });
@@ -45,7 +49,7 @@ describe("extends/cherry_syntax", () => {
   });
 
   it("renders ```echarts fenced block via echarts API", () => {
-    const md = "```echarts\n{\"series\":[{\"type\":\"bar\"}]}\n```";
+    const md = '```echarts\n{"series":[{"type":"bar"}]}\n```';
     const html = renderMarkdown(engine(), md);
     expect(html).toContain('<div data-type="echarts"');
     expect(html).toContain('class="cherry-echarts__img"');
@@ -56,19 +60,27 @@ describe("extends/cherry_syntax", () => {
 
   it("renders ```math as normal fenced code", () => {
     const html = renderMarkdown(engine(), "```math\n\\frac{a}{b}\n```");
-    expect(html).toBe('<pre><code class="language-math">\\frac{a}{b}\n</code></pre>\n');
+    expect(html).toBe(
+      '<pre><code class="language-math">\\frac{a}{b}\n</code></pre>\n',
+    );
   });
 
   it("renders ```katex and ```latex as normal fenced code", () => {
     const katex = renderMarkdown(engine(), "```katex\nx^2\n```");
-    expect(katex).toBe('<pre><code class="language-katex">x^2\n</code></pre>\n');
+    expect(katex).toBe(
+      '<pre><code class="language-katex">x^2\n</code></pre>\n',
+    );
     const latex = renderMarkdown(engine(), "```latex\nx^2\n```");
-    expect(latex).toBe('<pre><code class="language-latex">x^2\n</code></pre>\n');
+    expect(latex).toBe(
+      '<pre><code class="language-latex">x^2\n</code></pre>\n',
+    );
   });
 
   it("falls back to normal fenced code for js when extension enabled", () => {
     const html = renderMarkdown(engine(), "```js\nconst a = 1;\n```");
-    expect(html).toBe('<pre><code class="language-js">const a = 1;\n</code></pre>\n');
+    expect(html).toBe(
+      '<pre><code class="language-js">const a = 1;\n</code></pre>\n',
+    );
   });
 
   it("renders ```mermaid fenced block via mermaid.ink API", () => {
@@ -88,7 +100,8 @@ describe("extends/cherry_syntax", () => {
   });
 
   it("falls back to normal fenced code for ```card", () => {
-    const md = "```card\n#list/1\n[Title](https://example.com) Description\n```";
+    const md =
+      "```card\n#list/1\n[Title](https://example.com) Description\n```";
     const html = renderMarkdown(engine(), md);
     expect(html).toBe(
       '<pre><code class="language-card">#list/1\n[Title](https://example.com) Description\n</code></pre>\n',

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_TOOLBAR_GROUPS, DEFAULT_TOOLBAR_ITEMS } from "@/editor/toolbar/defaults.js";
+import {
+  DEFAULT_TOOLBAR_GROUPS,
+  DEFAULT_TOOLBAR_ITEMS,
+} from "@/editor/toolbar/defaults.js";
 import {
   groupToolbarItems,
   resolveToolbarGroups,
@@ -22,20 +25,18 @@ describe("resolveToolbarItems", () => {
       "textFormat",
       "insert",
       "structure",
-      "blocks",
+      "components",
       "advanced",
     ]);
   });
 
-  it("merges custom items by id", () => {
+  it("overwrites custom items by id", () => {
     const items = resolveToolbarItems({
-      items: [{ id: "textFormat", label: "Format", title: "Custom format" }],
+      items: [{ id: "textFormat", label: "Format" }],
     });
     const format = items.find((i) => i.id === "textFormat");
-    expect(format?.type).toBe("menu");
-    if (format?.type === "menu") {
-      expect(format.label).toBe("Format");
-    }
+    expect(format?.label).toBe("Format");
+    expect((format as any)?.children).toBeUndefined(); // It completely replaced it
   });
 
   it("hides items with hidden=true", () => {
@@ -66,7 +67,9 @@ describe("resolveToolbarItems", () => {
 
   it("adds new custom item", () => {
     const items = resolveToolbarItems({
-      items: [{ id: "custom", label: "C", command: "insertText", payload: "x" }],
+      items: [
+        { id: "custom", label: "C", command: "insertText", payload: "x" },
+      ],
     });
     expect(items.some((i) => i.id === "custom")).toBe(true);
   });
@@ -75,9 +78,15 @@ describe("resolveToolbarItems", () => {
 describe("groupToolbarItems", () => {
   it("groups items by groups option", () => {
     const items = resolveToolbarItems();
-    const groups = groupToolbarItems(items, [["textFormat", "structure"], ["insert", "blocks"]]);
+    const groups = groupToolbarItems(items, [
+      ["textFormat", "structure"],
+      ["insert", "components"],
+    ]);
     expect(groups[0]?.map((i) => i.id)).toEqual(["textFormat", "structure"]);
-    expect(groups[1]?.map((i) => i.id).slice(0, 2)).toEqual(["insert", "blocks"]);
+    expect(groups[1]?.map((i) => i.id).slice(0, 2)).toEqual([
+      "insert",
+      "components",
+    ]);
     expect(groups[1]?.length).toBeGreaterThan(2);
   });
 
@@ -87,13 +96,6 @@ describe("groupToolbarItems", () => {
     expect(groups[0]?.map((i) => i.id).slice(0, 1)).toEqual(["textFormat"]);
     expect(groups[0]!.length).toBeGreaterThan(1);
   });
-
-  it("does not include layout item", () => {
-    const items = resolveToolbarItems();
-    expect(items.some((i) => i.type === "layout")).toBe(false);
-    const groups = groupToolbarItems(items, DEFAULT_TOOLBAR_GROUPS);
-    expect(groups.flat().some((i) => i.type === "layout")).toBe(false);
-  });
 });
 
 describe("resolveToolbarGroups", () => {
@@ -101,7 +103,6 @@ describe("resolveToolbarGroups", () => {
     const groups = resolveToolbarGroups();
     expect(groups.length).toBeGreaterThan(0);
     const items = groups.flatMap((g) => g.items);
-    expect(items.some((i) => i.type === "layout")).toBe(false);
     expect(items.some((i) => i.id === "themeMenu")).toBe(true);
   });
 });

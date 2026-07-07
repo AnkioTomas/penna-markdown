@@ -4,7 +4,10 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {
+  createNode,
+  type MarkdownNode,
+} from "@/transformer/core/MarkdownNode.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
@@ -43,12 +46,15 @@ class CardBlockParser extends BaseBlockParser {
 
   render(node: MarkdownNode, ctx: RenderContext) {
     const title = String(node.props?.title ?? "");
-    const titleNodes = (node.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
+    const titleNodes =
+      (node.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
     const body = ctx.renderBlock(node.children ?? []);
 
     const parts = [`<div class="cherry-card"${this.sourceLineAttrs(node)}>`];
     if (title) {
-      parts.push(`<p class="cherry-card__title">${ctx.renderInline(titleNodes)}</p>`);
+      parts.push(
+        `<p class="cherry-card__title">${ctx.renderInline(titleNodes)}</p>`,
+      );
     }
     if (body) {
       parts.push(`<div class="cherry-card__body">${body}</div>`);

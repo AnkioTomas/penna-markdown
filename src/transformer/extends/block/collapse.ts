@@ -4,7 +4,10 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {
+  createNode,
+  type MarkdownNode,
+} from "@/transformer/core/MarkdownNode.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
@@ -77,7 +80,11 @@ function readCollapseInnerLines(
 }
 
 function parseCollapseSections(lines: string[]) {
-  const sections: Array<{ marker: string; title: string; contentLines: string[] }> = [];
+  const sections: Array<{
+    marker: string;
+    title: string;
+    contentLines: string[];
+  }> = [];
   let i = 0;
 
   while (i < lines.length) {
@@ -121,7 +128,10 @@ function parseCollapseSections(lines: string[]) {
   return sections;
 }
 
-function renderCollapseTitle(titleLineNodes: MarkdownNode[][], ctx: RenderContext): string {
+function renderCollapseTitle(
+  titleLineNodes: MarkdownNode[][],
+  ctx: RenderContext,
+): string {
   const lines = titleLineNodes ?? [];
   if (lines.length === 0) return "";
   return lines.map((nodes) => ctx.renderInline(nodes)).join("<br>");
@@ -145,7 +155,9 @@ class CollapseBlockParser extends BaseBlockParser {
     if (!block) return null;
 
     const container = parseCollapseContainer(open[1] ?? "");
-    const sections = parseCollapseSections(normalizeInnerLines(block.innerLines));
+    const sections = parseCollapseSections(
+      normalizeInnerLines(block.innerLines),
+    );
     if (sections.length === 0) return null;
 
     const items = sections.map((section) => {
@@ -199,7 +211,8 @@ class CollapseBlockParser extends BaseBlockParser {
 
     const parts = items.map((item) => {
       const open = Boolean(item.props?.open);
-      const titleLineNodes = (item.props?.titleLineNodes as MarkdownNode[][] | undefined) ?? [];
+      const titleLineNodes =
+        (item.props?.titleLineNodes as MarkdownNode[][] | undefined) ?? [];
       const openAttr = open ? " open" : "";
       const nameAttr = groupName ? ` name="${groupName}"` : "";
       const summary = renderCollapseTitle(titleLineNodes, ctx);

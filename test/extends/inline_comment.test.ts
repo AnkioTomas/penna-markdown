@@ -5,7 +5,8 @@ describe("extends/inline_comment", () => {
   const engine = () => createEngine();
 
   it("removes %% comment %% from rendered HTML", () => {
-    const html = renderMarkdown(engine(), 
+    const html = renderMarkdown(
+      engine(),
       "可见 %% 这一行是写给自己的悄悄话，预览模式和导出时完全不可见 %% 内容",
     );
     expect(html).toBe("<p>可见  内容</p>\n");

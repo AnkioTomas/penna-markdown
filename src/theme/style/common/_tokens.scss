@@ -39,21 +39,57 @@ $cherry-dark-brand-on-bg: #e0f4f8;
 // Layer 2: 语义色板
 // ==========================================
 $cherry-core-semantics: (
-  note: (#206aca, #ff0),
-  tip: (#30a46c, #39ff14),
-  warning: (#b45309, #fc0),
-  caution: (#c53030, #f99),
-  danger: (#dc2626, #f66),
-  important: (#844bbc, #ccf),
+  note: (
+    #206aca,
+    #ff0,
+  ),
+  tip: (
+    #30a46c,
+    #39ff14,
+  ),
+  warning: (
+    #b45309,
+    #fc0,
+  ),
+  caution: (
+    #c53030,
+    #f99,
+  ),
+  danger: (
+    #dc2626,
+    #f66,
+  ),
+  important: (
+    #844bbc,
+    #ccf,
+  ),
 );
 
 $cherry-dark-core-semantics: (
-  note: (#93c5fd, #db0),
-  tip: (#4ade80, #4ade80),
-  warning: (#fbbf24, #fbbf24),
-  caution: (#fca5a5, #fca5a5),
-  danger: (#f87171, #f87171),
-  important: (#c4b5fd, #a5b4fc),
+  note: (
+    #93c5fd,
+    #db0,
+  ),
+  tip: (
+    #4ade80,
+    #4ade80,
+  ),
+  warning: (
+    #fbbf24,
+    #fbbf24,
+  ),
+  caution: (
+    #fca5a5,
+    #fca5a5,
+  ),
+  danger: (
+    #f87171,
+    #f87171,
+  ),
+  important: (
+    #c4b5fd,
+    #a5b4fc,
+  ),
 );
 
 $cherry-dark-mark-mix: 50%;
@@ -103,20 +139,36 @@ $cherry-dark-brand-mark-mix: 48%;
     --cherry-c-#{$name}: #{$base-color};
     @if $is-dark {
       // 暗色：用 mark 色相与底色混合，保留高亮感但不铺纯荧光
-      --cherry-c-#{$name}-mark: color-mix(in srgb, #{$mark-color} #{$cherry-dark-mark-mix}, #{$surface});
+      --cherry-c-#{$name}-mark: color-mix(
+        in srgb,
+        #{$mark-color} #{$cherry-dark-mark-mix},
+        #{$surface}
+      );
     } @else {
       --cherry-c-#{$name}-mark: #{$mark-color};
     }
 
     $contrast-color: cherry-contrast-color($is-dark);
-    --cherry-c-#{$name}-on-bg: color-mix(in srgb, #{$base-color} 20%, #{$contrast-color});
+    --cherry-c-#{$name}-on-bg: color-mix(
+      in srgb,
+      #{$base-color} 20%,
+      #{$contrast-color}
+    );
 
     $bg-opacity: cherry-bg-opacity($is-dark);
     $border-opacity: cherry-border-opacity($is-dark);
 
     --cherry-c-alert-#{$name}-text: #{$base-color};
-    --cherry-c-alert-#{$name}-bg: color-mix(in srgb, #{$base-color} #{$bg-opacity}, transparent);
-    --cherry-c-alert-#{$name}-border: color-mix(in srgb, #{$base-color} #{$border-opacity}, transparent);
+    --cherry-c-alert-#{$name}-bg: color-mix(
+      in srgb,
+      #{$base-color} #{$bg-opacity},
+      transparent
+    );
+    --cherry-c-alert-#{$name}-border: color-mix(
+      in srgb,
+      #{$base-color} #{$border-opacity},
+      transparent
+    );
   }
 }
 
@@ -140,9 +192,18 @@ $cherry-dark-brand-mark-mix: 48%;
   --cherry-c-media-shade: var(--cherry-c-bg);
   --cherry-c-on-brand: var(--cherry-c-contrast-light);
 
-  --cherry-c-code-block-header-bg: color-mix(in srgb, var(--cherry-c-text-3) 6%, var(--cherry-c-bg-elevated));
-  --cherry-c-code-block-code-bg: color-mix(in srgb, var(--cherry-c-text-3) 4%, var(--cherry-c-bg));
-  --cherry-c-code-block-shadow: 0 1px 2px color-mix(in srgb, var(--cherry-c-text-3) 8%, transparent),
+  --cherry-c-code-block-header-bg: color-mix(
+    in srgb,
+    var(--cherry-c-text-3) 6%,
+    var(--cherry-c-bg-elevated)
+  );
+  --cherry-c-code-block-code-bg: color-mix(
+    in srgb,
+    var(--cherry-c-text-3) 4%,
+    var(--cherry-c-bg)
+  );
+  --cherry-c-code-block-shadow:
+    0 1px 2px color-mix(in srgb, var(--cherry-c-text-3) 8%, transparent),
     0 8px 24px color-mix(in srgb, var(--cherry-c-text-3) 6%, transparent);
 }
 
@@ -171,7 +232,8 @@ $cherry-dark-brand-mark-mix: 48%;
     var(--cherry-c-contrast-dark) 22%,
     var(--cherry-c-bg-elevated)
   );
-  --cherry-c-code-block-shadow: 0 1px 2px color-mix(in srgb, var(--cherry-c-contrast-dark) 35%, transparent);
+  --cherry-c-code-block-shadow: 0 1px 2px
+    color-mix(in srgb, var(--cherry-c-contrast-dark) 35%, transparent);
 }
 
 // ==========================================
@@ -218,7 +280,11 @@ $cherry-dark-brand-mark-mix: 48%;
   --cherry-c-contrast-light: #{$cherry-contrast-light};
   --cherry-c-contrast-dark: #{$cherry-contrast-dark};
 
-  --cherry-c-brand-mark: color-mix(in srgb, #{$cherry-dark-brand-3} #{$cherry-dark-brand-mark-mix}, #{$cherry-dark-bg});
+  --cherry-c-brand-mark: color-mix(
+    in srgb,
+    #{$cherry-dark-brand-3} #{$cherry-dark-brand-mark-mix},
+    #{$cherry-dark-bg}
+  );
   --cherry-c-code-fg: #{$cherry-dark-code-fg};
 
   @include generate-semantic-suite($cherry-dark-core-semantics, true);
@@ -231,4 +297,3 @@ $cherry-dark-brand-mark-mix: 48%;
     @content;
   }
 }
-

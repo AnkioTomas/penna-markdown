@@ -12,7 +12,7 @@ export function getDeepestNode(nodes: MarkdownNode[]): MarkdownNode | null {
 
   // 【关键修复】：如果当前节点已经是段落了，立刻返回！
   // 绝对不能再往 last.children 里钻了，因为段落的 children 是 Inline 文本节点！
-  if (last.type === 'paragraph') {
+  if (last.type === "paragraph") {
     return last;
   }
 
@@ -36,7 +36,7 @@ export function canGenericLazyContinue(
   ctx: BlockParseContext,
   currentLines: string[],
   nextLine: string,
-  parseFn: (lines: string[]) => MarkdownNode[]
+  parseFn: (lines: string[]) => MarkdownNode[],
 ): boolean {
   if (currentLines.length === 0) return false;
   // 缩进代码行（4 空格）不算强块级起点，见 CommonMark §4.8 / GFM #216
@@ -50,5 +50,5 @@ export function canGenericLazyContinue(
   const deepest = getDeepestNode(tempAst);
 
   // 规则 3：只要最深处（不管隔了多少层）是一个段落，就允许这行纯文本“掉落”进去
-  return deepest?.type === 'paragraph';
+  return deepest?.type === "paragraph";
 }

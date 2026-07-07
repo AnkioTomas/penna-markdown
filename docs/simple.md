@@ -17,13 +17,13 @@ repo: https://github.com/AutoAccountingOrg/cherry-markdown-next
 
 ## 语法清单
 
-| 类别 | 覆盖 |
-| --- | --- |
-| **GFM** | ATX/Setext 标题、强调、链接/图片、列表、引用、表格、分隔线、围栏/缩进代码、基础任务 |
-| **Cherry 行内** | Frontmatter 变量 `[[key]]`、高亮、Emoji、HTML 属性、剧透、数学、徽章、上下标、注释、脚注引用 |
+| 类别            | 覆盖                                                                                                |
+| --------------- | --------------------------------------------------------------------------------------------------- |
+| **GFM**         | ATX/Setext 标题、强调、链接/图片、列表、引用、表格、分隔线、围栏/缩进代码、基础任务                 |
+| **Cherry 行内** | Frontmatter 变量 `[[key]]`、高亮、Emoji、HTML 属性、剧透、数学、徽章、上下标、注释、脚注引用        |
 | **Cherry 块级** | YAML Frontmatter、Alert×5、扩展任务列表、块级公式、脚注定义、媒体/iframe、增强代码、Mermaid/ECharts |
-| **布局** | 容器（note/tip/warning/对齐/嵌套）、Tabs、Steps、Timeline、Collapse |
-| **卡片/文档** | card / link-card / image-card / repo-card / card-grid / card-masonry / field / field-group |
+| **布局**        | 容器（note/tip/warning/对齐/嵌套）、Tabs、Steps、Timeline、Collapse                                 |
+| **卡片/文档**   | card / link-card / image-card / repo-card / card-grid / card-masonry / field / field-group          |
 
 ---
 
@@ -53,9 +53,9 @@ Setext 一级
 
 ### 强调与删除
 
-*斜体* **粗体** ***粗斜体*** ~~删除线~~ · 嵌套 **粗 *斜* 粗**
+_斜体_ **粗体** _**粗斜体**_ ~~删除线~~ · 嵌套 **粗 _斜_ 粗**
 
-H~2~O 与 ~~删除~~ 不冲突 · 转义 \*literal\*
+H~~2~~O 与 ~~删除~~ 不冲突 · 转义 \*literal\*
 
 行末硬换行：第一行\
 仍属同段
@@ -102,14 +102,14 @@ H~2~O 与 ~~删除~~ 不冲突 · 转义 \*literal\*
 
 ### 表格与分隔线
 
-| 左 | 中 | 右 |
-| :--- | :---: | ---: |
-| A | B | C |
+| 左     |    中    |      右 |
+| :----- | :------: | ------: |
+| A      |    B     |       C |
 | `code` | **bold** | :smile: |
 
 ---
 
-***
+---
 
 ### 代码
 
@@ -155,7 +155,7 @@ $$
 
 [New]{.tip .top} [note]{.note} [important]{.important} [warning]{.warning} [caution]{.caution} [danger]{.danger .bottom}
 
-H~2~O · E=mc^2^ · x^*n*^
+H~~2~~O · E=mc^2^ · x^_n_^
 
 ### 注释 · 脚注引用
 
@@ -252,18 +252,21 @@ $$
 ### 折叠面板
 
 ::: collapse
+
 - 默认折叠
 
   普通折叠面板。
-:::
+  :::
 
 ::: collapse expand
+
 - 默认展开
 
   expand 模式。
-:::
+  :::
 
 ::: collapse accordion
+
 - 面板 A
 
   内容 A
@@ -275,7 +278,7 @@ $$
 - :- 面板 C
 
   accordion 下强制折叠（`:-`）
-:::
+  :::
 
 ### Tabs · Steps · Timeline
 
@@ -300,6 +303,7 @@ pnpm install
 :::
 
 ::: timeline
+
 - 成功节点
   time=2024-06 type=success
 
@@ -309,9 +313,10 @@ pnpm install
   time=2024-09 type=warning color=#f59e0b
 
   单项 `color` 覆盖。
-:::
+  :::
 
 ::: timeline line="dotted" placement="between"
+
 - 右侧
   time=2025-01 type=important placement=right
 
@@ -321,7 +326,7 @@ pnpm install
   time=2025-06 type=success
 
   默认左侧。
-:::
+  :::
 
 ---
 
@@ -353,18 +358,34 @@ export default {
 ```
 
 ```css :collapsed-lines
-html { margin: 0; }
+html {
+  margin: 0;
+}
 /* ... 折叠的冗长代码 ... */
-body { color: inherit; }
+body {
+  color: inherit;
+}
 ```
 
 ```css :collapsed-lines=5
-.line { color: red; }
-.line { color: orange; }
-.line { color: yellow; }
-.line { color: green; }
-.line { color: blue; }
-.line { color: indigo; }
+.line {
+  color: red;
+}
+.line {
+  color: orange;
+}
+.line {
+  color: yellow;
+}
+.line {
+  color: green;
+}
+.line {
+  color: blue;
+}
+.line {
+  color: indigo;
+}
 ```
 
 ### Mermaid
@@ -531,10 +552,10 @@ VuePress 2 核心库
 
 详见 [文档](https://example.com)[^ref-link]。
 
-[^note]: 出自 **《过零丁洋》** · 支持 *富文本* 脚注正文。
+[^note]: 出自 **《过零丁洋》** · 支持 _富文本_ 脚注正文。
 
 [^ref-link]: 脚注定义可含 [链接](https://example.com) 与 `code`。
 
 ---
 
-*文档路径：`docs/simple.md` · 编辑器页头可切换 `test.md` / `simple.md`（选择会记住）*
+_文档路径：`docs/simple.md` · 编辑器页头可切换 `test.md` / `simple.md`（选择会记住）_

@@ -2,12 +2,16 @@ import { describe, expect, it } from "vitest";
 import { createEngine, renderMarkdown } from "../helpers/engine.js";
 
 function panelHtml(type: string, title: string, body: string) {
-  const titleHtml = title ? `<p class="cherry-alert__title">${title}</p>\n` : "";
+  const titleHtml = title
+    ? `<p class="cherry-alert__title">${title}</p>\n`
+    : "";
   return `<div class="cherry-alert cherry-alert--${type}">\n${titleHtml}${body}\n</div>\n`;
 }
 
 function alignHtml(type: string, body: string, title = "") {
-  const titleHtml = title ? `<p class="cherry-align__title">${title}</p>\n` : "";
+  const titleHtml = title
+    ? `<p class="cherry-align__title">${title}</p>\n`
+    : "";
   return `<div class="cherry-align cherry-align--${type}">\n${titleHtml}${body}\n</div>\n`;
 }
 

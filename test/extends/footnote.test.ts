@@ -30,7 +30,9 @@ describe("extends/footnote", () => {
     const html = renderMarkdown(engine(), md);
     expect(html).toContain('id="footnote-ref-1"');
     expect(html).toContain('id="footnote-ref-1-2"');
-    expect(html).toContain('href="#footnote-ref-1" class="cherry-footnote-backref"');
+    expect(html).toContain(
+      'href="#footnote-ref-1" class="cherry-footnote-backref"',
+    );
     expect(html.match(/class="cherry-footnote-item"/g)?.length).toBe(1);
   });
 

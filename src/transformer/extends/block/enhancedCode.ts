@@ -7,7 +7,10 @@
  * 语法高亮由 renderer hydrate 后处理。
  */
 
-import {BaseBlockParser, ParserOptions} from "@/transformer/core/ParserBase.js";
+import {
+  BaseBlockParser,
+  ParserOptions,
+} from "@/transformer/core/ParserBase.js";
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import codeParser from "@/transformer/gfm/block/code.js";
@@ -17,7 +20,7 @@ import { unescapeHref } from "@/transformer/utils/linkDestination.js";
 import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
 
 /** `syntaxOptions.code`（增强围栏代码块） */
-export interface CodeOptions extends  ParserOptions{
+export interface CodeOptions extends ParserOptions {
   enable?: boolean;
   highlightJs?: (code: string, lang: string) => string;
 }
@@ -39,7 +42,10 @@ export interface CollapsedCodeAnalysis {
 
 export function parseLineHighlightSpec(spec: string): number[] {
   const lines = new Set<number>();
-  for (const part of spec.split(",").map((s) => s.trim()).filter(Boolean)) {
+  for (const part of spec
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)) {
     if (part.includes("-")) {
       const [rawStart, rawEnd] = part.split("-", 2);
       const start = Number.parseInt(rawStart ?? "", 10);
@@ -56,7 +62,9 @@ export function parseLineHighlightSpec(spec: string): number[] {
   return [...lines].sort((a, b) => a - b);
 }
 
-export function mergeLineHighlightSpecs(...specs: Array<number[] | string>): number[] {
+export function mergeLineHighlightSpecs(
+  ...specs: Array<number[] | string>
+): number[] {
   const lines = new Set<number>();
   for (const spec of specs) {
     if (Array.isArray(spec)) {
@@ -166,11 +174,15 @@ export function analyzeCollapsedCode(
 
 /** 折叠标记行替换为空行，保持行号与行高亮对齐 */
 export function normalizeCodeLines(content: string): string[] {
-  return content.split("\n").map((line) => (isCollapseMarkerLine(line) ? "" : line));
+  return content
+    .split("\n")
+    .map((line) => (isCollapseMarkerLine(line) ? "" : line));
 }
 
 export function buildGutterText(lineCount: number): string {
-  return Array.from({ length: lineCount }, (_, index) => String(index + 1)).join("\n");
+  return Array.from({ length: lineCount }, (_, index) =>
+    String(index + 1),
+  ).join("\n");
 }
 export function buildCodeBodyStyle(
   highlightLines: number[],
@@ -240,7 +252,10 @@ function stripLangSuffixModifiers(lang: string): string {
   return lang.replace(/:collapsed-lines(?:=\d+)?/gi, "").trim();
 }
 
-function splitLangAndLineSpec(token: string): { lang: string; lineSpec: string } {
+function splitLangAndLineSpec(token: string): {
+  lang: string;
+  lineSpec: string;
+} {
   const decoded = decodeHtmlEntities(unescapeHref(token));
   const withoutCollapse = stripLangSuffixModifiers(decoded);
   const match = withoutCollapse.match(/^([^{]*?)\{([^}]+)\}$/);
@@ -250,14 +265,17 @@ function splitLangAndLineSpec(token: string): { lang: string; lineSpec: string }
   return { lang: withoutCollapse, lineSpec: "" };
 }
 
-function parseCollapsedLinesMeta(
-  info: string,
-): { collapsedLines: boolean; collapsedMaxLines?: number } {
+function parseCollapsedLinesMeta(info: string): {
+  collapsedLines: boolean;
+  collapsedMaxLines?: number;
+} {
   const attached = info.match(/:collapsed-lines(?:=(\d+))?/i);
   if (attached) {
     return {
       collapsedLines: true,
-      collapsedMaxLines: attached[1] ? Number.parseInt(attached[1], 10) : undefined,
+      collapsedMaxLines: attached[1]
+        ? Number.parseInt(attached[1], 10)
+        : undefined,
     };
   }
 
@@ -266,7 +284,9 @@ function parseCollapsedLinesMeta(
     if (tokenMatch) {
       return {
         collapsedLines: true,
-        collapsedMaxLines: tokenMatch[1] ? Number.parseInt(tokenMatch[1], 10) : undefined,
+        collapsedMaxLines: tokenMatch[1]
+          ? Number.parseInt(tokenMatch[1], 10)
+          : undefined,
       };
     }
   }
@@ -290,9 +310,12 @@ export function parseFenceMeta(line: string): {
 
   const info = (match[4] || match[6] || "").trim();
   const firstToken = info.split(/\s+/)[0] ?? "";
-  const { lang: langFromToken, lineSpec: tokenLineSpec } = splitLangAndLineSpec(firstToken);
+  const { lang: langFromToken, lineSpec: tokenLineSpec } =
+    splitLangAndLineSpec(firstToken);
 
-  let highlightLines = tokenLineSpec ? parseLineHighlightSpec(tokenLineSpec) : [];
+  let highlightLines = tokenLineSpec
+    ? parseLineHighlightSpec(tokenLineSpec)
+    : [];
 
   let restInfo = info;
   if (firstToken) {
@@ -333,11 +356,19 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
     super("code");
   }
 
-  canOpenAt(lines: string[], index: number, ctx: Parameters<BaseBlockParser["canOpenAt"]>[2]) {
+  canOpenAt(
+    lines: string[],
+    index: number,
+    ctx: Parameters<BaseBlockParser["canOpenAt"]>[2],
+  ) {
     return codeParser.canOpenAt(lines, index, ctx);
   }
 
-  parse(lines: string[], index: number, ctx: Parameters<BaseBlockParser["parse"]>[2]) {
+  parse(
+    lines: string[],
+    index: number,
+    ctx: Parameters<BaseBlockParser["parse"]>[2],
+  ) {
     const result = codeParser.parse(lines, index, ctx);
     if (!result) return null;
 
@@ -363,7 +394,9 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
     const lang = meta.lang.toLowerCase();
     if (SPECIAL_LANGS.has(lang)) {
       props.lang = lang;
-      const mw = (lines[index] ?? "").match(/\bmax-width=(?:"([^"]*)"|'([^']*)'|(\S+))/i);
+      const mw = (lines[index] ?? "").match(
+        /\bmax-width=(?:"([^"]*)"|'([^']*)'|(\S+))/i,
+      );
       if (mw) {
         const raw = (mw[1] ?? mw[2] ?? mw[3] ?? "").trim();
         if (raw) props.maxWidth = /^\d+(\.\d+)?$/.test(raw) ? `${raw}px` : raw;
@@ -384,21 +417,26 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
       : [];
     const collapsedLines = Boolean(props.collapsedLines);
     const collapsedMaxLines =
-      typeof props.collapsedMaxLines === "number" ? props.collapsedMaxLines : undefined;
+      typeof props.collapsedMaxLines === "number"
+        ? props.collapsedMaxLines
+        : undefined;
 
-    const collapseOpts = collapsedLines ? { enabled: true, maxLines: collapsedMaxLines } : null;
+    const collapseOpts = collapsedLines
+      ? { enabled: true, maxLines: collapsedMaxLines }
+      : null;
     const collapseForRender = collapseOpts
       ? analyzeCollapsedCode(content, collapseOpts)
       : null;
     const langClass = escapeHtml(lang);
     const opts = this.getOptions() as CodeOptions;
-    const { html: codeBody, collapse: collapseAnalysis } = renderCodeBlockBodyHtml(
-      content,
-      langClass,
-      highlightLines,
-      collapseForRender,
-      opts.highlightJs,
-    );
+    const { html: codeBody, collapse: collapseAnalysis } =
+      renderCodeBlockBodyHtml(
+        content,
+        langClass,
+        highlightLines,
+        collapseForRender,
+        opts.highlightJs,
+      );
 
     const copyBtn =
       '<button type="button" class="cherry-copy-code-button" aria-label="复制代码" data-copied="已复制"></button>';
@@ -439,7 +477,9 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
   private renderPlainGfmCode(node: MarkdownNode, ctx: RenderContext): string {
     const lang = String(node.props?.lang ?? "");
     const content = node.value ?? "";
-    const classAttr = lang ? ` class="language-${escapeHtml(lang.trim())}"` : "";
+    const classAttr = lang
+      ? ` class="language-${escapeHtml(lang.trim())}"`
+      : "";
 
     const opts = this.getOptions() as CodeOptions;
     const inner = renderCodeInnerHtml(content, lang, opts.highlightJs);
@@ -450,7 +490,9 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
   render(node: MarkdownNode, ctx: RenderContext) {
     const opts = this.getOptions() as CodeOptions;
     if (!opts.enable) return this.renderPlainGfmCode(node, ctx);
-    const lang = String(node.props?.lang ?? "").trim().toLowerCase();
+    const lang = String(node.props?.lang ?? "")
+      .trim()
+      .toLowerCase();
     if (!lang) return this.renderPlainGfmCode(node, ctx);
     if (SPECIAL_LANGS.has(lang)) {
       return specialCodeParser.render(node, ctx);

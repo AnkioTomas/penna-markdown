@@ -16,9 +16,12 @@ export function renderLinkDialog(
       <button type="submit">插入</button>
     </div>
   `;
-  (form.elements.namedItem("text") as HTMLInputElement).value = props.text ?? "";
+  (form.elements.namedItem("text") as HTMLInputElement).value =
+    props.text ?? "";
   (form.elements.namedItem("url") as HTMLInputElement).value = props.url ?? "";
-  form.querySelector('[data-action="cancel"]')?.addEventListener("click", () => callbacks.onCancel());
+  form
+    .querySelector('[data-action="cancel"]')
+    ?.addEventListener("click", () => callbacks.onCancel());
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const fd = new FormData(form);

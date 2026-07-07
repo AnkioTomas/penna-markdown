@@ -67,7 +67,9 @@ export function extractMarkdownSummary(markdown: string, maxLen = 80): string {
 }
 
 /** 将目录中的 Markdown 文件转为侧栏文件项 */
-export async function fetchMarkdownFileItems(dir = "/docs/"): Promise<CherryFileItem[]> {
+export async function fetchMarkdownFileItems(
+  dir = "/docs/",
+): Promise<CherryFileItem[]> {
   const docs = await fetchDocsList(dir);
   const items = await Promise.all(
     docs.map(async (doc) => {

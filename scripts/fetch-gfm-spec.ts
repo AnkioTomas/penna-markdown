@@ -78,7 +78,10 @@ async function downloadSpec(ref: string): Promise<string> {
 
 /** 解析 spec.txt（与 cmark-gfm test/spec_tests.py get_tests 相同） */
 export function parseGfmSpec(specText: string): GfmSpecCase[] {
-  const lines = specText.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+  const lines = specText
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
+    .split("\n");
   const headerRe = /^#+ /;
 
   let lineNumber = 0;
@@ -98,7 +101,11 @@ export function parseGfmSpec(specText: string): GfmSpecCase[] {
 
     if (trimmed.startsWith(`${FENCE} example`)) {
       state = 1;
-      extensions = trimmed.slice(FENCE.length + " example".length).trim().split(/\s+/).filter(Boolean);
+      extensions = trimmed
+        .slice(FENCE.length + " example".length)
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
     } else if (trimmed === FENCE) {
       state = 0;
       exampleNumber += 1;
@@ -135,11 +142,13 @@ export function parseGfmSpec(specText: string): GfmSpecCase[] {
 }
 
 function slugSection(section: string): string {
-  return section
-    .toLowerCase()
-    .replace(/[^\w\u4e00-\u9fff]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80) || "untitled";
+  return (
+    section
+      .toLowerCase()
+      .replace(/[^\w\u4e00-\u9fff]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 80) || "untitled"
+  );
 }
 
 async function writeSplitCases(cases: GfmSpecCase[]): Promise<number> {
@@ -192,8 +201,16 @@ async function main() {
     sections: [...new Set(cases.map((c) => c.section))].length,
   };
 
-  await writeFile(resolve(OUT_DIR, "cases.json"), `${JSON.stringify(cases, null, 2)}\n`, "utf8");
-  await writeFile(resolve(OUT_DIR, "meta.json"), `${JSON.stringify(meta, null, 2)}\n`, "utf8");
+  await writeFile(
+    resolve(OUT_DIR, "cases.json"),
+    `${JSON.stringify(cases, null, 2)}\n`,
+    "utf8",
+  );
+  await writeFile(
+    resolve(OUT_DIR, "meta.json"),
+    `${JSON.stringify(meta, null, 2)}\n`,
+    "utf8",
+  );
 
   console.log(`已保存: test/fixtures/gfm/cases.json (${cases.length} 条用例)`);
   console.log(`已保存: test/fixtures/gfm/meta.json`);

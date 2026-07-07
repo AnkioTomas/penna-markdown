@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, createEngineWithExtensions, renderMarkdown } from "../helpers/engine.js";
+import {
+  createEngine,
+  createEngineWithExtensions,
+  renderMarkdown,
+} from "../helpers/engine.js";
 
 describe("extends/badge", () => {
   const engine = () => createEngineWithExtensions(["badge", "html_attrs"]);
@@ -20,7 +24,9 @@ describe("extends/badge", () => {
 
   it("renders warning badge", () => {
     const html = renderMarkdown(engine(), "[标签]{.warning}");
-    expect(html).toBe('<p><span class="cherry-badge warning">标签</span></p>\n');
+    expect(html).toBe(
+      '<p><span class="cherry-badge warning">标签</span></p>\n',
+    );
   });
 
   it("renders position-only class", () => {
@@ -30,9 +36,7 @@ describe("extends/badge", () => {
 
   it("does not conflict with inline links", () => {
     const html = renderMarkdown(engine(), "[链接](https://example.com)");
-    expect(html).toBe(
-      '<p><a href="https://example.com">链接</a></p>\n',
-    );
+    expect(html).toBe('<p><a href="https://example.com">链接</a></p>\n');
   });
 
   it("coexists with frontmatter variables", () => {

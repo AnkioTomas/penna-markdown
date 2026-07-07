@@ -3,7 +3,10 @@ import { toggleInlineWrap } from "./inline.js";
 import { insertText, setLinePrefix } from "./utils.js";
 
 export function registerBasicCommands(
-  register: (name: string, handler: import("./types.js").CommandHandler) => void,
+  register: (
+    name: string,
+    handler: import("./types.js").CommandHandler,
+  ) => void,
 ): void {
   register("bold", (view) => {
     toggleInlineWrap(view, "**", "**", "文本");

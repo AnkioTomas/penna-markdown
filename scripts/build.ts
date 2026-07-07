@@ -22,15 +22,15 @@ function cssRawPlugin(): esbuild.Plugin {
     name: "css-raw",
     setup(build) {
       build.onResolve({ filter: /\.css\?raw$/ }, (args) =>
-          build
-              .resolve(args.path.replace(/\?raw$/, ""), {
-                resolveDir: args.resolveDir,
-                kind: args.kind,
-                importer: args.importer,
-              })
-              .then((resolved) =>
-                  resolved ? { path: resolved.path, namespace: "css-raw" } : null,
-              ),
+        build
+          .resolve(args.path.replace(/\?raw$/, ""), {
+            resolveDir: args.resolveDir,
+            kind: args.kind,
+            importer: args.importer,
+          })
+          .then((resolved) =>
+            resolved ? { path: resolved.path, namespace: "css-raw" } : null,
+          ),
       );
       build.onLoad({ filter: /.*/, namespace: "css-raw" }, (args) => ({
         contents: readFileSync(args.path, "utf8"),
@@ -57,13 +57,21 @@ type BundleEntry = {
   traditionalTarget?: string[];
 };
 const entries: BundleEntry[] = [
-  { in: "src/editor/Cherry.ts", name: "cherry", globalName: "CherryNextEditor" },
-  { in: "src/renderer/Renderer.ts", name: "cherry-render", globalName: "CherryNextRenderer" },
+  {
+    in: "src/editor/Cherry.ts",
+    name: "cherry",
+    globalName: "CherryNextEditor",
+  },
+  {
+    in: "src/renderer/Renderer.ts",
+    name: "cherry-render",
+    globalName: "CherryNextRenderer",
+  },
   {
     in: "src/transformer/TransformerEngine.ts",
     name: "cherry-transformer",
     globalName: "CherryNextTransformer",
-    modernTarget: ["es2020"],
+    modernTarget: ["es2015"],
     traditionalTarget: ["es2015"],
   },
 ];
@@ -85,11 +93,19 @@ function formatSize(bytes: number): string {
 async function buildBundleEntry(entry: BundleEntry) {
   const entryPath = resolve(rootDir, entry.in);
   const out = (file: string) => resolve(distDir, file);
-  const modernTarget = entry.modernTarget ?? ["es2018"];
+  const modernTarget = entry.modernTarget ?? ["es2015"];
   const traditionalTarget = entry.traditionalTarget ?? modernTarget;
   const outputs = [
-    { file: out(`${entry.name}.min.mjs`), format: "esm" as const, target: modernTarget },
-    { file: out(`${entry.name}.min.cjs`), format: "cjs" as const, target: modernTarget },
+    {
+      file: out(`${entry.name}.min.mjs`),
+      format: "esm" as const,
+      target: modernTarget,
+    },
+    {
+      file: out(`${entry.name}.min.cjs`),
+      format: "cjs" as const,
+      target: modernTarget,
+    },
     {
       file: out(`${entry.name}.min.js`),
       format: "iife" as const,
@@ -107,7 +123,9 @@ async function buildBundleEntry(entry: BundleEntry) {
       globalName: output.globalName,
     });
     const size = statSync(output.file).size;
-    console.log(`  ${output.file.replace(`${distDir}/`, "")}  ${formatSize(size)}`);
+    console.log(
+      `  ${output.file.replace(`${distDir}/`, "")}  ${formatSize(size)}`,
+    );
   }
 }
 async function buildThemeStyles() {
@@ -116,7 +134,9 @@ async function buildThemeStyles() {
 const stylesOnly = process.argv.includes("--styles-only");
 mkdirSync(distDir, { recursive: true });
 if (stylesOnly) {
-  console.log("mode: styles-only (JS bundles skipped, use `pnpm build` for full build)");
+  console.log(
+    "mode: styles-only (JS bundles skipped, use `pnpm build` for full build)",
+  );
   await buildThemeStyles();
   console.log(`theme styles done: ${REGISTERED_THEMES.join(", ")}`);
 } else {

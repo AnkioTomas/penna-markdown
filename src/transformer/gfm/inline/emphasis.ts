@@ -57,7 +57,11 @@ class EmphasisInlineParser extends BaseInlineParser {
     const prefixLen = literalOpenerPrefixLen(src, index, parts);
     if (prefixLen > 0) {
       return {
-        node: createNode("text", prefixLen, src.slice(index, index + prefixLen)),
+        node: createNode(
+          "text",
+          prefixLen,
+          src.slice(index, index + prefixLen),
+        ),
         nextIndex: index + prefixLen,
       };
     }
@@ -73,7 +77,10 @@ class EmphasisInlineParser extends BaseInlineParser {
   }
 
   /** @inheritdoc */
-  render(node: MarkdownNode, ctx: { renderInline(nodes?: MarkdownNode[]): string }) {
+  render(
+    node: MarkdownNode,
+    ctx: { renderInline(nodes?: MarkdownNode[]): string },
+  ) {
     return `<em>${ctx.renderInline(node.children)}</em>`;
   }
 }

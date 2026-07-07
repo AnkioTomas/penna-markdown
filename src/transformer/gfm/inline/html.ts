@@ -10,21 +10,33 @@ import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { isEscaped } from "@/transformer/utils/escape.js";
 import { sanitizeRawHtml } from "@/transformer/utils/safeHtml.js";
-import { isInlineWhitespace, skipInlineWhitespace } from "@/transformer/utils/normalize.js";
-import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
+import {
+  isInlineWhitespace,
+  skipInlineWhitespace,
+} from "@/transformer/utils/normalize.js";
+import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
 
-const isAlpha = (c: string) => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-const isDigit = (c: string) => (c >= '0' && c <= '9');
-const isTagChar = (c: string) => isAlpha(c) || isDigit(c) || c === '-';
+const isAlpha = (c: string) => (c >= "a" && c <= "z") || (c >= "A" && c <= "Z");
+const isDigit = (c: string) => c >= "0" && c <= "9";
+const isTagChar = (c: string) => isAlpha(c) || isDigit(c) || c === "-";
 
 // 属性名起始字符: [a-zA-Z_:]
-const isAttrNameStart = (c: string) => isAlpha(c) || c === '_' || c === ':';
+const isAttrNameStart = (c: string) => isAlpha(c) || c === "_" || c === ":";
 
 // 属性名字符: [a-zA-Z0-9_.:-]
-const isAttrNameChar = (c: string) => isAttrNameStart(c) || isDigit(c) || c === '.' || c === '-';
+const isAttrNameChar = (c: string) =>
+  isAttrNameStart(c) || isDigit(c) || c === "." || c === "-";
 
 // 无引号属性值禁止的字符: [^"'=<>` \t\r\n]
-const isUnquotedValid = (c: string) => c && c !== '"' && c !== "'" && c !== '=' && c !== '<' && c !== '>' && c !== '`' && !isInlineWhitespace(c);
+const isUnquotedValid = (c: string) =>
+  c &&
+  c !== '"' &&
+  c !== "'" &&
+  c !== "=" &&
+  c !== "<" &&
+  c !== ">" &&
+  c !== "`" &&
+  !isInlineWhitespace(c);
 
 class HTMLInlineParser extends BaseInlineParser {
   constructor() {
@@ -32,23 +44,22 @@ class HTMLInlineParser extends BaseInlineParser {
   }
 
   canOpenAt(src: string, index: number, ctx: InlineParseContext): boolean {
-    return src[index] === '<';
+    return src[index] === "<";
   }
 
   /** @inheritdoc */
   parse(src: string, index: number, ctx: any) {
-
     if (isEscaped(src, index)) return null;
 
     // 状态机路由分发
     const nextChar = src[index + 1];
     let endIndex = -1;
 
-    if (nextChar === '!') {
+    if (nextChar === "!") {
       endIndex = this.matchCommentOrDecl(src, index);
-    } else if (nextChar === '?') {
+    } else if (nextChar === "?") {
       endIndex = this.matchProcessingInstruction(src, index);
-    } else if (nextChar === '/') {
+    } else if (nextChar === "/") {
       endIndex = this.matchCloseTag(src, index);
     } else if (isAlpha(nextChar)) {
       endIndex = this.matchOpenTag(src, index);
@@ -89,10 +100,10 @@ class HTMLInlineParser extends BaseInlineParser {
 
     // 匹配声明: <![A-Z]...>
     if (
-      start + 2 < src.length
-      && src[start + 1] === "!"
-      && src[start + 2] >= "A"
-      && src[start + 2] <= "Z"
+      start + 2 < src.length &&
+      src[start + 1] === "!" &&
+      src[start + 2] >= "A" &&
+      src[start + 2] <= "Z"
     ) {
       const end = src.indexOf(">", start + 3);
       return end !== -1 ? end + 1 : -1;

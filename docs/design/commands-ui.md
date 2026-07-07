@@ -49,16 +49,16 @@ runCommand(view, command, payload?, ctx?: { theme? })
 
 ### 内置命令
 
-| 命令 | 行为 |
-| --- | --- |
-| `bold` / `italic` / `strikethrough` / `code` | 选区包裹标记 |
-| `heading1` … `heading6` | 行首 ATX 前缀 |
-| `blockquote` / `unorderedList` / `orderedList` / `taskList` | 行首前缀 |
-| `horizontalRule` / `codeBlock` / `image` | 插入模板 |
-| `insertText` | 通用插入，payload `{ text, selectFrom?, selectTo? }` |
-| `insertTable` | 打开表格对话框 |
-| `insertLink` | 打开链接对话框 |
-| `insertBadge` | 打开徽章对话框 |
+| 命令                                                        | 行为                                                 |
+| ----------------------------------------------------------- | ---------------------------------------------------- |
+| `bold` / `italic` / `strikethrough` / `code`                | 选区包裹标记                                         |
+| `heading1` … `heading6`                                     | 行首 ATX 前缀                                        |
+| `blockquote` / `unorderedList` / `orderedList` / `taskList` | 行首前缀                                             |
+| `horizontalRule` / `codeBlock` / `image`                    | 插入模板                                             |
+| `insertText`                                                | 通用插入，payload `{ text, selectFrom?, selectTo? }` |
+| `insertTable`                                               | 打开表格对话框                                       |
+| `insertLink`                                                | 打开链接对话框                                       |
+| `insertBadge`                                               | 打开徽章对话框                                       |
 
 扩展命令：调用 `registerCommand(name, handler)` 注册到同一 Map。
 
@@ -120,12 +120,12 @@ resolveToolbarGroups(options) → renderToolbar(mount, { groups, ctx, ... })
 
 `ToolbarContext` 提供：
 
-| 方法 | 作用 |
-| --- | --- |
+| 方法                         | 作用                  |
+| ---------------------------- | --------------------- |
 | `execute(command, payload?)` | 发射 `editor:command` |
-| `setLayout(mode)` | 发射 `cherry:layout` |
-| `getLayout()` | 当前布局模式 |
-| `focus()` | 聚焦编辑区 |
+| `setLayout(mode)`            | 发射 `cherry:layout`  |
+| `getLayout()`                | 当前布局模式          |
+| `focus()`                    | 聚焦编辑区            |
 
 Toolbar **不** 直接持有 `EditorView`；这是刻意解耦，便于测试与自定义 UI。
 
@@ -155,12 +155,12 @@ const view = cherry.getEditorView();
 
 ## 测试
 
-| 文件 | 覆盖 |
-| --- | --- |
-| `test/editor/commands.test.ts` | 命令 handler |
-| `test/editor/toolbar.test.ts` | 配置解析 |
-| `test/editor/toolbar.render.test.ts` | DOM 渲染 |
-| `test/editor/dialog.test.ts` | 对话框 open/result |
+| 文件                                 | 覆盖               |
+| ------------------------------------ | ------------------ |
+| `test/editor/commands.test.ts`       | 命令 handler       |
+| `test/editor/toolbar.test.ts`        | 配置解析           |
+| `test/editor/toolbar.render.test.ts` | DOM 渲染           |
+| `test/editor/dialog.test.ts`         | 对话框 open/result |
 
 ---
 

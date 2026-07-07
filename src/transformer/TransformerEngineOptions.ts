@@ -1,4 +1,8 @@
-import type { BaseBlockParser, BaseInlineParser, SyntaxOptions } from "@/transformer/core/ParserBase";
+import type {
+  BaseBlockParser,
+  BaseInlineParser,
+  SyntaxOptions,
+} from "@/transformer/core/ParserBase";
 
 export interface TransformerEngineOptions {
   inlineParsers?: Record<number, BaseInlineParser>;

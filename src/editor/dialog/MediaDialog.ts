@@ -8,7 +8,12 @@ const KIND_LABELS: Record<MediaDialogResult["kind"], string> = {
 
 export function renderMediaDialog(
   host: HTMLElement,
-  props: { kind?: MediaDialogResult["kind"]; label?: string; url?: string; poster?: string },
+  props: {
+    kind?: MediaDialogResult["kind"];
+    label?: string;
+    url?: string;
+    poster?: string;
+  },
   callbacks: { onSubmit: (d: MediaDialogResult) => void; onCancel: () => void },
 ): () => void {
   const kind = props.kind ?? "video";
@@ -26,10 +31,14 @@ export function renderMediaDialog(
       <button type="submit" class="is-primary">插入</button>
     </div>
   `;
-  (form.elements.namedItem("label") as HTMLInputElement).value = props.label ?? "";
+  (form.elements.namedItem("label") as HTMLInputElement).value =
+    props.label ?? "";
   (form.elements.namedItem("url") as HTMLInputElement).value = props.url ?? "";
-  (form.elements.namedItem("poster") as HTMLInputElement).value = props.poster ?? "";
-  form.querySelector('[data-action="cancel"]')?.addEventListener("click", () => callbacks.onCancel());
+  (form.elements.namedItem("poster") as HTMLInputElement).value =
+    props.poster ?? "";
+  form
+    .querySelector('[data-action="cancel"]')
+    ?.addEventListener("click", () => callbacks.onCancel());
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const fd = new FormData(form);

@@ -50,7 +50,8 @@ function preview(text: string, max = 48): string {
 
 function formatChipValue(value: unknown): string {
   if (typeof value === "string") return preview(value, 36);
-  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (typeof value === "number" || typeof value === "boolean")
+    return String(value);
   try {
     return preview(JSON.stringify(value), 28);
   } catch {
@@ -63,7 +64,9 @@ function summarizePropValue(key: string, value: unknown): unknown {
   return value;
 }
 
-function collectMetaFields(node: MarkdownNode): { key: string; value: unknown }[] {
+function collectMetaFields(
+  node: MarkdownNode,
+): { key: string; value: unknown }[] {
   const rows: { key: string; value: unknown }[] = [];
 
   if (node.length !== undefined) {
@@ -325,7 +328,11 @@ export class AstTreeView {
     this.container.append(frag);
   }
 
-  private createIndent(guides: boolean[], isLast: boolean, depth: number): HTMLElement {
+  private createIndent(
+    guides: boolean[],
+    isLast: boolean,
+    depth: number,
+  ): HTMLElement {
     const indent = document.createElement("div");
     indent.className = "ast-indent";
     indent.setAttribute("aria-hidden", "true");
@@ -346,8 +353,18 @@ export class AstTreeView {
   }
 
   private createRow(state: AstRowState): HTMLElement {
-    const { path, depth, guides, isLast, type, meta, childCount, hasKids, collapsed, node } =
-      state;
+    const {
+      path,
+      depth,
+      guides,
+      isLast,
+      type,
+      meta,
+      childCount,
+      hasKids,
+      collapsed,
+      node,
+    } = state;
 
     const row = document.createElement("div");
     row.className = "ast-row";

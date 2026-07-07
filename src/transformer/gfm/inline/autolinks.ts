@@ -10,18 +10,25 @@ import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { renderSafeAnchor } from "@/transformer/utils/safeUrl.js";
 import { createNode, MarkdownNode } from "@/transformer/core/MarkdownNode.js";
-import {InlineParseContext} from "@/transformer/core/context/InlineParseContext";
+import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
 
 // --- 纯字符判定辅助函数 (内联优化) ---
 
-const isAlpha = (c: string) => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-const isAlnum = (c: string) => isAlpha(c) || (c >= '0' && c <= '9');
+const isAlpha = (c: string) => (c >= "a" && c <= "z") || (c >= "A" && c <= "Z");
+const isAlnum = (c: string) => isAlpha(c) || (c >= "0" && c <= "9");
 
 // URI 合法字符判定
 const isUriChar = (c: string) => {
   const code = c.charCodeAt(0);
   if (code < 0x20 || code === 0x7f) return false;
-  return c !== '<' && c !== '>' && c !== ' ' && c !== '\t' && c !== '\n' && c !== '\r';
+  return (
+    c !== "<" &&
+    c !== ">" &&
+    c !== " " &&
+    c !== "\t" &&
+    c !== "\n" &&
+    c !== "\r"
+  );
 };
 
 // 邮箱 Local-part 字符判定 (a-z, 0-9, .!#$%&'*+/=?^_`{|}~-)
@@ -45,10 +52,14 @@ const encodeHref = (src: string, start: number, end: number): string => {
 };
 
 // 剥离转移符（如果解析失败，作为普通尖括号文本呈现）
-const literalBracketInner = (src: string, start: number, end: number): string => {
+const literalBracketInner = (
+  src: string,
+  start: number,
+  end: number,
+): string => {
   let out = "";
   for (let i = start; i < end; i++) {
-    if (src[i] === '\\' && i + 1 < end) {
+    if (src[i] === "\\" && i + 1 < end) {
       out += src[i + 1];
       i++;
     } else {
@@ -73,16 +84,15 @@ class AutolinksInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   parse(src: string, index: number, ctx: any) {
-
     // 1. 预读寻找闭合尖括号 `>`
     let close = -1;
     let hasWhitespace = false;
     for (let i = index + 1; i < src.length; i++) {
       const c = src[i];
-      if (c === ' ' || c === '\t' || c === '\n' || c === '\r') {
+      if (c === " " || c === "\t" || c === "\n" || c === "\r") {
         hasWhitespace = true;
       }
-      if (c === '>') {
+      if (c === ">") {
         close = i;
         break;
       }
@@ -95,13 +105,20 @@ class AutolinksInlineParser extends BaseInlineParser {
     const totalLength = close + 1 - index;
 
     if (close === index + 1) {
-      return { node: createNode("text", totalLength, "<>"), nextIndex: close + 1 };
+      return {
+        node: createNode("text", totalLength, "<>"),
+        nextIndex: close + 1,
+      };
     }
 
     // Autolink 内部不允许有空白符
     if (hasWhitespace) {
       return {
-        node: createNode("text", totalLength, literalBracketInner(src, index + 1, close)),
+        node: createNode(
+          "text",
+          totalLength,
+          literalBracketInner(src, index + 1, close),
+        ),
         nextIndex: close + 1,
       };
     }
@@ -132,12 +149,16 @@ class AutolinksInlineParser extends BaseInlineParser {
 
     // 4. 解析失败的降级处理
     // GFM 边缘情况：如果 /> 闭合时不是 autolink，交给普通转义处理
-    if (src[close - 1] === '\\') {
+    if (src[close - 1] === "\\") {
       return { node: createNode("text", 1, "<"), nextIndex: index + 1 };
     }
 
     return {
-      node: createNode("text", totalLength, literalBracketInner(src, index + 1, close)),
+      node: createNode(
+        "text",
+        totalLength,
+        literalBracketInner(src, index + 1, close),
+      ),
       nextIndex: close + 1,
     };
   }
@@ -148,14 +169,15 @@ class AutolinksInlineParser extends BaseInlineParser {
   private isValidEmail(src: string, start: number, end: number): boolean {
     let atIndex = -1;
     for (let i = start; i < end; i++) {
-      if (src[i] === '\\') return false; // Email 不能包含反斜杠转义
-      if (src[i] === '@') {
+      if (src[i] === "\\") return false; // Email 不能包含反斜杠转义
+      if (src[i] === "@") {
         if (atIndex !== -1) return false; // 只能有一个 @
         atIndex = i;
       }
     }
 
-    if (atIndex === -1 || atIndex === start || atIndex === end - 1) return false;
+    if (atIndex === -1 || atIndex === start || atIndex === end - 1)
+      return false;
 
     // 检查 Local-part
     for (let i = start; i < atIndex; i++) {
@@ -168,7 +190,7 @@ class AutolinksInlineParser extends BaseInlineParser {
     let labelStart = atIndex + 1;
     while (labelStart < end) {
       let labelEnd = labelStart;
-      while (labelEnd < end && src[labelEnd] !== '.') {
+      while (labelEnd < end && src[labelEnd] !== ".") {
         labelEnd++;
       }
 
@@ -180,7 +202,7 @@ class AutolinksInlineParser extends BaseInlineParser {
       // 中间字符只能是字母、数字或连字符 '-'
       for (let i = labelStart + 1; i < labelEnd - 1; i++) {
         const c = src[i];
-        if (!isAlnum(c) && c !== '-') return false;
+        if (!isAlnum(c) && c !== "-") return false;
       }
 
       labelStart = labelEnd + 1;
@@ -195,7 +217,7 @@ class AutolinksInlineParser extends BaseInlineParser {
   private isValidUri(src: string, start: number, end: number): boolean {
     let colonIndex = -1;
     for (let i = start; i < end; i++) {
-      if (src[i] === ':') {
+      if (src[i] === ":") {
         colonIndex = i;
         break;
       }
@@ -209,7 +231,7 @@ class AutolinksInlineParser extends BaseInlineParser {
 
     for (let i = start + 1; i < colonIndex; i++) {
       const c = src[i];
-      if (!isAlnum(c) && c !== '+' && c !== '-' && c !== '.') return false;
+      if (!isAlnum(c) && c !== "+" && c !== "-" && c !== ".") return false;
     }
 
     if (colonIndex + 1 === end) return false; // 冒号后必须有内容

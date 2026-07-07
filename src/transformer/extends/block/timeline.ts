@@ -4,7 +4,10 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {
+  createNode,
+  type MarkdownNode,
+} from "@/transformer/core/MarkdownNode.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
@@ -73,7 +76,10 @@ function parseConfigLine(line: string): Record<string, string> {
   return config;
 }
 
-function resolveItemConfig(raw: Record<string, string>, container: { line: string }) {
+function resolveItemConfig(
+  raw: Record<string, string>,
+  container: { line: string },
+) {
   const type = TIMELINE_TYPES.has(raw.type) ? raw.type : "info";
   const line = LINE_STYLES.has(raw.line) ? raw.line : container.line;
   const placement =
@@ -123,7 +129,11 @@ function readTimelineInnerLines(
 }
 
 function parseTimelineSections(lines: string[]) {
-  const sections: Array<{ title: string; config: Record<string, string>; contentLines: string[] }> = [];
+  const sections: Array<{
+    title: string;
+    config: Record<string, string>;
+    contentLines: string[];
+  }> = [];
   let i = 0;
 
   while (i < lines.length) {
@@ -173,7 +183,10 @@ function parseTimelineSections(lines: string[]) {
   return sections;
 }
 
-function renderTimelineTitle(titleLineNodes: MarkdownNode[][], ctx: RenderContext): string {
+function renderTimelineTitle(
+  titleLineNodes: MarkdownNode[][],
+  ctx: RenderContext,
+): string {
   const lines = titleLineNodes ?? [];
   if (lines.length === 0) return "";
 
@@ -199,7 +212,9 @@ class TimelineBlockParser extends BaseBlockParser {
     if (!block) return null;
 
     const container = parseTimelineContainer(open[1] ?? "");
-    const sections = parseTimelineSections(normalizeInnerLines(block.innerLines));
+    const sections = parseTimelineSections(
+      normalizeInnerLines(block.innerLines),
+    );
     if (sections.length === 0) return null;
 
     const items = sections.map((section) => {
@@ -257,7 +272,8 @@ class TimelineBlockParser extends BaseBlockParser {
       const itemPlacement = String(item.props?.placement ?? "left");
       const color = String(item.props?.color ?? "");
       const time = String(item.props?.time ?? "");
-      const titleLineNodes = (item.props?.titleLineNodes as MarkdownNode[][] | undefined) ?? [];
+      const titleLineNodes =
+        (item.props?.titleLineNodes as MarkdownNode[][] | undefined) ?? [];
 
       const classes = [
         "cherry-timeline-item",

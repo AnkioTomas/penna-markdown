@@ -16,7 +16,10 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import {
+  createNode,
+  type MarkdownNode,
+} from "@/transformer/core/MarkdownNode.js";
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
@@ -68,8 +71,16 @@ function readTabsInnerLines(
 }
 
 function parseTabSections(lines: string[]) {
-  const sections: Array<{ active: boolean; title: string; contentLines: string[] }> = [];
-  let current: { active: boolean; title: string; contentLines: string[] } | null = null;
+  const sections: Array<{
+    active: boolean;
+    title: string;
+    contentLines: string[];
+  }> = [];
+  let current: {
+    active: boolean;
+    title: string;
+    contentLines: string[];
+  } | null = null;
 
   for (const line of lines) {
     const trimmed = line.trim();
@@ -121,19 +132,15 @@ class TabsBlockParser extends BaseBlockParser {
 
     const activeIndex = resolveActiveIndex(sections);
     const tabs = sections.map((section, tabIndex) => {
-      const innerChildren = ctx.parseBlocks(normalizeInnerLines(section.contentLines));
-      const titleNodes = section.title ? ctx.parseInline(section.title) : [];
-      return createNode(
-        "tab_item",
-        0,
-        undefined,
-        innerChildren,
-        {
-          active: tabIndex === activeIndex,
-          title: section.title,
-          titleNodes,
-        },
+      const innerChildren = ctx.parseBlocks(
+        normalizeInnerLines(section.contentLines),
       );
+      const titleNodes = section.title ? ctx.parseInline(section.title) : [];
+      return createNode("tab_item", 0, undefined, innerChildren, {
+        active: tabIndex === activeIndex,
+        title: section.title,
+        titleNodes,
+      });
     });
 
     return {
@@ -157,7 +164,8 @@ class TabsBlockParser extends BaseBlockParser {
 
     tabs.forEach((tab, index) => {
       const active = Boolean(tab.props?.active);
-      const titleNodes = (tab.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
+      const titleNodes =
+        (tab.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
       const checked = active ? " checked" : "";
       labels.push(
         `<label class="cherry-tabs__label">` +

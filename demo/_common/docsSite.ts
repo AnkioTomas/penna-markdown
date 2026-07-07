@@ -129,9 +129,13 @@ async function autoScanDir(dir: string): Promise<DocTreeNode[]> {
   const list = await fetchDirListing(dir);
   const nodes: DocTreeNode[] = [];
 
-  const dirs = list.filter((f) => f.isDir).sort((a, b) => a.name.localeCompare(b.name, "zh-CN"));
+  const dirs = list
+    .filter((f) => f.isDir)
+    .sort((a, b) => a.name.localeCompare(b.name, "zh-CN"));
   const files = list
-    .filter((f) => !f.isDir && f.name.endsWith(".md") && !isDocsMetaFile(f.name))
+    .filter(
+      (f) => !f.isDir && f.name.endsWith(".md") && !isDocsMetaFile(f.name),
+    )
     .sort((a, b) => a.name.localeCompare(b.name, "zh-CN"));
 
   for (const file of files) {
@@ -158,7 +162,10 @@ async function autoScanDir(dir: string): Promise<DocTreeNode[]> {
   return nodes;
 }
 
-async function itemToNode(dir: string, item: SidebarItem): Promise<DocTreeNode | null> {
+async function itemToNode(
+  dir: string,
+  item: SidebarItem,
+): Promise<DocTreeNode | null> {
   const resolved = resolveLinkFromDir(dir, item.link);
   const isDirLink = item.link.endsWith("/") || resolved.endsWith("/");
 
@@ -203,7 +210,10 @@ async function itemToNode(dir: string, item: SidebarItem): Promise<DocTreeNode |
 }
 
 /** 目录链接若存在子级 `_sidebar.md`，则展开为多个节点（避免重复嵌套） */
-async function itemToNodes(dir: string, item: SidebarItem): Promise<DocTreeNode[]> {
+async function itemToNodes(
+  dir: string,
+  item: SidebarItem,
+): Promise<DocTreeNode[]> {
   const resolved = resolveLinkFromDir(dir, item.link);
   if (!item.link.endsWith("/") && !resolved.endsWith("/")) {
     const node = await itemToNode(dir, item);
@@ -228,7 +238,10 @@ async function itemToNodes(dir: string, item: SidebarItem): Promise<DocTreeNode[
   return node ? [node] : [];
 }
 
-async function buildFromSidebarConfig(dir: string, content: string): Promise<DocTreeNode[]> {
+async function buildFromSidebarConfig(
+  dir: string,
+  content: string,
+): Promise<DocTreeNode[]> {
   const groups = parseSidebarMarkdown(content);
   const nodes: DocTreeNode[] = [];
 
@@ -261,12 +274,17 @@ export async function buildDocTree(dir = "/docs/"): Promise<DocTreeNode[]> {
   return autoScanDir(dir);
 }
 
-export async function resolveDocsEntryHref(dir = "/docs/"): Promise<string | null> {
+export async function resolveDocsEntryHref(
+  dir = "/docs/",
+): Promise<string | null> {
   return resolveDirIndexHref(dir);
 }
 
 /** 将 Markdown 内相对链接解析为 docs 站点内的文档 href */
-export function resolveDocLink(fromHref: string, rawLink: string): string | null {
+export function resolveDocLink(
+  fromHref: string,
+  rawLink: string,
+): string | null {
   if (!rawLink || rawLink.startsWith("#")) return null;
   if (/^[a-z][a-z0-9+.-]*:/i.test(rawLink)) return null;
 
@@ -307,10 +325,14 @@ export function collectNavHrefs(nodes: DocTreeNode[]): Set<string> {
   return set;
 }
 
-export function findDocFile(nodes: DocTreeNode[], href: string): DocTreeFile | null {
+export function findDocFile(
+  nodes: DocTreeNode[],
+  href: string,
+): DocTreeFile | null {
   const target = normalizeDocHref(href);
   for (const node of nodes) {
-    if (node.kind === "file" && normalizeDocHref(node.href) === target) return node;
+    if (node.kind === "file" && normalizeDocHref(node.href) === target)
+      return node;
     if (node.kind === "dir") {
       if (node.indexHref && normalizeDocHref(node.indexHref) === target) {
         return { kind: "file", name: node.name, href: node.indexHref };

@@ -14,7 +14,11 @@
   height: 100%;
   position: relative;
   --cherry-sidebar-max-width: 300px;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
   color: var(--cherry-c-text-1);
   background: color-mix(in srgb, var(--cherry-c-text-3) 8%, var(--cherry-c-bg));
 }

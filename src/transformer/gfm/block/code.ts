@@ -31,7 +31,7 @@ class CodeBlockParser extends BaseBlockParser {
     if (indent >= 4) return false;
 
     const fenceChar = line[indent];
-    if (fenceChar !== '`' && fenceChar !== '~') return false;
+    if (fenceChar !== "`" && fenceChar !== "~") return false;
 
     let fenceLength = 0;
     let i = indent;
@@ -51,7 +51,7 @@ class CodeBlockParser extends BaseBlockParser {
     if (indentCount >= 4) return null;
 
     const fenceChar = line[indentCount];
-    if (fenceChar !== '`' && fenceChar !== '~') return null;
+    if (fenceChar !== "`" && fenceChar !== "~") return null;
 
     let p = indentCount;
     let fenceLength = 0;
@@ -66,7 +66,7 @@ class CodeBlockParser extends BaseBlockParser {
     const infoRaw = line.slice(p);
 
     // GFM 规范：如果使用反引号作为围栏，info string 中不能包含反引号
-    if (fenceChar === '`' && infoRaw.includes('`')) return null;
+    if (fenceChar === "`" && infoRaw.includes("`")) return null;
 
     // 获取语言 (info string 的第一个单词，支持反斜杠转义与实体引用)
     const info = infoRaw.trim();
@@ -86,7 +86,11 @@ class CodeBlockParser extends BaseBlockParser {
 
       // 1. 检查是否是闭合行
       let endIndent = 0;
-      while (endIndent < currentLine.length && currentLine[endIndent] === ' ' && endIndent < 4) {
+      while (
+        endIndent < currentLine.length &&
+        currentLine[endIndent] === " " &&
+        endIndent < 4
+      ) {
         endIndent++;
       }
 
@@ -105,7 +109,7 @@ class CodeBlockParser extends BaseBlockParser {
           // 检查闭合围栏之后是否只有空白字符
           let isOnlyWhitespace = true;
           for (let j = endP; j < currentLine.length; j++) {
-            if (currentLine[j] !== ' ' && currentLine[j] !== '\t') {
+            if (currentLine[j] !== " " && currentLine[j] !== "\t") {
               isOnlyWhitespace = false;
               break;
             }
@@ -123,7 +127,11 @@ class CodeBlockParser extends BaseBlockParser {
       if (indentCount > 0) {
         let currentSpaceCount = 0;
         // 剥离与起始行相同数量的空格，如果不足则只剥离现有的空格
-        while (currentSpaceCount < currentLine.length && currentLine[currentSpaceCount] === ' ' && currentSpaceCount < indentCount) {
+        while (
+          currentSpaceCount < currentLine.length &&
+          currentLine[currentSpaceCount] === " " &&
+          currentSpaceCount < indentCount
+        ) {
           currentSpaceCount++;
         }
         lineToPush = currentLine.slice(currentSpaceCount);
@@ -133,13 +141,9 @@ class CodeBlockParser extends BaseBlockParser {
       i += 1;
     }
 
-    const node = createNode(
-        this.type,
-        i - index,
-        contentLines.join("\n"),
-        [],
-        { lang }
-    );
+    const node = createNode(this.type, i - index, contentLines.join("\n"), [], {
+      lang,
+    });
 
     return { node, nextIndex: i };
   }

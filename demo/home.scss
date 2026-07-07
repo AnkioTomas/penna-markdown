@@ -23,7 +23,8 @@ body.demo-home {
   font-size: 1.5rem;
   margin-top: 2rem;
   margin-bottom: 1rem;
-  border-bottom: 2px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  border-bottom: 2px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
   padding-bottom: 0.5rem;
   color: var(--cherry-c-text-1);
 }
@@ -41,12 +42,16 @@ body.demo-home {
   text-decoration: none;
   color: inherit;
   border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
-  box-shadow: 0 1px 3px color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 3px
+    color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px color-mix(in srgb, var(--cherry-c-text-3) 16%, transparent);
+    box-shadow: 0 4px 6px
+      color-mix(in srgb, var(--cherry-c-text-3) 16%, transparent);
   }
 }
 
@@ -69,6 +74,7 @@ body.demo-home {
 
   &:hover {
     transform: none;
-    box-shadow: 0 1px 3px color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
+    box-shadow: 0 1px 3px
+      color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
   }
 }

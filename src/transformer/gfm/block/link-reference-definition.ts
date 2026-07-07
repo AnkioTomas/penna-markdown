@@ -18,7 +18,11 @@ import {
 } from "@/transformer/utils/linkDestination.js";
 import { findLinkLabelEnd } from "@/transformer/utils/linkLabel.js";
 import { getSetextUnderlineInfo } from "@/transformer/gfm/block/setext_heading.js";
-import { isBlankString, normalizeLinkRefLabel, skipInlineWhitespace } from "@/transformer/utils/normalize";
+import {
+  isBlankString,
+  normalizeLinkRefLabel,
+  skipInlineWhitespace,
+} from "@/transformer/utils/normalize";
 
 export { normalizeLinkRefLabel as normalizeRefLabel };
 
@@ -58,13 +62,19 @@ function isLRDContinuationLine(line: string): boolean {
   return trimmed.startsWith("<") || trimmed.startsWith("/");
 }
 
-function canFollowLRDLine(lines: string[], index: number, ctx: BlockParseContext): boolean {
+function canFollowLRDLine(
+  lines: string[],
+  index: number,
+  ctx: BlockParseContext,
+): boolean {
   if (index <= 0) return true;
   if (isBlankString(lines[index - 1] ?? "")) return true;
   const prev = lines[index - 1] ?? "";
-  return ctx.canStrongBreak(lines, index - 1)
-    || isLRDLineStart(prev)
-    || isLRDContinuationLine(prev);
+  return (
+    ctx.canStrongBreak(lines, index - 1) ||
+    isLRDLineStart(prev) ||
+    isLRDContinuationLine(prev)
+  );
 }
 
 function tryParseLRDBlock(
@@ -76,7 +86,11 @@ function tryParseLRDBlock(
   let nextIndex = index;
 
   while (endIdx < lines.length && !isBlankString(lines[endIdx] ?? "")) {
-    if (endIdx > index && (isLRDLineStart(lines[endIdx] ?? "") || isObviousBlockStarter(lines[endIdx] ?? ""))) {
+    if (
+      endIdx > index &&
+      (isLRDLineStart(lines[endIdx] ?? "") ||
+        isObviousBlockStarter(lines[endIdx] ?? ""))
+    ) {
       break;
     }
     const parsed = parseLRDString(lines.slice(index, endIdx + 1).join("\n"));
@@ -137,7 +151,10 @@ export function parseLRDString(text: string): LRDResult | null {
   }
 
   let titleRaw = "";
-  if (i < text.length && (text[i] === '"' || text[i] === "'" || text[i] === "(")) {
+  if (
+    i < text.length &&
+    (text[i] === '"' || text[i] === "'" || text[i] === "(")
+  ) {
     const titleParsed = parseLinkTitle(text, i);
     if (!titleParsed?.closed) return null;
     if (/\n\s*\n/.test(titleParsed.title)) return null;
@@ -145,7 +162,10 @@ export function parseLRDString(text: string): LRDResult | null {
     i = titleParsed.next;
   }
 
-  i = skipInlineWhitespace(text, i, { allowNewline: true, maxNewlines: Number.MAX_SAFE_INTEGER });
+  i = skipInlineWhitespace(text, i, {
+    allowNewline: true,
+    maxNewlines: Number.MAX_SAFE_INTEGER,
+  });
   if (i < text.length) return null;
 
   return {
@@ -164,7 +184,10 @@ class LinkReferenceDefinitionParser extends BaseBlockParser {
   canOpenAt(lines: string[], index: number, ctx: BlockParseContext): boolean {
     if (!canFollowLRDLine(lines, index, ctx)) return false;
     const line = lines[index] ?? "";
-    if (skipBlockPrefixSpaces(line) >= line.length || line[skipBlockPrefixSpaces(line)] !== "[") {
+    if (
+      skipBlockPrefixSpaces(line) >= line.length ||
+      line[skipBlockPrefixSpaces(line)] !== "["
+    ) {
       return false;
     }
     return tryParseLRDBlock(lines, index) !== null;

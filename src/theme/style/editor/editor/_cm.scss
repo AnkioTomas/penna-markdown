@@ -8,7 +8,8 @@
     min-height: 0;
     overflow: hidden;
     background: var(--cherry-c-bg);
-    border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+    border-right: 1px solid
+      color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
   }
 
   &.cherry-editor-cm .cm-editor,
@@ -43,7 +44,9 @@
   min-width: 0;
   overflow: auto;
   position: relative;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    monospace;
 }
 
 .cherry-editor-cm .cm-content {
@@ -80,7 +83,8 @@
   box-sizing: border-box;
   flex-direction: column;
   background: var(--cherry-c-bg);
-  border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  border-right: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
   color: var(--cherry-c-text-3);
 }
 
@@ -105,11 +109,19 @@
 }
 
 .cherry-editor-cm .cm-selectionBackground {
-  background: color-mix(in srgb, var(--cherry-c-brand-1) 20%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--cherry-c-brand-1) 20%,
+    transparent
+  ) !important;
 }
 
 .cherry-editor-cm .cm-focused .cm-selectionBackground {
-  background: color-mix(in srgb, var(--cherry-c-brand-1) 30%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--cherry-c-brand-1) 30%,
+    transparent
+  ) !important;
 }
 
 .cherry-editor-cm .cm-activeLine {
@@ -120,4 +132,3 @@
   background: color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
   color: var(--cherry-c-brand-1);
 }
-

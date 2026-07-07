@@ -1,11 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { createEngine, createEnhancedEngine, renderMarkdown } from "../helpers/engine.js";
+import {
+  createEngine,
+  createEnhancedEngine,
+  renderMarkdown,
+} from "../helpers/engine.js";
 
 describe("security/xss", () => {
   const engine = () => createEngine();
 
   it("strips script block HTML at render", () => {
-    const md = '<script>alert(1)</script>\n\nok';
+    const md = "<script>alert(1)</script>\n\nok";
     const html = renderMarkdown(engine(), md);
     expect(html).not.toContain("<script");
     expect(html).toContain("<p>ok</p>");

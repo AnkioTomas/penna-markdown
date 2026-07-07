@@ -13,9 +13,7 @@ describe("block/heading", () => {
       createEngine(),
       "### foo \\###\n## foo #\\##\n# foo \\#\n",
     );
-    expect(html).toBe(
-      "<h3>foo ###</h3>\n<h2>foo ###</h2>\n<h1>foo #</h1>\n",
-    );
+    expect(html).toBe("<h3>foo ###</h3>\n<h2>foo ###</h2>\n<h1>foo #</h1>\n");
   });
 
   it("Example 36: ATX heading contents parsed as inlines", () => {
@@ -25,16 +23,12 @@ describe("block/heading", () => {
 
   it("Example 63: setext underline is paragraph text inside blockquote", () => {
     const html = renderMarkdown(createEngine(), "> foo\nbar\n===\n");
-    expect(html).toBe(
-      "<blockquote>\n<p>foo\nbar\n===</p>\n</blockquote>\n",
-    );
+    expect(html).toBe("<blockquote>\n<p>foo\nbar\n===</p>\n</blockquote>\n");
   });
 
   it("Example 62: thematic break after blockquote is not lazy continuation", () => {
     const html = renderMarkdown(createEngine(), "> Foo\n---\n");
-    expect(html).toBe(
-      "<blockquote>\n<p>Foo</p>\n</blockquote>\n<hr />\n",
-    );
+    expect(html).toBe("<blockquote>\n<p>Foo</p>\n</blockquote>\n<hr />\n");
   });
 
   it("Example 66: leading --- is thematic break, not frontmatter", () => {

@@ -32,5 +32,5 @@ export const cherryTags = {
   containerParam: Tag.define(),
   codeInfoKey: Tag.define(),
   codeInfoValue: Tag.define(),
-  codeInfoFlag: Tag.define()
+  codeInfoFlag: Tag.define(),
 };

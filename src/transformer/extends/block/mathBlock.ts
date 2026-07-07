@@ -53,7 +53,10 @@ class MathBlockParser extends BaseBlockParser {
   ): string {
     const latex = content.trim();
     if (!latex) return "";
-    const host = apiHost ?? (this.getOptions() as MathBlockOptions).apiHost ?? MATH_API_HOST;
+    const host =
+      apiHost ??
+      (this.getOptions() as MathBlockOptions).apiHost ??
+      MATH_API_HOST;
     const param = inline ? "inline" : "from";
     let url = `${host}/?${param}=${encodeURIComponent(latex)}`;
     if (color) url += `&color=${encodeURIComponent(color)}`;

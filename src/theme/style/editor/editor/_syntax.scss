@@ -157,7 +157,11 @@
 
   .cm-ext-frontmatter {
     color: var(--cherry-c-text-3);
-    background: color-mix(in srgb, var(--cherry-c-border-soft) 40%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--cherry-c-border-soft) 40%,
+      transparent
+    );
   }
 
   .cm-ext-frontmatter-mark {
@@ -196,7 +200,11 @@
   .cm-ext-repo-card,
   .cm-ext-field,
   .cm-ext-field-group {
-    background: color-mix(in srgb, var(--cherry-c-border-soft) 30%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--cherry-c-border-soft) 30%,
+      transparent
+    );
   }
 
   .cm-ext-footnotes {
