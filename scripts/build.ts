@@ -1,39 +1,36 @@
 /**
- * 构建脚本：
- * - transformer：现代 ESM、传统 IIFE、CJS，及对应 min 产物
- * - 主题样式：Vite 编译 SCSS → dist/*.min.css（editor / render 分主题输出）
- * - renderer / editor / theme：ESM、CJS、IIFE
+ * 构建脚本：仅输出 min 产物
+ * - cherry.min.*            完整编辑器（ESM / CJS / IIFE）
+ * - cherry-render.min.*     渲染器（内含 Theme）
+ * - cherry-transformer.min.* Markdown 解析引擎
+ * - 主题样式：Vite 编译 SCSS → dist/cherry-*.min.css
  */
-
 import * as esbuild from "esbuild";
-import { mkdirSync, readFileSync, rmSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, statSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { build as viteBuild } from "vite";
 import REGISTERED_THEMES from "../src/theme/ThemeRegister.js";
-
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = resolve(rootDir, "dist");
 const themeViteConfig = resolve(rootDir, "scripts/vite.theme.config.ts");
-
 const alias = {
   "@": resolve(rootDir, "src"),
 };
-
 function cssRawPlugin(): esbuild.Plugin {
   return {
     name: "css-raw",
     setup(build) {
       build.onResolve({ filter: /\.css\?raw$/ }, (args) =>
-        build
-          .resolve(args.path.replace(/\?raw$/, ""), {
-            resolveDir: args.resolveDir,
-            kind: args.kind,
-            importer: args.importer,
-          })
-          .then((resolved) =>
-            resolved ? { path: resolved.path, namespace: "css-raw" } : null,
-          ),
+          build
+              .resolve(args.path.replace(/\?raw$/, ""), {
+                resolveDir: args.resolveDir,
+                kind: args.kind,
+                importer: args.importer,
+              })
+              .then((resolved) =>
+                  resolved ? { path: resolved.path, namespace: "css-raw" } : null,
+              ),
       );
       build.onLoad({ filter: /.*/, namespace: "css-raw" }, (args) => ({
         contents: readFileSync(args.path, "utf8"),
@@ -42,142 +39,93 @@ function cssRawPlugin(): esbuild.Plugin {
     },
   };
 }
-
 const base: esbuild.BuildOptions = {
   bundle: true,
   platform: "browser",
   alias,
   plugins: [cssRawPlugin()],
-  loader: {
-    ".css": "text",
+  loader: { ".css": "text" },
+  minify: true,
+  sourcemap: false,
+  legalComments: "none",
+};
+type BundleEntry = {
+  in: string;
+  name: string;
+  globalName: string;
+  modernTarget?: string[];
+  traditionalTarget?: string[];
+};
+const entries: BundleEntry[] = [
+  { in: "src/editor/Cherry.ts", name: "cherry", globalName: "CherryNextEditor" },
+  { in: "src/renderer/Renderer.ts", name: "cherry-render", globalName: "CherryNextRenderer" },
+  {
+    in: "src/transformer/TransformerEngine.ts",
+    name: "cherry-transformer",
+    globalName: "CherryNextTransformer",
+    modernTarget: ["es2020"],
+    traditionalTarget: ["es2015"],
   },
-};
-
-const transformerEntry = {
-  in: "src/transformer/TransformerEngine.ts",
-  name: "transformer",
-  globalName: "CherryNextTransformer",
-};
-
-const simpleEntries = [
-  { in: "src/renderer/Renderer.ts", name: "renderer", globalName: "CherryNextRenderer" },
-  { in: "src/editor/Cherry.ts", name: "editor", globalName: "CherryNextEditor" },
-  { in: "src/theme/Theme.ts", name: "theme", globalName: "CherryNextTheme" },
 ];
-
 async function buildOne(entryPath: string, options: esbuild.BuildOptions) {
   await esbuild.build({
     ...base,
     entryPoints: [entryPath],
+    logLevel: "warning",
     ...options,
   });
 }
 
-async function buildTransformerEntry(entry: typeof transformerEntry) {
+function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+async function buildBundleEntry(entry: BundleEntry) {
   const entryPath = resolve(rootDir, entry.in);
   const out = (file: string) => resolve(distDir, file);
+  const modernTarget = entry.modernTarget ?? ["es2018"];
+  const traditionalTarget = entry.traditionalTarget ?? modernTarget;
+  const outputs = [
+    { file: out(`${entry.name}.min.mjs`), format: "esm" as const, target: modernTarget },
+    { file: out(`${entry.name}.min.cjs`), format: "cjs" as const, target: modernTarget },
+    {
+      file: out(`${entry.name}.min.js`),
+      format: "iife" as const,
+      target: traditionalTarget,
+      globalName: entry.globalName,
+    },
+  ];
 
-  const modernTarget = ["es2020"];
-  const traditionalTarget = ["es2015"];
-
-  await buildOne(entryPath, {
-    outfile: out(`${entry.name}.mjs`),
-    format: "esm",
-    target: modernTarget,
-    sourcemap: true,
-  });
-  await buildOne(entryPath, {
-    outfile: out(`${entry.name}.min.mjs`),
-    format: "esm",
-    target: modernTarget,
-    minify: true,
-    sourcemap: false,
-    legalComments: "none",
-  });
-
-  await buildOne(entryPath, {
-    outfile: out(`${entry.name}.cjs`),
-    format: "cjs",
-    target: modernTarget,
-    sourcemap: true,
-  });
-  await buildOne(entryPath, {
-    outfile: out(`${entry.name}.min.cjs`),
-    format: "cjs",
-    target: modernTarget,
-    minify: true,
-    sourcemap: false,
-    legalComments: "none",
-  });
-
-  await buildOne(entryPath, {
-    outfile: out(`${entry.name}.iife.js`),
-    format: "iife",
-    globalName: entry.globalName,
-    target: traditionalTarget,
-    sourcemap: true,
-  });
-  await buildOne(entryPath, {
-    outfile: out(`${entry.name}.min.js`),
-    format: "iife",
-    globalName: entry.globalName,
-    target: traditionalTarget,
-    minify: true,
-    sourcemap: false,
-    legalComments: "none",
-  });
+  console.log(`esbuild: ${entry.name}`);
+  for (const output of outputs) {
+    await buildOne(entryPath, {
+      outfile: output.file,
+      format: output.format,
+      target: output.target,
+      globalName: output.globalName,
+    });
+    const size = statSync(output.file).size;
+    console.log(`  ${output.file.replace(`${distDir}/`, "")}  ${formatSize(size)}`);
+  }
 }
-
 async function buildThemeStyles() {
-  await viteBuild({
-    configFile: themeViteConfig,
-    logLevel: "info",
-  });
+  await viteBuild({ configFile: themeViteConfig, logLevel: "info" });
 }
-
-async function buildSimpleEntry(entry: (typeof simpleEntries)[number]) {
-  const entryPath = resolve(rootDir, entry.in);
-  const target = ["es2018"];
-
-  await buildOne(entryPath, {
-    outfile: resolve(distDir, `${entry.name}.mjs`),
-    format: "esm",
-    target,
-    sourcemap: true,
-  });
-  await buildOne(entryPath, {
-    outfile: resolve(distDir, `${entry.name}.cjs`),
-    format: "cjs",
-    target,
-    sourcemap: true,
-  });
-  await buildOne(entryPath, {
-    outfile: resolve(distDir, `${entry.name}.iife.js`),
-    format: "iife",
-    globalName: entry.globalName,
-    target,
-    sourcemap: true,
-  });
-}
-
 const stylesOnly = process.argv.includes("--styles-only");
-
 mkdirSync(distDir, { recursive: true });
-
 if (stylesOnly) {
+  console.log("mode: styles-only (JS bundles skipped, use `pnpm build` for full build)");
   await buildThemeStyles();
-  console.log(`theme styles done: cherry + transformer + themes for ${REGISTERED_THEMES.join(", ")}`);
+  console.log(`theme styles done: ${REGISTERED_THEMES.join(", ")}`);
 } else {
   rmSync(distDir, { recursive: true, force: true });
   mkdirSync(distDir, { recursive: true });
+  console.log("mode: full (css + js)");
   await buildThemeStyles();
-  await buildTransformerEntry(transformerEntry);
-
-  for (const entry of simpleEntries) {
-    await buildSimpleEntry(entry);
+  for (const entry of entries) {
+    await buildBundleEntry(entry);
   }
-
-  const built = [transformerEntry.name, ...simpleEntries.map((e) => e.name)].join(", ");
-  console.log("build done:", built);
-  console.log(`theme css (min only): cherry + transformer + themes for ${REGISTERED_THEMES.join(", ")}`);
+  console.log("build done (min only):", entries.map((e) => e.name).join(", "));
 }

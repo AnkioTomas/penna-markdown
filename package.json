@@ -3,25 +3,40 @@
   "version": "0.1.0",
   "packageManager": "pnpm@11.5.0",
   "type": "module",
-  "main": "./dist/editor.cjs",
-  "module": "./dist/editor.mjs",
-  "unpkg": "./dist/editor.iife.js",
-  "jsdelivr": "./dist/editor.iife.js",
+  "main": "./dist/cherry.min.cjs",
+  "module": "./dist/cherry.min.mjs",
+  "unpkg": "./dist/cherry.min.js",
+  "jsdelivr": "./dist/cherry.min.js",
   "exports": {
     ".": {
-      "import": "./dist/editor.mjs",
-      "require": "./dist/editor.cjs",
-      "default": "./dist/editor.mjs"
+      "import": "./dist/cherry.min.mjs",
+      "require": "./dist/cherry.min.cjs",
+      "default": "./dist/cherry.min.mjs"
+    },
+    "./editor": {
+      "import": "./dist/cherry.min.mjs",
+      "require": "./dist/cherry.min.cjs",
+      "default": "./dist/cherry.min.mjs"
+    },
+    "./renderer": {
+      "import": "./dist/cherry-render.min.mjs",
+      "require": "./dist/cherry-render.min.cjs",
+      "default": "./dist/cherry-render.min.mjs"
     },
     "./transformer": {
-      "import": "./dist/transformer.mjs",
-      "require": "./dist/transformer.cjs",
-      "default": "./dist/transformer.mjs"
+      "import": "./dist/cherry-transformer.min.mjs",
+      "require": "./dist/cherry-transformer.min.cjs",
+      "default": "./dist/cherry-transformer.min.mjs"
     },
     "./transformer.min": {
-      "import": "./dist/transformer.min.mjs",
-      "require": "./dist/transformer.min.cjs",
-      "default": "./dist/transformer.min.mjs"
+      "import": "./dist/cherry-transformer.min.mjs",
+      "require": "./dist/cherry-transformer.min.cjs",
+      "default": "./dist/cherry-transformer.min.mjs"
+    },
+    "./theme": {
+      "import": "./dist/cherry-render.min.mjs",
+      "require": "./dist/cherry-render.min.cjs",
+      "default": "./dist/cherry-render.min.mjs"
     },
     "./cherry-theme-*-render.css": "./dist/cherry-theme-*-render.min.css",
     "./cherry-theme-*-render.min.css": "./dist/cherry-theme-*-render.min.css",
@@ -33,25 +48,10 @@
     "./theme/*/editor.min.css": "./dist/cherry-theme-*-editor.min.css",
     "./cherry-editor-base.css": "./dist/cherry-editor-base.min.css",
     "./cherry-editor-base.min.css": "./dist/cherry-editor-base.min.css",
-    "./transformer.css": "./dist/cherry-theme-default-render.min.css",
-    "./transformer.min.css": "./dist/cherry-theme-default-render.min.css",
-    "./editor.css": "./dist/cherry-theme-default-editor.min.css",
-    "./editor.min.css": "./dist/cherry-theme-default-editor.min.css",
-    "./renderer": {
-      "import": "./dist/renderer.mjs",
-      "require": "./dist/renderer.cjs",
-      "default": "./dist/renderer.mjs"
-    },
-    "./editor": {
-      "import": "./dist/editor.mjs",
-      "require": "./dist/editor.cjs",
-      "default": "./dist/editor.mjs"
-    },
-    "./theme": {
-      "import": "./dist/theme.mjs",
-      "require": "./dist/theme.cjs",
-      "default": "./dist/theme.mjs"
-    }
+    "./transformer.css": "./dist/cherry-render.min.css",
+    "./transformer.min.css": "./dist/cherry-render.min.css",
+    "./editor.css": "./dist/cherry-editor-base.min.css",
+    "./editor.min.css": "./dist/cherry-editor-base.min.css"
   },
   "files": [
     "dist",
