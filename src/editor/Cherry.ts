@@ -190,6 +190,9 @@ export class Cherry {
   setSidebarVisible(show: boolean): void {
     this.sidebarEl.style.display = show ? "" : "none";
     this.sidebarMaskEl.classList.toggle("is-active", show);
+    if (this.getLayout() === "split") {
+      this.divider.setSplit(this.divider.getSplit());
+    }
   }
 
   toggleSidebar(): void {

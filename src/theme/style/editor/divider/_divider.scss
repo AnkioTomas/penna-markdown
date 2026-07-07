@@ -1,14 +1,17 @@
 /** 分栏布局与拖拽条 */
 .cherry-body--split {
-  --cherry-split: 50%;
+  --cherry-editor-ratio: 5000;
+  --cherry-preview-ratio: 5000;
 
   .cherry-editor {
-    flex: 0 0 var(--cherry-split) !important;
-    max-width: var(--cherry-split);
+    flex: var(--cherry-editor-ratio) 1 0 !important;
+    max-width: none;
+    min-width: 0;
   }
 
   .cherry-preview {
-    flex: 1 1 0 !important;
+    flex: var(--cherry-preview-ratio) 1 0 !important;
+    max-width: none;
     min-width: 0;
   }
 }

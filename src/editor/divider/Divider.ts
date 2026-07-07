@@ -4,46 +4,47 @@ import type { Theme } from "@/theme/Theme";
 const MIN_SPLIT = 0.15;
 const MAX_SPLIT = 0.85;
 const DEFAULT_SPLIT = 0.5;
+const SPLIT_STORAGE_KEY = "cherry-editor-split";
 
 function clampSplit(ratio: number): number {
   return Math.min(MAX_SPLIT, Math.max(MIN_SPLIT, ratio));
 }
 
+function readStoredSplit(): number {
+  try {
+    const raw = localStorage.getItem(SPLIT_STORAGE_KEY);
+    if (raw == null) return DEFAULT_SPLIT;
+    const value = Number.parseFloat(raw);
+    return Number.isFinite(value) ? clampSplit(value) : DEFAULT_SPLIT;
+  } catch {
+    return DEFAULT_SPLIT;
+  }
+}
+
 /** 分栏拖拽条：布局切换 + 左右宽度调整 */
 export class Divider {
   private readonly bodyEl: HTMLElement;
-  private readonly editorEl: HTMLElement;
-  private readonly previewEl: HTMLElement;
   private readonly sidebarEl: HTMLElement | null;
 
   private mode: EditorLayoutMode = "split";
-  private split = DEFAULT_SPLIT;
+  private split = readStoredSplit();
   private dragging = false;
+  private moved = false;
 
-  private readonly onPointerDown: (e: PointerEvent) => void;
-  private readonly onPointerMove: (e: PointerEvent) => void;
-  private readonly onPointerUp: (e: PointerEvent) => void;
+  private readonly onPointerDown = (e: PointerEvent) => this.startDrag(e);
+  private readonly onPointerMove = (e: PointerEvent) => this.moveDrag(e);
+  private readonly onPointerUp = (e: PointerEvent) => this.endDrag(e);
 
   constructor(
     private readonly mount: HTMLElement,
     private readonly theme: Theme,
   ) {
-    const body = mount.parentElement;
-    const editor = mount.previousElementSibling;
-    const preview = mount.nextElementSibling;
-
-    if (
-      !body?.classList.contains("cherry-body") ||
-      !editor?.classList.contains("cherry-editor") ||
-      !preview?.classList.contains("cherry-preview")
-    ) {
-      throw new Error("Divider 必须位于 .cherry-body 内，且夹在编辑区与预览区之间");
+    if (!mount.parentElement) {
+      throw new Error("Divider 必须挂载在有效的 DOM 树中");
     }
 
-    this.bodyEl = body;
-    this.editorEl = editor as HTMLElement;
-    this.previewEl = preview as HTMLElement;
-    this.sidebarEl = body.querySelector(".cherry-sidebar");
+    this.bodyEl = mount.parentElement;
+    this.sidebarEl = this.bodyEl.querySelector(".cherry-sidebar");
 
     mount.setAttribute("role", "separator");
     mount.setAttribute("aria-orientation", "vertical");
@@ -55,6 +56,7 @@ export class Divider {
     this.onPointerUp = (e) => this.endDrag(e);
 
     mount.addEventListener("pointerdown", this.onPointerDown);
+
     this.applyLayout();
   }
 
@@ -96,14 +98,30 @@ export class Divider {
     if (this.mode === "split") {
       this.applySplit();
     } else {
-      this.bodyEl.style.removeProperty("--cherry-split");
+      this.bodyEl.style.removeProperty("--cherry-editor-ratio");
+      this.bodyEl.style.removeProperty("--cherry-preview-ratio");
     }
   }
 
+  /** 利用 Flex 比例完美分摊剩余空间（无需 ResizeObserver） */
   private applySplit(): void {
-    const pct = this.split * 100;
-    this.bodyEl.style.setProperty("--cherry-split", `${pct}%`);
-    this.mount.setAttribute("aria-valuenow", String(Math.round(pct)));
+    const editorRatio = Math.round(this.split * 10000);
+    const previewRatio = Math.round((1 - this.split) * 10000);
+    
+    this.bodyEl.style.setProperty("--cherry-editor-ratio", String(editorRatio));
+    this.bodyEl.style.setProperty("--cherry-preview-ratio", String(previewRatio));
+    this.mount.setAttribute("aria-valuenow", String(Math.round(this.split * 100)));
+  }
+
+  private getTrackMetrics(): { bodyWidth: number; track: number; sidebarWidth: number } {
+    const bodyWidth = this.bodyEl.getBoundingClientRect().width;
+    const sidebarWidth =
+      this.sidebarEl && this.sidebarEl.offsetParent !== null
+        ? this.sidebarEl.offsetWidth
+        : 0;
+    const dividerWidth = this.mount.offsetWidth;
+    const track = bodyWidth - sidebarWidth - dividerWidth;
+    return { bodyWidth, track, sidebarWidth };
   }
 
   private startDrag(e: PointerEvent): void {
@@ -112,17 +130,17 @@ export class Divider {
     e.stopPropagation();
 
     this.dragging = true;
+    this.moved = false;
     this.mount.classList.add("is-dragging");
     this.mount.setPointerCapture(e.pointerId);
     document.addEventListener("pointermove", this.onPointerMove);
     document.addEventListener("pointerup", this.onPointerUp);
     document.addEventListener("pointercancel", this.onPointerUp);
-
-    this.updateSplitFromPointer(e.clientX);
   }
 
   private moveDrag(e: PointerEvent): void {
     if (!this.dragging) return;
+    this.moved = true;
     this.updateSplitFromPointer(e.clientX);
   }
 
@@ -139,15 +157,23 @@ export class Divider {
       this.mount.releasePointerCapture(e.pointerId);
     }
 
-    this.theme.emit("editor:split", { split: this.split });
+    if (this.moved) {
+      this.persistSplit();
+      this.theme.emit("editor:split", { split: this.split });
+    }
+  }
+
+  private persistSplit(): void {
+    try {
+      localStorage.setItem(SPLIT_STORAGE_KEY, String(this.split));
+    } catch {
+      // 忽略隐私模式等写入失败
+    }
   }
 
   private updateSplitFromPointer(clientX: number): void {
     const bodyRect = this.bodyEl.getBoundingClientRect();
-    const sidebarWidth = this.sidebarEl?.offsetWidth ?? 0;
-    const dividerWidth = this.mount.offsetWidth;
-    const track = bodyRect.width - sidebarWidth - dividerWidth;
-
+    const { track, sidebarWidth } = this.getTrackMetrics();
     if (track <= 0) return;
 
     const offset = clientX - bodyRect.left - sidebarWidth;
