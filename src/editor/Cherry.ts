@@ -196,6 +196,10 @@ export class Cherry {
     this.setSidebarVisible(!this.isSidebarVisible());
   }
 
+  setSidebarActiveFile(fileId: string): void {
+    this.sidebar?.setActiveFile(fileId);
+  }
+
   destroy(): void {
     if (this.destroyed) return;
     this.destroyed = true;

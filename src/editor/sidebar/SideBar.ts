@@ -9,6 +9,7 @@ export class SideBar {
   private readonly tocPanelEl: HTMLElement;
   private readonly offs: Set<() => void> = new Set();
   private activeTab: "file" | "toc" = "toc";
+  private activeFileId: string | null = null;
 
   constructor(
     private readonly mount: HTMLElement,
@@ -56,7 +57,7 @@ export class SideBar {
     }
     
     this.mount.appendChild(panelsEl);
-    this.switchTab("toc");
+    this.switchTab(this.options.fetchFiles ? "file" : "toc");
 
     // Listen to TOC updates
     this.offs.add(
@@ -96,7 +97,12 @@ export class SideBar {
     for (const file of files) {
       const itemEl = document.createElement("div");
       itemEl.className = "cherry-file-item";
+      itemEl.dataset.fileId = file.id;
+      if (file.id === this.activeFileId) {
+        itemEl.classList.add("is-active");
+      }
       itemEl.onclick = () => {
+        this.setActiveFile(file.id);
         if (this.options.onFileClick) this.options.onFileClick(file.id);
       };
 
@@ -153,6 +159,13 @@ export class SideBar {
 
     for (const rootItem of toc) {
       renderNode(rootItem, this.tocPanelEl);
+    }
+  }
+
+  setActiveFile(fileId: string): void {
+    this.activeFileId = fileId;
+    for (const el of this.filePanelEl.querySelectorAll<HTMLElement>(".cherry-file-item")) {
+      el.classList.toggle("is-active", el.dataset.fileId === fileId);
     }
   }
 

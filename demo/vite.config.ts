@@ -2,6 +2,15 @@ import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
 
+function resolveDirPath(root: string, urlPath: string): string {
+  const rel = urlPath.replace(/^\/+/, "").replace(/\/+$/, "") || ".";
+  const inRoot = path.join(root, rel);
+  if (fs.existsSync(inRoot)) return inRoot;
+  const inParent = path.resolve(root, "..", rel);
+  if (fs.existsSync(inParent)) return inParent;
+  return inRoot;
+}
+
 export default defineConfig({
   root: '.',
   server: {
@@ -19,16 +28,24 @@ export default defineConfig({
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
           if (req.url) {
-            const urlPath = req.url.split('?')[0];
-            const fullPath = path.join(server.config.root, urlPath);
+            const urlPath = req.url.split("?")[0];
+            const fullPath = resolveDirPath(server.config.root, urlPath);
             if (fs.existsSync(fullPath) && fs.statSync(fullPath).isDirectory()) {
               const files = fs.readdirSync(fullPath);
-              if (!files.includes('index.html')) {
-                const isJson = req.url.includes('?json') || req.headers.accept?.includes('application/json');
-                const fileData = files.map(file => {
-                  const isDir = fs.statSync(path.join(fullPath, file)).isDirectory();
-                  const href = urlPath.endsWith('/') ? `${urlPath}${file}` : `${urlPath}/${file}`;
-                  return { name: file, isDir, href };
+              if (!files.includes("index.html")) {
+                const isJson = req.url.includes("?json") || req.headers.accept?.includes("application/json");
+                const fileData = files.map((file) => {
+                  const filePath = path.join(fullPath, file);
+                  const stat = fs.statSync(filePath);
+                  const isDir = stat.isDirectory();
+                  const href = urlPath.endsWith("/") ? `${urlPath}${file}` : `${urlPath}/${file}`;
+                  return {
+                    name: file,
+                    isDir,
+                    href,
+                    mtime: stat.mtimeMs,
+                    size: stat.size,
+                  };
                 });
 
                 if (isJson) {
