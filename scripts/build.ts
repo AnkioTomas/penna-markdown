@@ -17,34 +17,10 @@ const themeViteConfig = resolve(rootDir, "scripts/vite.theme.config.ts");
 const alias = {
   "@": resolve(rootDir, "src"),
 };
-function cssRawPlugin(): esbuild.Plugin {
-  return {
-    name: "css-raw",
-    setup(build) {
-      build.onResolve({ filter: /\.css\?raw$/ }, (args) =>
-        build
-          .resolve(args.path.replace(/\?raw$/, ""), {
-            resolveDir: args.resolveDir,
-            kind: args.kind,
-            importer: args.importer,
-          })
-          .then((resolved) =>
-            resolved ? { path: resolved.path, namespace: "css-raw" } : null,
-          ),
-      );
-      build.onLoad({ filter: /.*/, namespace: "css-raw" }, (args) => ({
-        contents: readFileSync(args.path, "utf8"),
-        loader: "text",
-      }));
-    },
-  };
-}
 const base: esbuild.BuildOptions = {
   bundle: true,
   platform: "browser",
   alias,
-  plugins: [cssRawPlugin()],
-  loader: { ".css": "text" },
   minify: true,
   sourcemap: false,
   legalComments: "none",
@@ -121,6 +97,7 @@ async function buildBundleEntry(entry: BundleEntry) {
       format: output.format,
       target: output.target,
       globalName: output.globalName,
+      packages: output.format === "iife" ? undefined : "external",
     });
     const size = statSync(output.file).size;
     console.log(
