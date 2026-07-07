@@ -7,6 +7,7 @@ import { StatusBar } from "@/editor/statusbar/StatusBar";
 import type { CherryOptions } from "@/editor/CherryOptions";
 import type { EditorLayoutMode } from "@/editor/Layout";
 import { printCherryLogo } from "@/editor/printLogo";
+import { ScrollSync } from "@/editor/sync/ScrollSync";
 import { Theme } from "@/theme/Theme";
 
 
@@ -56,6 +57,7 @@ export class Cherry {
 
   private readonly id: string | undefined;
   private destroyed = false;
+  private scrollSync: ScrollSync | null = null;
 
   constructor(
     private readonly rootEl: HTMLElement,
@@ -144,6 +146,8 @@ export class Cherry {
     if (options.sidebar === false) {
       this.sidebarEl.style.display = "none";
     }
+
+    this.scrollSync = new ScrollSync(this.editor, this.previewEl, this.theme);
 
     const initialMarkdown = editorOptions.value ?? "";
     if (initialMarkdown) {
