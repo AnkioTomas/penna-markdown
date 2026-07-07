@@ -5,7 +5,7 @@ import { Renderer } from "@/renderer/Renderer.js";
 import { Theme } from "@/theme/Theme.js";
 import { setupPreviewThemeAndAppearance } from "../../_common/theme.js";
 import { requiredEl } from "../../_common/dom.js";
-import { SYNTAX_DATA } from "./data.js";
+import { EXTENDS_DATA } from "./data.js";
 
 async function init() {
   const menuList = requiredEl<HTMLElement>("#menu-list");
@@ -15,11 +15,11 @@ async function init() {
   const theme = new Theme();
   const renderer = new Renderer({ mount: htmlPreview, theme });
 
-  let activeId = SYNTAX_DATA[0].id;
+  let activeId = EXTENDS_DATA[0].id;
 
   function renderMenu() {
     menuList.innerHTML = "";
-    SYNTAX_DATA.forEach((item) => {
+    EXTENDS_DATA.forEach((item) => {
       const el = document.createElement("div");
       el.className = `menu-item ${item.id === activeId ? "active" : ""}`;
       el.textContent = item.name;
@@ -33,7 +33,7 @@ async function init() {
   }
 
   function renderContent() {
-    const item = SYNTAX_DATA.find((i) => i.id === activeId);
+    const item = EXTENDS_DATA.find((i) => i.id === activeId);
     if (item) {
       sourcePreview.textContent = item.markdown;
       renderer.render(item.markdown);
