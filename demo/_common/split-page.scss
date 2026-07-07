@@ -1,31 +1,25 @@
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  background: #f3f4f6;
-  color: #111827;
-}
-
 .header {
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 16px 18px;
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--cherry-c-bg-elevated);
+  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
 }
 
 .back {
   text-decoration: none;
-  color: #2563eb;
+  color: var(--cherry-c-brand-1);
   font-size: 13px;
+
+  &:hover {
+    color: var(--cherry-c-brand-2);
+  }
 }
 
 .title {
   font-weight: 650;
+  color: var(--cherry-c-text-1);
 }
 
 .layout {
@@ -37,8 +31,8 @@ body {
 }
 
 .panel {
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--cherry-c-bg);
+  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
   border-radius: 12px;
   overflow: hidden;
   display: flex;
@@ -48,9 +42,9 @@ body {
 
 .panel-title {
   padding: 12px 14px;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
   font-size: 13px;
-  color: #374151;
+  color: var(--cherry-c-text-2);
   font-weight: 600;
 }
 

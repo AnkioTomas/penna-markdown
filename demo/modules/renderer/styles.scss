@@ -9,24 +9,24 @@
 
 .subtitle {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--cherry-c-text-3);
   font-weight: 400;
 }
 
 .theme-btn {
   margin-left: auto;
   padding: 6px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
   border-radius: 999px;
-  background: #fff;
-  color: #374151;
+  background: var(--cherry-c-bg);
+  color: var(--cherry-c-text-1);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
 
   &:hover {
-    border-color: #9ca3af;
-    background: #f9fafb;
+    border-color: var(--cherry-c-brand-2);
+    background: var(--cherry-c-bg-elevated);
   }
 }
 
@@ -35,14 +35,15 @@
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #374151;
+  color: var(--cherry-c-text-2);
 }
 
 .skin-select {
   padding: 5px 8px;
-  border: 1px solid #d1d5db;
+  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
   border-radius: 8px;
-  background: #fff;
+  background: var(--cherry-c-bg);
+  color: var(--cherry-c-text-1);
   font-size: 12px;
 }
 
@@ -51,9 +52,9 @@
     monospace;
   font-size: 12px;
   font-weight: 500;
-  color: #0369a1;
-  background: #e0f2fe;
-  border: 1px solid #bae6fd;
+  color: var(--cherry-c-brand-on-bg);
+  background: var(--cherry-c-brand-soft);
+  border: 1px solid color-mix(in srgb, var(--cherry-c-brand-2) 35%, transparent);
   border-radius: 999px;
   padding: 5px 14px;
   white-space: nowrap;
@@ -74,6 +75,8 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
     monospace;
   resize: none;
+  background: var(--cherry-c-bg);
+  color: var(--cherry-c-text-1);
 }
 
 .btn {
@@ -81,12 +84,12 @@
   padding: 10px 14px;
   border: none;
   border-radius: 8px;
-  background: #2563eb;
-  color: #fff;
+  background: var(--cherry-c-brand-1);
+  color: var(--cherry-c-contrast-light);
   cursor: pointer;
 
   &:hover {
-    background: #1d4ed8;
+    background: var(--cherry-c-brand-2);
   }
 }
 
@@ -101,7 +104,7 @@
 }
 
 .panel-title-sub {
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
 }
 
 .stats {
@@ -116,7 +119,7 @@
 
   dt {
     margin: 0;
-    color: #6b7280;
+    color: var(--cherry-c-text-3);
     font-size: 12px;
   }
 
@@ -126,6 +129,7 @@
       monospace;
     font-size: 12px;
     word-break: break-all;
+    color: var(--cherry-c-text-1);
   }
 }
 
@@ -143,108 +147,35 @@
   display: block;
   padding: 4px 8px;
   border-radius: 6px;
-  color: #374151;
+  color: var(--cherry-c-text-2);
   text-decoration: none;
   line-height: 1.4;
   font-size: 12px;
 
   &:hover {
-    background: #f3f4f6;
-    color: #2563eb;
+    background: var(--cherry-c-bg-elevated);
+    color: var(--cherry-c-brand-1);
   }
 }
 
 .toc-h1 { padding-left: 8px; font-weight: 600; }
 .toc-h2 { padding-left: 16px; }
-.toc-h3 { padding-left: 24px; color: #4b5563; }
-.toc-h4 { padding-left: 32px; color: #6b7280; }
-.toc-h5 { padding-left: 40px; color: #6b7280; }
-.toc-h6 { padding-left: 48px; color: #9ca3af; }
+.toc-h3 { padding-left: 24px; color: var(--cherry-c-text-2); }
+.toc-h4 { padding-left: 32px; color: var(--cherry-c-text-3); }
+.toc-h5 { padding-left: 40px; color: var(--cherry-c-text-3); }
+.toc-h6 { padding-left: 48px; color: var(--cherry-c-text-3); }
 
 .sidebar-empty {
   margin: 0;
   padding: 8px;
-  color: #9ca3af;
+  color: var(--cherry-c-text-3);
   font-size: 12px;
 }
 
 .renderer-error {
   margin: 0;
-  color: #b91c1c;
+  color: var(--cherry-c-danger);
   font-size: 13px;
-}
-
-body.demo-dark {
-  background: #0f0f0f;
-  color: rgba(255, 255, 255, 0.87);
-
-  .header {
-    background: #141414;
-    border-bottom-color: #2a2a2a;
-  }
-
-  .back {
-    color: #8cccd5;
-  }
-
-  .subtitle {
-    color: rgba(255, 255, 255, 0.45);
-  }
-
-  .panel {
-    background: #141414;
-    border-color: #2a2a2a;
-  }
-
-  .panel-title {
-    color: rgba(255, 255, 255, 0.72);
-    border-bottom-color: #2a2a2a;
-  }
-
-  .textarea {
-    background: #141414;
-    color: rgba(255, 255, 255, 0.87);
-  }
-
-  .skin-label {
-    color: rgba(255, 255, 255, 0.72);
-  }
-
-  .skin-select {
-    background: #1f1f1f;
-    border-color: #3a3a3a;
-    color: rgba(255, 255, 255, 0.87);
-  }
-
-  .theme-btn {
-    background: #1f1f1f;
-    border-color: #3a3a3a;
-    color: rgba(255, 255, 255, 0.87);
-
-    &:hover {
-      background: #262626;
-      border-color: #525252;
-    }
-  }
-
-  .timing {
-    color: #8cccd5;
-    background: rgba(131, 208, 218, 0.12);
-    border-color: rgba(131, 208, 218, 0.28);
-  }
-
-  .stats dt {
-    color: rgba(255, 255, 255, 0.45);
-  }
-
-  .toc-item {
-    color: rgba(255, 255, 255, 0.72);
-
-    &:hover {
-      background: #1f1f1f;
-      color: #8cccd5;
-    }
-  }
 }
 
 @media (max-width: 1100px) {

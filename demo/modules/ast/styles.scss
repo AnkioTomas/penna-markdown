@@ -1,20 +1,22 @@
-/* AST 调试台 — 视觉主题 */
+/* AST 调试台 — 对齐 Cherry 暗色 token */
+
+@use "../../../src/theme/style/common/tokens" as tokens;
 
 :root {
-  --bg: #09090f;
-  --bg-elevated: #111118;
-  --bg-panel: #14141c;
-  --bg-tree: #0c0c12;
-  --border: rgba(255, 255, 255, 0.07);
-  --border-strong: rgba(255, 255, 255, 0.12);
-  --text: #ececf4;
-  --text-muted: #7a7a92;
-  --text-dim: #55556a;
-  --accent: #7c6cf5;
-  --accent-soft: rgba(124, 108, 245, 0.14);
-  --accent-glow: rgba(124, 108, 245, 0.35);
-  --rail: rgba(255, 255, 255, 0.1);
-  --rail-branch: rgba(255, 255, 255, 0.18);
+  --bg: var(--cherry-c-bg);
+  --bg-elevated: var(--cherry-c-bg-elevated);
+  --bg-panel: var(--cherry-c-bg-elevated);
+  --bg-tree: var(--cherry-c-bg);
+  --border: color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  --border-strong: color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
+  --text: var(--cherry-c-text-1);
+  --text-muted: var(--cherry-c-text-2);
+  --text-dim: var(--cherry-c-text-3);
+  --accent: var(--cherry-c-brand-1);
+  --accent-soft: var(--cherry-c-brand-soft);
+  --accent-glow: color-mix(in srgb, var(--cherry-c-brand-3) 35%, transparent);
+  --rail: color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  --rail-branch: color-mix(in srgb, var(--cherry-c-text-3) 28%, transparent);
   --radius: 10px;
   --radius-sm: 6px;
   --font-ui: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
@@ -28,14 +30,12 @@
 }
 
 body {
+  @include tokens.theme-dark;
   margin: 0;
   min-height: 100vh;
   font-family: var(--font-ui);
   background: var(--bg);
   color: var(--text);
-  background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124, 108, 245, 0.18), transparent),
-    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(56, 189, 248, 0.08), transparent);
 }
 
 /* ── Header ── */
@@ -75,8 +75,8 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent), #38bdf8);
-  color: #fff;
+  background: linear-gradient(135deg, var(--cherry-c-brand-1), var(--cherry-c-brand-3));
+  color: var(--cherry-c-contrast-light);
   font-size: 14px;
   box-shadow: 0 0 20px var(--accent-glow);
 }
@@ -93,9 +93,9 @@ body {
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 500;
-  color: #a5f3fc;
-  background: rgba(56, 189, 248, 0.1);
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  color: var(--cherry-c-brand-on-bg);
+  background: var(--cherry-c-brand-soft);
+  border: 1px solid color-mix(in srgb, var(--cherry-c-brand-2) 35%, transparent);
   border-radius: 999px;
   padding: 5px 14px;
 }

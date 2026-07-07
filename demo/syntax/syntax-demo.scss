@@ -3,34 +3,34 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  background: #fff;
+  background: var(--cherry-c-bg);
 }
 
 .sidebar {
   width: 240px;
   flex-shrink: 0;
-  background: #f9fafb;
-  border-right: 1px solid #e5e7eb;
+  background: var(--cherry-c-bg-elevated);
+  border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
   overflow-y: auto;
 }
 
 .menu-item {
   padding: 12px 16px;
   cursor: pointer;
-  color: #4b5563;
+  color: var(--cherry-c-text-2);
   font-size: 14px;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
   transition: background 0.2s;
 
   &:hover {
-    background: #f3f4f6;
+    background: color-mix(in srgb, var(--cherry-c-brand-soft) 45%, var(--cherry-c-bg-elevated));
   }
 
   &.active {
-    background: #eff6ff;
-    color: #2563eb;
+    background: color-mix(in srgb, var(--cherry-c-brand-soft) 70%, var(--cherry-c-bg-elevated));
+    color: var(--cherry-c-brand-1);
     font-weight: 600;
-    border-right: 3px solid #2563eb;
+    border-right: 3px solid var(--cherry-c-brand-1);
   }
 }
 
@@ -48,7 +48,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
 
   &:last-child {
     border-right: none;
@@ -57,12 +57,12 @@
 
 .panel-title {
   padding: 8px 16px;
-  background: #f3f4f6;
+  background: var(--cherry-c-bg-elevated);
   font-size: 13px;
   font-weight: 600;
-  color: #4b5563;
+  color: var(--cherry-c-text-2);
   flex-shrink: 0;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
 }
 
 .panel-body {
@@ -77,7 +77,7 @@ pre#source-preview {
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 14px;
   line-height: 1.5;
-  color: #374151;
+  color: var(--cherry-c-text-1);
   white-space: pre-wrap;
-  background: #fafafa;
+  background: var(--cherry-c-bg);
 }

@@ -1,20 +1,54 @@
-* { box-sizing: border-box; }
-html, body { margin: 0; height: 100%; font-family: system-ui, sans-serif; }
-body { display: flex; flex-direction: column; background: #fff; color: #111827; }
+@use "../../src/theme/style/common/tokens" as tokens;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  @include tokens.theme-default;
+  display: flex;
+  flex-direction: column;
+  background: var(--cherry-c-bg);
+  color: var(--cherry-c-text-1);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body.demo-dark {
+  @include tokens.theme-dark;
+}
 
 .header {
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 12px 18px;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--cherry-c-bg-elevated);
+  border-bottom: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
   flex-shrink: 0;
 }
 
-.back { text-decoration: none; color: #2563eb; font-size: 13px; }
-.back:hover { text-decoration: underline; }
-.title { font-weight: 600; font-size: 14px; }
+.back {
+  text-decoration: none;
+  color: var(--cherry-c-brand-1);
+  font-size: 13px;
+
+  &:hover {
+    text-decoration: underline;
+    color: var(--cherry-c-brand-2);
+  }
+}
+
+.title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--cherry-c-text-1);
+}
 
 .header-controls {
   display: flex;
@@ -29,30 +63,16 @@ body { display: flex; flex-direction: column; background: #fff; color: #111827; 
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #4b5563;
+  color: var(--cherry-c-text-2);
 }
 
 .header-controls select {
   font: inherit;
   padding: 4px 8px;
-  border: 1px solid #d1d5db;
+  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
   border-radius: 6px;
-  background: #fff;
-}
-
-body.demo-dark {
-  background: #111827;
-  color: #f3f4f6;
-  .header {
-    background: #1f2937;
-    border-bottom-color: #374151;
-  }
-  .header-controls label { color: #d1d5db; }
-  .header-controls select {
-    background: #111827;
-    border-color: #4b5563;
-    color: #e5e7eb;
-  }
+  background: var(--cherry-c-bg);
+  color: var(--cherry-c-text-1);
 }
 
 .app-container {

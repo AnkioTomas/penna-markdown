@@ -4,30 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cherry Markdown Next · Demo 入口</title>
-    <style>
-      body { font-family: system-ui, sans-serif; background: #f3f4f6; margin: 0; padding: 2rem; color: #111827; }
-      .wrap { max-width: 900px; margin: 0 auto; }
-      .header { margin-bottom: 2rem; text-align: center; }
-      
-      .section-title {
-        font-size: 1.5rem;
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-        border-bottom: 2px solid #e5e7eb;
-        padding-bottom: 0.5rem;
-        color: #1f2937;
-      }
-      
-      .cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
-      .card { background: #fff; padding: 1.5rem; border-radius: 8px; text-decoration: none; color: inherit; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; }
-      .card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-      .card-title { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; color: #2563eb; }
-      .card-desc { font-size: 0.875rem; color: #4b5563; }
-      .card.disabled { opacity: 0.6; cursor: not-allowed; filter: grayscale(100%); }
-      .card.disabled:hover { transform: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    </style>
   </head>
-  <body>
+  <body class="demo-home">
     <div class="wrap">
       <header class="header">
         <h1>Cherry Markdown Next</h1>
@@ -90,5 +68,6 @@
         </a>
       </section>
     </div>
+    <script type="module" src="./home.ts"></script>
   </body>
 </html>

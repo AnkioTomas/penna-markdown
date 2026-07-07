@@ -1,0 +1,74 @@
+@use "../src/theme/style/common/tokens" as tokens;
+
+body.demo-home {
+  @include tokens.theme-default;
+  display: block;
+  min-height: 100vh;
+  padding: 2rem;
+  background: var(--cherry-c-bg-elevated);
+  color: var(--cherry-c-text-1);
+}
+
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  padding-bottom: 0.5rem;
+  color: var(--cherry-c-text-1);
+}
+
+.cards {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.card {
+  background: var(--cherry-c-bg);
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px color-mix(in srgb, var(--cherry-c-text-3) 16%, transparent);
+  }
+}
+
+.card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--cherry-c-brand-1);
+}
+
+.card-desc {
+  font-size: 0.875rem;
+  color: var(--cherry-c-text-2);
+}
+
+.card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+
+  &:hover {
+    transform: none;
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
+  }
+}
