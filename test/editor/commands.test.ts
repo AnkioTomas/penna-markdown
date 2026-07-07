@@ -1,10 +1,11 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { describe, expect, it, vi, afterEach } from "vitest";
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import { runCommand } from "@/editor/commands.js";
+import { runCommand, applyHeading } from "@/editor/commands/index.js";
+import { Theme } from "@/theme/Theme.js";
 
 function createView(doc: string, selection?: { anchor: number; head?: number }) {
   const parent = document.createElement("div");
@@ -16,8 +17,10 @@ function createView(doc: string, selection?: { anchor: number; head?: number }) 
   return new EditorView({ state, parent });
 }
 
-describe.skip("editor/commands", () => {
-  afterEach(() => { document.body.innerHTML = ""; });
+describe("editor/commands", () => {
+  afterEach(() => {
+    document.body.innerHTML = "";
+  });
 
   it("bold wraps selection", () => {
     const view = createView("hello world", { anchor: 0, head: 5 });
@@ -30,6 +33,79 @@ describe.skip("editor/commands", () => {
     const view = createView("Title", { anchor: 0 });
     runCommand(view, "heading1");
     expect(view.state.doc.toString()).toBe("# Title");
+    view.destroy();
+  });
+
+  it("heading1 applies to whole line when cursor is mid-line", () => {
+    const view = createView("Title", { anchor: 3 });
+    applyHeading(view, 1);
+    expect(view.state.doc.toString()).toBe("# Title");
+    view.destroy();
+  });
+
+  it("heading1 replaces existing heading prefix", () => {
+    const view = createView("## Title", { anchor: 5 });
+    runCommand(view, "heading1");
+    expect(view.state.doc.toString()).toBe("# Title");
+    view.destroy();
+  });
+
+  it("table inserts markdown after dialog result", async () => {
+    const view = createView("");
+    const theme = new Theme();
+    theme.on("editor:dialog:open", (payload) => {
+      const { id } = payload as { id: string };
+      queueMicrotask(() => {
+        theme.emit("editor:dialog:result", { id, data: { rows: 2, cols: 2 } });
+      });
+    });
+    await runCommand(view, "table", undefined, { theme });
+    expect(view.state.doc.toString()).toContain("| --- | --- |");
+    view.destroy();
+  });
+
+  it("link inserts markdown after dialog result", async () => {
+    const view = createView("");
+    const theme = new Theme();
+    theme.on("editor:dialog:open", (payload) => {
+      const { id } = payload as { id: string };
+      queueMicrotask(() => {
+        theme.emit("editor:dialog:result", {
+          id,
+          data: { text: "Cherry", url: "https://example.com" },
+        });
+      });
+    });
+    await runCommand(view, "link", undefined, { theme });
+    expect(view.state.doc.toString()).toBe("[Cherry](https://example.com)");
+    view.destroy();
+  });
+
+  it("badge wraps selection without dialog", async () => {
+    const view = createView("note", { anchor: 0, head: 4 });
+    const theme = new Theme();
+    const openSpy = vi.fn();
+    theme.on("editor:dialog:open", openSpy);
+    await runCommand(view, "badge", { variant: "tip" }, { theme });
+    expect(view.state.doc.toString()).toBe("[note]{.tip}");
+    expect(openSpy).not.toHaveBeenCalled();
+    view.destroy();
+  });
+
+  it("badge opens dialog when selection is empty", async () => {
+    const view = createView("");
+    const theme = new Theme();
+    theme.on("editor:dialog:open", (payload) => {
+      const { id } = payload as { id: string };
+      queueMicrotask(() => {
+        theme.emit("editor:dialog:result", {
+          id,
+          data: { text: "new", variant: "warning" },
+        });
+      });
+    });
+    await runCommand(view, "badge", undefined, { theme });
+    expect(view.state.doc.toString()).toBe("[new]{.warning}");
     view.destroy();
   });
 });

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>文档预览 · Cherry Markdown Next</title>
+  </head>
+  <body class="docs-demo">
+    <div class="header">
+      <a class="back" href="../../index.html">返回入口</a>
+      <div class="title">文档预览</div>
+      <div class="subtitle" id="doc-path">docs/</div>
+      <div class="header-controls">
+        <label>
+          主题
+          <select id="theme-select" aria-label="选择渲染 theme"></select>
+        </label>
+        <label>
+          明暗
+          <select id="appearance-select" aria-label="选择明暗模式">
+            <option value="light">浅色</option>
+            <option value="dark">深色</option>
+            <option value="auto">跟随系统</option>
+          </select>
+        </label>
+      </div>
+      <div id="timing" class="timing" title="renderer.render() 耗时">— ms</div>
+    </div>
+
+    <div class="docs-shell">
+      <aside class="docs-sidebar">
+        <nav id="doc-tree" class="doc-tree" aria-label="文档目录"></nav>
+      </aside>
+
+      <main class="docs-main">
+        <div id="preview-wrap" class="docs-content-scroll">
+          <article class="docs-content">
+            <div id="preview" class="cherry-render"></div>
+          </article>
+        </div>
+      </main>
+
+      <aside class="docs-aside">
+        <div class="docs-aside-sticky">
+          <p class="docs-aside-title">本页目录</p>
+          <nav id="toc" class="docs-toc" aria-label="当前页标题目录"></nav>
+        </div>
+      </aside>
+    </div>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

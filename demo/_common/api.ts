@@ -86,3 +86,17 @@ export async function fetchMarkdownFileItems(dir = "/docs/"): Promise<CherryFile
     return (docB?.mtime ?? 0) - (docA?.mtime ?? 0);
   });
 }
+
+export type { DocTreeFile, DocTreeNode } from "./docsSite.js";
+export {
+  buildDocTree,
+  buildDocTree as fetchMarkdownTree,
+  collectNavHrefs,
+  findDocFile,
+  flattenDocTree,
+  loadDocHref,
+  normalizeDocHref,
+  parseSidebarMarkdown,
+  resolveDocLink,
+  resolveDocsEntryHref,
+} from "./docsSite.js";

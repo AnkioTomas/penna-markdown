@@ -1,0 +1,10 @@
+/** 独立 Renderer Demo：仅渲染结构与主题 render 皮肤（不含编辑器 chrome） */
+@import "../../src/theme/style/transformer.scss";
+
+@import "../../src/theme/themes/claude/render.scss";
+@import "../../src/theme/themes/github/render.scss";
+@import "../../src/theme/themes/morandi/render.scss";
+@import "../../src/theme/themes/latex/render.scss";
+@import "../../src/theme/themes/vue/render.scss";
+@import "../../src/theme/themes/gitbook/render.scss";
+@import "../../src/theme/themes/notion/render.scss";

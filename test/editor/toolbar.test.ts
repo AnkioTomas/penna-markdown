@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_TOOLBAR_ITEMS } from "@/editor/toolbar/defaults.js";
-import { resolveToolbarItems } from "@/editor/toolbar/resolve.js";
+import { DEFAULT_TOOLBAR_GROUPS, DEFAULT_TOOLBAR_ITEMS } from "@/editor/toolbar/defaults.js";
+import {
+  groupToolbarItems,
+  resolveToolbarGroups,
+  resolveToolbarItems,
+} from "@/editor/toolbar/resolve.js";
 
-describe.skip("resolveToolbarItems", () => {
+describe("resolveToolbarItems", () => {
   it("returns defaults when no options", () => {
     const items = resolveToolbarItems();
     expect(items.length).toBe(DEFAULT_TOOLBAR_ITEMS.length);
@@ -26,6 +30,8 @@ describe.skip("resolveToolbarItems", () => {
       "taskList",
       "link",
       "image",
+      "table",
+      "badge",
       "codeBlock",
       "horizontalRule",
     ]);
@@ -66,5 +72,38 @@ describe.skip("resolveToolbarItems", () => {
       items: [{ id: "custom", label: "C", command: "insertText", payload: "x" }],
     });
     expect(items.some((i) => i.id === "custom")).toBe(true);
+  });
+});
+
+describe("groupToolbarItems", () => {
+  it("groups items by groups option", () => {
+    const items = resolveToolbarItems();
+    const groups = groupToolbarItems(items, [["bold", "italic"], ["link", "table"]]);
+    expect(groups[0]?.map((i) => i.id)).toEqual(["bold", "italic"]);
+    expect(groups[1]?.map((i) => i.id).slice(0, 2)).toEqual(["link", "table"]);
+    expect(groups[1]?.length).toBeGreaterThan(2);
+  });
+
+  it("appends ungrouped items to the last group", () => {
+    const items = resolveToolbarItems();
+    const groups = groupToolbarItems(items, [["bold", "italic"]]);
+    expect(groups[0]?.map((i) => i.id).slice(0, 2)).toEqual(["bold", "italic"]);
+    expect(groups[0]!.length).toBeGreaterThan(2);
+  });
+
+  it("excludes layout from grouped rows", () => {
+    const items = resolveToolbarItems();
+    const groups = groupToolbarItems(items, DEFAULT_TOOLBAR_GROUPS);
+    expect(items.some((i) => i.type === "layout")).toBe(true);
+    expect(groups.flat().some((i) => i.type === "layout")).toBe(false);
+  });
+});
+
+describe("resolveToolbarGroups", () => {
+  it("puts layout in its own trailing group", () => {
+    const groups = resolveToolbarGroups();
+    const last = groups[groups.length - 1];
+    expect(last?.items.length).toBe(1);
+    expect(last?.items[0]?.type).toBe("layout");
   });
 });
