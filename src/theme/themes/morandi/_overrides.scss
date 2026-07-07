@@ -18,7 +18,7 @@
   h4,
   h5,
   h6 {
-    margin: rem(29) 0 rem(16);
+    margin: 0 0 rem(16);
     padding: 0;
     border: 0;
     font-family: var(--morandi-font-sans);
@@ -31,7 +31,7 @@
     font-size: rem(35);
     color: var(--morandi-h1-color);
     padding-bottom: rem(10);
-    border-bottom: rem(2) solid #{$morandi-h1-rule};
+    border-bottom: rem(2) solid var(--morandi-h1-rule);
   }
 
   h2 {
@@ -65,10 +65,6 @@
     font-weight: 400;
   }
 
-  :first-child {
-    margin-top: 0;
-  }
-
   p {
     margin: 0 0 rem(16);
   }
@@ -85,29 +81,29 @@
   }
 
   blockquote {
-    margin: rem(24) 0;
+    margin: 0 0 rem(24);
     padding: rem(16) rem(19);
     border-left: rem(4) solid var(--cherry-c-blockquote-border);
     border-radius: 0 rem(10) rem(10) 0;
-    background: #{$morandi-blockquote-bg};
+    background: var(--morandi-blockquote-bg);
     color: var(--cherry-c-text-1);
     font-style: italic;
 
     blockquote {
-      margin: rem(13) 0;
+      margin: 0 0 rem(13);
       border-left-color: var(--morandi-h3-color);
-      background: color-mix(in srgb, #{$morandi-blockquote-bg} 60%, transparent);
+      background: color-mix(in srgb, var(--morandi-blockquote-bg) 60%, transparent);
     }
 
     blockquote blockquote {
       border-left-color: var(--morandi-h4-color);
-      background: color-mix(in srgb, #{$morandi-blockquote-bg} 40%, transparent);
+      background: color-mix(in srgb, var(--morandi-blockquote-bg) 40%, transparent);
     }
   }
 
   hr {
     height: rem(2);
-    margin: rem(40) 0;
+    margin: 0 0 rem(40);
     padding: 0;
     border: 0;
     background-color: var(--cherry-c-hr-color);
@@ -115,7 +111,7 @@
 
   ul,
   ol {
-    margin: rem(16) 0 rem(16) rem(26);
+    margin: 0 0 rem(16) rem(26);
     padding-left: 0;
   }
 
@@ -194,7 +190,7 @@
     --cherry-table-head-bg: #{$morandi-table-head-bg};
     --cherry-table-row-bg: var(--cherry-c-bg);
     --cherry-table-stripe-bg: transparent;
-    margin: rem(32) 0;
+    margin: 0 0 rem(32);
     border-collapse: collapse;
 
     th,
@@ -210,7 +206,7 @@
     }
 
     tbody tr:hover {
-      background: color-mix(in srgb, #{$morandi-blockquote-bg} 50%, transparent);
+      background: color-mix(in srgb, var(--morandi-blockquote-bg) 50%, transparent);
     }
   }
 
@@ -219,7 +215,7 @@
   }
 
   .cherry-alert {
-    margin: rem(16) 0;
+    margin: 0 0 rem(16);
     padding: rem(14) rem(16);
     border: rem(1) solid var(--alert-border);
     border-left-width: rem(4);
@@ -238,7 +234,7 @@
     --cb-lang-fg: var(--cherry-c-text-3);
     --cb-lang-bg: transparent;
     --cb-line-highlight: color-mix(in srgb, var(--cherry-c-brand-1) 10%, transparent);
-    margin: rem(16) 0;
+    margin: 0 0 rem(16);
 
     &__panel {
       border: 0;
@@ -264,58 +260,54 @@
     }
 
     .hljs {
-      background: transparent;
+      background: var(--cherry-c-hljs-bg);
       color: var(--cherry-c-text-1);
     }
 
     .hljs-comment,
     .hljs-quote {
-      color: #93a1a1;
+      color: var(--cherry-c-hljs-comment);
       font-style: italic;
     }
 
     .hljs-keyword,
     .hljs-selector-tag {
-      color: #d33682;
+      color: var(--cherry-c-hljs-keyword);
       font-weight: 700;
     }
 
     .hljs-string,
     .hljs-regexp {
-      color: #dc322f;
+      color: var(--cherry-c-hljs-string);
     }
 
     .hljs-number,
     .hljs-literal {
-      color: #6c71c4;
+      color: var(--cherry-c-hljs-number);
     }
 
     .hljs-title,
     .hljs-title.class_,
     .hljs-type,
     .hljs-built_in {
-      color: #2aa198;
+      color: var(--cherry-c-hljs-title);
     }
 
     .hljs-variable,
     .hljs-template-variable,
     .hljs-attribute {
-      color: #586e75;
+      color: var(--cherry-c-hljs-attr);
     }
 
     .hljs-meta {
-      color: #cb4b16;
+      color: var(--cherry-c-hljs-meta);
       font-style: italic;
     }
 
     .hljs-name,
     .hljs-section {
-      color: #859900;
+      color: var(--cherry-c-hljs-section);
     }
-  }
-
-  pre:not(.cherry-code-block__pre) .hljs {
-    background: transparent;
   }
 
   .task-list .task-item {
@@ -350,32 +342,6 @@
 
     &:hover {
       text-decoration: underline;
-    }
-  }
-
-  @at-root .cherry-dark.cherry-theme-morandi .cherry-render {
-    h1 {
-      border-bottom-color: #{$morandi-dark-h1-rule};
-    }
-
-    blockquote {
-      background: #{$morandi-dark-blockquote-bg};
-
-      blockquote {
-        background: color-mix(in srgb, #{$morandi-dark-blockquote-bg} 72%, transparent);
-      }
-
-      blockquote blockquote {
-        background: color-mix(in srgb, #{$morandi-dark-blockquote-bg} 52%, transparent);
-      }
-    }
-
-    table {
-      --cherry-table-head-bg: #{$morandi-dark-table-head-bg};
-
-      tbody tr:hover {
-        background: color-mix(in srgb, #{$morandi-dark-blockquote-bg} 65%, transparent);
-      }
     }
   }
 }
