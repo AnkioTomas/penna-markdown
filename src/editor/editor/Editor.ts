@@ -7,6 +7,7 @@ import {
   highlightActiveLineGutter,
   keymap,
   lineNumbers,
+  drawSelection,
 } from "@codemirror/view";
 import { createEditorSyntaxHighlighting } from "./cmSyntax";
 import { CherryInlinesExtension, CherryMathBlockExtension, codeInfoPlugin } from "./lezer";
@@ -67,7 +68,7 @@ export class Editor {
       extensions.push(lineNumbers(), highlightActiveLineGutter());
     }
     
-    extensions.push(highlightActiveLine());
+    extensions.push(highlightActiveLine(), drawSelection());
 
     const state = EditorState.create({
       doc: options.value ?? "",
