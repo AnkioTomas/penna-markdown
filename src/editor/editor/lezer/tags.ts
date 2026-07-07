@@ -7,6 +7,7 @@ export const cherryTags = {
   container: Tag.define(),
   footnotes: Tag.define(),
   frontmatter: Tag.define(),
+  commentBlock: Tag.define(),
 
   // Inlines
   highlight: Tag.define(),

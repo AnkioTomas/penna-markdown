@@ -37,6 +37,7 @@ import stepsBlock from "@/transformer/extends/block/steps.js";
 import timelineBlock from "@/transformer/extends/block/timeline.js";
 import collapseBlock from "@/transformer/extends/block/collapse.js";
 import enhancedCodeParser from "@/transformer/extends/block/enhancedCode.js";
+import commentBlockParser from "@/transformer/extends/block/commentBlock.js";
 import cardBlockParser from "@/transformer/extends/block/card/card.js";
 import { linkCardBlockParser } from "@/transformer/extends/block/card/linkCard.js";
 import { imageCardBlockParser } from "@/transformer/extends/block/card/imageCard.js";
@@ -65,6 +66,7 @@ export const extendInlineSyntax: Record<number, BaseInlineParser> = {
 /** 全部扩展块级语法 */
 export const extendBlockSyntax: Record<number, BaseBlockParser> = {
   910: frontmatterBlock,
+  906: commentBlockParser,
   905: mathBlockParser,
   405: footnoteDefBlock,
   1: footnotesSectionBlockParser,

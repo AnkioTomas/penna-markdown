@@ -212,6 +212,7 @@ export function registerExtendCommands(
   registerSnippet(register, "field", SNIPPETS.field, 18, 26);
   registerSnippet(register, "fieldGroup", SNIPPETS.fieldGroup, 20, 24);
   registerSnippet(register, "mathBlock", SNIPPETS.mathBlock, 3, 10);
+  registerSnippet(register, "commentBlock", SNIPPETS.commentBlock, 4, 6);
 
   register("mermaid", (view, payload) => {
     const kind = String((payload as { kind?: string })?.kind ?? "flowchart");

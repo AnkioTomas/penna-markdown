@@ -297,6 +297,7 @@ export const DEFAULT_TOOLBAR_ITEMS: ToolbarItem[] = [
     children: [
       { id: "htmlAttr", label: "属性", title: "在选区后追加 {.class}", command: "htmlAttr" },
       { id: "mathBlock", label: "块级公式", command: "mathBlock" },
+      { id: "commentBlock", label: "块级注释", command: "commentBlock" },
       {
         id: "mermaidMenu",
         type: "menu",

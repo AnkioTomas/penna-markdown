@@ -10,7 +10,7 @@ import {
   drawSelection,
 } from "@codemirror/view";
 import { createEditorSyntaxHighlighting } from "./cmSyntax";
-import { CherryInlinesExtension, CherryMathBlockExtension, codeInfoPlugin } from "./lezer";
+import { CherryInlinesExtension, CherryMathBlockExtension, CherryCommentBlockExtension, codeInfoPlugin } from "./lezer/index.js";
 import type { EditorOptions } from "./EditorOptions";
 import type { Theme } from "@/theme/Theme";
 
@@ -57,7 +57,7 @@ export class Editor {
       ]),
       markdown({
         base: markdownLanguage,
-        extensions: [CherryMathBlockExtension, CherryInlinesExtension],
+        extensions: [CherryMathBlockExtension, CherryCommentBlockExtension, CherryInlinesExtension],
       }),
       createEditorSyntaxHighlighting(),
       codeInfoPlugin,

@@ -138,6 +138,7 @@ flowchart LR
 | 语法 | 示例 | Parser |
 | --- | --- | --- |
 | YAML Frontmatter | `---\ntitle: x\n---` | `frontmatter` |
+| 块级注释 | `%%%\nhidden\n%%%` | `commentBlock` |
 | 块级公式 | `$$...$$` | `mathBlock` |
 | 脚注定义 | `[^1]: text` | `footnoteDef` |
 | iframe / 媒体块 | `!iframe[...](url)` | `iframe` / `media` |
@@ -415,11 +416,16 @@ pnpm dev
 
 与删除线：~~删除~~ 不影响 H~2~O
 
-### 行内注释
+### 行内注释与块级注释
 
 可见 %% 这一段是写给自己的悄悄话，预览/导出时完全不可见 %% 继续书写。
 
 空注释：前%%%%后 → `前后`
+
+块级注释：
+%%%
+不渲染多行注释
+%%%
 
 ### 行内公式
 
@@ -2580,7 +2586,7 @@ English · **中文粗体** · *日本語斜体* · Русский · Ελλην
 | Frontmatter | — | YAML + `[[var]]` | |
 | Emoji | — | `:name:` | |
 | 剧透 | — | `!!` | |
-| 注释 | — | `%%` | 输出不可见 |
+| 注释 | — | `%%` / `%%%` | 输出不可见 |
 | Mermaid | — | ` ```mermaid` | specialCode |
 | ECharts | — | ` ```echarts` | JSON 配置 |
 

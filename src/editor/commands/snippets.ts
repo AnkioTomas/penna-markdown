@@ -63,6 +63,7 @@ export const SNIPPETS = {
     "::: field name\n@type string\n字段说明\n:::",
   ),
   mathBlock: "$$\nE = mc^2\n$$\n",
+  commentBlock: "%%%\n注释\n%%%\n",
   frontmatter: "---\ntitle: 标题\ndescription: 描述\n---\n\n",
   mermaid: "```mermaid\nflowchart LR\n  A[开始] --> B[结束]\n```\n",
   mermaidFlowchart: "```mermaid\nflowchart TD\n  A[开始] --> B{判断}\n  B -->|是| C[结束]\n```\n",

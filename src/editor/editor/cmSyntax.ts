@@ -34,6 +34,7 @@ const GFM_HIGHLIGHT_STYLE = HighlightStyle.define([
   { tag: cherryTags.mathBlock, class: "cm-ext-math-block" },
   { tag: cherryTags.footnotes, class: "cm-ext-footnotes" },
   { tag: cherryTags.frontmatter, class: "cm-ext-frontmatter" },
+  { tag: cherryTags.commentBlock, class: "cm-ext-comment-block" },
 
   // Inlines
   { tag: cherryTags.highlight, class: "cm-ext-highlight" },
