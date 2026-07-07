@@ -28,7 +28,7 @@ function el<K extends keyof HTMLElementTagNameMap>(
   return node;
 }
 
-export function isButtonItem(item: ToolbarItem): item is ToolbarButtonItem {
+function isButtonItem(item: ToolbarItem): item is ToolbarButtonItem {
   return item.type === "button" || item.type === undefined;
 }
 
@@ -162,7 +162,6 @@ export function renderLayoutGroup(ctx: ToolbarContext, group: HTMLElement) {
     }) as HTMLButtonElement;
     btn.textContent = LAYOUT_LABELS[mode];
     btn.classList.toggle("is-active", ctx.getLayout() === mode);
-    ctx.onLayoutButton(mode, btn);
     group.append(btn);
   }
 }

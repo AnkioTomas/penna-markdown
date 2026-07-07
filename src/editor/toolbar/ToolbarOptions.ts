@@ -9,8 +9,6 @@ export interface ToolbarOptions {
   orderMap?: Record<string, string[]>;
   /** 分组排版：每组为 item id 数组，未出现在任何组内的 id 追加到末尾 */
   groups?: string[][];
-  /** 移动端断点（px），默认 640 */
-  mobileBreakpoint?: number;
   /** 是否显示布局切换器，默认 false */
   showLayoutSwitcher?: boolean;
 }

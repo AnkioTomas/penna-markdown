@@ -6,7 +6,6 @@ export interface ToolbarContext {
   focus(): void;
   setLayout(mode: EditorLayoutMode): void;
   getLayout(): EditorLayoutMode;
-  onLayoutButton(mode: EditorLayoutMode, btn: HTMLButtonElement): void;
 }
 
 export type ToolbarItemType = "button" | "menu" | "separator";
@@ -21,8 +20,6 @@ export interface ToolbarItemBase {
   mobileOverflow?: boolean;
   /** SVG innerHTML，优先于 label */
   icon?: string;
-  /** 声明所属分组（groups 未配置时的 fallback） */
-  group?: string;
 }
 
 export interface ToolbarButtonItem extends ToolbarItemBase {

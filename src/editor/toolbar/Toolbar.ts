@@ -32,7 +32,6 @@ export class Toolbar {
         theme.emit("cherry:layout", { mode });
       },
       getLayout: () => this.layoutMode,
-      onLayoutButton: () => {},
     };
 
     const grouped = resolveToolbarGroups(options);

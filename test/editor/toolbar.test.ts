@@ -35,7 +35,7 @@ describe("resolveToolbarItems", () => {
       items: [{ id: "textFormat", label: "Format" }],
     });
     const format = items.find((i) => i.id === "textFormat");
-    expect(format?.label).toBe("Format");
+    expect((format as any)?.label).toBe("Format");
     expect((format as any)?.children).toBeUndefined(); // It completely replaced it
   });
 
