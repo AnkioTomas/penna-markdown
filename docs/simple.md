@@ -11,7 +11,7 @@ repo: https://github.com/AutoAccountingOrg/cherry-markdown-next
 
 # [[title]]
 
-> **[[subtitle]]** — 每种语法各一条样例；边界/压力/回归见 `demo/test.md`。
+> **[[subtitle]]** — 每种语法各一条样例；边界/压力/回归见 `docs/test.md`。
 
 作者 [[author.name]]（[[author.url]]）· v[[version]] · 标签 [[tags]] · 仓库 [[repo]]
 
@@ -19,17 +19,27 @@ repo: https://github.com/AutoAccountingOrg/cherry-markdown-next
 
 | 类别 | 覆盖 |
 | --- | --- |
-| **GFM** | ATX/Setext 标题、强调、链接/图片、列表、引用、表格、分隔线、围栏/缩进代码 |
-| **Cherry 行内** | 高亮、Emoji、HTML 属性、剧透、数学、徽章、上下标、注释、脚注引用 |
-| **Cherry 块级** | Alert×5、扩展任务列表、公式、脚注、[api.ankio.net](https://api.ankio.net/?help=1) 媒体/iframe、增强代码、Mermaid/ECharts |
-| **布局** | 容器、Tabs、Steps、Timeline、Collapse |
-| **卡片/文档** | card / link-card / image-card / repo-card / card-grid / card-masonry / field-group |
+| **GFM** | ATX/Setext 标题、强调、链接/图片、列表、引用、表格、分隔线、围栏/缩进代码、基础任务 |
+| **Cherry 行内** | Frontmatter 变量 `[[key]]`、高亮、Emoji、HTML 属性、剧透、数学、徽章、上下标、注释、脚注引用 |
+| **Cherry 块级** | YAML Frontmatter、Alert×5、扩展任务列表、块级公式、脚注定义、媒体/iframe、增强代码、Mermaid/ECharts |
+| **布局** | 容器（note/tip/warning/对齐/嵌套）、Tabs、Steps、Timeline、Collapse |
+| **卡片/文档** | card / link-card / image-card / repo-card / card-grid / card-masonry / field / field-group |
+
+---
+
+## Frontmatter 与变量
+
+文首 `---` 围栏解析为 YAML；正文用 `[[key]]` 引用（嵌套键用 `.` 分隔）。
+
+未定义变量保留字面量：[[undefined.key]] · 行内 code 内不替换：`[[version]]`
 
 ---
 
 ## GFM 标准语法
 
 ### 标题
+
+# 一级 ATX {#atx-h1}
 
 ## 二级 ATX {#atx-h2}
 
@@ -75,6 +85,9 @@ H~2~O 与 ~~删除~~ 不冲突 · 转义 \*literal\*
 - 松散项
 
   项下段落（仍属上一项）
+
+- [ ] GFM 基础待办
+- [x] GFM 基础完成
 
 ### 引用
 
@@ -128,19 +141,25 @@ export const sum = (a, b) => a + b;
 
 **加粗**{.highlight} · **加粗**{#special} · **加粗**{#id .class} · **加粗**{class="x" data-a="1"}
 
+[链接](https://example.com){.button target="_blank"} · ![pic](https://api.ankio.net/picsum/80/80){.rounded}
+
 ### 剧透 · 数学 · 徽章 · 上下标
 
-!! 悬浮剧透 !! · !! 点击 !! {click}
+!! 悬浮剧透 !! · !! 点击 !! {click} · !! 另一种写法 !! {.click}
 
-Euler $e^{i\pi}+1=0$ · $\mathbb{R}^2$
+Euler $e^{i\pi}+1=0$ · $\mathbb{R}^2$ · 同行块级 $$E=mc^2$$
 
-[New]{.tip .top} [note]{.note} [danger]{.danger .bottom}
+$$
+\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}
+$$
+
+[New]{.tip .top} [note]{.note} [important]{.important} [warning]{.warning} [caution]{.caution} [danger]{.danger .bottom}
 
 H~2~O · E=mc^2^ · x^*n*^
 
 ### 注释 · 脚注引用
 
-可见 %% 编辑备注（读者不可见） %% 继续。
+可见 %% 编辑备注（读者不可见） %% 继续。空注释：前%%%%后 → `前后`
 
 正文引用[^note]与[^ref-link]。
 
@@ -183,19 +202,60 @@ $$
 
 ### 自定义容器
 
+::: note 📘 说明
+默认 note 容器。
+:::
+
 ::: tip 💡 提示
 容器内支持 **Markdown**、列表与嵌套 `code`。
+:::
+
+::: important ⭐ 重要
+关键信息。
 :::
 
 ::: warning ⚠️ 警告
 与 Alert 共用主题色体系。
 :::
 
+::: caution 🛑 谨慎
+可能有负面后果。
+:::
+
+::: danger 🚨 危险
+删除前请备份。
+:::
+
 ::: center
-居中文本
+居中文本（别名 `::: c`）
+:::
+
+::: right
+右对齐（别名 `::: r`）
+:::
+
+::: tip 外层
+外层正文。
+
+::: info 内层
+嵌套容器示例。
+:::
+
 :::
 
 ### 折叠面板
+
+::: collapse
+- 默认折叠
+
+  普通折叠面板。
+:::
+
+::: collapse expand
+- 默认展开
+
+  expand 模式。
+:::
 
 ::: collapse accordion
 - 面板 A
@@ -204,7 +264,11 @@ $$
 
 - :+ 面板 B
 
-  默认展开
+  强制展开（`:+`）
+
+- :- 面板 C
+
+  accordion 下强制折叠（`:-`）
 :::
 
 ### Tabs · Steps · Timeline
@@ -229,16 +293,28 @@ pnpm install
 
 :::
 
-::: timeline line="dotted"
-- 里程碑 A
+::: timeline
+- 成功节点
   time=2024-06 type=success
 
-  首个 Demo。
+  基础时间线。
 
-- 里程碑 B
-  time=2025-01 type=important line=dashed
+- 警告节点
+  time=2024-09 type=warning color=#f59e0b
 
-  编辑器集成。
+  单项 `color` 覆盖。
+:::
+
+::: timeline line="dotted" placement="between"
+- 右侧
+  time=2025-01 type=important placement=right
+
+  容器 `placement="between"`。
+
+- 左侧
+  time=2025-06 type=success
+
+  默认左侧。
 :::
 
 ---
@@ -251,6 +327,10 @@ pnpm install
 { "name": "cherry-markdown-next", "version": "0.1.0" }
 ```
 
+```bash title='run.sh'
+echo "单引号 title"
+```
+
 ```js{2,4}
 export default {
   name: "demo",      // 高亮
@@ -259,10 +339,26 @@ export default {
 };
 ```
 
+```json title="package.json" {2-3}
+{
+  "name": "demo",
+  "private": true
+}
+```
+
 ```css :collapsed-lines
 html { margin: 0; }
 /* ... 折叠的冗长代码 ... */
 body { color: inherit; }
+```
+
+```css :collapsed-lines=5
+.line { color: red; }
+.line { color: orange; }
+.line { color: yellow; }
+.line { color: green; }
+.line { color: blue; }
+.line { color: indigo; }
 ```
 
 ### Mermaid
@@ -272,14 +368,50 @@ flowchart LR
   MD[Markdown] --> AST[AST] --> HTML[HTML]
 ```
 
+```mermaid
+sequenceDiagram
+  participant U as 用户
+  participant E as Engine
+  U->>E: parse(md)
+  E-->>U: AST
+```
+
+```mermaid
+pie title 占比
+  "GFM" : 45
+  "Cherry" : 35
+  "Custom" : 20
+```
+
+```graph
+flowchart TD
+  输入 --> 解析 --> 渲染
+```
+
 ### ECharts
 
 ```echarts
 {
-  "title": { "text": "示例" },
+  "title": { "text": "柱状图" },
   "xAxis": { "type": "category", "data": ["A", "B", "C"] },
   "yAxis": { "type": "value" },
   "series": [{ "type": "bar", "data": [12, 20, 15] }]
+}
+```
+
+```echarts
+{
+  "title": { "text": "折线图", "left": "center" },
+  "xAxis": { "type": "category", "data": ["Q1", "Q2", "Q3"] },
+  "yAxis": { "type": "value" },
+  "series": [{ "type": "line", "smooth": true, "data": [12, 18, 9] }]
+}
+```
+
+```echarts
+{
+  "title": { "text": "饼图", "left": "center" },
+  "series": [{ "type": "pie", "radius": "55%", "data": [{ "value": 40, "name": "A" }, { "value": 32, "name": "B" }] }]
 }
 ```
 
@@ -311,16 +443,25 @@ flowchart LR
 
 ::: link-card 文档 link="https://api.ankio.net/?help=1" icon="https://api.ankio.net/favicon?url=https://github.com"
 
-整卡可点击跳转，左侧 favicon（[`/favicon?url=`](https://api.ankio.net/favicon?help=1)）。
+整卡可点击跳转；`image=` 可作 `icon=` 别名。
 :::
 
-::: image-card image="https://api.ankio.net/picsum/640/360" title="随机图片 /picsum" author="Demo" date="2025/01/01"
+::: link-card https://github.com
+
+仅 URL 简写。
+:::
+
+::: image-card image="https://api.ankio.net/picsum/640/360" title="随机图片" href="https://api.ankio.net/picsum?help=1" author="Demo" date="2025/01/01"
 
 [`/picsum/640/360`](https://api.ankio.net/picsum?help=1) 图片卡片。
 :::
 
 ::: repo-card vuepress/core
 VuePress 2 核心库
+:::
+
+::: repo-card tencent/cherry-markdown visibility="Public"
+带 `visibility` 属性的仓库卡。
 :::
 
 :::: card-grid cols="{ sm: 1, md: 2 }"
@@ -350,6 +491,13 @@ VuePress 2 核心库
 ---
 
 ## 字段文档
+
+::: field theme
+@type ThemeConfig
+@required
+@default { base: '/' }
+单个字段块。
+:::
 
 :::: field-group
 ::: field theme
@@ -381,4 +529,4 @@ VuePress 2 核心库
 
 ---
 
-*文档路径：`demo/simple.md` · 编辑器页头可切换 `test.md` / `simple.md`（选择会记住）*
+*文档路径：`docs/simple.md` · 编辑器页头可切换 `test.md` / `simple.md`（选择会记住）*
