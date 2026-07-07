@@ -19,7 +19,7 @@ export {
 import { extractToc, extractTocFlat } from "./toc/extract.js";
 import { replaceGraph } from "@/renderer/graph/graph";
 import { CodeListener } from "@/renderer/code/code";
-import hljs from "highlight.js";
+import hljs from "highlight.js/lib/common";
 import { RenderOption } from "@/renderer/RenderOption";
 import { IncrementalSession } from "@/renderer/incremental/IncrementalSession.js";
 import { BlockIndex } from "@/renderer/incremental/BlockIndex.js";
