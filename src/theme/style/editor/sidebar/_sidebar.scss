@@ -1,8 +1,10 @@
 .cherry-sidebar {
-  --cherry-sidebar-width: 200px;
+  --cherry-sidebar-width: var(--cherry-sidebar-max-width, 300px);
 
   width: var(--cherry-sidebar-width);
-  max-width: 200px;
+  max-width: var(--cherry-sidebar-width);
+  min-width: 0;
+  flex: 0 0 var(--cherry-sidebar-width);
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -10,7 +12,6 @@
   border-right: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
   overflow: hidden;
   transition: width 0.2s ease, transform 0.2s ease;
-  z-index: 10;
 }
 
 @media (max-width: 640px) {
@@ -20,6 +21,7 @@
     left: 0;
     bottom: 0;
     height: 100%;
+    z-index: 15;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
   }
 
@@ -31,7 +33,7 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.4);
-    z-index: 9;
+    z-index: 14;
     animation: cherry-fade-in 0.2s ease;
   }
 }

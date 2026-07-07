@@ -10,6 +10,8 @@ export interface CherryFileItem {
 }
 
 export interface SideBarOptions {
+  /** 侧栏最大宽度（px），默认 300 */
+  maxWidth?: number;
   /** 异步获取文件列表的钩子，如果未提供，则只显示大纲面板 */
   fetchFiles?: () => Promise<CherryFileItem[]>;
   /** 点击文件列表项时的回调 */
