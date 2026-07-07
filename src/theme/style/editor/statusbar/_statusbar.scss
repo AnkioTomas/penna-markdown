@@ -11,7 +11,8 @@
   box-sizing: border-box;
 }
 
-.cherry-statusbar-left {
+.cherry-statusbar-left,
+.cherry-statusbar-right {
   display: flex;
   align-items: center;
   gap: 4px;

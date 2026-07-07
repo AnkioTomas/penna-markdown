@@ -4,9 +4,11 @@ const ICON_SIDEBAR = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
 const ICON_EDIT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cherry-icon"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
 const ICON_PREVIEW = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cherry-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
 const ICON_SPLIT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cherry-icon"><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"></path></svg>`;
+const ICON_REFRESH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cherry-icon"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>`;
 
 export class StatusBar {
   private readonly leftEl: HTMLElement;
+  private readonly rightEl: HTMLElement;
   private readonly countEl: HTMLElement;
   private readonly offs: Set<() => void> = new Set();
   
@@ -23,11 +25,16 @@ export class StatusBar {
     this.leftEl.className = "cherry-statusbar-left";
     this.mount.appendChild(this.leftEl);
 
+    this.rightEl = document.createElement("div");
+    this.rightEl.className = "cherry-statusbar-right";
+    this.mount.appendChild(this.rightEl);
+
     this.countEl = document.createElement("div");
     this.countEl.className = "cherry-statusbar-count";
-    this.mount.appendChild(this.countEl);
+    this.rightEl.appendChild(this.countEl);
 
     this.initButtons();
+    this.initRightButtons();
 
     // 监听 preview:rendered 或 editor:change
     this.offs.add(
@@ -68,7 +75,7 @@ export class StatusBar {
     const btnSplit = document.createElement("button");
     btnSplit.className = "cherry-statusbar-btn";
     btnSplit.innerHTML = ICON_SPLIT;
-    btnSplit.title = "双屏模式";
+    btnSplit.title = "双栏模式";
     btnSplit.onclick = () => this.switchLayout("split", btnSplit);
     this.leftEl.appendChild(btnSplit);
 
@@ -94,6 +101,29 @@ export class StatusBar {
         btnSidebar.classList.toggle("is-active", show);
       })
     );
+  }
+
+  private initRightButtons() {
+    const btnRefresh = document.createElement("button");
+    btnRefresh.className = "cherry-statusbar-btn";
+    btnRefresh.innerHTML = ICON_REFRESH;
+    btnRefresh.title = "强制全量刷新渲染";
+    btnRefresh.onclick = () => {
+      this.theme.emit("preview:force-refresh", {});
+      
+      const svg = btnRefresh.querySelector("svg");
+      if (svg) {
+        svg.style.transition = "transform 0.5s ease";
+        svg.style.transform = `rotate(360deg)`;
+        setTimeout(() => {
+          svg.style.transition = "none";
+          svg.style.transform = `rotate(0deg)`;
+        }, 500);
+      }
+    };
+    
+    // Insert after countEl to be on the right side
+    this.rightEl.appendChild(btnRefresh);
   }
 
   private switchLayout(mode: "edit" | "preview" | "split", _activeBtn: HTMLElement) {

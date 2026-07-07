@@ -39,11 +39,33 @@ export class Preview {
         this.offs.add(theme.on(THEME_EVENT_SKIN, () => {
             if (this.lastMarkdown) this.onEditorChange(this.lastMarkdown,);
         }));
+        this.offs.add(theme.on("preview:force-refresh", () => {
+            if (this.lastMarkdown) {
+                this.pendingTransactions = [];
+                const mount = this.renderer.getMount();
+                const scrollTop = mount.scrollTop;
+                
+                const result = this.renderer.renderFull(this.lastMarkdown);
+                
+                // DOM 替换后恢复滚动位置，避免强制重置到顶部导致滚动同步引擎误判
+                mount.scrollTop = scrollTop;
+                
+                this.theme.emit("preview:rendered", {
+                    markdown: this.lastMarkdown,
+                    html: result.html,
+                    ast: result.ast,
+                    blocks: result.blocks,
+                    partial: false,
+                    changedStartLines: [],
+                });
+            }
+        }));
     }
 
     private pendingTransactions: Transaction[] = [];
 
     private onEditorChange(markdown: string, tr?: Transaction | readonly Transaction[]): void {
+        this.lastMarkdown = markdown;
         if (tr) {
             if (Array.isArray(tr)) {
                 this.pendingTransactions.push(...tr);
