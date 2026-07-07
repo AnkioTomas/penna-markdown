@@ -4,33 +4,37 @@
 // 用户通过 {click} 注入的 .click 修饰类保持简短
 @mixin styles {
   .cherry-spoiler {
-    cursor: default;
-    transition: filter 0.2s ease;
+    // 修复 Safari 悬浮 Bug：如果不设置 pointer，Safari 会因为元素“不可点击”而拒绝触发 :hover 状态
+    cursor: pointer;
+    transition: color 0.2s ease, text-shadow 0.2s ease;
 
     // 默认：悬浮显示
-    filter: blur(rem(4));
+    color: transparent;
+    text-shadow: 0 0 rem(6) var(--cherry-c-text-1);
     background: color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
     border-radius: rem(4);
     padding: 0 rem(4);
-    will-change: filter;
-    -webkit-backface-visibility: hidden;
 
     &:hover {
-      filter: blur(0);
+      color: inherit;
+      text-shadow: none;
     }
 
     // {click}：点击切换显示
     &.click {
       cursor: pointer;
-      filter: blur(0);
+      color: inherit;
+      text-shadow: none;
 
       .cherry-spoiler__text {
-        filter: blur(rem(4));
-        transition: filter 0.2s ease;
+        color: transparent;
+        text-shadow: 0 0 rem(6) var(--cherry-c-text-1);
+        transition: color 0.2s ease, text-shadow 0.2s ease;
       }
 
       &:has(.cherry-spoiler__toggle:checked) .cherry-spoiler__text {
-        filter: blur(0);
+        color: inherit;
+        text-shadow: none;
       }
     }
   }
