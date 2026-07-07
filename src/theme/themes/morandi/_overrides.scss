@@ -137,8 +137,8 @@
     margin-left: rem(19);
   }
 
-  ul:not(.task-list) > li,
-  ol:not(.task-list) > li {
+  :not(.cherry-steps) > ul:not(.task-list) > li,
+  :not(.cherry-steps) > ol:not(.task-list) > li {
     position: relative;
     margin: rem(8) 0;
 
@@ -152,14 +152,14 @@
     }
   }
 
-  ul:not(.task-list) ul > li::before,
-  ol:not(.task-list) ol > li::before {
+  :not(.cherry-steps) > ul:not(.task-list) ul > li::before,
+  :not(.cherry-steps) > ol:not(.task-list) ol > li::before {
     border-left-width: rem(1);
     border-left-color: var(--morandi-h2-color);
   }
 
-  ul:not(.task-list) ul ul > li::before,
-  ol:not(.task-list) ol ol > li::before {
+  :not(.cherry-steps) > ul:not(.task-list) ul ul > li::before,
+  :not(.cherry-steps) > ol:not(.task-list) ol ol > li::before {
     border-left-width: rem(0.5);
     border-left-color: var(--morandi-h1-color);
   }
