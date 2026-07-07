@@ -116,8 +116,8 @@ class SpecialCodeBlockParser extends BaseBlockParser {
     const trimmed = code.trim();
     if (!trimmed) return "";
     const host = apiHost ?? this.cfg().mermaidApiHost ?? MERMAID_API_HOST;
-    const payload = base64UrlEncode(JSON.stringify({ code: trimmed }));
-    let url = `${host}/img/${payload}`;
+    const payload = base64UrlEncode(JSON.stringify({ code: trimmed ,mermaid:{"theme":"default"}}));
+    let url = `${host}/svg/${payload}`;
     if (theme === "dark") url += "?theme=dark";
     return url;
   }
