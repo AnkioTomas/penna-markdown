@@ -8,7 +8,9 @@
 // 日间：.cherry-theme-github .cherry-render
 .cherry-theme-github {
   .cherry-render {
-    @include tokens.theme-light;  }
+    @include tokens.theme-light;
+    @include overrides.styles;
+  }
 }
 
 // 夜间：.cherry-dark.cherry-theme-github .cherry-render

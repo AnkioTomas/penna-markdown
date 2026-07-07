@@ -7,7 +7,9 @@
 // 日间：.cherry-theme-morandi .cherry-render
 .cherry-theme-morandi {
   .cherry-render {
-    @include tokens.theme-light;  }
+    @include tokens.theme-light;
+    @include overrides.styles;
+  }
 }
 
 // 夜间：.cherry-dark.cherry-theme-morandi .cherry-render

@@ -8,7 +8,10 @@
 // 日间：.cherry-theme-claude .cherry-render
 .cherry-theme-claude {
   .cherry-render {
-    @include tokens.theme-light;    @include highlight.wave;  }
+    @include tokens.theme-light;
+    @include highlight.wave;
+    @include overrides.styles;
+  }
 }
 
 // 夜间：.cherry-dark.cherry-theme-claude .cherry-render

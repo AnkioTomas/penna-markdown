@@ -6,7 +6,9 @@
 
 .cherry-theme-latex {
   .cherry-render {
-    @include tokens.theme-light;  }
+    @include tokens.theme-light;
+    @include overrides.styles;
+  }
 }
 
 .cherry-dark.cherry-theme-latex {
