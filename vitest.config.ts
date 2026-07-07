@@ -18,12 +18,9 @@ export default defineConfig({
       transform(_code, id) {
         const [filePath, query] = id.split("?");
         if (!filePath.endsWith(".css")) return;
-        const raw = query === "raw";
         const css = readFileSync(filePath, "utf8");
         return {
-          code: raw
-            ? `export default ${JSON.stringify(css)}`
-            : `export default ${JSON.stringify(css)}`,
+          code: `export default ${JSON.stringify(css)}`,
           map: null,
         };
       },
