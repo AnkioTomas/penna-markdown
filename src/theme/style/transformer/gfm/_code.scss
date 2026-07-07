@@ -21,10 +21,11 @@
   }
 
   :not(pre) > code {
-    padding: rem(3.2) rem(6.4);
-    font-size: rem(14.4);
-    background: color-mix(in srgb, var(--cherry-c-brand-soft) 65%, var(--cherry-c-bg-elevated));
-    border: rem(1) solid color-mix(in srgb, var(--cherry-c-brand-2) 25%, transparent);
+    padding: 0.2em 0.4em;
+    font-size: 0.9em;
+    color: var(--cherry-c-code-fg);
+    background: color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
+    border: rem(1) solid color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent);
     border-radius: rem(4);
   }
 }

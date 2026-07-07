@@ -9,15 +9,20 @@
 
     // 默认：悬浮显示
     filter: blur(rem(4));
+    background: color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
+    border-radius: rem(4);
+    padding: 0 rem(4);
+    will-change: filter;
+    -webkit-backface-visibility: hidden;
 
     &:hover {
-      filter: none;
+      filter: blur(0);
     }
 
     // {click}：点击切换显示
     &.click {
       cursor: pointer;
-      filter: none;
+      filter: blur(0);
 
       .cherry-spoiler__text {
         filter: blur(rem(4));
@@ -25,7 +30,7 @@
       }
 
       &:has(.cherry-spoiler__toggle:checked) .cherry-spoiler__text {
-        filter: none;
+        filter: blur(0);
       }
     }
   }

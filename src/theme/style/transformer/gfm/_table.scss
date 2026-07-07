@@ -25,7 +25,7 @@
 
   th,
   td {
-    padding: rem(6) rem(13);
+    padding: rem(8) rem(16);
     border: rem(1) solid var(--cherry-table-border);
     text-align: left;
     vertical-align: top;
@@ -39,9 +39,14 @@
   tbody {
     tr {
       background: var(--cherry-table-row-bg);
+      transition: background-color 0.2s ease;
 
       &:nth-child(even) {
         background: var(--cherry-table-stripe-bg);
+      }
+
+      &:hover {
+        background: color-mix(in srgb, var(--cherry-c-text-3) 8%, var(--cherry-table-row-bg));
       }
     }
 
@@ -51,15 +56,19 @@
   }
 
   // 无 thead/tbody 包裹的简易表格
-  table > tr:nth-child(odd) td {
+  table tr:nth-child(odd) td {
     background: var(--cherry-table-row-bg);
   }
 
-  table > tr:nth-child(even) td {
+  table tr:nth-child(even) td {
     background: var(--cherry-table-stripe-bg);
   }
 
-  table > tr:first-child th {
+  table tr:hover td {
+    background: color-mix(in srgb, var(--cherry-c-text-3) 8%, var(--cherry-table-row-bg));
+  }
+
+  table tr:first-child th {
     background: var(--cherry-table-head-bg);
   }
 }
