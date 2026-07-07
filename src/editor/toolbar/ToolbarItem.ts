@@ -1,8 +1,8 @@
 import type { EditorCommand } from "../commands.js";
-import type { EditorLayoutMode } from "../Layout";
+import type { EditorLayoutMode } from "../Layout.js";
 
 export interface ToolbarContext {
-  execute(command: string, payload?: unknown): void;
+  execute(command: EditorCommand | string, payload?: unknown): void;
   focus(): void;
   setLayout(mode: EditorLayoutMode): void;
   getLayout(): EditorLayoutMode;
@@ -19,6 +19,10 @@ export interface ToolbarItemBase {
   hidden?: boolean;
   /** 移动端收进「更多」菜单 */
   mobileOverflow?: boolean;
+  /** SVG innerHTML，优先于 label */
+  icon?: string;
+  /** 声明所属分组（groups 未配置时的 fallback） */
+  group?: string;
 }
 
 export interface ToolbarButtonItem extends ToolbarItemBase {
@@ -50,4 +54,3 @@ export type ToolbarItem =
   | ToolbarMenuItem
   | ToolbarSeparatorItem
   | ToolbarLayoutItem;
-

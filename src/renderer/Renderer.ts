@@ -1,6 +1,21 @@
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
-import { Theme, THEME_EVENT_LIGHT_DARK, type ThemeLightDarkEvent } from "@/theme/Theme.js";
+import {
+  Theme,
+  THEME_EVENT_LIGHT_DARK,
+  THEME_EVENT_SKIN,
+  type ThemeLightDarkEvent,
+  type ThemeSkinEvent,
+  type LightDark,
+} from "@/theme/Theme.js";
+export {
+  Theme,
+  THEME_EVENT_LIGHT_DARK,
+  THEME_EVENT_SKIN,
+  type ThemeLightDarkEvent,
+  type ThemeSkinEvent,
+  type LightDark,
+};
 import { extractToc, extractTocFlat } from "./toc/extract.js";
 import { replaceGraph } from "@/renderer/graph/graph";
 import { CodeListener } from "@/renderer/code/code";

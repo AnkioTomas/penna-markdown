@@ -1,0 +1,60 @@
+import {
+  ICON_BADGE,
+  ICON_BOLD,
+  ICON_CODE,
+  ICON_CODEBLOCK,
+  ICON_HEADING,
+  ICON_HR,
+  ICON_IMAGE,
+  ICON_ITALIC,
+  ICON_LINK,
+  ICON_LIST,
+  ICON_QUOTE,
+  ICON_STRIKE,
+  ICON_TABLE,
+  ICON_PLUS,
+  ICON_EXT,
+  ICON_VIDEO,
+  ICON_AUDIO,
+} from "./icons.js";
+import type { ToolbarItem } from "./ToolbarItem.js";
+
+export const DEFAULT_TOOLBAR_ITEMS: ToolbarItem[] = [
+  { id: "bold", label: "B", title: "加粗", command: "bold", icon: ICON_BOLD },
+  { id: "italic", label: "I", title: "斜体", command: "italic", icon: ICON_ITALIC },
+  { id: "strikethrough", label: "S", title: "删除线", command: "strikethrough", icon: ICON_STRIKE },
+  { id: "code", label: "</>", title: "行内代码", command: "code", icon: ICON_CODE },
+  {
+    id: "heading",
+    type: "menu",
+    label: "H",
+    title: "标题",
+    icon: ICON_HEADING,
+    children: [
+      { id: "heading1", label: "H1", title: "一级标题", command: "heading1" },
+      { id: "heading2", label: "H2", title: "二级标题", command: "heading2" },
+      { id: "heading3", label: "H3", title: "三级标题", command: "heading3" },
+      { id: "heading4", label: "H4", title: "四级标题", command: "heading4", mobileOverflow: true },
+      { id: "heading5", label: "H5", title: "五级标题", command: "heading5", mobileOverflow: true },
+      { id: "heading6", label: "H6", title: "六级标题", command: "heading6", mobileOverflow: true },
+    ],
+  },
+  { id: "blockquote", label: "❝", title: "引用", command: "blockquote", icon: ICON_QUOTE, mobileOverflow: true },
+  { id: "unorderedList", label: "•", title: "无序列表", command: "unorderedList", icon: ICON_LIST },
+  { id: "orderedList", label: "1.", title: "有序列表", command: "orderedList", mobileOverflow: true },
+  { id: "taskList", label: "☑", title: "任务列表", command: "taskList", mobileOverflow: true },
+  { id: "link", label: "🔗", title: "链接", command: "link", icon: ICON_LINK },
+  { id: "image", label: "🖼", title: "图片", command: "image", icon: ICON_IMAGE, mobileOverflow: true },
+  { id: "table", label: "表", title: "表格", command: "table", icon: ICON_TABLE, mobileOverflow: true },
+  { id: "badge", label: "Badge", title: "徽章", command: "badge", icon: ICON_BADGE, mobileOverflow: true },
+  { id: "codeBlock", label: "{ }", title: "代码块", command: "codeBlock", icon: ICON_CODEBLOCK, mobileOverflow: true },
+  { id: "horizontalRule", label: "—", title: "分隔线", command: "horizontalRule", icon: ICON_HR, mobileOverflow: true },
+  { id: "layout", type: "layout" },
+];
+
+export const DEFAULT_TOOLBAR_GROUPS: string[][] = [
+  ["bold", "italic", "strikethrough", "code"],
+  ["heading", "blockquote", "unorderedList", "orderedList", "taskList"],
+  ["link", "image", "table", "badge"],
+  ["codeBlock", "horizontalRule"],
+];

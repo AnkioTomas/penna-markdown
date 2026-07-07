@@ -8,6 +8,11 @@ import type { CherryOptions } from "@/editor/CherryOptions";
 import type { EditorLayoutMode } from "@/editor/Layout";
 import { printCherryLogo } from "@/editor/printLogo";
 import { ScrollSync } from "@/editor/sync/ScrollSync";
+import { CommandBridge } from "@/editor/CommandBridge.js";
+import { DialogHost } from "@/editor/dialog/DialogHost.js";
+import { runCommand as executeCommand } from "@/editor/commands.js";
+import type { EditorCommand } from "@/editor/commands.js";
+import type { EditorView } from "@codemirror/view";
 import { Theme } from "@/theme/Theme";
 
 
@@ -54,6 +59,8 @@ export class Cherry {
   private readonly sidebar: SideBar | null;
   private readonly divider: Divider;
   private readonly statusbar: StatusBar | null = null;
+  private readonly commandBridge: CommandBridge;
+  private readonly dialogHost: DialogHost;
 
   private readonly id: string | undefined;
   private destroyed = false;
@@ -125,6 +132,9 @@ export class Cherry {
       this.statusbar = new StatusBar(this.statusbarEl, this.theme);
     }
 
+    this.divider = new Divider(this.dividerEl, this.theme);
+    this.divider.setLayout(initialLayout);
+
     this.toolbar =
       options.toolbar === false
         ? null
@@ -132,6 +142,8 @@ export class Cherry {
             mount: this.toolbarEl,
             theme: this.theme,
             options: options.toolbar ?? {},
+            focus: () => this.editor.focus(),
+            getLayout: () => this.getLayout(),
           });
 
     this.sidebar = new SideBar(
@@ -140,14 +152,14 @@ export class Cherry {
       typeof options.sidebar === "object" ? options.sidebar : {}
     );
 
-    this.divider = new Divider(this.dividerEl, this.theme);
-    this.divider.setLayout(initialLayout);
-
     if (options.sidebar === false) {
       this.sidebarEl.style.display = "none";
     }
 
     this.scrollSync = new ScrollSync(this.editor, this.previewEl, this.theme);
+
+    this.dialogHost = new DialogHost(this.cherryEl, this.theme);
+    this.commandBridge = new CommandBridge(this.theme, () => this.editor.getView());
 
     const initialMarkdown = editorOptions.value ?? "";
     if (initialMarkdown) {
@@ -207,10 +219,20 @@ export class Cherry {
     this.sidebar?.setActiveFile(fileId);
   }
 
+  getEditorView(): EditorView {
+    return this.editor.getView();
+  }
+
+  runCommand(command: EditorCommand | string, payload?: unknown): boolean | Promise<boolean> {
+    return executeCommand(this.editor.getView(), command, payload, { theme: this.theme });
+  }
+
   destroy(): void {
     if (this.destroyed) return;
     this.destroyed = true;
     this.theme.emit("editor:destroy", { id: this.id });
+    this.commandBridge.destroy();
+    this.dialogHost.destroy();
     this.toolbar?.destroy();
     this.sidebar?.destroy();
     this.divider.destroy();

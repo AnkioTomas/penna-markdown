@@ -1,2 +1,16 @@
-/** 工具栏命令 id（MVP 仅占位，后续实现 runCommand） */
-export type EditorCommand = string;
+export {
+  runCommand,
+  applyHeading,
+  insertTable,
+  insertLink,
+  applyBadge,
+} from "./commands/index.js";
+export type {
+  EditorCommand,
+  CommandContext,
+  TableDialogResult,
+  LinkDialogResult,
+  BadgeDialogResult,
+  BadgeVariant,
+  BadgePosition,
+} from "./commands/types.js";

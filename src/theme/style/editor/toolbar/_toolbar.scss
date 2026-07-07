@@ -10,18 +10,11 @@
 .cherry-toolbar-scroll {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 4px;
   flex: 1;
   min-width: 0;
   padding: 6px 10px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
 }
 
 .cherry-toolbar-group {
@@ -109,25 +102,48 @@
 .cherry-toolbar-menu-panel {
   display: none;
   position: absolute;
-  top: calc(100% + 4px);
+  top: 100%;
   left: 0;
-  min-width: 140px;
-  padding: 4px;
-  background: var(--cherry-c-bg);
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  z-index: 100;
+  flex-direction: column;
+  min-width: 120px;
+  margin-top: 4px;
+  padding: 6px;
   border-radius: 8px;
-  box-shadow: 0 4px 16px color-mix(in srgb, var(--cherry-c-text-1) 12%, transparent);
-  z-index: 20;
+  background: color-mix(in srgb, var(--cherry-c-bg) 85%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
+  box-shadow: 0 12px 32px -8px color-mix(in srgb, var(--cherry-c-text-1) 15%, transparent);
+  
+  /* Animation base */
+  opacity: 0;
+  transform: translateY(6px) scale(0.98);
+  transition: opacity 0.15s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
 }
 
 .cherry-toolbar-submenu .cherry-toolbar-menu-panel {
-  top: 0;
-  left: calc(100% + 2px);
+  transform: translateX(-6px) scale(0.98);
+  top: -4px;
+  left: 100%;
+  margin-left: 2px;
 }
 
-.cherry-toolbar-menu.is-open > .cherry-toolbar-menu-panel,
-.cherry-toolbar-submenu.is-open > .cherry-toolbar-menu-panel {
-  display: block;
+/* Click-to-open for top level menus */
+.cherry-toolbar-menu.is-open > .cherry-toolbar-menu-panel {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Hover-to-open for submenus */
+.cherry-toolbar-submenu:hover > .cherry-toolbar-menu-panel {
+  display: flex;
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  pointer-events: auto;
 }
 
 .cherry-toolbar-menu-item {
