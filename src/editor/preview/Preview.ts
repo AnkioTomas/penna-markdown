@@ -27,7 +27,10 @@ export class Preview {
 
     this.offs.add(
       theme.on("editor:change", (payload) => {
-        let { markdown, tr } = payload as { markdown: string; tr: Transaction };
+        const { markdown, tr } = payload as {
+          markdown: string;
+          tr: Transaction;
+        };
         this.onEditorChange(markdown, tr);
       }),
     );
