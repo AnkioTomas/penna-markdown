@@ -1,6 +1,6 @@
-import { DEFAULT_TOOLBAR_ITEMS } from "./defaults.js";
-import type { ToolbarItem } from "./ToolbarItem.js";
-import type { ToolbarOptions } from "./ToolbarOptions.js";
+import { DEFAULT_TOOLBAR_ITEMS } from "@/editor/toolbar/defaults";
+import type { ToolbarItem } from "@/editor/toolbar/ToolbarItem";
+import type { ToolbarOptions } from "@/editor/toolbar/ToolbarOptions";
 
 /**
  * 合并系统默认配置项与用户自定义配置项。

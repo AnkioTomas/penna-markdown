@@ -1,4 +1,4 @@
-import { ICON_THEME } from "./icons.js";
+import { ICON_THEME } from "@/editor/toolbar/icons";
 import REGISTERED_THEMES from "@/theme/ThemeRegister.js";
 
 export const THEME_LABELS: Record<string, string> = {

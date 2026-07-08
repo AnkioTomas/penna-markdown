@@ -1,8 +1,8 @@
 import type { ToolbarOptions } from "@/editor/toolbar/ToolbarOptions";
 import type { Theme } from "@/theme/Theme";
 import type { ToolbarContext } from "./ToolbarItem";
-import { resolveToolbarItems } from "./resolve.js";
-import { renderToolbar } from "./renderToolbar.js";
+import { resolveToolbarItems } from "@/editor/toolbar/resolve";
+import { renderToolbar } from "@/editor/toolbar/renderToolbar";
 
 export class Toolbar {
   private cleanup: (() => void) | null = null;

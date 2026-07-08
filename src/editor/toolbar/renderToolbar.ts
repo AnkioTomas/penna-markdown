@@ -1,12 +1,12 @@
-import { el } from "../Cherry.js";
-import { ICON_MORE, resolveCommandIcon } from "./icons.js";
+import { el } from "@/editor/Cherry";
+import { ICON_MORE, resolveCommandIcon } from "@/editor/toolbar/icons";
 import type {
   ToolbarButtonItem,
   ToolbarContext,
   ToolbarItem,
   ToolbarItemBase,
   ToolbarMenuItem,
-} from "./ToolbarItem.js";
+} from "@/editor/toolbar/ToolbarItem";
 
 /**
  * 判断当前项目是否为按钮项。
@@ -201,20 +201,24 @@ export function renderToolbar(
     if (window.innerWidth <= 640 && isNested) return;
 
     panel.classList.remove("is-flipped");
-    panel.style.transform = '';
-    
+    panel.style.transform = "";
+
     const rect = panel.getBoundingClientRect();
     if (rect.right > window.innerWidth - 8) {
       panel.classList.add("is-flipped");
-      
+
       const flippedRect = panel.getBoundingClientRect();
       if (flippedRect.left < 8) {
         const shift = 8 - flippedRect.left;
-        panel.style.transform = isNested ? `translateX(${shift}px) scale(1)` : `translate(${shift}px, 0) scale(1)`;
+        panel.style.transform = isNested
+          ? `translateX(${shift}px) scale(1)`
+          : `translate(${shift}px, 0) scale(1)`;
       }
     } else if (rect.left < 8) {
       const shift = 8 - rect.left;
-      panel.style.transform = isNested ? `translateX(${shift}px) scale(1)` : `translate(${shift}px, 0) scale(1)`;
+      panel.style.transform = isNested
+        ? `translateX(${shift}px) scale(1)`
+        : `translate(${shift}px, 0) scale(1)`;
     }
   };
 
@@ -260,7 +264,7 @@ export function renderToolbar(
             wrap.classList.add("is-open");
             trigger.setAttribute("aria-expanded", "true");
             openPanel = wrap.querySelector(".cherry-toolbar-menu-panel");
-            
+
             if (openPanel) {
               applyCollisionDetection(openPanel, false);
             }
@@ -286,8 +290,10 @@ export function renderToolbar(
             }
             wrap.classList.add("is-open");
             trigger.setAttribute("aria-expanded", "true");
-            
-            const panel = wrap.querySelector(".cherry-toolbar-menu-panel") as HTMLElement;
+
+            const panel = wrap.querySelector(
+              ".cherry-toolbar-menu-panel",
+            ) as HTMLElement;
             if (panel) applyCollisionDetection(panel, true);
           }
         }
@@ -320,7 +326,9 @@ export function renderToolbar(
 
   const onPointerOver = (e: PointerEvent) => {
     if (e.pointerType === "touch") return; // 防止移动端触控触发 hover 干扰 click 闭合
-    const wrap = (e.target as HTMLElement).closest(".cherry-toolbar-submenu") as HTMLElement;
+    const wrap = (e.target as HTMLElement).closest(
+      ".cherry-toolbar-submenu",
+    ) as HTMLElement;
     if (!wrap) return;
 
     const timer = hoverTimers.get(wrap);
@@ -332,34 +340,49 @@ export function renderToolbar(
     if (!wrap.classList.contains("is-open")) {
       const parentPanel = wrap.closest(".cherry-toolbar-menu-panel");
       if (parentPanel) {
-        parentPanel.querySelectorAll(".cherry-toolbar-submenu.is-open").forEach((sib) => {
-          if (sib !== wrap) {
-            sib.classList.remove("is-open");
-            sib.querySelector(".cherry-toolbar-menu-trigger")?.setAttribute("aria-expanded", "false");
-            const t = hoverTimers.get(sib as HTMLElement);
-            if (t) { clearTimeout(t); hoverTimers.delete(sib as HTMLElement); }
-          }
-        });
+        parentPanel
+          .querySelectorAll(".cherry-toolbar-submenu.is-open")
+          .forEach((sib) => {
+            if (sib !== wrap) {
+              sib.classList.remove("is-open");
+              sib
+                .querySelector(".cherry-toolbar-menu-trigger")
+                ?.setAttribute("aria-expanded", "false");
+              const t = hoverTimers.get(sib as HTMLElement);
+              if (t) {
+                clearTimeout(t);
+                hoverTimers.delete(sib as HTMLElement);
+              }
+            }
+          });
       }
 
       wrap.classList.add("is-open");
-      wrap.querySelector(".cherry-toolbar-menu-trigger")?.setAttribute("aria-expanded", "true");
-      
-      const panel = wrap.querySelector(".cherry-toolbar-menu-panel") as HTMLElement;
+      wrap
+        .querySelector(".cherry-toolbar-menu-trigger")
+        ?.setAttribute("aria-expanded", "true");
+
+      const panel = wrap.querySelector(
+        ".cherry-toolbar-menu-panel",
+      ) as HTMLElement;
       if (panel) applyCollisionDetection(panel, true);
     }
   };
 
   const onPointerOut = (e: PointerEvent) => {
     if (e.pointerType === "touch") return;
-    const wrap = (e.target as HTMLElement).closest(".cherry-toolbar-submenu") as HTMLElement;
+    const wrap = (e.target as HTMLElement).closest(
+      ".cherry-toolbar-submenu",
+    ) as HTMLElement;
     if (!wrap) return;
     const related = e.relatedTarget as HTMLElement | null;
     if (wrap.contains(related)) return;
 
     const timer = setTimeout(() => {
       wrap.classList.remove("is-open");
-      wrap.querySelector(".cherry-toolbar-menu-trigger")?.setAttribute("aria-expanded", "false");
+      wrap
+        .querySelector(".cherry-toolbar-menu-trigger")
+        ?.setAttribute("aria-expanded", "false");
       hoverTimers.delete(wrap);
     }, 150);
     hoverTimers.set(wrap, timer);

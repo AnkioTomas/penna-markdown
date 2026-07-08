@@ -1,6 +1,6 @@
 import type { EditorView } from "@codemirror/view";
 import type { Theme } from "@/theme/Theme";
-import { runCommand, type EditorCommand } from "./commands/index.js";
+import { runCommand, type EditorCommand } from "@/editor/commands";
 
 export class CommandBridge {
   private readonly offs: (() => void)[] = [];

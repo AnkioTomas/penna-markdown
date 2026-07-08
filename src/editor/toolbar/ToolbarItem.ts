@@ -1,4 +1,4 @@
-import type { EditorCommand } from "../commands/index.js";
+import type { EditorCommand } from "@/editor/commands/index";
 
 export interface ToolbarContext {
   execute(command: EditorCommand | string, payload?: unknown): void;
