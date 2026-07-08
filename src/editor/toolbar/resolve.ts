@@ -4,7 +4,7 @@ import type { ToolbarOptions } from "./ToolbarOptions.js";
 
 /**
  * 合并系统默认配置项与用户自定义配置项。
- * 
+ *
  * 合并策略：
  * 1. 采用 shallow merge（浅层覆盖）：同名 id 项以用户自定义项（custom）直接替换默认项（defaults）。
  * 2. 显式隐藏：若用户传入的自定义项带有 `hidden: true` 标记，则在此阶段直接删除该项，不参与后续渲染。

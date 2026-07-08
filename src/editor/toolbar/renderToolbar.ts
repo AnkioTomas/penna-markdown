@@ -167,7 +167,7 @@ export function renderOverflowMenu(items: ToolbarItem[]) {
 
 /**
  * 工具栏主渲染引擎。
- * 
+ *
  * 设计意图：
  * 1. 采用**全局事件委托**（Event Delegation）代理所有工具栏内部按钮点击，消除大量的局部事件监听器绑定。
  * 2. 建立 O(1) 的 Map 映射快速查找，避免在事件流中频繁进行 DOM 到树节点的递归搜索。
@@ -184,7 +184,7 @@ export function renderToolbar(
   mount.replaceChildren();
 
   let openPanel: HTMLElement | null = null;
-  
+
   // 统一关闭当前打开的所有顶层和二级菜单面板
   const closeOpenPanel = () => {
     if (!openPanel) return;
