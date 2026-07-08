@@ -163,7 +163,7 @@ export const CherryInlinesExtension: MarkdownConfig = {
             ];
 
             if (typeStr && typeStr.trim().length > 0) {
-              let currentPos = pos + markerLen;
+              const currentPos = pos + markerLen;
               const str = match[2];
 
               // First token is the type (e.g. card, tip, repo-card)
@@ -176,8 +176,8 @@ export const CherryInlinesExtension: MarkdownConfig = {
                   cx.elt("CherryContainerType", typeStart, typeEnd),
                 );
 
-                let rest = str.slice(typeMatch[0].length);
-                let restPos = typeEnd;
+                const rest = str.slice(typeMatch[0].length);
+                const restPos = typeEnd;
 
                 // Now parse the rest for keys, values, and params
                 const tokenRegex = /([a-zA-Z0-9_-]+)="([^"]*)"|([^\s]+)/g;

@@ -23,8 +23,8 @@ export const codeInfoPlugin = ViewPlugin.fromClass(
     }
 
     buildDecorations(view: EditorView) {
-      let builder = new RangeSetBuilder<Decoration>();
-      for (let { from, to } of view.visibleRanges) {
+      const builder = new RangeSetBuilder<Decoration>();
+      for (const { from, to } of view.visibleRanges) {
         syntaxTree(view.state).iterate({
           from,
           to,

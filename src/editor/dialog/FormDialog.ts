@@ -1,12 +1,7 @@
 import type { DialogCallbacks } from "@/editor/commands/DialogCommand.js";
 
 export type FormFieldType =
-  | "text"
-  | "url"
-  | "search"
-  | "textarea"
-  | "select"
-  | "checkbox";
+  "text" | "url" | "search" | "textarea" | "select" | "checkbox";
 
 export interface FormFieldOption {
   value: string;

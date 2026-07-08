@@ -1,7 +1,13 @@
 import type { Theme } from "@/theme/Theme";
-import type { DialogResultMap, DialogType } from "@/editor/commands/dialogTypes.js";
+import type {
+  DialogResultMap,
+  DialogType,
+} from "@/editor/commands/dialogTypes.js";
 
-export type { DialogType, DialogResultMap } from "@/editor/commands/dialogTypes.js";
+export type {
+  DialogType,
+  DialogResultMap,
+} from "@/editor/commands/dialogTypes.js";
 
 let dialogCounter = 0;
 

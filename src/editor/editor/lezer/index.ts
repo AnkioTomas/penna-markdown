@@ -1,5 +1,5 @@
 export { CherryInlinesExtension, FrontmatterParser } from "./cherryInlines";
-export { CherryMathBlockExtension } from "./cherryMathBlock.js";
-export { CherryCommentBlockExtension } from "./cherryCommentBlock.js";
+export { CherryMathBlockExtension } from "@/editor/editor/lezer/cherryMathBlock";
+export { CherryCommentBlockExtension } from "@/editor/editor/lezer/cherryCommentBlock";
 export { cherryTags } from "./tags";
 export { codeInfoPlugin } from "./codeInfoPlugin";

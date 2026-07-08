@@ -1,5 +1,5 @@
 import { BlockContext, Line, MarkdownConfig } from "@lezer/markdown";
-import { cherryTags } from "./tags.js";
+import { cherryTags } from "@/editor/editor/lezer/tags";
 
 export const CherryCommentBlockExtension: MarkdownConfig = {
   defineNodes: [

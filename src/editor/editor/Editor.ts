@@ -24,7 +24,7 @@ import {
   CherryMathBlockExtension,
   CherryCommentBlockExtension,
   codeInfoPlugin,
-} from "./lezer/index.js";
+} from "@/editor/editor/lezer/index";
 import type { EditorOptions } from "./EditorOptions";
 import type { Theme } from "@/theme/Theme";
 
