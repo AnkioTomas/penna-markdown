@@ -17,8 +17,7 @@ const themeViteConfig = resolve(rootDir, "scripts/vite.theme.config.ts");
 const alias = {
   "@": resolve(rootDir, "src"),
 };
-const base: esbuild.BuildOptions
-    = {
+const base: esbuild.BuildOptions = {
   bundle: true,
   platform: "browser",
   alias,
