@@ -139,11 +139,13 @@ export const CherryInlinesExtension: MarkdownConfig = {
 
         // @type syntax
         if (next === 64 /* '@' */) {
-          const match = /^@([a-zA-Z0-9_-]+)/.exec(cx.slice(pos, cx.end));
-          // Only match if it's the start of the line or preceded by a space/newline
+          const match = /^@([a-zA-Z0-9_:-]+)/.exec(cx.slice(pos, cx.end));
+          // Only match at inline-section start or when preceded by whitespace
           if (
             match &&
-            (pos === 0 || cx.char(pos - 1) === 10 || cx.char(pos - 1) === 32)
+            (pos === cx.offset ||
+              cx.char(pos - 1) === 10 ||
+              cx.char(pos - 1) === 32)
           ) {
             return cx.addElement(
               cx.elt("CherryAtType", pos, pos + match[0].length),
