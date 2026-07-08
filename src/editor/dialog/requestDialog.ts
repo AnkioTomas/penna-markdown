@@ -1,37 +1,12 @@
-import type {
-  BadgeDialogResult,
-  LinkDialogResult,
-  TableDialogResult,
-  MediaDialogResult,
-  EmojiDialogResult,
-  AttrDialogResult,
-  FootnoteDialogResult,
-  CodeBlockDialogResult,
-  FrontmatterDialogResult,
-  CollapseDialogResult,
-  TimelineDialogResult,
-} from "@/editor/commands/types.js";
+import type { Theme } from "@/theme/Theme";
+import type { DialogResultMap, DialogType } from "@/editor/commands/dialogTypes.js";
 
-export type DialogResultMap = {
-  table: TableDialogResult;
-  link: LinkDialogResult;
-  badge: BadgeDialogResult;
-  media: MediaDialogResult;
-  emoji: EmojiDialogResult;
-  attr: AttrDialogResult;
-  footnote: FootnoteDialogResult;
-  codeBlock: CodeBlockDialogResult;
-  frontmatter: FrontmatterDialogResult;
-  collapse: CollapseDialogResult;
-  timeline: TimelineDialogResult;
-};
-
-export type DialogType = keyof DialogResultMap;
+export type { DialogType, DialogResultMap } from "@/editor/commands/dialogTypes.js";
 
 let dialogCounter = 0;
 
 export function requestDialog<T extends DialogType>(
-  theme: import("@/theme/Theme").Theme,
+  theme: Theme,
   type: T,
   props?: Record<string, unknown>,
 ): Promise<DialogResultMap[T] | null> {
