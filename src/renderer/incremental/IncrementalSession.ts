@@ -23,10 +23,10 @@ import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import type { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import type { Theme } from "@/theme/Theme.js";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
-import type { CherryChangeLineSet } from "./CherryChangeSet.js";
-import { BlockIndex } from "./BlockIndex.js";
-import { parseWithHashBoundary } from "./HashBoundaryResolver.js";
-import { reconcileDom } from "./DomReconciler.js";
+import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
+import { BlockIndex } from "@/renderer/incremental/BlockIndex";
+import { parseWithHashBoundary } from "@/renderer/incremental/HashBoundaryResolver";
+import { reconcileDom } from "@/renderer/incremental/DomReconciler";
 
 /** {@link IncrementalSession.tryUpdate} 的返回值。 */
 export interface IncrementalUpdateResult {

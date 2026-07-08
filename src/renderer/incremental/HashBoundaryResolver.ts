@@ -28,8 +28,8 @@ import type {
   IncrementalParseResult,
 } from "@/transformer/core/Incremental/IncrementalParseRange.js";
 import { frontmatterEndLine } from "@/transformer/extends/block/frontmatter.js";
-import type { CherryChangeLineSet } from "./CherryChangeSet.js";
-import { iterateTopLevelLines } from "./BlockIndex.js";
+import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
+import { iterateTopLevelLines } from "@/renderer/incremental/BlockIndex";
 
 /**
  * 单个 AST 顶层块的行区间与 hash（hash 边界专用，含 invisible 块）。

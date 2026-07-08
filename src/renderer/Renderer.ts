@@ -1,22 +1,14 @@
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import {
+  type LightDark,
   Theme,
   THEME_EVENT_LIGHT_DARK,
   THEME_EVENT_SKIN,
   type ThemeLightDarkEvent,
   type ThemeSkinEvent,
-  type LightDark,
 } from "@/theme/Theme.js";
-export {
-  Theme,
-  THEME_EVENT_LIGHT_DARK,
-  THEME_EVENT_SKIN,
-  type ThemeLightDarkEvent,
-  type ThemeSkinEvent,
-  type LightDark,
-};
-import { extractToc, extractTocFlat } from "./toc/extract.js";
+import { extractToc, extractTocFlat } from "@/renderer/toc/extract";
 import { replaceGraph } from "@/renderer/graph/graph";
 import { CodeListener } from "@/renderer/code/code";
 import hljs from "highlight.js/lib/common";
@@ -26,6 +18,15 @@ import { BlockIndex } from "@/renderer/incremental/BlockIndex.js";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
 import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
 import { ParserStore } from "@/transformer/core/ParserStore";
+
+export {
+  Theme,
+  THEME_EVENT_LIGHT_DARK,
+  THEME_EVENT_SKIN,
+  type ThemeLightDarkEvent,
+  type ThemeSkinEvent,
+  type LightDark,
+};
 
 export interface RenderResult {
   html: string;
