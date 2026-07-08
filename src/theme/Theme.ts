@@ -1,6 +1,10 @@
-import { EventBus, type EventHandler } from "./event/EventBus.js";
-import { logD as emitLogD, logE as emitLogE, logW as emitLogW } from "./log.js";
-import REGISTERED_THEMES from "./ThemeRegister.js";
+import { EventBus, type EventHandler } from "@/theme/event/EventBus";
+import {
+  logD as emitLogD,
+  logE as emitLogE,
+  logW as emitLogW,
+} from "@/theme/log";
+import REGISTERED_THEMES from "@/theme/ThemeRegister";
 
 export type LightDark = "light" | "dark";
 
