@@ -137,11 +137,8 @@ export class Cherry {
     this.toolbar =
       options.toolbar === false
         ? null
-        : new Toolbar(
-            this.toolbarEl,
-            this.theme,
-            options.toolbar ?? {},
-            () => this.editor.focus(),
+        : new Toolbar(this.toolbarEl, this.theme, options.toolbar ?? {}, () =>
+            this.editor.focus(),
           );
 
     this.sidebar = new SideBar(
