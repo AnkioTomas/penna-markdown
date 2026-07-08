@@ -12,7 +12,10 @@ import { TransformerEngineOptions } from "@/transformer/TransformerEngineOptions
 import { RenderContext } from "@/transformer/core/context/RenderContext";
 import { MarkdownNode } from "@/transformer/core/MarkdownNode";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
-import { IncrementalParseRange, IncrementalParseResult, } from "@/transformer/core/Incremental/IncrementalParseRange";
+import {
+  IncrementalParseRange,
+  IncrementalParseResult,
+} from "@/transformer/core/Incremental/IncrementalParseRange";
 import { IncrementalParser } from "@/transformer/core/Incremental/IncrementalParser";
 
 /**

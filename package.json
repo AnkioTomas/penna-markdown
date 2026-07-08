@@ -67,7 +67,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "clean": "rm -rf dist",
-    "format": "prettier --write ."
+    "format:imports": "tsx scripts/format-imports.ts",
+    "format": "npm run format:imports && prettier --write ."
   },
   "dependencies": {
     "@codemirror/commands": "^6.8.1",

@@ -19,7 +19,11 @@
 
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import type { TransformerEngine } from "@/transformer/TransformerEngine.js";
-import { BLOCK_HASH_ATTR, BlockIndex, lookupByHashPrefix, } from "@/renderer/incremental/BlockIndex";
+import {
+  BLOCK_HASH_ATTR,
+  BlockIndex,
+  lookupByHashPrefix,
+} from "@/renderer/incremental/BlockIndex";
 
 /** {@link reconcileDom} 的返回值。 */
 export interface DomReconcileResult {
