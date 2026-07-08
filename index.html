@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cherry Markdown Next</title>
+    <script>
+      (function () {
+        var params = new URLSearchParams(location.search);
+        var to =
+          params.get("to") ||
+          params.get("demo") ||
+          (location.hash || "").replace(/^#\/?/, "");
+        var target = "/demo/";
+        if (to) {
+          target =
+            "/demo/" +
+            to.replace(/^\/+/, "").replace(/\/+$/, "") +
+            "/index.html";
+        }
+        location.replace(target);
+      })();
+    </script>
+    <meta http-equiv="refresh" content="0;url=/demo/" />
+  </head>
+  <body>
+    <p>正在跳转到 Demo… <a href="/demo/">点此继续</a></p>
+  </body>
+</html>
