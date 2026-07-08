@@ -47,7 +47,7 @@ class ImageInlineParser extends BaseInlineParser {
     const nextIndex = labelEnd + 1;
     const children = ctx.parseInline(labelText);
 
-    let j = skipInlineWhitespace(src, nextIndex);
+    const j = skipInlineWhitespace(src, nextIndex);
 
     if (j < src.length && src[j] === "(") {
       const inline = parseInlineLinkParen(src, j);

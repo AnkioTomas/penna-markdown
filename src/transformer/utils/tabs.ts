@@ -204,7 +204,7 @@ function advanceInLine(line, offset, column, count, inColumns) {
  * @returns {string}
  */
 export function expandListItemContent(line, contentOffset) {
-  let column = visualColumn(line, contentOffset);
+  const column = visualColumn(line, contentOffset);
   let offset = contentOffset;
 
   if (offset < line.length && (line[offset] === " " || line[offset] === "\t")) {

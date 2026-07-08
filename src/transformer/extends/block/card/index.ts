@@ -3,12 +3,12 @@
  * @module transformer/extends/block/card
  */
 
-import cardBlockParser from "./card.js";
-import { linkCardBlockParser } from "./linkCard.js";
-import { imageCardBlockParser } from "./imageCard.js";
-import { repoCardBlockParser } from "./repoCard.js";
-import { cardGridBlockParser } from "./cardGrid.js";
-import { cardMasonryBlockParser } from "./cardMasonry.js";
+import cardBlockParser from "@/transformer/extends/block/card/card";
+import { linkCardBlockParser } from "@/transformer/extends/block/card/linkCard";
+import { imageCardBlockParser } from "@/transformer/extends/block/card/imageCard";
+import { repoCardBlockParser } from "@/transformer/extends/block/card/repoCard";
+import { cardGridBlockParser } from "@/transformer/extends/block/card/cardGrid";
+import { cardMasonryBlockParser } from "@/transformer/extends/block/card/cardMasonry";
 import type { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import type { SyntaxMap } from "@/transformer/utils/syntaxMap.js";
 

@@ -3,7 +3,7 @@
  * @module transformer/core/ParserBase
  */
 
-import type { MarkdownNode } from "./MarkdownNode.js";
+import type { MarkdownNode } from "@/transformer/core/MarkdownNode";
 import { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
 import { RenderContext } from "@/transformer/core/context/RenderContext";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
@@ -69,7 +69,7 @@ export abstract class BaseInlineParser {
   render(
     node: MarkdownNode,
     ctx: RenderContext,
-    html: Object = { html: "" },
+    html: object = { html: "" },
   ): string {
     return "";
   }

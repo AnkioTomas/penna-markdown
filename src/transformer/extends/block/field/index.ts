@@ -3,8 +3,8 @@
  * @module transformer/extends/block/field
  */
 
-import { fieldBlockParser } from "./field.js";
-import { fieldGroupBlockParser } from "./fieldGroup.js";
+import { fieldBlockParser } from "@/transformer/extends/block/field/field";
+import { fieldGroupBlockParser } from "@/transformer/extends/block/field/fieldGroup";
 import type { BaseBlockParser } from "@/transformer/core/ParserBase.js";
 import type { SyntaxMap } from "@/transformer/utils/syntaxMap.js";
 

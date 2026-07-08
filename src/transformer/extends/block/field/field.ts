@@ -12,8 +12,11 @@ import type { BlockParseContext } from "@/transformer/core/context/BlockParseCon
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
-import { blockLength, readTripleColonBlock } from "../card/shared.js";
-import { parseFieldDirectives } from "./shared.js";
+import {
+  blockLength,
+  readTripleColonBlock,
+} from "@/transformer/extends/block/card/shared";
+import { parseFieldDirectives } from "@/transformer/extends/block/field/shared";
 
 const OPEN_RE = /^ {0,3}:::(?!:)\s+field(?:\s+(\S+))?\s*$/;
 

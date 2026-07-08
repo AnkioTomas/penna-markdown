@@ -12,11 +12,9 @@ import { TransformerEngineOptions } from "@/transformer/TransformerEngineOptions
 import { RenderContext } from "@/transformer/core/context/RenderContext";
 import { MarkdownNode } from "@/transformer/core/MarkdownNode";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
-import {
-  IncrementalParseRange,
-  IncrementalParseResult,
-} from "@/transformer/core/Incremental/IncrementalParseRange";
+import { IncrementalParseRange, IncrementalParseResult, } from "@/transformer/core/Incremental/IncrementalParseRange";
 import { IncrementalParser } from "@/transformer/core/Incremental/IncrementalParser";
+
 /**
  * Markdown 解析与 HTML 渲染核心引擎。
  * 负责调度块级与行内解析器，构建 AST 树，并驱动 HTML 的增量及全量渲染。
@@ -78,7 +76,7 @@ export class TransformerEngine {
     markdown: string | string[],
     range: IncrementalParseRange,
   ): IncrementalParseResult {
-    let incrementalParser = new IncrementalParser(this.registry);
+    const incrementalParser = new IncrementalParser(this.registry);
     return incrementalParser.parse(prevAst, markdown, range);
   }
 
@@ -167,9 +165,9 @@ export class TransformerEngine {
     const results: string[] = [];
 
     for (let i = 0; i < nodes.length; i++) {
-      let node = nodes[i];
-      let prevHtml = results.pop() ?? "";
-      let prevHtmlObj = { html: prevHtml };
+      const node = nodes[i];
+      const prevHtml = results.pop() ?? "";
+      const prevHtmlObj = { html: prevHtml };
       const html =
         this.registry
           .getInlineParser(node.type)

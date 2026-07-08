@@ -7,7 +7,7 @@ import type {
   BaseBlockParser,
   BaseInlineParser,
   SyntaxOptions,
-} from "./ParserBase.js";
+} from "@/transformer/core/ParserBase";
 import { gfmBlockSyntax, gfmInlineSyntax } from "@/transformer/gfm/index.js";
 import { extendBlockSyntax, extendInlineSyntax } from "@/transformer/extends";
 

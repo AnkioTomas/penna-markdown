@@ -197,9 +197,9 @@ function findClosedTag(src: string, index: number): number {
 }
 
 export function findAttr(src: string, _index: number) {
-  let index = skipSpaces(src, _index);
+  const index = skipSpaces(src, _index);
   if (src[index] !== "{") return { next: _index, attr: null };
-  let close = findClosedTag(src, index);
+  const close = findClosedTag(src, index);
   if (close === -1) return { next: _index, attr: null };
   const rawInner = src.slice(index + 1, close);
   const inner = rawInner.trim();
@@ -228,7 +228,7 @@ class HtmlAttrsInlineParser extends BaseInlineParser {
     if (isEscaped(src, index)) return null;
 
     // 找最近的未转义 '}'
-    let close = findClosedTag(src, index);
+    const close = findClosedTag(src, index);
 
     if (close === -1) {
       return { node: createNode("text", 1, "{"), nextIndex: index + 1 };

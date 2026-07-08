@@ -12,7 +12,7 @@ import type { BlockParseContext } from "@/transformer/core/context/BlockParseCon
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
-import { blockLength, pickAttr } from "./card/shared.js";
+import { blockLength, pickAttr } from "@/transformer/extends/block/card/shared";
 
 const OPEN_RE = /^ {0,3}:::(?!:)\s+timeline(?:\s+(.*))?$/;
 const CLOSE_RE = /^ {0,3}:::\s*$/;

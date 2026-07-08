@@ -17,7 +17,7 @@ import {
   parseTitleInline,
   pickAttr,
   readTripleColonBlock,
-} from "./shared.js";
+} from "@/transformer/extends/block/card/shared";
 
 const OPEN_RE = /^ {0,3}:::(?!:)\s+image-card(?:\s+(.*))?\s*$/;
 

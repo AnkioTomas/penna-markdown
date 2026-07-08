@@ -37,7 +37,7 @@ class SetextHeadingBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   canOpenAt(lines: string[], index: number, ctx: BlockParseContext): boolean {
-    let line = lines[index];
+    const line = lines[index];
     if (isBlankString(line)) return false;
     if (ctx.inContainer()) return false;
 

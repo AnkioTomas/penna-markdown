@@ -11,7 +11,10 @@ import {
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
-import { blockLength, readQuadColonBlock } from "../card/shared.js";
+import {
+  blockLength,
+  readQuadColonBlock,
+} from "@/transformer/extends/block/card/shared";
 
 const OPEN_RE = /^ {0,3}::::(?!:)\s+field-group\s*$/;
 

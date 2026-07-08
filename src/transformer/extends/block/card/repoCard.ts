@@ -16,7 +16,7 @@ import {
   blockLength,
   parseRepoCardOpen,
   readTripleColonBlock,
-} from "./shared.js";
+} from "@/transformer/extends/block/card/shared";
 
 const OPEN_RE = /^ {0,3}:::(?!:)\s+repo-card(?:\s+(.*))?\s*$/;
 

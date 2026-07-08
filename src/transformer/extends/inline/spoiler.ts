@@ -60,7 +60,7 @@ class SpoilerInlineParser extends BaseInlineParser {
     if (inner.length === 0) return null;
     let closeIndex = endIndex + 2;
 
-    let props = {};
+    const props = {};
 
     const attr = findAttr(src, closeIndex);
 
@@ -69,7 +69,7 @@ class SpoilerInlineParser extends BaseInlineParser {
       closeIndex = attr.next;
     }
 
-    let matchLength = closeIndex - index;
+    const matchLength = closeIndex - index;
 
     return {
       node: createNode(

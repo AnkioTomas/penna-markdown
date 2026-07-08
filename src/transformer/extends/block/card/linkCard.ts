@@ -16,7 +16,7 @@ import {
   blockLength,
   parseLinkCardOpen,
   readTripleColonBlock,
-} from "./shared.js";
+} from "@/transformer/extends/block/card/shared";
 
 const OPEN_RE = /^ {0,3}:::(?!:)\s+link-card(?:\s+(.*))?\s*$/;
 

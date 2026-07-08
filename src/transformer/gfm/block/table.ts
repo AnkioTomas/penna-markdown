@@ -22,7 +22,7 @@ type Alignment = "left" | "center" | "right" | "none";
 export function parseTableRow(
   line: string,
 ): { cells: string[]; hasUnescapedPipe: boolean } | null {
-  let start = skipBlockPrefixSpaces(line);
+  const start = skipBlockPrefixSpaces(line);
 
   let end = line.length;
   // 2. 忽略尾随的空白符

@@ -52,7 +52,7 @@ export class InlineParseEngine {
           cached = buildEmphasisLexParts(src, that.ctx);
           that.emphasisLexCache.set(src, cached);
         }
-        return cached!!;
+        return cached!;
       }
     })();
   }

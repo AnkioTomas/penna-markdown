@@ -50,7 +50,7 @@ class BlockquoteBlockParser extends BaseBlockParser {
     if (!BLOCKQUOTE_LINE.test(line)) return null;
 
     return withBlockquoteFrame(ctx, () => {
-      let innerLines: string[] = [];
+      const innerLines: string[] = [];
       let i = index;
 
       while (i < lines.length) {

@@ -161,7 +161,7 @@ export class BlockParseEngine {
     startLine: number,
     endLine: number,
   ): string {
-    let str = lines.slice(startLine, endLine).join("");
+    const str = lines.slice(startLine, endLine).join("");
     return this.hash(str) + "_" + this.randomString(16);
   }
 
