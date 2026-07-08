@@ -84,21 +84,25 @@ export abstract class FormDialog<TResult> {
       form.append(head);
     }
 
+    const scrollArea = document.createElement("div");
+    scrollArea.className = "cherry-dialog-form-scroll-area";
+    form.append(scrollArea);
+
     const hint = this.hint;
     if (hint) {
       const hintEl = document.createElement("p");
       hintEl.className = "cherry-dialog-table-hint";
       hintEl.textContent = hint;
-      form.append(hintEl);
+      scrollArea.append(hintEl);
     }
 
     const errEl = document.createElement("p");
     errEl.className = "cherry-dialog-yaml-error";
     errEl.hidden = true;
-    form.append(errEl);
+    scrollArea.append(errEl);
 
     for (const field of this.fields) {
-      this.appendField(form, field, merged);
+      this.appendField(scrollArea, field, merged);
     }
 
     const actions = document.createElement("div");
@@ -189,7 +193,7 @@ export abstract class FormDialog<TResult> {
   }
 
   private appendField(
-    form: HTMLFormElement,
+    form: HTMLElement,
     field: FormFieldDef,
     props: Record<string, unknown>,
   ): void {

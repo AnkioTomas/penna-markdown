@@ -32,7 +32,11 @@
   position: relative;
   z-index: 1;
   min-width: 320px;
-  max-width: min(92vw, 460px);
+  width: fit-content;
+  max-width: 92vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
   border-radius: 12px;
   background: var(--cherry-c-bg);
   border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent);
@@ -47,13 +51,18 @@
 }
 
 .cherry-dialog-body {
-  padding: 24px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .cherry-dialog-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  flex: 1;
+  min-height: 0;
 }
 
 .cherry-dialog-field {
@@ -157,10 +166,26 @@
 }
 
 .cherry-dialog-table-head {
+  padding: 24px 24px 16px;
+  flex-shrink: 0;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
+}
+
+.cherry-dialog-form-scroll-area {
+  padding: 24px 24px 0;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cherry-dialog-table-head + .cherry-dialog-form-scroll-area {
+  padding-top: 0;
 }
 
 .cherry-dialog-table-title {
@@ -220,7 +245,8 @@
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 12px;
+  padding: 16px 24px 24px;
+  flex-shrink: 0;
 
   button {
     padding: 8px 16px;
