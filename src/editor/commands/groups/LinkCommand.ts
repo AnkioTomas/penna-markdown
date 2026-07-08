@@ -63,7 +63,7 @@ export class LinkCommand implements Command, DialogCapableCommand {
       url: selected,
     });
     if (!data?.url) return false;
-    
+
     const text = data.text || data.url;
     const titleStr = data.title ? ` "${data.title}"` : "";
     insertText(view, `[${text}](${data.url}${titleStr})`);
