@@ -9,7 +9,7 @@ import {
   type CommandContext,
 } from "@/editor/commands/Command";
 
-export type CollapseVariant = "default" | "expanded" | "custom";
+export type CollapseVariant = "default" | "expanded";
 
 export class CollapseCommand implements Command {
   constructor(private readonly variant: CollapseVariant) {}
@@ -26,8 +26,6 @@ export class CollapseCommand implements Command {
       snippet = `::: collapse accordion\n- 手风琴 A\n\n  ${indentedContent}\n\n- 手风琴 B\n\n  面板内容\n:::\n`;
     } else if (this.variant === "expanded") {
       snippet = `::: collapse accordion\n- :+ 手风琴 A\n\n  ${indentedContent}\n\n- 手风琴 B\n\n  面板内容\n:::\n`;
-    } else {
-      snippet = `::: collapse\n- 折叠标题\n\n  ${indentedContent}\n:::\n`;
     }
 
     insertSnippet(view, snippet);
@@ -39,5 +37,3 @@ export class CollapseCommand implements Command {
 export const collapseDefaultCommand = new CollapseCommand("default");
 /** `collapseExpanded` — 手风琴，首面板默认展开（:+） */
 export const collapseExpandedCommand = new CollapseCommand("expanded");
-/** `collapseCustom` — 自定义折叠/手风琴 */
-export const collapseCustomCommand = new CollapseCommand("custom");
