@@ -1,11 +1,10 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { Theme } from "@/theme/Theme";
 import { requestDialog } from "@/editor/dialog/requestDialog.js";
-
-import { validateFrontmatterYaml } from "@/editor/dialog/FrontmatterDialog.js";
+import { validateFrontmatterYaml } from "@/editor/commands/groups/FrontmatterCommand.js";
 
 describe("validateFrontmatterYaml", () => {
   it("accepts simple yaml", () => {

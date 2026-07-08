@@ -197,6 +197,27 @@ export function renderToolbar(
     openPanel = null;
   };
 
+  const applyCollisionDetection = (panel: HTMLElement, isNested: boolean) => {
+    if (window.innerWidth <= 640 && isNested) return;
+
+    panel.classList.remove("is-flipped");
+    panel.style.transform = '';
+    
+    const rect = panel.getBoundingClientRect();
+    if (rect.right > window.innerWidth - 8) {
+      panel.classList.add("is-flipped");
+      
+      const flippedRect = panel.getBoundingClientRect();
+      if (flippedRect.left < 8) {
+        const shift = 8 - flippedRect.left;
+        panel.style.transform = isNested ? `translateX(${shift}px) scale(1)` : `translate(${shift}px, 0) scale(1)`;
+      }
+    } else if (rect.left < 8) {
+      const shift = 8 - rect.left;
+      panel.style.transform = isNested ? `translateX(${shift}px) scale(1)` : `translate(${shift}px, 0) scale(1)`;
+    }
+  };
+
   // 页面级点击穿透闭合机制
   const onDocClick = (e: MouseEvent) => {
     if (!openPanel) return;
@@ -239,6 +260,10 @@ export function renderToolbar(
             wrap.classList.add("is-open");
             trigger.setAttribute("aria-expanded", "true");
             openPanel = wrap.querySelector(".cherry-toolbar-menu-panel");
+            
+            if (openPanel) {
+              applyCollisionDetection(openPanel, false);
+            }
           }
         } else {
           // 二级菜单触发器点击：仅切换自身
@@ -261,6 +286,9 @@ export function renderToolbar(
             }
             wrap.classList.add("is-open");
             trigger.setAttribute("aria-expanded", "true");
+            
+            const panel = wrap.querySelector(".cherry-toolbar-menu-panel") as HTMLElement;
+            if (panel) applyCollisionDetection(panel, true);
           }
         }
       }
@@ -288,7 +316,58 @@ export function renderToolbar(
     }
   };
 
+  const hoverTimers = new WeakMap<HTMLElement, ReturnType<typeof setTimeout>>();
+
+  const onPointerOver = (e: PointerEvent) => {
+    if (e.pointerType === "touch") return; // 防止移动端触控触发 hover 干扰 click 闭合
+    const wrap = (e.target as HTMLElement).closest(".cherry-toolbar-submenu") as HTMLElement;
+    if (!wrap) return;
+
+    const timer = hoverTimers.get(wrap);
+    if (timer) {
+      clearTimeout(timer);
+      hoverTimers.delete(wrap);
+    }
+
+    if (!wrap.classList.contains("is-open")) {
+      const parentPanel = wrap.closest(".cherry-toolbar-menu-panel");
+      if (parentPanel) {
+        parentPanel.querySelectorAll(".cherry-toolbar-submenu.is-open").forEach((sib) => {
+          if (sib !== wrap) {
+            sib.classList.remove("is-open");
+            sib.querySelector(".cherry-toolbar-menu-trigger")?.setAttribute("aria-expanded", "false");
+            const t = hoverTimers.get(sib as HTMLElement);
+            if (t) { clearTimeout(t); hoverTimers.delete(sib as HTMLElement); }
+          }
+        });
+      }
+
+      wrap.classList.add("is-open");
+      wrap.querySelector(".cherry-toolbar-menu-trigger")?.setAttribute("aria-expanded", "true");
+      
+      const panel = wrap.querySelector(".cherry-toolbar-menu-panel") as HTMLElement;
+      if (panel) applyCollisionDetection(panel, true);
+    }
+  };
+
+  const onPointerOut = (e: PointerEvent) => {
+    if (e.pointerType === "touch") return;
+    const wrap = (e.target as HTMLElement).closest(".cherry-toolbar-submenu") as HTMLElement;
+    if (!wrap) return;
+    const related = e.relatedTarget as HTMLElement | null;
+    if (wrap.contains(related)) return;
+
+    const timer = setTimeout(() => {
+      wrap.classList.remove("is-open");
+      wrap.querySelector(".cherry-toolbar-menu-trigger")?.setAttribute("aria-expanded", "false");
+      hoverTimers.delete(wrap);
+    }, 150);
+    hoverTimers.set(wrap, timer);
+  };
+
   mount.addEventListener("click", onToolbarClick);
+  mount.addEventListener("pointerover", onPointerOver);
+  mount.addEventListener("pointerout", onPointerOut);
 
   const scroll = el("div", "cherry-toolbar-scroll");
 
@@ -316,6 +395,8 @@ export function renderToolbar(
   return () => {
     document.removeEventListener("click", onDocClick);
     mount.removeEventListener("click", onToolbarClick);
+    mount.removeEventListener("pointerover", onPointerOver);
+    mount.removeEventListener("pointerout", onPointerOut);
     closeOpenPanel();
     mount.replaceChildren();
     mount.classList.remove("cherry-toolbar");

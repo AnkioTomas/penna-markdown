@@ -129,7 +129,9 @@ describe("Toolbar render", () => {
       },
     });
 
-    const btn = mount.querySelector('[data-toolbar-id="my-custom-btn"]') as HTMLButtonElement;
+    const btn = mount.querySelector(
+      '[data-toolbar-id="my-custom-btn"]',
+    ) as HTMLButtonElement;
     expect(btn).toBeTruthy();
     btn?.click();
     expect(clickedId).toBe("my-custom-btn");

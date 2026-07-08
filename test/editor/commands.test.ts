@@ -4,7 +4,14 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import { runCommand, applyHeading } from "@/editor/commands/index.js";
+import { runCommand } from "@/editor/commands/index.js";
+import { codeBlockMarkdown } from "@/editor/commands/groups/CodeBlockCommand";
+import { cardMarkdown } from "@/editor/commands/groups/CardCommand.js";
+import { fieldMarkdown } from "@/editor/commands/groups/FieldCommand.js";
+import { tabsMarkdown } from "@/editor/commands/groups/TabsCommand.js";
+import { alertMarkdown } from "@/editor/commands/groups/AlertCommand.js";
+import { mermaidMarkdown } from "@/editor/commands/groups/MermaidCommand.js";
+import { collapseMarkdown } from "@/editor/commands/groups/CollapseCommand.js";
 import { Theme } from "@/theme/Theme.js";
 
 function createView(
@@ -43,7 +50,7 @@ describe("editor/commands", () => {
 
   it("heading1 applies to whole line when cursor is mid-line", () => {
     const view = createView("Title", { anchor: 3 });
-    applyHeading(view, 1);
+    runCommand(view, "heading1");
     expect(view.state.doc.toString()).toBe("# Title");
     view.destroy();
   });
@@ -97,16 +104,36 @@ describe("editor/commands", () => {
     view.destroy();
   });
 
-  it("alert inserts GFM admonition syntax", () => {
+  it("alertTip inserts GFM admonition after dialog result", async () => {
     const view = createView("");
-    runCommand(view, "alert", { type: "TIP" });
+    const theme = new Theme();
+    theme.on("editor:dialog:open", (payload) => {
+      const { id } = payload as { id: string };
+      queueMicrotask(() => {
+        theme.emit("editor:dialog:result", {
+          id,
+          data: { kind: "TIP", content: "提示内容" },
+        });
+      });
+    });
+    await runCommand(view, "alertTip", undefined, { theme });
     expect(view.state.doc.toString()).toBe("> [!TIP]\n> 提示内容\n");
     view.destroy();
   });
 
-  it("container inserts triple-colon block", () => {
+  it("containerWarning inserts triple-colon block after dialog result", async () => {
     const view = createView("");
-    runCommand(view, "container", { type: "warning", title: "警告" });
+    const theme = new Theme();
+    theme.on("editor:dialog:open", (payload) => {
+      const { id } = payload as { id: string };
+      queueMicrotask(() => {
+        theme.emit("editor:dialog:result", {
+          id,
+          data: { type: "warning", title: "警告", content: "容器内容" },
+        });
+      });
+    });
+    await runCommand(view, "containerWarning", undefined, { theme });
     expect(view.state.doc.toString()).toBe("::: warning 警告\n容器内容\n:::\n");
     view.destroy();
   });
@@ -141,5 +168,183 @@ describe("editor/commands", () => {
     await runCommand(view, "badge", undefined, { theme });
     expect(view.state.doc.toString()).toBe("[new]{.warning}");
     view.destroy();
+  });
+
+  it("card inserts markdown after dialog result", async () => {
+    const view = createView("");
+    const theme = new Theme();
+    theme.on("editor:dialog:open", (payload) => {
+      const { id } = payload as { id: string };
+      queueMicrotask(() => {
+        theme.emit("editor:dialog:result", {
+          id,
+          data: {
+            variant: "basic",
+            title: "标题",
+            content: "正文",
+          },
+        });
+      });
+    });
+    await runCommand(view, "card", undefined, { theme });
+    expect(view.state.doc.toString()).toBe("::: card 标题\n正文\n:::\n");
+    view.destroy();
+  });
+});
+
+describe("codeBlockMarkdown", () => {
+  it("collapse variant emits :collapsed-lines=N", () => {
+    const md = codeBlockMarkdown({
+      variant: "collapse",
+      lang: "css",
+      code: "a {}\nb {}",
+      collapsedMaxLines: 5,
+    });
+    expect(md).toBe("```css :collapsed-lines=5\na {}\nb {}\n```\n");
+  });
+});
+
+describe("cardMarkdown", () => {
+  it("link variant emits link and icon attrs", () => {
+    const md = cardMarkdown({
+      variant: "link",
+      title: "文档",
+      link: "https://example.com",
+      icon: "https://example.com/icon.png",
+      content: "描述",
+    });
+    expect(md).toBe(
+      '::: link-card 文档 link="https://example.com" icon="https://example.com/icon.png"\n描述\n:::\n',
+    );
+  });
+
+  it("image variant emits metadata attrs", () => {
+    const md = cardMarkdown({
+      variant: "image",
+      image: "https://example.com/a.webp",
+      title: "灯塔",
+      href: "/",
+      author: "Alice",
+      date: "2024/01/01",
+      description: "海边",
+    });
+    expect(md).toContain('image="https://example.com/a.webp"');
+    expect(md).toContain('title="灯塔"');
+    expect(md).toContain('author="Alice"');
+    expect(md).toContain('description="海边"');
+  });
+
+  it("grid variant emits responsive cols and child cards", () => {
+    const md = cardMarkdown({
+      variant: "grid",
+      colsMode: "responsive",
+      colsSm: 1,
+      colsMd: 2,
+      colsLg: 3,
+      items: [
+        { title: "A", content: "一" },
+        { title: "B", content: "二" },
+      ],
+    });
+    expect(md).toContain(':::: card-grid cols="{ sm: 1, md: 2, lg: 3 }"');
+    expect(md).toContain("::: card A\n一\n:::");
+    expect(md).toContain("::: card B\n二\n:::");
+  });
+
+  it("masonry images mode emits image list", () => {
+    const md = cardMarkdown({
+      variant: "masonry",
+      cols: 3,
+      gap: 16,
+      mode: "images",
+      imageUrls: ["https://example.com/1.png", "https://example.com/2.png"],
+    });
+    expect(md).toContain(':::: card-masonry cols="3" gap="16"');
+    expect(md).toContain("![ ](https://example.com/1.png)");
+    expect(md).toContain("![ ](https://example.com/2.png)");
+  });
+});
+
+describe("fieldMarkdown", () => {
+  it("basic field emits directives", () => {
+    const md = fieldMarkdown({
+      variant: "basic",
+      name: "theme",
+      fieldType: "ThemeConfig",
+      status: "required",
+      defaultValue: "{ base: '/' }",
+      description: "主题配置",
+    });
+    expect(md).toContain("::: field theme");
+    expect(md).toContain("@type ThemeConfig");
+    expect(md).toContain("@required");
+    expect(md).toContain("@default { base: '/' }");
+  });
+});
+
+describe("tabsMarkdown", () => {
+  it("marks active tab with @tab:active", () => {
+    const md = tabsMarkdown({
+      tabs: [
+        { title: "A", content: "内容 A" },
+        { title: "B", content: "内容 B", active: true },
+      ],
+    });
+    expect(md).toContain("@tab A");
+    expect(md).toContain("@tab:active B");
+  });
+});
+
+describe("alertMarkdown", () => {
+  it("emits GFM alert block", () => {
+    expect(alertMarkdown({ kind: "WARNING", content: "注意" })).toBe(
+      "> [!WARNING]\n> 注意\n",
+    );
+  });
+});
+
+describe("mermaidMarkdown", () => {
+  it("emits max-width info string", () => {
+    const md = mermaidMarkdown({
+      variant: "flow",
+      source: "flowchart TD\n  A --> B",
+      maxWidth: "640",
+    });
+    expect(md).toBe("```mermaid max-width=640\nflowchart TD\n  A --> B\n```\n");
+  });
+});
+
+describe("collapseMarkdown", () => {
+  it("accordion mode emits multiple panels", () => {
+    const md = collapseMarkdown({
+      mode: "accordion",
+      panels: [
+        { title: "手风琴 A", content: "内容 A" },
+        { title: "手风琴 B", content: "内容 B" },
+      ],
+    });
+    expect(md).toBe(
+      "::: collapse accordion\n- 手风琴 A\n\n  内容 A\n\n- 手风琴 B\n\n  内容 B\n:::\n",
+    );
+  });
+
+  it("expanded preset uses :+ marker", () => {
+    const md = collapseMarkdown({
+      mode: "accordion",
+      panels: [{ title: "面板标题", content: "面板内容", expanded: true }],
+    });
+    expect(md).toContain("- :+ 面板标题");
+  });
+
+  it("expand mode uses :- for collapsed panel", () => {
+    const md = collapseMarkdown({
+      mode: "expand",
+      panels: [
+        { title: "标题 1", content: "正文 1" },
+        { title: "标题 2", content: "正文 2", expanded: false },
+      ],
+    });
+    expect(md).toContain("::: collapse expand");
+    expect(md).toContain("- :- 标题 2");
   });
 });

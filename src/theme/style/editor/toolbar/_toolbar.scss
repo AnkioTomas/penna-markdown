@@ -157,6 +157,7 @@
   z-index: 200;
   flex-direction: column;
   min-width: 168px;
+  max-width: calc(100vw - 16px);
   padding: 8px;
   border-radius: 12px;
   background: var(--cherry-c-bg-elevated);
@@ -180,14 +181,18 @@
   margin-left: 4px;
 }
 
-.cherry-toolbar-scroll {
-  > .cherry-toolbar-menu:last-child,
-  > .cherry-toolbar-menu:nth-last-child(2) {
-    > .cherry-toolbar-menu-panel {
-      left: auto;
-      right: 0;
-    }
-  }
+/* Dynamic flipped state from JS */
+.cherry-toolbar-menu-panel.is-flipped {
+  left: auto;
+  right: 0;
+}
+
+.cherry-toolbar-submenu > .cherry-toolbar-menu-panel.is-flipped {
+  left: auto;
+  right: 100%;
+  margin-left: 0;
+  margin-right: 4px;
+  transform: translateX(8px) scale(0.96);
 }
 
 /* Click-to-open for top level menus */
@@ -198,12 +203,16 @@
   pointer-events: auto;
 }
 
-/* Hover-to-open for submenus */
-.cherry-toolbar-submenu:hover > .cherry-toolbar-menu-panel {
+/* JS state controlled opening for submenus */
+.cherry-toolbar-submenu.is-open > .cherry-toolbar-menu-panel {
   display: flex;
   opacity: 1;
   transform: translateX(0) scale(1);
   pointer-events: auto;
+}
+
+.cherry-toolbar-submenu.is-open > .cherry-toolbar-menu-panel.is-flipped {
+  transform: translateX(0) scale(1);
 }
 
 .cherry-toolbar-menu-header {
@@ -308,9 +317,29 @@
     padding: 10px 12px;
   }
 
+  .cherry-toolbar-menu-panel {
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .cherry-toolbar-submenu {
+    display: flex;
+    flex-direction: column;
+  }
+
   .cherry-toolbar-submenu .cherry-toolbar-menu-panel {
-    top: calc(100% + 2px);
-    left: 0;
+    position: static;
+    transform: none !important;
+    box-shadow: none;
+    border: none;
+    padding: 0 0 0 24px;
+    background: transparent;
+    margin: 4px 0 0 0;
+    min-width: 0;
+    width: 100%;
+    max-height: none; /* submenus within accordion shouldn't have their own scrollbar */
+    overflow-y: visible;
   }
 
   .cherry-toolbar-desktop-only {
