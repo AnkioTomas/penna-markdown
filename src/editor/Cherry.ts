@@ -10,8 +10,8 @@ import { printCherryLogo } from "@/editor/printLogo";
 import { ScrollSync } from "@/editor/sync/ScrollSync";
 import { CommandBridge } from "@/editor/CommandBridge.js";
 import { DialogHost } from "@/editor/dialog/DialogHost.js";
-import { runCommand as executeCommand } from "@/editor/commands.js";
-import type { EditorCommand } from "@/editor/commands.js";
+import { runCommand as executeCommand } from "@/editor/commands/index.js";
+import type { EditorCommand } from "@/editor/commands/index.js";
 import type { EditorView } from "@codemirror/view";
 import { Theme } from "@/theme/Theme";
 
