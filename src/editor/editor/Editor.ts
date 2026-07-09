@@ -24,7 +24,9 @@ import {
   CherryMathBlockExtension,
   CherryCommentBlockExtension,
   codeInfoPlugin,
-} from "@/editor/editor/lezer/index";
+} from "@/editor/editor/lezer";
+import { clipboardExtension } from "./clipboard";
+import { pasteStateField, pasteTooltipPlugin } from "./pasteTooltip";
 import type { EditorOptions } from "./EditorOptions";
 import type { Theme } from "@/theme/Theme";
 
@@ -76,6 +78,9 @@ export class Editor {
       createEditorSyntaxHighlighting(),
       codeInfoPlugin,
       updateListener,
+      clipboardExtension(options.storage),
+      pasteStateField,
+      pasteTooltipPlugin,
     ];
 
     if (lineNumbersEnabled) {

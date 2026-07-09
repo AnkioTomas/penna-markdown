@@ -6,6 +6,16 @@ import type { ToolbarOptions } from "@/editor/toolbar/ToolbarOptions";
 import type { TransformerEngineOptions } from "@/transformer/TransformerEngineOptions";
 import type { LightDark } from "@/theme/Theme";
 
+export interface StorageAPI {
+  upload?: (
+    file: File,
+    context: {
+      source: "paste" | "drag" | "dialog" | "ai";
+      dialogType?: string; // 区分是 image, video 还是 audio dialog
+    },
+  ) => Promise<{ url: string; [key: string]: unknown }>;
+}
+
 /** {@link Cherry} 构造选项 */
 export interface CherryOptions {
   /** 实例标识，用于事件载荷 */
@@ -24,6 +34,8 @@ export interface CherryOptions {
   sidebar?: SideBarOptions | boolean;
   /** `false` 时隐藏底部状态栏，默认为 `true` */
   statusbar?: boolean;
+  /** 存储相关的 API 契约配置 */
+  storage?: StorageAPI;
   /** 编辑区选项 */
   editor?: EditorOptions;
   /** 预览区选项 */
