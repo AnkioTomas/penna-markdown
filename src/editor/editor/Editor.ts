@@ -4,6 +4,7 @@ import {
   historyKeymap,
   indentWithTab,
 } from "@codemirror/commands";
+import { search, searchKeymap } from "@codemirror/search";
 import {
   markdown,
   markdownKeymap,
@@ -27,6 +28,7 @@ import {
 } from "@/editor/editor/lezer";
 import { clipboardExtension } from "./clipboard";
 import { pasteStateField, pasteTooltipPlugin } from "./pasteTooltip";
+import { createCustomSearchPanel } from "./searchPanel";
 import type { EditorOptions } from "./EditorOptions";
 import type { Theme } from "@/theme/Theme";
 
@@ -65,6 +67,7 @@ export class Editor {
         ...markdownKeymap,
         ...defaultKeymap,
         ...historyKeymap,
+        ...searchKeymap,
         indentWithTab,
       ]),
       markdown({
@@ -81,6 +84,7 @@ export class Editor {
       clipboardExtension(options.storage),
       pasteStateField,
       pasteTooltipPlugin,
+      search({ top: true, createPanel: createCustomSearchPanel }), // Show search panel at the top
     ];
 
     if (lineNumbersEnabled) {

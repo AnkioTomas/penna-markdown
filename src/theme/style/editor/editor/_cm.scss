@@ -132,3 +132,95 @@
   background: color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
   color: var(--cherry-c-brand-1);
 }
+
+/* --- Search & Replace Panel Styling --- */
+.cherry-editor-cm .cm-panels {
+  background-color: var(--cherry-c-bg-elevated);
+  color: var(--cherry-c-text-1);
+  box-shadow: 0 2px 12px
+    color-mix(in srgb, var(--cherry-c-text-1) 8%, transparent);
+  z-index: 10;
+}
+.cherry-editor-cm .cm-panels-top {
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
+}
+.cherry-editor-cm .cm-panels-bottom {
+  border-top: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
+}
+.cherry-editor-cm .cm-searchMatch {
+  background-color: color-mix(
+    in srgb,
+    var(--cherry-c-brand-1) 30%,
+    transparent
+  );
+}
+.cherry-editor-cm .cm-searchMatch-selected {
+  background-color: color-mix(
+    in srgb,
+    var(--cherry-c-brand-1) 60%,
+    transparent
+  ) !important;
+}
+.cherry-editor-cm .cm-search {
+  padding: 8px 16px;
+  display: flex;
+  align-items: flex-start;
+  font-family: var(--cherry-font-family);
+  font-size: 13px;
+}
+.cherry-editor-cm .cm-search input {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 25%, transparent);
+  background: var(--cherry-c-bg);
+  color: var(--cherry-c-text-1);
+  font-size: 13px;
+  transition: all 0.2s ease;
+  outline: none;
+  min-width: 180px;
+}
+.cherry-editor-cm .cm-search input:focus {
+  border-color: var(--cherry-c-brand-1);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
+}
+.cherry-editor-cm .cm-search input::placeholder {
+  color: color-mix(in srgb, var(--cherry-c-text-3) 50%, transparent);
+}
+.cherry-editor-cm .cm-search button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent);
+  background: var(--cherry-c-bg);
+  cursor: pointer;
+  color: var(--cherry-c-text-2);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  outline: none;
+  white-space: nowrap;
+}
+.cherry-editor-cm .cm-search button:hover {
+  background: color-mix(in srgb, var(--cherry-c-text-1) 5%, var(--cherry-c-bg));
+  color: var(--cherry-c-text-1);
+}
+.cherry-editor-cm .cm-search button:active {
+  transform: scale(0.97);
+}
+.cherry-editor-cm .cm-search button.cm-search-close-btn {
+  /* Close button */
+  margin-left: 20px;
+  color: var(--cherry-c-text-3);
+  border-color: transparent;
+  background: transparent;
+}
+.cherry-editor-cm .cm-search button.cm-search-close-btn:hover {
+  background: color-mix(
+    in srgb,
+    var(--cherry-c-danger, #c62828) 10%,
+    transparent
+  );
+  color: var(--cherry-c-danger, #c62828);
+}

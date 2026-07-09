@@ -46,6 +46,29 @@ export class Preview {
       }),
     );
     this.offs.add(
+      theme.on("cherry:layout", (payload: any) => {
+        if (payload.mode === "preview" && options.maxWidth) {
+          const maxWidth =
+            typeof options.maxWidth === "number"
+              ? `${options.maxWidth}px`
+              : options.maxWidth;
+          mount.style.maxWidth = maxWidth;
+          mount.style.marginLeft = "auto";
+          mount.style.marginRight = "auto";
+          if (mount.parentElement) {
+            mount.parentElement.style.backgroundColor = "var(--cherry-c-bg)";
+          }
+        } else {
+          mount.style.maxWidth = "";
+          mount.style.marginLeft = "";
+          mount.style.marginRight = "";
+          if (mount.parentElement) {
+            mount.parentElement.style.backgroundColor = "";
+          }
+        }
+      }),
+    );
+    this.offs.add(
       theme.on("preview:force-refresh", () => {
         if (this.lastMarkdown) {
           this.pendingTransactions = [];
