@@ -12,12 +12,16 @@ import type { BlockParseContext } from "@/transformer/core/context/BlockParseCon
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { escapeHtml } from "@/transformer/utils/escape.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
-import { blockLength, pickAttr } from "@/transformer/extends/block/card/shared";
+import {
+  blockLength,
+  pickAttr,
+} from "@/transformer/extends/block/card/shared.js";
 
 const OPEN_RE = /^ {0,3}:::(?!:)\s+timeline(?:\s+(.*))?$/;
 const CLOSE_RE = /^ {0,3}:::\s*$/;
 const NESTED_OPEN_RE = /^ {0,3}:::(?!:)\s+\S/;
-const ITEM_HEAD_RE = /^ {0,3}-\s+(.+)$/;
+// 新版前置中括号解析正则：- [2024-01-01:success] 里程碑标题
+const ITEM_HEAD_RE = /^ {0,3}-\s+\[([^\]]+)\]\s+(.*)$/;
 /** 与 taskList 一致：`- [ ]` / `- [x]` 等是任务项，不是 timeline 节点 */
 const TASK_ITEM_RE = /^ {0,3}-\s+\[(?: |x|X|\/|>|<|-|\!)\]\s/;
 
@@ -58,44 +62,6 @@ function parseTimelineContainer(raw: string) {
   };
 }
 
-function isConfigLine(line: string): boolean {
-  const trimmed = line.trim();
-  return trimmed.length > 0 && /^\w+=/.test(trimmed);
-}
-
-function parseConfigLine(line: string): Record<string, string> {
-  const config: Record<string, string> = {};
-  const re = /(\w+)=(?:"([^"]*)"|(\S+))/g;
-  let match = re.exec(line.trim());
-
-  while (match) {
-    config[match[1]] = match[2] ?? match[3];
-    match = re.exec(line.trim());
-  }
-
-  return config;
-}
-
-function resolveItemConfig(
-  raw: Record<string, string>,
-  container: { line: string },
-) {
-  const type = TIMELINE_TYPES.has(raw.type) ? raw.type : "info";
-  const line = LINE_STYLES.has(raw.line) ? raw.line : container.line;
-  const placement =
-    raw.placement === "right" || raw.placement === "left"
-      ? raw.placement
-      : "left";
-
-  return {
-    time: raw.time ?? "",
-    type,
-    line,
-    placement,
-    color: raw.color ?? "",
-  };
-}
-
 function readTimelineInnerLines(
   lines: string[],
   start: number,
@@ -130,8 +96,9 @@ function readTimelineInnerLines(
 
 function parseTimelineSections(lines: string[]) {
   const sections: Array<{
+    time: string;
+    type: string;
     title: string;
-    config: Record<string, string>;
     contentLines: string[];
   }> = [];
   let i = 0;
@@ -143,27 +110,21 @@ function parseTimelineSections(lines: string[]) {
       continue;
     }
 
-    const titleLines = [head[1].trim()];
+    const timeRaw = head[1].trim();
+    const titleLines = [head[2].trim()];
+
+    let time = timeRaw;
+    let type = "info";
+    const colonIdx = timeRaw.lastIndexOf(":");
+    if (colonIdx > 0) {
+      const possibleType = timeRaw.slice(colonIdx + 1);
+      if (TIMELINE_TYPES.has(possibleType)) {
+        type = possibleType;
+        time = timeRaw.slice(0, colonIdx);
+      }
+    }
+
     i += 1;
-
-    while (i < lines.length) {
-      const line = lines[i] ?? "";
-      if (isTimelineItemHead(line)) break;
-      if (isConfigLine(line)) break;
-      if (line.trim() === "") break;
-      titleLines.push(line.trim());
-      i += 1;
-    }
-
-    let config: Record<string, string> = {};
-    if (i < lines.length && isConfigLine(lines[i] ?? "")) {
-      config = parseConfigLine(lines[i] ?? "");
-      i += 1;
-    }
-
-    while (i < lines.length && (lines[i] ?? "").trim() === "") {
-      i += 1;
-    }
 
     const contentLines: string[] = [];
     while (i < lines.length) {
@@ -174,8 +135,9 @@ function parseTimelineSections(lines: string[]) {
     }
 
     sections.push({
+      time,
+      type,
       title: titleLines.join("\n"),
-      config,
       contentLines,
     });
   }
@@ -218,7 +180,6 @@ class TimelineBlockParser extends BaseBlockParser {
     if (sections.length === 0) return null;
 
     const items = sections.map((section) => {
-      const config = resolveItemConfig(section.config, container);
       const titleLines = section.title
         .split("\n")
         .map((ln) => ln.trim())
@@ -232,11 +193,10 @@ class TimelineBlockParser extends BaseBlockParser {
         {
           title: section.title,
           titleLineNodes: titleLines.map((ln) => ctx.parseInline(ln)),
-          time: config.time,
-          itemType: config.type,
-          line: config.line,
-          placement: config.placement,
-          color: config.color,
+          time: section.time,
+          itemType: section.type,
+          line: container.line,
+          placement: container.placement,
         },
       );
     });
@@ -270,7 +230,6 @@ class TimelineBlockParser extends BaseBlockParser {
       const type = String(item.props?.itemType ?? "info");
       const line = String(item.props?.line ?? "solid");
       const itemPlacement = String(item.props?.placement ?? "left");
-      const color = String(item.props?.color ?? "");
       const time = String(item.props?.time ?? "");
       const titleLineNodes =
         (item.props?.titleLineNodes as MarkdownNode[][] | undefined) ?? [];
@@ -284,16 +243,12 @@ class TimelineBlockParser extends BaseBlockParser {
           : "cherry-timeline-item--placement-left",
       ].join(" ");
 
-      const style = color
-        ? ` style="--cherry-timeline-c-line: ${escapeHtml(color)}; --cherry-timeline-c-point: ${escapeHtml(color)}"`
-        : "";
-
       const timeHtml = time
         ? `<p class="cherry-timeline-time">${escapeHtml(time)}</p>`
         : "";
 
       return [
-        `<div class="${classes}"${style}>`,
+        `<div class="${classes}">`,
         `<div class="cherry-timeline-line"><span class="cherry-timeline-point"></span></div>`,
         `<div class="cherry-timeline-container">`,
         `<div class="cherry-timeline-content">`,

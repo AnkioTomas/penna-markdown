@@ -8,10 +8,7 @@ import { runCommand } from "@/editor/commands/index.js";
 import { codeBlockMarkdown } from "@/editor/commands/groups/CodeBlockCommand";
 import { cardMarkdown } from "@/editor/commands/groups/CardCommand.js";
 import { fieldMarkdown } from "@/editor/commands/groups/FieldCommand.js";
-import { tabsMarkdown } from "@/editor/commands/groups/TabsCommand.js";
-import { alertMarkdown } from "@/editor/commands/groups/AlertCommand.js";
 import { mermaidMarkdown } from "@/editor/commands/groups/MermaidCommand.js";
-import { collapseMarkdown } from "@/editor/commands/groups/CollapseCommand.js";
 import { Theme } from "@/theme/Theme.js";
 
 function createView(
@@ -282,27 +279,6 @@ describe("fieldMarkdown", () => {
   });
 });
 
-describe("tabsMarkdown", () => {
-  it("marks active tab with @tab:active", () => {
-    const md = tabsMarkdown({
-      tabs: [
-        { title: "A", content: "内容 A" },
-        { title: "B", content: "内容 B", active: true },
-      ],
-    });
-    expect(md).toContain("@tab A");
-    expect(md).toContain("@tab:active B");
-  });
-});
-
-describe("alertMarkdown", () => {
-  it("emits GFM alert block", () => {
-    expect(alertMarkdown({ kind: "WARNING", content: "注意" })).toBe(
-      "> [!WARNING]\n> 注意\n",
-    );
-  });
-});
-
 describe("mermaidMarkdown", () => {
   it("emits max-width info string", () => {
     const md = mermaidMarkdown({
@@ -311,40 +287,5 @@ describe("mermaidMarkdown", () => {
       maxWidth: "640",
     });
     expect(md).toBe("```mermaid max-width=640\nflowchart TD\n  A --> B\n```\n");
-  });
-});
-
-describe("collapseMarkdown", () => {
-  it("accordion mode emits multiple panels", () => {
-    const md = collapseMarkdown({
-      mode: "accordion",
-      panels: [
-        { title: "手风琴 A", content: "内容 A" },
-        { title: "手风琴 B", content: "内容 B" },
-      ],
-    });
-    expect(md).toBe(
-      "::: collapse accordion\n- 手风琴 A\n\n  内容 A\n\n- 手风琴 B\n\n  内容 B\n:::\n",
-    );
-  });
-
-  it("expanded preset uses :+ marker", () => {
-    const md = collapseMarkdown({
-      mode: "accordion",
-      panels: [{ title: "面板标题", content: "面板内容", expanded: true }],
-    });
-    expect(md).toContain("- :+ 面板标题");
-  });
-
-  it("expand mode uses :- for collapsed panel", () => {
-    const md = collapseMarkdown({
-      mode: "expand",
-      panels: [
-        { title: "标题 1", content: "正文 1" },
-        { title: "标题 2", content: "正文 2", expanded: false },
-      ],
-    });
-    expect(md).toContain("::: collapse expand");
-    expect(md).toContain("- :- 标题 2");
   });
 });

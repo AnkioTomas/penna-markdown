@@ -5,19 +5,13 @@ describe("extends/timeline", () => {
   const engine = () => createEngine();
 
   const sample = `::: timeline
-- 节点一
-  time=2025-03-20 type=success
-
+- [2025-03-20:success] 节点一
   正文内容
 
-- 节点二
-  time=2025-02-21 type=warning
-
+- [2025-02-21:warning] 节点二
   正文内容
 
-- 节点三
-  time=2025-01-22 type=danger
-
+- [2025-01-22:danger] 节点三
   正文内容
 :::`;
 
@@ -42,25 +36,22 @@ describe("extends/timeline", () => {
     expect(html).not.toContain("vp-timeline");
   });
 
-  it("supports multi-line title before config line", () => {
+  it("supports multi-line content", () => {
     const md = `::: timeline
-- 标题
-  也是标题
-  time=2025-03-20 type=success
+- [2025-03-20:success] 标题
+  这是第一行正文
 
-  正文内容
+  这是第二行正文
 :::`;
     const html = renderMarkdown(engine(), md);
-    expect(html).toContain(
-      '<p class="cherry-timeline-title">标题<br>也是标题</p>',
-    );
+    expect(html).toContain('<p class="cherry-timeline-title">标题</p>');
+    expect(html).toContain("<p>这是第一行正文</p>");
+    expect(html).toContain("<p>这是第二行正文</p>");
   });
 
   it("supports container placement config", () => {
     const md = `::: timeline placement="right"
-- 节点一
-  time=2025-03-20
-
+- [2025-03-20] 节点一
   正文内容
 :::`;
     const html = renderMarkdown(engine(), md);
@@ -69,27 +60,9 @@ describe("extends/timeline", () => {
     );
   });
 
-  it("supports between placement with item placement", () => {
-    const md = `::: timeline placement="between"
-- 节点一
-  time=2025-03-20 placement=right
-
-  正文内容
-:::`;
-    const html = renderMarkdown(engine(), md);
-    expect(html).toContain(
-      'class="cherry-timeline cherry-timeline--placement-between"',
-    );
-    expect(html).toContain(
-      '<div class="cherry-timeline-item cherry-timeline-item--info cherry-timeline-item--line-solid cherry-timeline-item--placement-right">',
-    );
-  });
-
-  it("supports line style config", () => {
+  it("supports line style config on container", () => {
     const md = `::: timeline line="dotted"
-- 节点一
-  time=2025-03-20 line=dashed
-
+- [2025-03-20] 节点一
   正文内容
 :::`;
     const html = renderMarkdown(engine(), md);
@@ -97,20 +70,8 @@ describe("extends/timeline", () => {
       'class="cherry-timeline cherry-timeline--placement-left"',
     );
     expect(html).toContain(
-      '<div class="cherry-timeline-item cherry-timeline-item--info cherry-timeline-item--line-dashed cherry-timeline-item--placement-left">',
+      '<div class="cherry-timeline-item cherry-timeline-item--info cherry-timeline-item--line-dotted cherry-timeline-item--placement-left">',
     );
-  });
-
-  it("supports custom item color", () => {
-    const md = `::: timeline
-- 节点一
-  time=2025-03-20 color=#3cf
-
-  正文内容
-:::`;
-    const html = renderMarkdown(engine(), md);
-    expect(html).toContain("--cherry-timeline-c-line: #3cf");
-    expect(html).toContain("--cherry-timeline-c-point: #3cf");
   });
 
   it("does not render as generic container", () => {
@@ -120,16 +81,12 @@ describe("extends/timeline", () => {
 
   it("renders task lists inside timeline item content", () => {
     const md = `::: timeline
-- v0.1.0 首次发布
-  time=2026-01-15 type=success
-
+- [2026-01-15:success] v0.1.0 首次发布
   - [x] GFM 完整支持
   - [x] Cherry 扩展语法
   - [ ] 编辑器完善
 
-- v0.2.0 计划中
-  time=2026-06-01 type=tip
-
+- [2026-06-01:tip] v0.2.0 计划中
   性能优化。
 :::`;
     const html = renderMarkdown(engine(), md);
