@@ -14,6 +14,7 @@ export class Toolbar {
     focus?: () => void,
   ) {
     const ctx: ToolbarContext = {
+      theme,
       execute: (command, payload) => {
         theme.emit("editor:command", { command, payload });
         focus?.();

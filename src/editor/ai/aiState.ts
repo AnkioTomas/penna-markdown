@@ -1,9 +1,9 @@
 import { StateEffect, StateField, type Transaction } from "@codemirror/state";
+import type { DiffHunk } from "./diffLines";
+import { hasPendingHunks } from "./diffLines";
 
 export type AIState =
   | { phase: "idle" }
-  | { phase: "bubble"; from: number; to: number }
-  | { phase: "custom"; from: number; to: number }
   | {
       phase: "generating";
       from: number;
@@ -15,21 +15,23 @@ export type AIState =
     }
   | {
       phase: "diff";
-      from: number;
-      to: number;
-      original: string;
-      result: string;
+      hunks: DiffHunk[];
     };
 
 export const IDLE_STATE: AIState = { phase: "idle" };
 
 export const setAIState = StateEffect.define<AIState>();
 
-/** 标记由 AI 扩展主动发起的事务，避免 diff 阶段误触发自动 Reject */
 export const aiTransaction = StateEffect.define<null>();
 
 export function isAITransaction(tr: Transaction): boolean {
   return tr.effects.some((e) => e.is(aiTransaction));
+}
+
+export function isAILocked(state: AIState): boolean {
+  if (state.phase === "generating") return true;
+  if (state.phase === "diff") return hasPendingHunks(state.hunks);
+  return false;
 }
 
 export const aiStateField = StateField.define<AIState>({
@@ -40,30 +42,6 @@ export const aiStateField = StateField.define<AIState>({
     for (const effect of tr.effects) {
       if (effect.is(setAIState)) return effect.value;
     }
-
-    if (value.phase === "diff" && tr.docChanged && !isAITransaction(tr)) {
-      return IDLE_STATE;
-    }
-
-    if (
-      tr.selection &&
-      value.phase !== "generating" &&
-      value.phase !== "diff"
-    ) {
-      const sel = tr.state.selection.main;
-      if (sel.empty) {
-        return value.phase === "idle" ? value : IDLE_STATE;
-      }
-      if (
-        (value.phase === "bubble" || value.phase === "custom") &&
-        value.from === sel.from &&
-        value.to === sel.to
-      ) {
-        return value;
-      }
-      return { phase: "bubble", from: sel.from, to: sel.to };
-    }
-
     return value;
   },
 });

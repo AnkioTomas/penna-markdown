@@ -21,16 +21,15 @@ parent: Cherry Markdown Next 设计文档
 
 源码开发（monorepo / 链接 `src`）还可直接引用：
 
-| 模块路径                          | 用途                                                                    |
-| --------------------------------- | ----------------------------------------------------------------------- |
-| `@/editor/commands`               | `runCommand`, `applyHeading`, `insertTable`, `insertLink`, `applyBadge` |
-| `@/editor/commands/registry`      | `registerCommand`, `getCommand`, `listCommands`                         |
-| `@/transformer/core/ParserBase`   | `BaseBlockParser`, `BaseInlineParser`                                   |
-| `@/transformer/core/MarkdownNode` | `createNode`, `MarkdownNode`                                            |
-| `@/editor/dialog/requestDialog`   | 对话框 Promise API                                                      |
+| 模块路径                          | 用途                                                                                |
+| --------------------------------- | ----------------------------------------------------------------------------------- |
+| `@/editor/commands`               | `runCommand`, `COMMANDS`, `listCommands`, `insertTable`, `insertLink`, `applyBadge` |
+| `@/transformer/core/ParserBase`   | `BaseBlockParser`, `BaseInlineParser`                                               |
+| `@/transformer/core/MarkdownNode` | `createNode`, `MarkdownNode`                                                        |
+| `@/editor/dialog/requestDialog`   | 对话框 Promise API                                                                  |
 
 > [!NOTE]
-> 发布包 `dist/cherry.min.*` 仅 bundle 入口依赖链上的符号。**自定义命令注册**需在构建前将 `registerCommand` 打进 bundle，或在应用层通过 `cherry.runCommand("insertText", …)` 间接扩展。
+> 发布包 `dist/cherry.min.*` 仅 bundle 入口依赖链上的符号。扩展 toolbar 命令需在 fork 后修改 `COMMANDS`，或通过 `cherry.runCommand("insertText", …)` 间接扩展。
 
 ---
 
@@ -368,7 +367,7 @@ interface TransformerEngineOptions {
 ### runCommand
 
 ```typescript
-import { runCommand } from "@/editor/commands";  // 源码路径
+import { runCommand } from "@/editor/commands/index.js";  // 源码路径
 
 runCommand(
   view: EditorView,

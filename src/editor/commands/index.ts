@@ -7,7 +7,12 @@
  */
 import type { EditorView } from "@codemirror/view";
 import type { Command } from "@/editor/commands/Command";
-import { buildDialogRenderers } from "@/editor/commands/DialogCommand";
+import {
+  buildDialogRenderers,
+  type DialogRenderer,
+} from "@/editor/commands/DialogCommand";
+import { renderAICustomDialog } from "@/editor/ai/AICustomDialog.js";
+import type { DialogType } from "@/editor/commands/dialogTypes.js";
 import {
   boldCommand,
   italicCommand,
@@ -248,7 +253,10 @@ export const COMMANDS: Record<string, Command> = {
 };
 
 /** 从 {@link COMMANDS} 收集的弹窗渲染器，键为 {@link DialogType}。 */
-export const DIALOG_RENDERERS = buildDialogRenderers(COMMANDS);
+export const DIALOG_RENDERERS: Partial<Record<DialogType, DialogRenderer>> = {
+  ...buildDialogRenderers(COMMANDS),
+  aiCustom: renderAICustomDialog,
+};
 
 /** 返回所有已注册命令名列表。 */
 export function listCommands(): string[] {

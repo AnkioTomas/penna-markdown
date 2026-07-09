@@ -1,105 +1,6 @@
-.cherry-ai-bubble {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 6px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent);
-  background: color-mix(in srgb, var(--cherry-c-bg-elevated) 92%, transparent);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 8px 24px
-    color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
-  font-family: var(--cherry-font-family);
-  font-size: 12px;
-  z-index: 10000;
-  pointer-events: auto;
-}
-
-.cherry-ai-bubble-actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
-  max-width: min(100vw - 24px, 480px);
-}
-
-.cherry-ai-bubble-btn {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 6px 10px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--cherry-c-text-2);
-  cursor: pointer;
-  transition:
-    background 0.15s ease,
-    color 0.15s ease,
-    border-color 0.15s ease;
-  outline: none;
-
-  &:hover {
-    color: var(--cherry-c-text-1);
-    background: color-mix(in srgb, var(--cherry-c-brand-1) 10%, transparent);
-    border-color: color-mix(in srgb, var(--cherry-c-brand-1) 25%, transparent);
-  }
-}
-
-.cherry-ai-bubble-label {
-  font-size: 11px;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
 .cherry-ai-icon {
   display: block;
   flex-shrink: 0;
-}
-
-.cherry-ai-custom-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 220px;
-  max-width: min(100vw - 24px, 360px);
-}
-
-.cherry-ai-custom-input {
-  flex: 1;
-  min-width: 0;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 25%, transparent);
-  background: var(--cherry-c-bg);
-  color: var(--cherry-c-text-1);
-  font-family: var(--cherry-font-family);
-  font-size: 12px;
-  outline: none;
-
-  &:focus {
-    border-color: var(--cherry-c-brand-1);
-    box-shadow: 0 0 0 3px
-      color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
-  }
-}
-
-.cherry-ai-custom-confirm {
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--cherry-c-brand-1);
-  background: var(--cherry-c-brand-1);
-  color: var(--cherry-c-bg);
-  font-family: var(--cherry-font-family);
-  font-size: 12px;
-  cursor: pointer;
-  white-space: nowrap;
-
-  &:hover {
-    filter: brightness(1.05);
-  }
 }
 
 .cherry-editor-cm .cm-editor .cherry-ai-mask {
@@ -162,24 +63,24 @@
     color-mix(in srgb, var(--cherry-c-danger, #c62828) 70%, transparent);
 }
 
-.cherry-ai-diff-actions {
+.cherry-ai-hunk-actions {
   position: fixed;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  border-radius: 10px;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 8px;
   border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent);
   background: var(--cherry-c-bg-elevated);
-  box-shadow: 0 6px 20px
-    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  box-shadow: 0 4px 14px
+    color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
   font-family: var(--cherry-font-family);
-  font-size: 13px;
+  font-size: 12px;
   z-index: 10000;
   pointer-events: auto;
 }
 
-.cherry-ai-diff-actions .cherry-ai-diff-btn {
+.cherry-ai-hunk-actions .cherry-ai-diff-btn {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -201,7 +102,7 @@
   }
 }
 
-.cherry-ai-diff-actions .cherry-ai-diff-btn--accept {
+.cherry-ai-hunk-actions .cherry-ai-diff-btn--accept {
   background: #2e7d32;
   color: #fff;
   border-color: #2e7d32;
@@ -211,7 +112,7 @@
   }
 }
 
-.cherry-ai-diff-actions .cherry-ai-diff-btn--reject {
+.cherry-ai-hunk-actions .cherry-ai-diff-btn--reject {
   background: color-mix(
     in srgb,
     var(--cherry-c-danger, #c62828) 12%,
@@ -234,7 +135,7 @@
   }
 }
 
-.cherry-ai-diff-actions .cherry-ai-diff-btn-label {
+.cherry-ai-hunk-actions .cherry-ai-diff-btn-label {
   line-height: 1;
   white-space: nowrap;
 }

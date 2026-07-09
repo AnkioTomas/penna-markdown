@@ -6,6 +6,38 @@ import type { ToolbarOptions } from "@/editor/toolbar/ToolbarOptions";
 import type { TransformerEngineOptions } from "@/transformer/TransformerEngineOptions";
 import type { LightDark } from "@/theme/Theme";
 
+/** 内置 action id：translate | continue | polish | custom */
+export type CherryAIAction = string;
+
+export interface CherryAIItem {
+  /** 操作 id，传给 AIRequest 的第一个参数 */
+  id: CherryAIAction;
+  /** 覆盖默认文案（内置项有默认值） */
+  label?: string;
+  /** SVG 字符串，内置项有默认 icon；外部新增项必填 */
+  icon?: string;
+}
+
+export interface CherryAIOptions {
+  /**
+   * 唯一对外请求入口，由宿主实现。
+   * @param action  操作 id（内置或自定义 item id）
+   * @param text    当前选中文本
+   * @param prompts 仅「自定义」操作时传入用户输入；其余内置项不传
+   */
+  AIRequest: (
+    action: string,
+    text: string,
+    prompts?: string,
+  ) => Promise<string>;
+
+  /**
+   * 工具栏 AI 菜单项列表，按数组顺序渲染。
+   * 可删除、重排、追加；省略时使用内置默认十项。
+   */
+  items?: CherryAIItem[];
+}
+
 export interface StorageAPI {
   upload?: (
     file: File,
@@ -36,6 +68,8 @@ export interface CherryOptions {
   statusbar?: boolean;
   /** 存储相关的 API 契约配置 */
   storage?: StorageAPI;
+  /** `false` 时禁用 AI 功能 */
+  ai?: CherryAIOptions | false;
   /** 编辑区选项 */
   editor?: EditorOptions;
   /** 预览区选项 */

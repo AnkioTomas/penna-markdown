@@ -29,6 +29,7 @@ import {
 import { clipboardExtension } from "./clipboard";
 import { pasteStateField, pasteTooltipPlugin } from "./pasteTooltip";
 import { createCustomSearchPanel } from "./searchPanel";
+import { createAIExtension, createAICommandListener } from "@/editor/ai";
 import type { EditorOptions } from "./EditorOptions";
 import type { Theme } from "@/theme/Theme";
 
@@ -45,6 +46,7 @@ import type { Theme } from "@/theme/Theme";
  */
 export class Editor {
   private readonly view: EditorView;
+  private aiCleanup: (() => void) | null = null;
 
   constructor(mount: HTMLElement, theme: Theme, options: EditorOptions) {
     mount.classList.add("cherry-editor-cm");
@@ -93,12 +95,24 @@ export class Editor {
 
     extensions.push(highlightActiveLine(), drawSelection());
 
+    if (options.ai) {
+      extensions.push(...createAIExtension(options.ai));
+    }
+
     const state = EditorState.create({
       doc: options.value ?? "",
       extensions,
     });
 
     this.view = new EditorView({ state, parent: mount });
+
+    if (options.ai) {
+      this.aiCleanup = createAICommandListener(
+        theme,
+        options.ai.AIRequest,
+        () => this.view,
+      );
+    }
   }
 
   getMarkdown(): string {
@@ -126,6 +140,8 @@ export class Editor {
   }
 
   destroy(): void {
+    this.aiCleanup?.();
+    this.aiCleanup = null;
     this.view.destroy();
   }
 }

@@ -1,22 +1,5 @@
 import type { EditorView } from "@codemirror/view";
 
-/** 取选区与可视区域交集的中点，全文选中时不会锚到文档顶部 */
-export function getVisibleAnchor(
-  view: EditorView,
-  from: number,
-  to: number,
-): number {
-  const { from: vf, to: vt } = view.viewport;
-  const visFrom = Math.max(from, vf);
-  const visTo = Math.min(to, vt);
-  if (visFrom < visTo) return Math.floor((visFrom + visTo) / 2);
-
-  const head = view.state.selection.main.head;
-  if (head >= from && head <= to) return head;
-
-  return Math.floor((from + to) / 2);
-}
-
 export function positionFixedPanel(
   view: EditorView,
   panel: HTMLElement,

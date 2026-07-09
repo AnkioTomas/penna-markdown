@@ -19,22 +19,23 @@ flowchart LR
   Theme --> CommandBridge
   CommandBridge --> runCommand
   Cherry["cherry.runCommand()"] --> runCommand
-  runCommand --> Registry["Map&lt;name, handler&gt;"]
-  Registry --> CM["EditorView 事务"]
+  runCommand --> COMMANDS["COMMANDS: Record&lt;name, Command&gt;"]
+  COMMANDS --> CM["EditorView 事务"]
 ```
 
 ---
 
 ## 注册与执行
 
-模块加载时 side-effect 注册（`src/editor/commands/index.ts`）：
+模块加载时构建静态命令表（`src/editor/commands/index.ts` 中的 `COMMANDS`）：
 
 ```typescript
-registerBasicCommands(registerCommand);
-registerHeadingCommands(registerCommand);
-registerTableCommand(registerCommand);
-registerLinkCommand(registerCommand);
-registerBadgeCommand(registerCommand);
+export const COMMANDS: Record<string, Command> = {
+  bold: boldCommand,
+  alertNote: alertNoteCommand,
+  mermaidFlow: mermaidFlowCommand,
+  // ...
+};
 ```
 
 统一入口：
@@ -43,24 +44,25 @@ registerBadgeCommand(registerCommand);
 runCommand(view, command, payload?, ctx?: { theme? })
 ```
 
-- `command` 为字符串名，如 `"bold"`、`"heading2"`、`"insertTable"`
+- `command` 为字符串名，如 `"bold"`、`"heading2"`、`"alertNote"`、`"mermaidFlow"`
+- 每个 toolbar item 对应独立 command 名（`setTheme` 除外，仍用 payload `{ id }`）
 - handler 签名：`(view, payload, ctx) => boolean | Promise<boolean>`
 - 执行前自动 `view.focus()`
 
-### 内置命令
+### 内置命令（节选）
 
 | 命令                                                        | 行为                                                 |
 | ----------------------------------------------------------- | ---------------------------------------------------- |
 | `bold` / `italic` / `strikethrough` / `code`                | 选区包裹标记                                         |
 | `heading1` … `heading6`                                     | 行首 ATX 前缀                                        |
 | `blockquote` / `unorderedList` / `orderedList` / `taskList` | 行首前缀                                             |
-| `horizontalRule` / `codeBlock` / `image`                    | 插入模板                                             |
+| `alertNote` / `alertTip` / …                                | 插入 GFM 告警块                                      |
+| `codeBlockBasic` / `codeBlockTitle` / …                     | 打开代码块对话框（variant 固化在 command 名）        |
+| `mermaidFlow` / `echartsBar` / …                            | 插入图表模板                                         |
 | `insertText`                                                | 通用插入，payload `{ text, selectFrom?, selectTo? }` |
-| `insertTable`                                               | 打开表格对话框                                       |
-| `insertLink`                                                | 打开链接对话框                                       |
-| `insertBadge`                                               | 打开徽章对话框                                       |
+| `table` / `link` / `badge`                                  | 打开对应对话框                                       |
 
-扩展命令：调用 `registerCommand(name, handler)` 注册到同一 Map。
+扩展命令：向 `COMMANDS` 添加条目，或 fork 后修改 `index.ts`。
 
 ---
 
@@ -86,7 +88,7 @@ Cherry 构造时创建，`destroy` 时取消订阅。
 
 1. Command handler 调用 `requestDialog(theme, type, props?)`，返回 `Promise<result>`
 2. `requestDialog` 生成唯一 `id`，发射 `editor:dialog:open`
-3. `DialogHost` 渲染对应表单（Table / Link / Badge）
+3. `DialogHost` 通过 `DIALOG_RENDERERS` 查找 command 内嵌的 `renderDialog`
 4. 用户提交或取消 → `editor:dialog:result { id, cancelled, data? }`
 5. `requestDialog` 的 Promise resolve/reject，handler 写入 CM
 

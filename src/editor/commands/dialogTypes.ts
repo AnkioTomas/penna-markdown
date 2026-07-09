@@ -28,6 +28,7 @@ import type { CardDialogResult } from "@/editor/commands/groups/CardCommand";
 import type { FieldDialogResult } from "@/editor/commands/groups/FieldCommand";
 import type { MermaidDialogResult } from "@/editor/commands/groups/MermaidCommand";
 import type { EchartsDialogResult } from "@/editor/commands/groups/EchartsCommand";
+import type { AICustomDialogResult } from "@/editor/ai/AICustomDialog.js";
 
 /** 所有内置弹窗的类型 id。 */
 export type DialogType =
@@ -50,7 +51,8 @@ export type DialogType =
   | "card"
   | "field"
   | "mermaid"
-  | "echarts";
+  | "echarts"
+  | "aiCustom";
 
 /** 各弹窗类型对应的提交结果数据结构。 */
 export type DialogResultMap = {
@@ -74,4 +76,5 @@ export type DialogResultMap = {
   field: FieldDialogResult;
   mermaid: MermaidDialogResult;
   echarts: EchartsDialogResult;
+  aiCustom: AICustomDialogResult;
 };

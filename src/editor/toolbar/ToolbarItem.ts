@@ -1,6 +1,8 @@
 import type { EditorCommand } from "@/editor/commands/index";
+import type { Theme } from "@/theme/Theme";
 
 export interface ToolbarContext {
+  theme: Theme;
   execute(command: EditorCommand | string, payload?: unknown): void;
   focus(): void;
 }

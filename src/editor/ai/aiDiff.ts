@@ -1,4 +1,4 @@
-import { StateField, RangeSetBuilder, type Text } from "@codemirror/state";
+import { StateField, RangeSetBuilder } from "@codemirror/state";
 import {
   Decoration,
   DecorationSet,
@@ -9,8 +9,9 @@ import {
   type ViewUpdate,
 } from "@codemirror/view";
 import { diffChars } from "./diffChars";
+import { buildHunks, hasPendingHunks, type DiffHunk } from "./diffLines";
 import { ICON_AI_ACCEPT, ICON_AI_REJECT } from "./defaults";
-import { getVisibleAnchor, positionFixedPanel } from "./positionPanel";
+import { positionFixedPanel } from "./positionPanel";
 import {
   IDLE_STATE,
   aiStateField,
@@ -40,43 +41,53 @@ class DeletedTextWidget extends WidgetType {
   }
 }
 
-function buildDiffDecorations(
+function buildHunkDecorations(
   diff: Extract<AIState, { phase: "diff" }>,
-  doc: Text,
 ): DecorationSet {
   const builder = new RangeSetBuilder<Decoration>();
-  const chunks = diffChars(diff.original, diff.result);
-  let pos = diff.from;
 
-  const endPos = Math.min(diff.to, doc.length);
-  const startLine = doc.lineAt(diff.from).number;
-  const endLine = doc.lineAt(Math.max(diff.from, endPos)).number;
-  for (let n = startLine; n <= endLine; n++) {
-    const line = doc.line(n);
+  for (const hunk of diff.hunks) {
+    if (hunk.status !== "pending") continue;
+
+    const startLine = hunk.from;
+    const endPos = Math.max(hunk.from, hunk.to);
     builder.add(
-      line.from,
-      line.from,
+      startLine,
+      startLine,
       Decoration.line({ class: "cherry-ai-diff-line" }),
     );
-  }
+    if (endPos > hunk.from) {
+      const endLine = hunk.to;
+      if (endLine > hunk.from) {
+        builder.add(
+          endLine,
+          endLine,
+          Decoration.line({ class: "cherry-ai-diff-line" }),
+        );
+      }
+    }
 
-  for (const chunk of chunks) {
-    if (chunk.type === "equal") {
-      pos += chunk.value.length;
-    } else if (chunk.type === "add") {
-      const from = pos;
-      const to = pos + chunk.value.length;
-      builder.add(from, to, Decoration.mark({ class: "cherry-ai-diff-add" }));
-      pos = to;
-    } else if (chunk.type === "del") {
-      builder.add(
-        pos,
-        pos,
-        Decoration.widget({
-          widget: new DeletedTextWidget(chunk.value),
-          side: -1,
-        }),
-      );
+    const chunks = diffChars(hunk.original, hunk.result);
+    let pos = hunk.from;
+
+    for (const chunk of chunks) {
+      if (chunk.type === "equal") {
+        pos += chunk.value.length;
+      } else if (chunk.type === "add") {
+        const from = pos;
+        const to = pos + chunk.value.length;
+        builder.add(from, to, Decoration.mark({ class: "cherry-ai-diff-add" }));
+        pos = to;
+      } else if (chunk.type === "del") {
+        builder.add(
+          pos,
+          pos,
+          Decoration.widget({
+            widget: new DeletedTextWidget(chunk.value),
+            side: -1,
+          }),
+        );
+      }
     }
   }
 
@@ -87,49 +98,62 @@ export const aiDiffDecorations = StateField.define<DecorationSet>({
   create() {
     return Decoration.none;
   },
-  update(deco, tr) {
+  update(_deco, tr) {
     const ai = tr.state.field(aiStateField);
     if (ai.phase !== "diff") return Decoration.none;
-    return buildDiffDecorations(ai, tr.state.doc);
+    return buildHunkDecorations(ai);
   },
   provide: (f) => EditorView.decorations.from(f),
 });
 
-function acceptDiff(view: EditorViewType) {
+function acceptHunk(view: EditorViewType, hunkId: string) {
   const ai = view.state.field(aiStateField);
   if (ai.phase !== "diff") return;
 
+  const hunks = ai.hunks.map((h) =>
+    h.id === hunkId ? { ...h, status: "accepted" as const } : h,
+  );
+
   view.dispatch({
-    effects: [aiTransaction.of(null), setAIState.of(IDLE_STATE)],
+    effects: [
+      aiTransaction.of(null),
+      setAIState.of(
+        hasPendingHunks(hunks) ? { phase: "diff", hunks } : IDLE_STATE,
+      ),
+    ],
   });
 }
 
-function rejectDiff(view: EditorViewType) {
+function rejectHunk(view: EditorViewType, hunkId: string) {
   const ai = view.state.field(aiStateField);
   if (ai.phase !== "diff") return;
 
+  const hunk = ai.hunks.find((h) => h.id === hunkId);
+  if (!hunk || hunk.status !== "pending") return;
+
+  const delta = hunk.original.length - (hunk.to - hunk.from);
+  const hunks = ai.hunks.map((h) => {
+    if (h.id === hunkId) return { ...h, status: "rejected" as const };
+    if (h.status === "pending" && h.from >= hunk.to) {
+      return { ...h, from: h.from + delta, to: h.to + delta };
+    }
+    return h;
+  });
+
+  const effects = [
+    aiTransaction.of(null),
+    setAIState.of(
+      hasPendingHunks(hunks) ? { phase: "diff", hunks } : IDLE_STATE,
+    ),
+  ];
+
   view.dispatch({
-    changes: { from: ai.from, to: ai.to, insert: ai.original },
-    effects: [aiTransaction.of(null), setAIState.of(IDLE_STATE)],
+    changes: { from: hunk.from, to: hunk.to, insert: hunk.original },
+    effects,
   });
 }
 
-/** 在状态已离开 diff 阶段时，用快照回滚（手动编辑触发自动 Reject） */
-export function rejectDiffSnapshot(
-  view: EditorViewType,
-  snapshot: Extract<AIState, { phase: "diff" }>,
-) {
-  view.dispatch({
-    changes: {
-      from: snapshot.from,
-      to: snapshot.to,
-      insert: snapshot.original,
-    },
-    effects: [aiTransaction.of(null)],
-  });
-}
-
-function buildDiffActionBtn(
+function buildHunkActionBtn(
   className: string,
   icon: string,
   label: string,
@@ -152,46 +176,36 @@ function buildDiffActionBtn(
   return btn;
 }
 
-function buildDiffActionsPanel(view: EditorViewType): HTMLElement {
+function buildHunkPanel(view: EditorViewType, hunk: DiffHunk): HTMLElement {
   const dom = document.createElement("div");
-  dom.className = "cherry-ai-diff-actions";
-
+  dom.className = "cherry-ai-hunk-actions";
+  dom.dataset.hunkId = hunk.id;
   dom.append(
-    buildDiffActionBtn(
+    buildHunkActionBtn(
       "cherry-ai-diff-btn--accept",
       ICON_AI_ACCEPT,
       "接受",
-      () => acceptDiff(view),
+      () => acceptHunk(view, hunk.id),
     ),
-    buildDiffActionBtn(
+    buildHunkActionBtn(
       "cherry-ai-diff-btn--reject",
       ICON_AI_REJECT,
       "拒绝",
-      () => rejectDiff(view),
+      () => rejectHunk(view, hunk.id),
     ),
   );
-
   return dom;
 }
 
-function positionDiffActionsPanel(
-  view: EditorViewType,
-  panel: HTMLElement,
-  diff: Extract<AIState, { phase: "diff" }>,
-) {
-  const anchor = getVisibleAnchor(view, diff.from, diff.to);
-  positionFixedPanel(view, panel, anchor, true);
-}
-
-export const aiDiffActionsPlugin = ViewPlugin.fromClass(
+export const aiDiffHunkActionsPlugin = ViewPlugin.fromClass(
   class {
-    panel: HTMLElement | null = null;
+    panels = new Map<string, HTMLElement>();
     private readonly onScroll: () => void;
     private readonly onResize: () => void;
 
     constructor(readonly view: EditorViewType) {
-      this.onScroll = () => this.reposition();
-      this.onResize = () => this.reposition();
+      this.onScroll = () => this.repositionAll();
+      this.onResize = () => this.repositionAll();
       view.scrollDOM.addEventListener("scroll", this.onScroll, {
         passive: true,
       });
@@ -210,40 +224,58 @@ export const aiDiffActionsPlugin = ViewPlugin.fromClass(
     sync() {
       const ai = this.view.state.field(aiStateField);
       if (ai.phase !== "diff") {
-        this.panel?.remove();
-        this.panel = null;
+        this.clearPanels();
         return;
       }
 
-      if (!this.panel) {
-        this.panel = buildDiffActionsPanel(this.view);
-        document.body.appendChild(this.panel);
+      const pending = ai.hunks.filter((h) => h.status === "pending");
+      const pendingIds = new Set(pending.map((h) => h.id));
+
+      for (const [id, panel] of this.panels) {
+        if (!pendingIds.has(id)) {
+          panel.remove();
+          this.panels.delete(id);
+        }
       }
 
-      requestAnimationFrame(() => {
-        if (!this.panel) return;
-        const current = this.view.state.field(aiStateField);
-        if (current.phase !== "diff") return;
-        positionDiffActionsPanel(this.view, this.panel, current);
-      });
+      for (const hunk of pending) {
+        let panel = this.panels.get(hunk.id);
+        if (!panel) {
+          panel = buildHunkPanel(this.view, hunk);
+          document.body.appendChild(panel);
+          this.panels.set(hunk.id, panel);
+        }
+      }
+
+      requestAnimationFrame(() => this.repositionAll());
     }
 
-    reposition() {
+    repositionAll() {
       const ai = this.view.state.field(aiStateField);
-      if (ai.phase !== "diff" || !this.panel) return;
-      positionDiffActionsPanel(this.view, this.panel, ai);
+      if (ai.phase !== "diff") return;
+
+      for (const hunk of ai.hunks) {
+        if (hunk.status !== "pending") continue;
+        const panel = this.panels.get(hunk.id);
+        if (!panel) continue;
+        const anchor = hunk.to > hunk.from ? hunk.to : hunk.from;
+        positionFixedPanel(this.view, panel, anchor, false);
+      }
+    }
+
+    clearPanels() {
+      for (const panel of this.panels.values()) panel.remove();
+      this.panels.clear();
     }
 
     destroy() {
       this.view.scrollDOM.removeEventListener("scroll", this.onScroll);
       window.removeEventListener("resize", this.onResize);
-      this.panel?.remove();
-      this.panel = null;
+      this.clearPanels();
     }
   },
 );
 
-/** 将 AI 结果写入文档并进入 diff 阶段 */
 export function enterDiffPhase(
   view: EditorViewType,
   from: number,
@@ -251,20 +283,23 @@ export function enterDiffPhase(
   original: string,
   result: string,
 ) {
+  const hunks = buildHunks(original, result, from);
+
+  if (result === original || hunks.length === 0) {
+    view.dispatch({
+      effects: [aiTransaction.of(null), setAIState.of(IDLE_STATE)],
+    });
+    return;
+  }
+
   view.dispatch({
     changes: { from, to, insert: result },
     effects: [
       aiTransaction.of(null),
-      setAIState.of({
-        phase: "diff",
-        from,
-        to: from + result.length,
-        original,
-        result,
-      }),
+      setAIState.of({ phase: "diff", hunks }),
       EditorView.scrollIntoView(from, { y: "center" }),
     ],
   });
 }
 
-export { acceptDiff, rejectDiff };
+export { acceptHunk, rejectHunk };

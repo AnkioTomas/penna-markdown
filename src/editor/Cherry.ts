@@ -5,6 +5,7 @@ import { SideBar } from "@/editor/sidebar/SideBar";
 import { Toolbar } from "@/editor/toolbar/Toolbar";
 import { StatusBar } from "@/editor/statusbar/StatusBar";
 import type { CherryOptions } from "@/editor/CherryOptions";
+import { buildAIToolbarItems } from "@/editor/ai";
 import type { EditorLayoutMode } from "@/editor/Layout";
 import { printCherryLogo } from "@/editor/printLogo";
 import { ScrollSync } from "@/editor/sync/ScrollSync";
@@ -123,6 +124,8 @@ export class Cherry {
 
     this.editor = new Editor(this.editorEl, this.theme, {
       ...editorOptions,
+      ai: options.ai,
+      storage: options.storage ?? editorOptions.storage,
       transformerEngineOptions:
         editorOptions.transformerEngineOptions ?? transformer,
     });
@@ -137,8 +140,19 @@ export class Cherry {
     this.toolbar =
       options.toolbar === false
         ? null
-        : new Toolbar(this.toolbarEl, this.theme, options.toolbar ?? {}, () =>
-            this.editor.focus(),
+        : new Toolbar(
+            this.toolbarEl,
+            this.theme,
+            {
+              ...options.toolbar,
+              items: [
+                ...(options.ai !== false && options.ai
+                  ? buildAIToolbarItems(options.ai.items)
+                  : []),
+                ...(options.toolbar?.items ?? []),
+              ],
+            },
+            () => this.editor.focus(),
           );
 
     this.sidebar = new SideBar(

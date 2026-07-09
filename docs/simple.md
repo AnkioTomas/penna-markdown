@@ -304,27 +304,22 @@ pnpm install
 
 ::: timeline
 
-- 成功节点
-  time=2024-06 type=success
+- [2024-01-01] 阶段一
+  项目启动，完成基础架构设计。
 
-  基础时间线。
+- [2024-06-15:success] 阶段二
+  核心模块开发完成，进入测试阶段。
 
-- 警告节点
-  time=2024-09 type=warning color=#f59e0b
-
-  单项 `color` 覆盖。
+- [2024-12-31:important] 阶段三
+  正式发布 1.0 版本。
   :::
 
 ::: timeline line="dotted" placement="between"
 
-- 右侧
-  time=2025-01 type=important placement=right
+- [2025-01:important] 右侧
+  容器 \`placement="between"\`。
 
-  容器 `placement="between"`。
-
-- 左侧
-  time=2025-06 type=success
-
+- [2025-06:success] 左侧
   默认左侧。
   :::
 

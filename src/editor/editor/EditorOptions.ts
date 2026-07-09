@@ -1,5 +1,5 @@
 import type { TransformerEngineOptions } from "@/transformer/TransformerEngineOptions";
-import type { StorageAPI } from "@/editor/CherryOptions";
+import type { CherryAIOptions, StorageAPI } from "@/editor/CherryOptions";
 
 export interface EditorOptions {
   /** 初始 Markdown 正文 */
@@ -12,4 +12,7 @@ export interface EditorOptions {
 
   /** 存储 API 契约配置 */
   storage?: StorageAPI;
+
+  /** `false` 时禁用 AI 功能 */
+  ai?: CherryAIOptions | false;
 }

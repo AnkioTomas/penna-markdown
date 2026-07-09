@@ -1,22 +1,22 @@
 import type { Extension } from "@codemirror/state";
 import type { CherryAIOptions } from "@/editor/CherryOptions";
-import { resolveAIItems } from "./defaults";
 import { aiStateField } from "./aiState";
-import { createAIBubbleExtensions } from "./aiBubble";
-import { aiMaskPlugin, aiGeneratingReadOnly } from "./aiMask";
-import { aiDiffDecorations, aiDiffActionsPlugin } from "./aiDiff";
+import { createAIKeymap } from "./aiKeymap";
+import { aiMaskPlugin, aiLockedReadOnly } from "./aiMask";
+import { aiDiffDecorations, aiDiffHunkActionsPlugin } from "./aiDiff";
 
-export function createAIExtension(options: CherryAIOptions): Extension[] {
-  const items = resolveAIItems(options.items);
-
+export function createAIExtension(_options: CherryAIOptions): Extension[] {
   return [
     aiStateField,
-    aiGeneratingReadOnly,
-    ...createAIBubbleExtensions(items, options.AIRequest),
+    aiLockedReadOnly,
+    createAIKeymap(),
     aiMaskPlugin,
     aiDiffDecorations,
-    aiDiffActionsPlugin,
+    aiDiffHunkActionsPlugin,
   ];
 }
 
 export { diffChars } from "./diffChars";
+export { diffLines, buildHunks } from "./diffLines";
+export { buildAIToolbarItems } from "./defaults";
+export { createAICommandListener } from "./aiBridge";
