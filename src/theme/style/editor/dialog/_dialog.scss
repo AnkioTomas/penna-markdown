@@ -210,6 +210,20 @@
   line-height: 1.5;
 }
 
+.cherry-dialog-link {
+  display: block;
+  font-size: 13px;
+  color: var(--cherry-c-brand-1);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
+}
+
 .cherry-dialog-form--table .cherry-dialog-grid-cell {
   width: 28px;
   height: 28px;

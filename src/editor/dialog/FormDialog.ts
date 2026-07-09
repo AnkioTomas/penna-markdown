@@ -36,6 +36,10 @@ export abstract class FormDialog<TResult> {
     return undefined;
   }
 
+  get link(): { text: string; href: string } | undefined {
+    return undefined;
+  }
+
   get submitText(): string {
     return "插入";
   }
@@ -89,6 +93,17 @@ export abstract class FormDialog<TResult> {
       hintEl.className = "cherry-dialog-table-hint";
       hintEl.textContent = hint;
       scrollArea.append(hintEl);
+    }
+
+    const linkDef = this.link;
+    if (linkDef) {
+      const linkEl = document.createElement("a");
+      linkEl.className = "cherry-dialog-link";
+      linkEl.href = linkDef.href;
+      linkEl.target = "_blank";
+      linkEl.rel = "noopener noreferrer";
+      linkEl.textContent = linkDef.text;
+      scrollArea.append(linkEl);
     }
 
     const errEl = document.createElement("p");
