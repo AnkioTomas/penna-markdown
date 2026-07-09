@@ -34,10 +34,6 @@ export default defineConfig({
     },
     environment: "node",
     include: ["test/**/*.test.ts"],
-    exclude: [
-      "test/editor/cmSyntax.test.ts",
-      "test/editor/cmDecorations.test.ts",
-    ],
     coverage: {
       provider: "v8",
       reporter: ["text", "html"],
