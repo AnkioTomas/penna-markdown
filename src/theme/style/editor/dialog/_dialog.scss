@@ -122,42 +122,67 @@
 
 .cherry-dialog-form--emoji .cherry-emoji-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
   max-height: 220px;
-  overflow: auto;
   padding: 4px;
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
-  border-radius: 8px;
 }
 
-.cherry-emoji-item {
+.cherry-emoji-tabs {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  padding: 8px 10px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: var(--cherry-c-bg-elevated);
+  justify-content: space-between;
+  padding: 0 24px;
+  gap: 4px;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
+}
+
+.cherry-emoji-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  text-align: left;
+  padding: 8px 0;
+  font-size: 16px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  border-radius: 4px 4px 0 0;
 
   &:hover {
-    border-color: var(--cherry-c-brand-1);
+    background: color-mix(in srgb, var(--cherry-c-text-3) 10%, transparent);
+  }
+
+  &.active {
+    border-bottom-color: var(--cherry-c-brand-1);
     background: color-mix(in srgb, var(--cherry-c-brand-1) 10%, transparent);
   }
 }
 
-.cherry-emoji-item-code {
-  font-family: ui-monospace, monospace;
-  font-size: 12px;
-  color: var(--cherry-c-brand-1);
+.cherry-emoji-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 24px;
+  aspect-ratio: 1;
+
+  &:hover {
+    border-color: var(--cherry-c-brand-1);
+    background: color-mix(in srgb, var(--cherry-c-brand-1) 10%, transparent);
+    transform: scale(1.1);
+  }
 }
 
-.cherry-emoji-item-label {
-  font-size: 12px;
+.cherry-emoji-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 32px 0;
   color: var(--cherry-c-text-3);
+  font-size: 14px;
 }
 
 .cherry-dialog-grid--10 {

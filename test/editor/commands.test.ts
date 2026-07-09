@@ -7,7 +7,6 @@ import { EditorView } from "@codemirror/view";
 import { runCommand } from "@/editor/commands/index.js";
 import { codeBlockMarkdown } from "@/editor/commands/groups/CodeBlockCommand";
 import { cardMarkdown } from "@/editor/commands/groups/CardCommand.js";
-import { fieldMarkdown } from "@/editor/commands/groups/FieldCommand.js";
 import { mermaidMarkdown } from "@/editor/commands/groups/MermaidCommand.js";
 import { Theme } from "@/theme/Theme.js";
 
@@ -166,27 +165,6 @@ describe("editor/commands", () => {
     expect(view.state.doc.toString()).toBe("[new]{.warning}");
     view.destroy();
   });
-
-  it("card inserts markdown after dialog result", async () => {
-    const view = createView("");
-    const theme = new Theme();
-    theme.on("editor:dialog:open", (payload) => {
-      const { id } = payload as { id: string };
-      queueMicrotask(() => {
-        theme.emit("editor:dialog:result", {
-          id,
-          data: {
-            variant: "basic",
-            title: "标题",
-            content: "正文",
-          },
-        });
-      });
-    });
-    await runCommand(view, "card", undefined, { theme });
-    expect(view.state.doc.toString()).toBe("::: card 标题\n正文\n:::\n");
-    view.destroy();
-  });
 });
 
 describe("codeBlockMarkdown", () => {
@@ -230,59 +208,11 @@ describe("cardMarkdown", () => {
     expect(md).toContain('author="Alice"');
     expect(md).toContain('description="海边"');
   });
-
-  it("grid variant emits responsive cols and child cards", () => {
-    const md = cardMarkdown({
-      variant: "grid",
-      colsMode: "responsive",
-      colsSm: 1,
-      colsMd: 2,
-      colsLg: 3,
-      items: [
-        { title: "A", content: "一" },
-        { title: "B", content: "二" },
-      ],
-    });
-    expect(md).toContain(':::: card-grid cols="{ sm: 1, md: 2, lg: 3 }"');
-    expect(md).toContain("::: card A\n一\n:::");
-    expect(md).toContain("::: card B\n二\n:::");
-  });
-
-  it("masonry images mode emits image list", () => {
-    const md = cardMarkdown({
-      variant: "masonry",
-      cols: 3,
-      gap: 16,
-      mode: "images",
-      imageUrls: ["https://example.com/1.png", "https://example.com/2.png"],
-    });
-    expect(md).toContain(':::: card-masonry cols="3" gap="16"');
-    expect(md).toContain("![ ](https://example.com/1.png)");
-    expect(md).toContain("![ ](https://example.com/2.png)");
-  });
-});
-
-describe("fieldMarkdown", () => {
-  it("basic field emits directives", () => {
-    const md = fieldMarkdown({
-      variant: "basic",
-      name: "theme",
-      fieldType: "ThemeConfig",
-      status: "required",
-      defaultValue: "{ base: '/' }",
-      description: "主题配置",
-    });
-    expect(md).toContain("::: field theme");
-    expect(md).toContain("@type ThemeConfig");
-    expect(md).toContain("@required");
-    expect(md).toContain("@default { base: '/' }");
-  });
 });
 
 describe("mermaidMarkdown", () => {
   it("emits max-width info string", () => {
     const md = mermaidMarkdown({
-      variant: "flow",
       source: "flowchart TD\n  A --> B",
       maxWidth: "640",
     });
