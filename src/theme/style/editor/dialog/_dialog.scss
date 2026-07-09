@@ -249,6 +249,15 @@
   }
 }
 
+.cherry-dialog-form--footnote-ref {
+  min-width: 360px;
+  max-width: 480px;
+
+  .cherry-dialog-field select {
+    width: 100%;
+  }
+}
+
 .cherry-dialog-form--table .cherry-dialog-grid-cell {
   width: 28px;
   height: 28px;

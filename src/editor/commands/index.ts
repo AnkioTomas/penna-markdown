@@ -1,32 +1,260 @@
+/**
+ * 编辑命令注册表与统一入口。
+ *
+ * - {@link COMMANDS} — 命令名 → 实例映射，Toolbar / 快捷键 / `cherry.runCommand()` 均通过此表调度
+ * - {@link runCommand} — 执行命令的唯一入口
+ * - {@link DIALOG_RENDERERS} — 从带弹窗命令收集的渲染器，供 DialogHost 使用
+ */
 import type { EditorView } from "@codemirror/view";
-import { registerBasicCommands } from "./basic.js";
-import { registerExtendCommands, registerThemeCommand } from "./extends.js";
-import { registerBadgeCommand, applyBadge } from "./badge.js";
-import { registerHeadingCommands, applyHeading } from "./heading.js";
-import { registerLinkCommand, insertLink } from "./link.js";
-import { registerCommand, getCommand } from "./registry.js";
-import { registerTableCommand, insertTable } from "./table.js";
-import type { CommandContext, EditorCommand } from "./types.js";
+import type { Command } from "@/editor/commands/Command";
+import { buildDialogRenderers } from "@/editor/commands/DialogCommand";
+import {
+  boldCommand,
+  italicCommand,
+  strikethroughCommand,
+  codeCommand,
+  highlightCommand,
+  highlightNoteCommand,
+  highlightTipCommand,
+  highlightWarningCommand,
+  highlightCautionCommand,
+  highlightDangerCommand,
+  highlightImportantCommand,
+  spoilerCommand,
+  supCommand,
+  subCommand,
+  commentCommand,
+  mathCommand,
+} from "@/editor/commands/groups/InlineWrapCommand";
+import {
+  blockquoteCommand,
+  unorderedListCommand,
+  orderedListCommand,
+} from "@/editor/commands/groups/LinePrefixCommand";
+import { horizontalRuleCommand } from "@/editor/commands/groups/HorizontalRuleCommand";
+import {
+  taskListCommand,
+  taskInProgressCommand,
+  taskDeferredCommand,
+  taskEarlyCommand,
+  taskCancelledCommand,
+  taskUrgentCommand,
+} from "@/editor/commands/groups/TaskCommand";
+import {
+  codeBlockBasicCommand,
+  codeBlockTitleCommand,
+  codeBlockHighlightCommand,
+  codeBlockCollapseCommand,
+} from "@/editor/commands/groups/CodeBlockCommand";
+import {
+  linkCommand,
+  imageCommand,
+} from "@/editor/commands/groups/LinkCommand";
+import { tableCommand } from "@/editor/commands/groups/TableCommand";
+import {
+  videoCommand,
+  audioCommand,
+  iframeCommand,
+} from "@/editor/commands/groups/MediaCommand";
+import {
+  badgeCommand,
+  applyBadge,
+} from "@/editor/commands/groups/BadgeCommand";
+import {
+  footnoteRefCommand,
+  footnoteDefCommand,
+  footnoteBothCommand,
+} from "@/editor/commands/groups/FootnoteCommand";
+import { emojiCommand } from "@/editor/commands/groups/EmojiCommand";
+import { htmlAttrCommand } from "@/editor/commands/groups/HtmlAttrCommand";
+import { frontmatterCommand } from "@/editor/commands/groups/FrontmatterCommand";
+import {
+  alertNoteCommand,
+  alertTipCommand,
+  alertImportantCommand,
+  alertWarningCommand,
+  alertCautionCommand,
+} from "@/editor/commands/groups/AlertCommand";
+import {
+  containerTipCommand,
+  containerWarningCommand,
+  containerNoteCommand,
+  containerInfoCommand,
+  containerImportantCommand,
+  containerDangerCommand,
+  containerCenterCommand,
+  containerLeftCommand,
+  containerRightCommand,
+} from "@/editor/commands/groups/ContainerCommand";
+import {
+  collapseDefaultCommand,
+  collapseExpandedCommand,
+} from "@/editor/commands/groups/CollapseCommand";
+import { tabsCommand } from "@/editor/commands/groups/TabsCommand";
+import { stepsCommand } from "@/editor/commands/groups/StepsCommand";
+import {
+  cardCommand,
+  linkCardCommand,
+  imageCardCommand,
+  repoCardCommand,
+  cardGridCommand,
+  cardMasonryCommand,
+} from "@/editor/commands/groups/CardCommand";
+import {
+  fieldCommand,
+  fieldGroupCommand,
+} from "@/editor/commands/groups/FieldCommand";
+import {
+  timelineContainerCommand,
+  timelineNodeCommand,
+} from "@/editor/commands/groups/TimelineCommand";
+import { mermaidCommand } from "@/editor/commands/groups/MermaidCommand";
+import { echartsCommand } from "@/editor/commands/groups/EchartsCommand";
+import { mathBlockCommand } from "@/editor/commands/groups/MathBlockCommand";
+import { commentBlockCommand } from "@/editor/commands/groups/CommentBlockCommand";
+import { setThemeCommand } from "@/editor/commands/groups/SetThemeCommand";
+import { insertTextCommand } from "@/editor/commands/groups/InsertTextCommand";
+import {
+  heading1Command,
+  heading2Command,
+  heading3Command,
+  heading4Command,
+  heading5Command,
+  heading6Command,
+} from "@/editor/commands/groups/HeadingCommand";
 
-registerBasicCommands(registerCommand);
-registerExtendCommands(registerCommand);
-registerThemeCommand(registerCommand);
-registerHeadingCommands(registerCommand);
-registerTableCommand(registerCommand);
-registerLinkCommand(registerCommand);
-registerBadgeCommand(registerCommand);
+export type { EditorCommand } from "@/editor/commands/Command";
 
-export { applyHeading, insertTable, insertLink, applyBadge };
-export type * from "./types.js";
+/**
+ * 内置命令注册表。
+ * 键名为 toolbar `command` 字段及 `runCommand` 第一参数。
+ */
+export const COMMANDS: Record<string, Command> = {
+  /* ---- 行内标记 (groups/InlineWrapCommand) ---- */
+  bold: boldCommand,
+  italic: italicCommand,
+  strikethrough: strikethroughCommand,
+  code: codeCommand,
+  highlight: highlightCommand,
+  highlightNote: highlightNoteCommand,
+  highlightTip: highlightTipCommand,
+  highlightWarning: highlightWarningCommand,
+  highlightCaution: highlightCautionCommand,
+  highlightDanger: highlightDangerCommand,
+  highlightImportant: highlightImportantCommand,
+  spoiler: spoilerCommand,
+  sup: supCommand,
+  sub: subCommand,
+  comment: commentCommand,
+  math: mathCommand,
+  /* ---- 文档结构 ---- */
+  heading1: heading1Command,
+  heading2: heading2Command,
+  heading3: heading3Command,
+  heading4: heading4Command,
+  heading5: heading5Command,
+  heading6: heading6Command,
+  blockquote: blockquoteCommand,
+  unorderedList: unorderedListCommand,
+  orderedList: orderedListCommand,
+  horizontalRule: horizontalRuleCommand,
+  /* ---- 任务列表 (groups/TaskCommand) ---- */
+  taskList: taskListCommand,
+  taskInProgress: taskInProgressCommand,
+  taskDeferred: taskDeferredCommand,
+  taskEarly: taskEarlyCommand,
+  taskCancelled: taskCancelledCommand,
+  taskUrgent: taskUrgentCommand,
+  /* ---- 代码块 (groups/CodeBlockCommand)，弹窗 type: codeBlock ---- */
+  codeBlockBasic: codeBlockBasicCommand,
+  codeBlockTitle: codeBlockTitleCommand,
+  codeBlockHighlight: codeBlockHighlightCommand,
+  codeBlockCollapse: codeBlockCollapseCommand,
+  /* ---- 链接 / 媒体 / 表格，均带弹窗 ---- */
+  link: linkCommand,
+  image: imageCommand,
+  table: tableCommand,
+  video: videoCommand,
+  audio: audioCommand,
+  iframe: iframeCommand,
+  /* ---- 徽章 / 脚注 / Emoji / 属性 / Frontmatter ---- */
+  badge: badgeCommand,
+  footnoteRef: footnoteRefCommand,
+  footnoteDef: footnoteDefCommand,
+  footnoteBoth: footnoteBothCommand,
+  emoji: emojiCommand,
+  htmlAttr: htmlAttrCommand,
+  frontmatter: frontmatterCommand,
+  /* ---- GFM 告警 (groups/AlertCommand) ---- */
+  alertNote: alertNoteCommand,
+  alertTip: alertTipCommand,
+  alertImportant: alertImportantCommand,
+  alertWarning: alertWarningCommand,
+  alertCaution: alertCautionCommand,
+  /* ---- 自定义容器 (groups/ContainerCommand) ---- */
+  containerTip: containerTipCommand,
+  containerWarning: containerWarningCommand,
+  containerNote: containerNoteCommand,
+  containerInfo: containerInfoCommand,
+  containerImportant: containerImportantCommand,
+  containerDanger: containerDangerCommand,
+  containerCenter: containerCenterCommand,
+  containerLeft: containerLeftCommand,
+  containerRight: containerRightCommand,
+  /* ---- 折叠面板 (groups/CollapseCommand) ---- */
+  collapseDefault: collapseDefaultCommand,
+  collapseExpanded: collapseExpandedCommand,
+  /* ---- 标签页 / 步骤 ---- */
+  tabs: tabsCommand,
+  steps: stepsCommand,
+  /* ---- 卡片 (groups/CardCommand) ---- */
+  card: cardCommand,
+  linkCard: linkCardCommand,
+  imageCard: imageCardCommand,
+  repoCard: repoCardCommand,
+  cardGrid: cardGridCommand,
+  cardMasonry: cardMasonryCommand,
+  /* ---- 表单字段 (groups/FieldCommand) ---- */
+  field: fieldCommand,
+  fieldGroup: fieldGroupCommand,
+  /* ---- 时间线 (groups/TimelineCommand) ---- */
+  timelineContainer: timelineContainerCommand,
+  timelineNode: timelineNodeCommand,
+  /* ---- 图表 ---- */
+  mermaid: mermaidCommand,
+  echarts: echartsCommand,
+  /* ---- 块级公式 / 注释 ---- */
+  mathBlock: mathBlockCommand,
+  commentBlock: commentBlockCommand,
+  /* ---- 主题 / 通用插入 ---- */
+  setTheme: setThemeCommand,
+  insertText: insertTextCommand,
+};
 
+/** 从 {@link COMMANDS} 收集的弹窗渲染器，键为 {@link DialogType}。 */
+export const DIALOG_RENDERERS = buildDialogRenderers(COMMANDS);
+
+/** 返回所有已注册命令名列表。 */
+export function listCommands(): string[] {
+  return Object.keys(COMMANDS);
+}
+
+/**
+ * 执行编辑命令。
+ * @param view - CodeMirror 编辑器实例
+ * @param command - 命令名，须存在于 {@link COMMANDS}
+ * @param payload - 可选参数（如 insertText 的文本、setTheme 的 id）
+ * @param ctx - 上下文；弹窗命令须传入 `{ theme }`
+ * @returns 命令不存在返回 false；弹窗命令可能返回 Promise
+ */
 export function runCommand(
   view: EditorView,
-  command: EditorCommand | string,
+  command: string,
   payload?: unknown,
-  ctx?: CommandContext,
+  ctx?: import("./Command.js").CommandContext,
 ): boolean | Promise<boolean> {
-  const handler = getCommand(command);
+  const handler = COMMANDS[command];
   if (!handler) return false;
   view.focus();
-  return handler(view, payload, ctx ?? {});
+  return handler.execute(view, payload, ctx ?? {});
 }
