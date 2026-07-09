@@ -3,11 +3,11 @@
  * 在光标处插入 GFM 水平线 `\n---\n`。
  */
 import type { EditorView } from "@codemirror/view";
-import { Command, insertText } from "@/editor/commands/Command";
+import { Command, insertSnippet } from "@/editor/commands/Command";
 
 class HorizontalRuleCommand implements Command {
   execute(view: EditorView): boolean {
-    insertText(view, "\n---\n");
+    insertSnippet(view, "---\n", 4);
     return true;
   }
 }
