@@ -5,9 +5,17 @@
 import type { EditorView } from "@codemirror/view";
 import { requestDialog } from "@/editor/dialog/requestDialog.js";
 import { FormDialog, type FormFieldDef } from "@/editor/dialog/FormDialog.js";
-import { Command, insertText, insertSnippet, type CommandContext } from "../Command.js";
-import type { DialogCallbacks, DialogCapableCommand } from "../DialogCommand.js";
-import type { DialogType } from "../dialogTypes.js";
+import {
+  Command,
+  insertText,
+  insertSnippet,
+  type CommandContext,
+} from "@/editor/commands/Command";
+import type {
+  DialogCallbacks,
+  DialogCapableCommand,
+} from "@/editor/commands/DialogCommand";
+import type { DialogType } from "@/editor/commands/dialogTypes";
 
 /** 代码块围栏变体，固化在命令名中（如 `codeBlockTitle`）。 */
 export type CodeBlockVariant = "basic" | "title" | "highlight" | "collapse";
@@ -32,11 +40,9 @@ const VARIANT_LABELS: Record<CodeBlockVariant, string> = {
 
 const LANG_FIELD: FormFieldDef = {
   name: "lang",
-  label: "语言",
+  label: "语言（可选）",
   type: "text",
-  required: true,
-  placeholder: "javascript",
-  defaultValue: "javascript",
+  placeholder: "如 javascript（留空无高亮）",
 };
 
 const CODE_FIELD: FormFieldDef = {
@@ -45,8 +51,7 @@ const CODE_FIELD: FormFieldDef = {
   type: "textarea",
   rows: 8,
   required: true,
-  placeholder: "console.log('hello');",
-  defaultValue: 'console.log("hello");',
+  placeholder: "在此输入代码...",
 };
 
 function parsePositiveInt(raw: string): number | null {
@@ -59,7 +64,7 @@ function parseCodeBlockRaw(
   raw: Record<string, string | boolean>,
   variant: CodeBlockVariant,
 ): CodeBlockDialogResult | null {
-  const lang = String(raw.lang ?? "").trim() || "text";
+  const lang = String(raw.lang ?? "").trim();
   const code = String(raw.code ?? "");
   if (!code.trim()) return null;
   const title = String(raw.title ?? "").trim();
@@ -97,7 +102,9 @@ class BasicCodeBlockFormDialog extends FormDialog<CodeBlockDialogResult> {
 
   readonly fields = [LANG_FIELD, CODE_FIELD];
 
-  toResult(raw: Record<string, string | boolean>): CodeBlockDialogResult | null {
+  toResult(
+    raw: Record<string, string | boolean>,
+  ): CodeBlockDialogResult | null {
     return parseCodeBlockRaw(raw, "basic");
   }
 }
@@ -129,7 +136,9 @@ class TitleCodeBlockFormDialog extends FormDialog<CodeBlockDialogResult> {
     return null;
   }
 
-  toResult(raw: Record<string, string | boolean>): CodeBlockDialogResult | null {
+  toResult(
+    raw: Record<string, string | boolean>,
+  ): CodeBlockDialogResult | null {
     return parseCodeBlockRaw(raw, "title");
   }
 }
@@ -161,7 +170,9 @@ class HighlightCodeBlockFormDialog extends FormDialog<CodeBlockDialogResult> {
     return null;
   }
 
-  toResult(raw: Record<string, string | boolean>): CodeBlockDialogResult | null {
+  toResult(
+    raw: Record<string, string | boolean>,
+  ): CodeBlockDialogResult | null {
     return parseCodeBlockRaw(raw, "highlight");
   }
 }
@@ -195,7 +206,9 @@ class CollapseCodeBlockFormDialog extends FormDialog<CodeBlockDialogResult> {
     return null;
   }
 
-  toResult(raw: Record<string, string | boolean>): CodeBlockDialogResult | null {
+  toResult(
+    raw: Record<string, string | boolean>,
+  ): CodeBlockDialogResult | null {
     const base = parseCodeBlockRaw(raw, "collapse");
     if (!base) return null;
     const collapsedMaxLines = parsePositiveInt(
