@@ -154,8 +154,10 @@ export class Cherry {
     this.scrollSync = new ScrollSync(this.editor, this.previewEl, this.theme);
 
     this.dialogHost = new DialogHost(this.cherryEl, this.theme);
-    this.commandBridge = new CommandBridge(this.theme, () =>
-      this.editor.getView(),
+    this.commandBridge = new CommandBridge(
+      this.theme,
+      () => this.editor.getView(),
+      () => this.preview.getStore(),
     );
 
     const initialMarkdown = editorOptions.value ?? "";

@@ -7,6 +7,7 @@ import {
   type Theme,
 } from "@/theme/Theme";
 import { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
+import { ParserStore } from "@/transformer/core/ParserStore";
 
 export class Preview {
   private readonly theme: Theme;
@@ -67,6 +68,10 @@ export class Preview {
         }
       }),
     );
+  }
+
+  getStore() {
+    return this.renderer.getStore() ?? new ParserStore([]);
   }
 
   private pendingTransactions: Transaction[] = [];

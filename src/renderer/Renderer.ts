@@ -178,6 +178,10 @@ export class Renderer {
     return this.mount;
   }
 
+  getStore(): ParserStore | null {
+    return (this.lastAst?.props?.store as ParserStore) ?? null;
+  }
+
   destroy(): void {
     this.theme.off(THEME_EVENT_LIGHT_DARK, this.onLightDarkChanged);
 

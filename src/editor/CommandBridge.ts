@@ -1,6 +1,7 @@
 import type { EditorView } from "@codemirror/view";
 import type { Theme } from "@/theme/Theme";
 import { runCommand, type EditorCommand } from "@/editor/commands";
+import { ParserStore } from "@/transformer/core/ParserStore";
 
 export class CommandBridge {
   private readonly offs: (() => void)[] = [];
@@ -8,6 +9,7 @@ export class CommandBridge {
   constructor(
     private readonly theme: Theme,
     private readonly getView: () => EditorView,
+    private readonly getStore?: () => ParserStore,
   ) {
     this.offs.push(
       theme.on("editor:command", (payload) => {
@@ -15,7 +17,10 @@ export class CommandBridge {
           command: EditorCommand;
           payload?: unknown;
         };
-        void runCommand(this.getView(), command, data, { theme: this.theme });
+        void runCommand(this.getView(), command, data, {
+          theme: this.theme,
+          getStore: this.getStore,
+        });
       }),
     );
   }
@@ -23,6 +28,7 @@ export class CommandBridge {
   execute(command: EditorCommand, payload?: unknown): Promise<boolean> {
     const result = runCommand(this.getView(), command, payload, {
       theme: this.theme,
+      getStore: this.getStore,
     });
     return Promise.resolve(result);
   }
