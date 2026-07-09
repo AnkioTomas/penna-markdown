@@ -30,6 +30,14 @@ export interface LinkReferenceDialogResult {
   refId: string;
 }
 
+/** `image` 弹窗提交结果。 */
+export interface ImageDialogResult {
+  text: string;
+  url: string;
+  title?: string;
+  maxWidth?: string;
+}
+
 /** `linkRefDef` 弹窗提交结果。 */
 export interface LinkRefDefDialogResult {
   label: string;
@@ -58,9 +66,7 @@ function previewUrl(url: string, max = 40): string {
 }
 
 /** 从 ParserStore 收集已有链接引用定义（键 ref_*）。 */
-export function collectLinkRefs(
-  store: ParserStore | undefined,
-): LinkRefInfo[] {
+export function collectLinkRefs(store: ParserStore | undefined): LinkRefInfo[] {
   if (!store) return [];
   const refs: LinkRefInfo[] = [];
   for (const [key, value] of Object.entries(store.getAll())) {
@@ -140,6 +146,39 @@ class LinkFormDialog extends FormDialog<LinkDialogResult> {
 }
 
 const linkFormDialog = new LinkFormDialog();
+
+class ImageFormDialog extends FormDialog<ImageDialogResult> {
+  override get title() {
+    return "插入图片";
+  }
+
+  readonly fields = [
+    { name: "text", label: "图片描述", type: "text" as const },
+    { name: "url", label: "图片链接", type: "url" as const, required: true },
+    { name: "title", label: "标题（可选）", type: "text" as const },
+    {
+      name: "maxWidth",
+      label: "最大宽度",
+      type: "text" as const,
+      placeholder: "如 100% 或 500px",
+    },
+  ];
+
+  toResult(raw: Record<string, string | boolean>): ImageDialogResult | null {
+    const url = String(raw.url ?? "").trim();
+    if (!url) return null;
+    const title = String(raw.title ?? "").trim();
+    const maxWidth = String(raw.maxWidth ?? "").trim();
+    return {
+      text: String(raw.text ?? "").trim(),
+      url,
+      title: title || undefined,
+      maxWidth: maxWidth || undefined,
+    };
+  }
+}
+
+const imageFormDialog = new ImageFormDialog();
 
 class LinkReferenceFormDialog extends FormDialog<LinkReferenceDialogResult> {
   private fieldsForRender: FormFieldDef[] = [];
@@ -238,7 +277,7 @@ class LinkRefDefFormDialog extends FormDialog<LinkRefDefDialogResult> {
   }
 
   override get hint() {
-    return "生成 [标识]: url \"标题\"，供引用式链接使用";
+    return '生成 [标识]: url "标题"，供引用式链接使用';
   }
 
   readonly fields = [
@@ -253,7 +292,9 @@ class LinkRefDefFormDialog extends FormDialog<LinkRefDefDialogResult> {
     { name: "title", label: "标题（可选）", type: "text" as const },
   ];
 
-  toResult(raw: Record<string, string | boolean>): LinkRefDefDialogResult | null {
+  toResult(
+    raw: Record<string, string | boolean>,
+  ): LinkRefDefDialogResult | null {
     const url = String(raw.url ?? "").trim();
     if (!url) return null;
     const label = String(raw.label ?? "").trim();
@@ -351,9 +392,9 @@ export class LinkCommand implements Command, DialogCapableCommand {
  * `image` — 插入 Markdown 图片 `![alt](url)`。
  */
 export class ImageCommand implements Command, DialogCapableCommand {
-  readonly dialogType: DialogType = "link";
+  readonly dialogType: DialogType = "image";
 
-  renderDialog = linkFormDialog.render.bind(linkFormDialog);
+  renderDialog = imageFormDialog.render.bind(imageFormDialog);
 
   async execute(
     view: EditorView,
@@ -363,14 +404,18 @@ export class ImageCommand implements Command, DialogCapableCommand {
     if (!ctx?.theme) return false;
     const { from, to, empty } = view.state.selection.main;
     const selected = empty ? "" : view.state.sliceDoc(from, to);
-    const data = await requestDialog(ctx.theme, "link", {
+    const data = await requestDialog(ctx.theme, "image", {
       text: selected || "",
       url: "",
     });
     if (!data?.url) return false;
     const alt = data.text || "";
     const title = data.title ? ` "${data.title}"` : "";
-    insertText(view, `![${alt}](${data.url}${title})`);
+    let md = `![${alt}](${data.url}${title})`;
+    if (data.maxWidth) {
+      md += `{max-width=${data.maxWidth}}`;
+    }
+    insertText(view, md);
     return true;
   }
 }

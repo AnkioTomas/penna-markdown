@@ -6,6 +6,7 @@
 import type { TableDialogResult } from "@/editor/commands/groups/TableCommand";
 import type {
   LinkDialogResult,
+  ImageDialogResult,
   LinkReferenceDialogResult,
   LinkRefDefDialogResult,
 } from "@/editor/commands/groups/LinkCommand";
@@ -32,6 +33,7 @@ import type { EchartsDialogResult } from "@/editor/commands/groups/EchartsComman
 export type DialogType =
   | "table"
   | "link"
+  | "image"
   | "linkReference"
   | "linkRefDef"
   | "badge"
@@ -54,6 +56,7 @@ export type DialogType =
 export type DialogResultMap = {
   table: TableDialogResult;
   link: LinkDialogResult;
+  image: ImageDialogResult;
   linkReference: LinkReferenceDialogResult;
   linkRefDef: LinkRefDefDialogResult;
   badge: BadgeDialogResult;
