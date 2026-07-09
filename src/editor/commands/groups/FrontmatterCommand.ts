@@ -1,23 +1,32 @@
 /**
  * Frontmatter（文档头 YAML）命令。
- * 在文档顶部插入或替换 `---\n...\n---` 块，提交前校验 YAML 语法。
+ * 在文档顶部插入或替换 `---\n...\n---` 块；变量引用可从已有 frontmatter 键下拉选取。
  */
 import type { EditorView } from "@codemirror/view";
 import YAML from "yaml";
 import { requestDialog } from "@/editor/dialog/requestDialog.js";
-import { FormDialog } from "@/editor/dialog/FormDialog.js";
+import { FormDialog, type FormFieldDef } from "@/editor/dialog/FormDialog.js";
 import {
   Command,
   insertAtDocumentTop,
   insertText,
   type CommandContext,
 } from "@/editor/commands/Command";
-import type { DialogCapableCommand } from "@/editor/commands/DialogCommand";
+import type {
+  DialogCallbacks,
+  DialogCapableCommand,
+} from "@/editor/commands/DialogCommand";
 import type { DialogType } from "@/editor/commands/dialogTypes";
+import type { ParserStore } from "@/transformer/core/ParserStore";
 
 /** `frontmatter` 弹窗提交结果。 */
 export interface FrontmatterDialogResult {
   yaml: string;
+}
+
+/** `frontmatterVar` 弹窗提交结果。 */
+export interface FrontmatterVarDialogResult {
+  path: string;
 }
 
 const DEFAULT_YAML = `title: 标题
@@ -48,6 +57,35 @@ export function validateFrontmatterYaml(yaml: string): string | null {
 /** 包装为 frontmatter 围栏 Markdown。 */
 export function frontmatterMarkdown(yaml: string): string {
   return `---\n${yaml.trim()}\n---\n\n`;
+}
+
+/** 将 frontmatter 对象展平为点分路径列表（供 [[path]] 引用）。 */
+export function flattenFrontmatterKeys(
+  obj: Record<string, unknown>,
+  prefix = "",
+): string[] {
+  const keys: string[] = [];
+  for (const [key, value] of Object.entries(obj)) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    if (value !== null && typeof value === "object" && !Array.isArray(value)) {
+      keys.push(
+        ...flattenFrontmatterKeys(value as Record<string, unknown>, path),
+      );
+    } else {
+      keys.push(path);
+    }
+  }
+  return keys.sort((a, b) => a.localeCompare(b));
+}
+
+/** 从 ParserStore 读取 frontmatter 变量路径。 */
+export function collectFrontmatterVars(
+  store: ParserStore | undefined,
+): string[] {
+  if (!store?.has("frontMatter")) return [];
+  const data = store.get<Record<string, unknown>>("frontMatter");
+  if (!data || typeof data !== "object") return [];
+  return flattenFrontmatterKeys(data);
 }
 
 class FrontmatterFormDialog extends FormDialog<FrontmatterDialogResult> {
@@ -96,7 +134,105 @@ class FrontmatterFormDialog extends FormDialog<FrontmatterDialogResult> {
   }
 }
 
+class FrontmatterVarFormDialog extends FormDialog<FrontmatterVarDialogResult> {
+  private fieldsForRender: FormFieldDef[] = [];
+
+  override get title() {
+    return "插入变量引用";
+  }
+
+  override get hint() {
+    return "生成 [[变量路径]]；可选取文档 frontmatter 中已有字段";
+  }
+
+  override get className() {
+    return "cherry-dialog-form--frontmatter-var";
+  }
+
+  override get fields() {
+    return this.fieldsForRender;
+  }
+
+  override render(
+    host: HTMLElement,
+    props: Record<string, unknown>,
+    callbacks: DialogCallbacks<FrontmatterVarDialogResult>,
+  ): () => void {
+    const vars = (props.frontmatterVars as string[] | undefined) ?? [];
+
+    if (vars.length > 0) {
+      this.fieldsForRender = [
+        {
+          name: "selectedVar",
+          label: "选择已有变量",
+          type: "select",
+          required: true,
+          options: [
+            ...vars.map((name) => ({ value: name, label: name })),
+            { value: "__NEW__", label: "自定义路径…" },
+          ],
+        },
+        {
+          name: "customVar",
+          label: "变量路径",
+          type: "text",
+          hidden: true,
+          placeholder: "title 或 author.name",
+        },
+      ];
+    } else {
+      this.fieldsForRender = [
+        {
+          name: "customVar",
+          label: "变量路径",
+          type: "text",
+          required: true,
+          placeholder: "title 或 author.name",
+          defaultValue: "title",
+        },
+      ];
+    }
+
+    return super.render(host, props, callbacks);
+  }
+
+  toResult(
+    raw: Record<string, string | boolean>,
+  ): FrontmatterVarDialogResult | null {
+    let path = String(raw.selectedVar ?? "");
+    if (!path || path === "__NEW__") {
+      path = String(raw.customVar ?? "").trim();
+    }
+    if (!path) return null;
+    return { path };
+  }
+
+  override onMount(form: HTMLFormElement) {
+    const select = form.elements.namedItem("selectedVar");
+    const customInput = form.elements.namedItem("customVar");
+    if (
+      !(select instanceof HTMLSelectElement) ||
+      !(customInput instanceof HTMLInputElement)
+    ) {
+      return;
+    }
+
+    const customField = customInput.closest("label");
+    const sync = () => {
+      const isNew = select.value === "__NEW__";
+      if (customField) customField.hidden = !isNew;
+      customInput.required = isNew;
+      if (isNew) customInput.focus();
+    };
+
+    select.addEventListener("change", sync);
+    sync();
+    return () => select.removeEventListener("change", sync);
+  }
+}
+
 const frontmatterFormDialog = new FrontmatterFormDialog();
+const frontmatterVarFormDialog = new FrontmatterVarFormDialog();
 
 /**
  * `frontmatter` — 打开 YAML 编辑器；若文档已有 frontmatter 则预填并替换。
@@ -123,25 +259,44 @@ export class FrontmatterCommand implements Command, DialogCapableCommand {
   }
 }
 
-/** `frontmatter` 命令实例 */
-export const frontmatterCommand = new FrontmatterCommand();
-
 /**
- * `frontmatterVar` — 插入 frontmatter 变量引用 `[[name]]`。
- * 空选区时插入占位符并选中变量名以便直接编辑。
+ * `frontmatterVar` — 插入 frontmatter 变量引用 `[[path]]`，可选取已有键。
  */
-export class FrontmatterVarCommand implements Command {
-  execute(view: EditorView): boolean {
+export class FrontmatterVarCommand implements Command, DialogCapableCommand {
+  readonly dialogType: DialogType = "frontmatterVar";
+
+  renderDialog = frontmatterVarFormDialog.render.bind(frontmatterVarFormDialog);
+
+  async execute(
+    view: EditorView,
+    _p: unknown,
+    ctx: CommandContext,
+  ): Promise<boolean> {
+    if (!ctx?.theme) return false;
+
+    const vars = collectFrontmatterVars(ctx.getStore?.());
     const { from, to, empty } = view.state.selection.main;
-    if (!empty) {
-      const selected = view.state.sliceDoc(from, to);
-      insertText(view, `[[${selected}]]`);
-      return true;
+    const selected = empty ? "" : view.state.sliceDoc(from, to).trim();
+
+    const props: Record<string, unknown> = { frontmatterVars: vars };
+    if (selected && vars.includes(selected)) {
+      props.selectedVar = selected;
+    } else if (selected) {
+      props.customVar = selected;
     }
-    insertText(view, "[[变量名]]", 2, 5);
+
+    const data = (await requestDialog(
+      ctx.theme,
+      "frontmatterVar",
+      props,
+    )) as FrontmatterVarDialogResult | null;
+    if (!data) return false;
+    insertText(view, `[[${data.path}]]`);
     return true;
   }
 }
 
+/** `frontmatter` 命令实例 */
+export const frontmatterCommand = new FrontmatterCommand();
 /** `frontmatterVar` 命令实例 */
 export const frontmatterVarCommand = new FrontmatterVarCommand();

@@ -15,7 +15,10 @@ import type { EmojiDialogResult } from "@/editor/commands/groups/EmojiCommand";
 
 import type { FootnoteDialogResult } from "@/editor/commands/groups/FootnoteCommand";
 import type { CodeBlockDialogResult } from "@/editor/commands/groups/CodeBlockCommand";
-import type { FrontmatterDialogResult } from "@/editor/commands/groups/FrontmatterCommand";
+import type {
+  FrontmatterDialogResult,
+  FrontmatterVarDialogResult,
+} from "@/editor/commands/groups/FrontmatterCommand";
 import type {
   TimelineNodeDialogResult,
   TimelineContainerDialogResult,
@@ -39,6 +42,7 @@ export type DialogType =
   | "footnoteBoth"
   | "codeBlock"
   | "frontmatter"
+  | "frontmatterVar"
   | "timelineNode"
   | "timelineContainer"
   | "card"
@@ -60,6 +64,7 @@ export type DialogResultMap = {
   footnoteBoth: FootnoteDialogResult;
   codeBlock: CodeBlockDialogResult;
   frontmatter: FrontmatterDialogResult;
+  frontmatterVar: FrontmatterVarDialogResult;
   timelineNode: TimelineNodeDialogResult;
   timelineContainer: TimelineContainerDialogResult;
   card: CardDialogResult;
