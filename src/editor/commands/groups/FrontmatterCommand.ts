@@ -9,6 +9,7 @@ import { FormDialog } from "@/editor/dialog/FormDialog.js";
 import {
   Command,
   insertAtDocumentTop,
+  insertText,
   type CommandContext,
 } from "@/editor/commands/Command";
 import type { DialogCapableCommand } from "@/editor/commands/DialogCommand";
@@ -124,3 +125,23 @@ export class FrontmatterCommand implements Command, DialogCapableCommand {
 
 /** `frontmatter` 命令实例 */
 export const frontmatterCommand = new FrontmatterCommand();
+
+/**
+ * `frontmatterVar` — 插入 frontmatter 变量引用 `[[name]]`。
+ * 空选区时插入占位符并选中变量名以便直接编辑。
+ */
+export class FrontmatterVarCommand implements Command {
+  execute(view: EditorView): boolean {
+    const { from, to, empty } = view.state.selection.main;
+    if (!empty) {
+      const selected = view.state.sliceDoc(from, to);
+      insertText(view, `[[${selected}]]`);
+      return true;
+    }
+    insertText(view, "[[变量名]]", 2, 5);
+    return true;
+  }
+}
+
+/** `frontmatterVar` 命令实例 */
+export const frontmatterVarCommand = new FrontmatterVarCommand();

@@ -17,3 +17,5 @@ export const taskEarlyCommand = new SnippetCommand("- [<] 提前", 6, 8);
 export const taskCancelledCommand = new SnippetCommand("- [-] 已取消", 6, 9);
 /** `taskUrgent` — 紧急，`- [!] 紧急` */
 export const taskUrgentCommand = new SnippetCommand("- [!] 紧急", 6, 8);
+/** `taskDone` — 已完成，`- [x] 已完成` */
+export const taskDoneCommand = new SnippetCommand("- [x] 已完成", 6, 9);

@@ -4,7 +4,11 @@
  * 与 `requestDialog(theme, type)` 配合，提供类型安全的提交结果推断。
  */
 import type { TableDialogResult } from "@/editor/commands/groups/TableCommand";
-import type { LinkDialogResult } from "@/editor/commands/groups/LinkCommand";
+import type {
+  LinkDialogResult,
+  LinkReferenceDialogResult,
+  LinkRefDefDialogResult,
+} from "@/editor/commands/groups/LinkCommand";
 import type { BadgeDialogResult } from "@/editor/commands/groups/BadgeCommand";
 import type { MediaDialogResult } from "@/editor/commands/groups/MediaCommand";
 import type { EmojiDialogResult } from "@/editor/commands/groups/EmojiCommand";
@@ -25,6 +29,8 @@ import type { EchartsDialogResult } from "@/editor/commands/groups/EchartsComman
 export type DialogType =
   | "table"
   | "link"
+  | "linkReference"
+  | "linkRefDef"
   | "badge"
   | "media"
   | "emoji"
@@ -44,6 +50,8 @@ export type DialogType =
 export type DialogResultMap = {
   table: TableDialogResult;
   link: LinkDialogResult;
+  linkReference: LinkReferenceDialogResult;
+  linkRefDef: LinkRefDefDialogResult;
   badge: BadgeDialogResult;
   media: MediaDialogResult;
   emoji: EmojiDialogResult;

@@ -15,10 +15,12 @@ export type ContainerVariant =
   | "note"
   | "info"
   | "important"
+  | "caution"
   | "danger"
   | "center"
   | "left"
   | "right"
+  | "justify"
   | "custom";
 
 const PRESET_DEFAULTS: Record<
@@ -30,10 +32,12 @@ const PRESET_DEFAULTS: Record<
   note: { type: "note", title: "说明" },
   info: { type: "info", title: "信息" },
   important: { type: "important", title: "重要" },
+  caution: { type: "caution", title: "谨慎" },
   danger: { type: "danger", title: "危险" },
   center: { type: "center", title: "" },
   left: { type: "left", title: "" },
   right: { type: "right", title: "" },
+  justify: { type: "justify", title: "" },
 };
 
 export class ContainerCommand implements Command {
@@ -68,7 +72,9 @@ export const containerWarningCommand = new ContainerCommand("warning");
 export const containerNoteCommand = new ContainerCommand("note");
 export const containerInfoCommand = new ContainerCommand("info");
 export const containerImportantCommand = new ContainerCommand("important");
+export const containerCautionCommand = new ContainerCommand("caution");
 export const containerDangerCommand = new ContainerCommand("danger");
 export const containerCenterCommand = new ContainerCommand("center");
 export const containerLeftCommand = new ContainerCommand("left");
 export const containerRightCommand = new ContainerCommand("right");
+export const containerJustifyCommand = new ContainerCommand("justify");

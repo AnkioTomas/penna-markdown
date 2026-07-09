@@ -39,6 +39,7 @@ import {
   taskEarlyCommand,
   taskCancelledCommand,
   taskUrgentCommand,
+  taskDoneCommand,
 } from "@/editor/commands/groups/TaskCommand";
 import {
   codeBlockBasicCommand,
@@ -49,6 +50,8 @@ import {
 import {
   linkCommand,
   imageCommand,
+  linkReferenceCommand,
+  linkRefDefCommand,
 } from "@/editor/commands/groups/LinkCommand";
 import { tableCommand } from "@/editor/commands/groups/TableCommand";
 import {
@@ -67,7 +70,10 @@ import {
 } from "@/editor/commands/groups/FootnoteCommand";
 import { emojiCommand } from "@/editor/commands/groups/EmojiCommand";
 import { htmlAttrCommand } from "@/editor/commands/groups/HtmlAttrCommand";
-import { frontmatterCommand } from "@/editor/commands/groups/FrontmatterCommand";
+import {
+  frontmatterCommand,
+  frontmatterVarCommand,
+} from "@/editor/commands/groups/FrontmatterCommand";
 import {
   alertNoteCommand,
   alertTipCommand,
@@ -81,14 +87,17 @@ import {
   containerNoteCommand,
   containerInfoCommand,
   containerImportantCommand,
+  containerCautionCommand,
   containerDangerCommand,
   containerCenterCommand,
   containerLeftCommand,
   containerRightCommand,
+  containerJustifyCommand,
 } from "@/editor/commands/groups/ContainerCommand";
 import {
   collapseDefaultCommand,
   collapseExpandedCommand,
+  collapseExpandCommand,
 } from "@/editor/commands/groups/CollapseCommand";
 import { tabsCommand } from "@/editor/commands/groups/TabsCommand";
 import { stepsCommand } from "@/editor/commands/groups/StepsCommand";
@@ -165,6 +174,7 @@ export const COMMANDS: Record<string, Command> = {
   taskEarly: taskEarlyCommand,
   taskCancelled: taskCancelledCommand,
   taskUrgent: taskUrgentCommand,
+  taskDone: taskDoneCommand,
   /* ---- 代码块 (groups/CodeBlockCommand)，弹窗 type: codeBlock ---- */
   codeBlockBasic: codeBlockBasicCommand,
   codeBlockTitle: codeBlockTitleCommand,
@@ -173,6 +183,8 @@ export const COMMANDS: Record<string, Command> = {
   /* ---- 链接 / 媒体 / 表格，均带弹窗 ---- */
   link: linkCommand,
   image: imageCommand,
+  linkReference: linkReferenceCommand,
+  linkRefDef: linkRefDefCommand,
   table: tableCommand,
   video: videoCommand,
   audio: audioCommand,
@@ -185,6 +197,7 @@ export const COMMANDS: Record<string, Command> = {
   emoji: emojiCommand,
   htmlAttr: htmlAttrCommand,
   frontmatter: frontmatterCommand,
+  frontmatterVar: frontmatterVarCommand,
   /* ---- GFM 告警 (groups/AlertCommand) ---- */
   alertNote: alertNoteCommand,
   alertTip: alertTipCommand,
@@ -197,13 +210,16 @@ export const COMMANDS: Record<string, Command> = {
   containerNote: containerNoteCommand,
   containerInfo: containerInfoCommand,
   containerImportant: containerImportantCommand,
+  containerCaution: containerCautionCommand,
   containerDanger: containerDangerCommand,
   containerCenter: containerCenterCommand,
   containerLeft: containerLeftCommand,
   containerRight: containerRightCommand,
+  containerJustify: containerJustifyCommand,
   /* ---- 折叠面板 (groups/CollapseCommand) ---- */
   collapseDefault: collapseDefaultCommand,
   collapseExpanded: collapseExpandedCommand,
+  collapseExpand: collapseExpandCommand,
   /* ---- 标签页 / 步骤 ---- */
   tabs: tabsCommand,
   steps: stepsCommand,
