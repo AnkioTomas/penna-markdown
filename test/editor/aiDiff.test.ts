@@ -1,38 +1,37 @@
 import { describe, expect, it } from "vitest";
-import { diffChars } from "@/editor/ai/diffChars";
+import { buildHunks, diffLines } from "@/editor/ai/diffLines";
 
-describe("diffChars", () => {
-  it("returns equal for identical strings", () => {
-    expect(diffChars("hello", "hello")).toEqual([
-      { type: "equal", value: "hello" },
-    ]);
-  });
-
-  it("detects insertion", () => {
-    const chunks = diffChars("abc", "abcd");
-    expect(chunks).toContainEqual({ type: "equal", value: "abc" });
-    expect(chunks).toContainEqual({ type: "add", value: "d" });
-  });
-
-  it("detects deletion", () => {
-    const chunks = diffChars("abcd", "abc");
-    expect(chunks).toContainEqual({ type: "equal", value: "abc" });
-    expect(chunks).toContainEqual({ type: "del", value: "d" });
-  });
-
-  it("detects substitution", () => {
-    const chunks = diffChars("cat", "cut");
-    expect(chunks.some((c) => c.type === "del" && c.value.includes("a"))).toBe(
+describe("diffLines", () => {
+  it("detects single line change", () => {
+    const chunks = diffLines("a\nb\nc\n", "a\nB\nc\n");
+    expect(chunks.some((c) => c.type === "del" && c.value.includes("b"))).toBe(
       true,
     );
-    expect(chunks.some((c) => c.type === "add" && c.value.includes("u"))).toBe(
+    expect(chunks.some((c) => c.type === "add" && c.value.includes("B"))).toBe(
       true,
     );
   });
 
-  it("handles empty strings", () => {
-    expect(diffChars("", "")).toEqual([]);
-    expect(diffChars("", "hi")).toEqual([{ type: "add", value: "hi" }]);
-    expect(diffChars("hi", "")).toEqual([{ type: "del", value: "hi" }]);
+  it("builds hunks from line diff", () => {
+    const original = "line1\nline2\nline3\n";
+    const result = "line1\nline2-mod\nline3\n";
+    const hunks = buildHunks(original, result, 0);
+    expect(hunks).toHaveLength(1);
+    expect(hunks[0].status).toBe("pending");
+    expect(hunks[0].original).toContain("line2");
+    expect(hunks[0].result).toContain("line2-mod");
+  });
+
+  it("builds multiple hunks", () => {
+    const original = "a\nb\nc\nd\n";
+    const result = "a\nB\nc\nD\n";
+    const hunks = buildHunks(original, result, 10);
+    expect(hunks.length).toBeGreaterThanOrEqual(2);
+    expect(hunks[0].from).toBeGreaterThanOrEqual(10);
+  });
+
+  it("returns no hunks when text is unchanged", () => {
+    const text = "same line\n";
+    expect(buildHunks(text, text, 0)).toEqual([]);
   });
 });
