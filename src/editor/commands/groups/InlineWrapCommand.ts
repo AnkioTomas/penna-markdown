@@ -43,6 +43,36 @@ export const strikethroughCommand = new InlineWrapCommand("~~", "~~", "文本");
 export const codeCommand = new InlineWrapCommand("`", "`", "code");
 /** `highlight` — 高亮，语法 `==文本==` */
 export const highlightCommand = new InlineWrapCommand("==", "==", "高亮");
+export const highlightNoteCommand = new InlineWrapCommand(
+  "==",
+  "=={.note}",
+  "高亮",
+);
+export const highlightTipCommand = new InlineWrapCommand(
+  "==",
+  "=={.tip}",
+  "高亮",
+);
+export const highlightWarningCommand = new InlineWrapCommand(
+  "==",
+  "=={.warning}",
+  "高亮",
+);
+export const highlightCautionCommand = new InlineWrapCommand(
+  "==",
+  "=={.caution}",
+  "高亮",
+);
+export const highlightDangerCommand = new InlineWrapCommand(
+  "==",
+  "=={.danger}",
+  "高亮",
+);
+export const highlightImportantCommand = new InlineWrapCommand(
+  "==",
+  "=={.important}",
+  "高亮",
+);
 /** `spoiler` — 剧透隐藏，语法 `!!文本!!` */
 export const spoilerCommand = new InlineWrapCommand("!!", "!!", "剧透");
 /** `sup` — 上标，语法 `^文本^` */
