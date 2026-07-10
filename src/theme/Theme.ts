@@ -1,85 +1,47 @@
-import { EventBus, type EventHandler } from "@/theme/event/EventBus";
-import {
-  logD as emitLogD,
-  logE as emitLogE,
-  logW as emitLogW,
-} from "@/theme/log";
 import REGISTERED_THEMES from "@/theme/ThemeRegister";
-
-export type LightDark = "light" | "dark";
-
-/** 主题皮肤切换事件 */
-export const THEME_EVENT_SKIN = "theme:skin";
-/** 明暗模式切换事件 */
-export const THEME_EVENT_LIGHT_DARK = "theme:ld";
-
-export interface ThemeSkinEvent {
-  prev: string;
-  id: string;
-  render: HTMLElement;
-}
-
-export interface ThemeLightDarkEvent {
-  mode: LightDark;
-  isDark: boolean;
-}
-
-const LOG_PREFIX = "[cherry]";
+import { EventBus } from "@/core/event/EventBus";
+import { Log } from "@/core/Log";
+import {
+  LightDark,
+  THEME_EVENT_LIGHT_DARK,
+} from "@/theme/event/ThemeLightDarkEvent";
+import { THEME_EVENT_SKIN } from "@/theme/event/ThemeSkinEvent";
 
 export class Theme {
-  private bus = new EventBus();
   private id = "default";
   private mode: LightDark = "light";
   private render: HTMLElement | null = null;
   private root: HTMLElement | null = null;
 
-  constructor(private readonly debug = false) {}
-
-  /** 是否处于调试模式 */
-  isDebug(): boolean {
-    return this.debug;
-  }
-
-  /** 调试日志；非调试模式不输出 */
-  logD(...args: unknown[]): void {
-    if (!this.debug) return;
-    emitLogD(LOG_PREFIX, ...args);
-  }
-
-  /** 警告日志 */
-  logW(...args: unknown[]): void {
-    emitLogW(LOG_PREFIX, ...args);
-  }
-
-  /** 错误日志 */
-  logE(...args: unknown[]): void {
-    emitLogE(LOG_PREFIX, ...args);
-  }
+  constructor(
+    private readonly bus: EventBus,
+    private readonly logger: Log,
+    private readonly rootElement: HTMLElement,
+    private readonly themes: string[], //外部注册的theme
+  ) {}
 
   list() {
-    return REGISTERED_THEMES;
+    return [...REGISTERED_THEMES, ...this.themes];
   }
 
-  setTheme(id: string, render: HTMLElement, root?: HTMLElement) {
-    if (!REGISTERED_THEMES.includes(id as (typeof REGISTERED_THEMES)[number])) {
-      throw new Error(`未知主题: ${id}`);
+  setTheme(id: string) {
+    if (!this.list().includes(id)) {
+      this.logger.logE('unknow theme "' + id + '" , skip it');
     }
 
     const prev = this.id;
     this.id = id;
-    this.render = render;
-    this.root = root ?? render.parentElement ?? render;
 
     this.applyThemeClasses();
     this.applyAppearanceClass();
 
     if (prev !== id) {
-      this.logD("setTheme", { prev, id });
-      this.emit(THEME_EVENT_SKIN, {
+      this.logger.logD("setTheme", { prev, id });
+      this.bus.emit(THEME_EVENT_SKIN, {
         prev,
         id,
-        render,
-      } satisfies ThemeSkinEvent);
+        root: this.rootElement,
+      });
     }
   }
 
@@ -88,7 +50,6 @@ export class Theme {
       id: this.id,
       mode: this.mode,
       isDark: this.mode === "dark",
-      render: this.render,
       root: this.root,
     };
   }
@@ -97,26 +58,11 @@ export class Theme {
     if (this.mode === mode) return;
     this.mode = mode;
     this.applyAppearanceClass();
-    this.logD("setLightDark", { mode });
-    this.emit(THEME_EVENT_LIGHT_DARK, {
+    this.logger.logD("setLightDark", { mode });
+    this.bus.emit(THEME_EVENT_LIGHT_DARK, {
       mode,
       isDark: mode === "dark",
-    } satisfies ThemeLightDarkEvent);
-  }
-
-  on<T = unknown>(event: string, handler: EventHandler<T>): () => void {
-    this.logD("event:on", event);
-    return this.bus.on(event, handler);
-  }
-
-  off<T = unknown>(event: string, handler: EventHandler<T>): void {
-    this.logD("event:off", event);
-    this.bus.off(event, handler);
-  }
-
-  emit<T = unknown>(event: string, payload?: T): void {
-    this.logD("event:emit", event, payload);
-    this.bus.emit(event, payload);
+    });
   }
 
   /** 主题 class 在 root；render 仅 cherry-render（供 `.cherry-theme-* .cherry-render` 命中） */
@@ -128,11 +74,11 @@ export class Theme {
       if (name.startsWith("cherry-theme-")) this.render.classList.remove(name);
     }
 
-    const themeRoot = this.root ?? this.render;
-    for (const name of [...themeRoot.classList]) {
-      if (name.startsWith("cherry-theme-")) themeRoot.classList.remove(name);
+    for (const name of [...this.rootElement.classList]) {
+      if (name.startsWith("cherry-theme-"))
+        this.rootElement.classList.remove(name);
     }
-    themeRoot.classList.add(`cherry-theme-${this.id}`);
+    this.rootElement.classList.add(`cherry-theme-${this.id}`);
   }
 
   private applyAppearanceClass() {
