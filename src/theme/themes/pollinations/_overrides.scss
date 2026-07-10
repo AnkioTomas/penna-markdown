@@ -1,18 +1,16 @@
 @use "../../style/common/rem" as *;
-@use "mixins" as pixel;
+@use "mixins" as brutal;
 @use "palette" as *;
 @use "containers";
 
-/// 像素画布容器（预览区 / 独立 Renderer 挂载点）
+/// Neo-Brutalism 预览画布：米色底、无网格装饰
 @mixin surface {
   position: relative;
   isolation: isolate;
   box-sizing: border-box;
   min-height: 100%;
-  padding: rem(24) rem(18) rem(40);
-  @include pixel.pixel-canvas-light;
-  @include pixel.pixel-frame;
-  @include pixel.scanline-overlay(0.6%);
+  padding: var(--polli-space-block) rem(24) rem(40);
+  @include brutal.canvas-light;
 
   > * {
     position: relative;
@@ -20,9 +18,9 @@
   }
 }
 
-/// Markdown 内容排版：正文可读，像素感留给标题点缀
+/// Markdown 排版：Press Start 2P 标题 + System UI 正文 + IBM Plex Mono 代码
 @mixin content {
-  @include pixel.pixel-font-body;
+  @include brutal.font-body;
   font-size: var(--polli-text-size);
   color: var(--cherry-c-text-1);
   word-wrap: break-word;
@@ -31,77 +29,75 @@
 
   ::selection {
     color: var(--cherry-c-text-1);
-    background: color-mix(in srgb, var(--polli-h2-color) 28%, transparent);
+    background: color-mix(in srgb, #{$polli-accent-strong} 55%, transparent);
   }
 
   h1 {
-    @include pixel.pixel-font-title;
-    margin: 0 0 rem(20);
-    padding: rem(14) rem(16);
-    font-size: rem(20);
+    @include brutal.font-title;
+    margin: 0 0 var(--polli-space-block);
+    padding: rem(16);
+    font-size: rem(24);
+    line-height: 1.5;
+    color: #{$polli-dark};
+    background: #{$polli-accent-strong};
+    border: 0;
+    box-shadow: var(--polli-shadow-card);
+  }
+
+  h2 {
+    @include brutal.font-title;
+    margin: var(--polli-space-block) 0 rem(16);
+    padding: rem(8) rem(12);
+    font-size: rem(18);
     line-height: 1.55;
     color: #{$polli-dark};
     background: color-mix(
       in srgb,
-      #{$polli-primary-light} 72%,
+      #{$polli-primary-light} 65%,
       #{$polli-cream}
     );
-    border: rem(2) solid
-      color-mix(in srgb, #{$polli-primary-strong} 38%, #{$polli-border});
-    box-shadow: rem(2) rem(2) 0
-      color-mix(in srgb, #{$polli-primary-strong} 20%, #{$polli-border});
-  }
-
-  h2 {
-    @include pixel.pixel-font-heading;
-    margin: rem(28) 0 rem(14);
-    padding: 0 0 rem(8);
-    font-size: rem(18);
-    color: #{$polli-dark};
-    border-bottom: rem(2) solid
-      color-mix(in srgb, #{$polli-primary-strong} 32%, #{$polli-border});
+    border: 0;
+    box-shadow: var(--polli-shadow-sm);
   }
 
   h3 {
-    @include pixel.pixel-font-heading;
-    margin: rem(22) 0 rem(10);
-    padding-left: rem(10);
+    @include brutal.font-heading;
+    margin: rem(24) 0 rem(8);
+    padding: 0;
     font-size: rem(16);
     color: #{$polli-dark};
-    border-left: rem(3) solid
-      color-mix(in srgb, #{$polli-secondary-strong} 36%, #{$polli-border});
+    border: 0;
   }
 
   h4 {
-    @include pixel.pixel-font-heading;
-    margin: rem(18) 0 rem(8);
+    @include brutal.font-body;
+    margin: rem(20) 0 rem(8);
     font-size: rem(15);
-    font-weight: 600;
-    color: color-mix(in srgb, #{$polli-dark} 90%, #{$polli-muted});
+    font-weight: 700;
+    color: #{$polli-dark};
   }
 
   h5,
   h6 {
-    margin: rem(14) 0 rem(8);
+    margin: rem(16) 0 rem(8);
     padding: 0;
     border: 0;
-    @include pixel.pixel-font-body;
+    @include brutal.font-body;
     font-weight: 600;
     line-height: var(--polli-heading-leading);
   }
 
   h5 {
     font-size: rem(14);
-    color: #{$polli-muted};
-    letter-spacing: rem(0.3);
-    text-transform: none;
+    color: #{$polli-subtle};
   }
 
   h6 {
-    font-size: rem(13);
+    font-size: rem(12);
     color: #{$polli-subtle};
-    font-style: normal;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: rem(0.4);
+    text-transform: uppercase;
   }
 
   p {
@@ -114,33 +110,33 @@
   }
 
   a {
-    @include pixel.pixel-link;
+    @include brutal.brutal-link;
   }
 
   blockquote {
-    margin: 0 0 rem(18);
-    padding: rem(10) rem(14);
-    border-left: rem(3) solid
-      color-mix(in srgb, #{$polli-primary-strong} 34%, #{$polli-border});
-    background: color-mix(in srgb, #{$polli-tan} 75%, #{$polli-cream});
-    color: color-mix(in srgb, #{$polli-dark} 90%, #{$polli-muted});
+    margin: 0 0 rem(24);
+    padding: rem(16);
+    border: 0;
+    background: #{$polli-primary-light};
+    color: #{$polli-dark};
+    box-shadow: var(--polli-shadow-card);
 
     blockquote {
-      margin: rem(10) 0 0;
-      border-left-color: color-mix(
+      margin: rem(12) 0 0;
+      background: color-mix(
         in srgb,
-        #{$polli-secondary-strong} 30%,
-        #{$polli-border}
+        #{$polli-secondary-light} 55%,
+        #{$polli-cream}
       );
     }
   }
 
   hr {
     height: rem(2);
-    margin: rem(24) 0;
+    margin: var(--polli-space-block) 0;
     padding: 0;
     border: 0;
-    background: color-mix(in srgb, #{$polli-border} 85%, transparent);
+    background: #{$polli-dark};
     opacity: 1;
   }
 
@@ -156,29 +152,32 @@
   }
 
   li {
-    margin: rem(6) 0;
+    margin: rem(4) 0;
     color: #{$polli-dark};
 
     &::marker {
-      color: color-mix(in srgb, #{$polli-muted} 75%, #{$polli-dark});
+      color: #{$polli-subtle};
     }
   }
 
   :not(pre) > code {
+    @include brutal.font-code;
     padding: rem(2) rem(6);
-    font-size: 0.92em;
+    font-size: 0.9em;
     color: var(--cherry-c-code-inline-fg);
     background: var(--cherry-c-code-inline-bg);
-    border: rem(1) solid var(--cherry-c-code-inline-border);
+    border: 0;
+    box-shadow: var(--polli-shadow-sm);
   }
 
   pre:not(.cherry-code-block__pre) {
     margin: 0 0 rem(16);
-    padding: rem(14);
+    padding: rem(16);
+    @include brutal.font-code;
     line-height: 1.45;
-    font-family: var(--polli-font-body);
-    @include pixel.pixel-accent-panel;
-    border: rem(1) solid var(--polli-edge);
+    border: 0;
+    background: #{$polli-tan};
+    box-shadow: var(--polli-shadow-card);
   }
 
   table {
@@ -187,9 +186,10 @@
     --cherry-table-row-bg: var(--cherry-c-bg-elevated);
     --cherry-table-stripe-bg: transparent;
     width: 100%;
-    margin: 0 0 rem(20);
+    margin: 0 0 var(--polli-space-block);
     border-collapse: collapse;
-    border: rem(1) solid var(--polli-edge);
+    border: 0;
+    box-shadow: var(--polli-shadow-card);
 
     th,
     td {
@@ -198,7 +198,7 @@
     }
 
     th {
-      font-weight: 600;
+      font-weight: 700;
       font-size: rem(13);
       color: var(--cherry-c-text-1);
       background: var(--polli-table-head-bg);
@@ -207,7 +207,7 @@
     tbody tr:nth-child(even) td {
       background: color-mix(
         in srgb,
-        var(--polli-h3-color) 6%,
+        #{$polli-secondary-light} 35%,
         var(--cherry-c-bg)
       );
     }
@@ -215,69 +215,53 @@
 
   img {
     border: 0;
-    box-shadow: none;
+    box-shadow: var(--polli-shadow-card);
     image-rendering: auto;
   }
 
   .cherry-code-block {
-    --cb-line-height: 1.35;
+    --cb-line-height: 1.45;
     --cb-radius: 0;
-    --cb-border: color-mix(
-      in srgb,
-      #{$polli-secondary-strong} 35%,
-      #{$polli-border}
-    );
-    --cb-shadow: rem(2) rem(2) 0
-      color-mix(in srgb, #{$polli-secondary-strong} 22%, transparent);
-    --cb-header-bg: color-mix(
-      in srgb,
-      #{$polli-secondary-light} 55%,
-      #{$polli-cream}
-    );
+    --cb-border: transparent;
+    --cb-shadow: var(--polli-shadow-card);
+    --cb-header-bg: #{$polli-secondary-light};
     --cb-code-bg: var(--cherry-c-bg-elevated);
     --cb-lang-fg: var(--cherry-c-text-1);
-    --cb-lang-bg: color-mix(
-      in srgb,
-      #{$polli-primary-light} 65%,
-      #{$polli-cream}
-    );
+    --cb-lang-bg: #{$polli-accent-strong};
     --cb-line-highlight: color-mix(
       in srgb,
-      var(--cherry-c-brand-mark) 18%,
+      var(--cherry-c-brand-mark) 22%,
       transparent
     );
     margin: 0 0 rem(16);
 
     &__panel {
-      border-width: rem(2);
+      border: 0;
     }
 
     &__header {
-      min-height: rem(34);
-      padding: rem(6) rem(12);
-      border-bottom: rem(2) solid
-        color-mix(in srgb, #{$polli-secondary-strong} 30%, #{$polli-border});
+      min-height: rem(36);
+      padding: rem(8) rem(12);
+      border-bottom: rem(2) solid #{$polli-dark};
     }
 
     &__lang {
       padding: rem(2) rem(8);
-      font-family: var(--polli-font-body);
+      @include brutal.font-code;
       font-size: rem(12);
       font-weight: 600;
       line-height: 1.6;
       color: var(--cb-lang-fg);
       background: var(--cb-lang-bg);
-      border: rem(2) solid
-        color-mix(in srgb, #{$polli-primary-strong} 35%, #{$polli-border});
-      box-shadow: rem(1) rem(1) 0
-        color-mix(in srgb, #{$polli-primary-strong} 20%, transparent);
+      border: 0;
+      box-shadow: var(--polli-shadow-sm);
     }
 
     &__body,
     &__pre,
     &__pre code,
     .hljs {
-      font-family: var(--polli-font-body);
+      @include brutal.font-code;
       line-height: var(--cb-line-height);
     }
 
@@ -334,20 +318,16 @@
 
   .task-list .task-item {
     &.todo .marker {
-      --marker-color: #{$polli-muted};
+      --marker-color: #{$polli-subtle};
     }
 
     &.done .marker {
-      --marker-color: color-mix(
-        in srgb,
-        #{$polli-tertiary-strong} 55%,
-        #{$polli-muted}
-      );
+      --marker-color: #{$polli-tertiary-strong};
     }
   }
 
   sup.cherry-footnote-ref a {
-    @include pixel.pixel-link;
+    @include brutal.brutal-link;
     font-size: rem(11);
   }
 
@@ -360,7 +340,7 @@
 }
 
 @mixin surface-dark {
-  @include pixel.pixel-canvas-dark;
+  @include brutal.canvas-dark;
 }
 
 @mixin content-dark {
@@ -370,9 +350,13 @@
     color: #{$polli-cream};
   }
 
+  h1 {
+    color: #{$polli-dark};
+  }
+
   h4,
   h5 {
-    color: #{$polli-muted};
+    color: #{$polli-cream};
   }
 
   h6 {
@@ -383,13 +367,21 @@
     color: #{$polli-cream};
 
     &::marker {
-      color: #{$polli-muted};
+      color: #{$polli-subtle};
     }
   }
 
   blockquote {
-    color: color-mix(in srgb, #{$polli-cream} 92%, #{$polli-muted});
-    background: color-mix(in srgb, #{$polli-muted} 18%, #{$polli-dark});
+    color: #{$polli-cream};
+    background: var(--polli-blockquote-bg);
+  }
+
+  hr {
+    background: color-mix(in srgb, #{$polli-cream} 85%, transparent);
+  }
+
+  :not(pre) > code {
+    box-shadow: var(--polli-shadow-sm);
   }
 
   @include containers.styles-dark;

@@ -1,4 +1,5 @@
 @use "sass:list";
+@use "../../style/common/rem" as *;
 @use "../../style/common/semantic-picks" as picks;
 @use "palette" as *;
 
@@ -6,7 +7,7 @@ $polli-h1: $polli-dark;
 $polli-h2: $polli-dark;
 $polli-h3: $polli-dark;
 $polli-h4: color-mix(in srgb, #{$polli-dark} 88%, #{$polli-muted});
-$polli-h5: $polli-muted;
+$polli-h5: $polli-subtle;
 $polli-h6: $polli-subtle;
 
 $polli-link: $polli-secondary-strong;
@@ -156,42 +157,29 @@ $polli-dark-mark-mix: 60%;
   @return $polli-primary-strong;
 }
 
+@function polli-shadow-color($is-dark) {
+  @if $is-dark {
+    @return color-mix(in srgb, #{$polli-cream} 85%, transparent);
+  }
+
+  @return #{$polli-dark};
+}
+
 @mixin typography-tokens {
   --polli-font-title: "Press Start 2P", "Courier New", Courier, monospace;
   --polli-font-body:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --polli-font-code:
     "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
     "Liberation Mono", monospace;
-  --polli-font-heading: var(--polli-font-body);
+  --polli-font-heading: var(--polli-font-title);
   --cherry-font-family: var(--polli-font-body);
-  --polli-text-size: 0.9375rem;
-  --polli-text-leading: 1.8;
+  --polli-text-size: 1rem;
+  --polli-text-leading: 1.6;
   --polli-heading-leading: 1.45;
-  --polli-edge: color-mix(in srgb, #{$polli-border} 55%, #{$polli-cream});
-  --polli-edge-strong: color-mix(
-    in srgb,
-    #{$polli-secondary-strong} 22%,
-    #{$polli-border}
-  );
-  --polli-surface-bg: color-mix(
-    in srgb,
-    #{$polli-cream} 92%,
-    #{$polli-secondary-light}
-  );
-  --polli-surface-tint: color-mix(
-    in srgb,
-    #{$polli-secondary-light} 28%,
-    transparent
-  );
-  --polli-panel-bg: color-mix(
-    in srgb,
-    #{$polli-primary-light} 22%,
-    #{$polli-cream}
-  );
-  --polli-panel-border: color-mix(
-    in srgb,
-    #{$polli-primary-strong} 28%,
-    #{$polli-border}
-  );
+  --polli-space: #{rem(8)};
+  --polli-space-block: #{rem(32)};
   --polli-radius: 0;
 
   --polli-h1-color: #{$polli-h1};
@@ -203,37 +191,6 @@ $polli-dark-mark-mix: 60%;
 }
 
 @mixin typography-tokens-dark {
-  --polli-edge: color-mix(
-    in srgb,
-    #{$polli-dark-table-border} 38%,
-    transparent
-  );
-  --polli-edge-strong: color-mix(
-    in srgb,
-    #{$polli-secondary-strong} 24%,
-    #{$polli-dark-elevated}
-  );
-  --polli-surface-bg: color-mix(
-    in srgb,
-    #{$polli-dark-bg} 94%,
-    #{$polli-dark-elevated}
-  );
-  --polli-surface-tint: color-mix(
-    in srgb,
-    #{$polli-secondary-strong} 12%,
-    transparent
-  );
-  --polli-panel-bg: color-mix(
-    in srgb,
-    #{$polli-primary-strong} 10%,
-    #{$polli-dark-elevated}
-  );
-  --polli-panel-border: color-mix(
-    in srgb,
-    #{$polli-primary-strong} 22%,
-    #{$polli-dark-elevated}
-  );
-
   --polli-h1-color: #{$polli-dark-h1};
   --polli-h2-color: #{$polli-dark-h2};
   --polli-h3-color: #{$polli-dark-h3};
@@ -286,15 +243,11 @@ $polli-dark-mark-mix: 60%;
   $border-soft: polli-border-soft($is-dark);
   $border-faint: polli-border-faint($is-dark);
   $code-inline-bg: polli-code-inline-bg($is-dark);
-  $shadow-color: if(
-    $is-dark,
-    color-mix(in srgb, #{$polli-secondary-strong} 18%, transparent),
-    color-mix(in srgb, #{$polli-secondary-strong} 12%, transparent)
-  );
+  $shadow-color: polli-shadow-color($is-dark);
 
-  --polli-shadow-sm: #{1px 1px 0 #{$shadow-color}};
-  --polli-shadow-md: #{2px 2px 0 #{$shadow-color}};
-  --polli-shadow-accent: #{2px 2px 0 #{$polli-accent-strong}};
+  --polli-shadow-sm: #{rem(2) rem(2) 0 0 #{$shadow-color}};
+  --polli-shadow-btn: #{rem(4) rem(4) 0 0 #{$shadow-color}};
+  --polli-shadow-card: #{rem(6) rem(6) 0 0 #{$shadow-color}};
 
   --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
   --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
@@ -316,18 +269,14 @@ $polli-dark-mark-mix: 60%;
   --cherry-c-on-brand: #{$polli-dark};
 
   --cherry-c-code-inline-bg: #{$code-inline-bg};
-  --cherry-c-code-inline-fg: color-mix(
-    in srgb,
-    #{$polli-muted} 25%,
-    #{$polli-dark}
-  );
-  --cherry-c-code-inline-border: #{$border-soft};
+  --cherry-c-code-inline-fg: #{if($is-dark, $polli-dark-text, $polli-muted)};
+  --cherry-c-code-inline-border: transparent;
 
   --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
   --cherry-c-code-block-code-bg: var(--cherry-c-bg-elevated);
-  --cherry-c-code-block-shadow: var(--polli-shadow-sm);
+  --cherry-c-code-block-shadow: var(--polli-shadow-card);
 
-  --cherry-c-table-th-border: #{$border-soft};
+  --cherry-c-table-th-border: #{$border-faint};
   --cherry-c-table-td-border: #{$border-faint};
   --cherry-c-hr-color: #{polli-hr-color($is-dark)};
   --cherry-c-blockquote-border: #{polli-blockquote-border($is-dark)};
@@ -373,8 +322,8 @@ $polli-dark-mark-mix: 60%;
   --cherry-c-brand-on-bg: #{$polli-dark};
 
   --cherry-c-text-1: #{$polli-dark};
-  --cherry-c-text-2: #{$polli-muted};
-  --cherry-c-text-3: #{$polli-subtle};
+  --cherry-c-text-2: #{$polli-subtle};
+  --cherry-c-text-3: #{$polli-muted};
 
   --cherry-c-bg: #{$polli-cream};
   --cherry-c-bg-elevated: #{$polli-tan};
@@ -383,7 +332,7 @@ $polli-dark-mark-mix: 60%;
   --cherry-c-contrast-dark: #{$polli-dark};
 
   --cherry-c-brand-mark: #{$polli-accent-strong};
-  --cherry-c-code-fg: #{$polli-dark};
+  --cherry-c-code-fg: #{$polli-muted};
   --cherry-c-border-soft: #{$polli-border};
   --cherry-c-border-faint: #{color-mix(
       in srgb,
@@ -424,7 +373,7 @@ $polli-dark-mark-mix: 60%;
     #{$polli-accent-strong} #{$polli-dark-mark-mix},
     #{$polli-dark-bg}
   );
-  --cherry-c-code-fg: #{$polli-dark-text};
+  --cherry-c-code-fg: #{$polli-dark-text-subtle};
   --cherry-c-border-soft: #{$polli-dark-table-border};
   --cherry-c-border-faint: #{color-mix(
       in srgb,
