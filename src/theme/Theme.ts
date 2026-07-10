@@ -1,3 +1,18 @@
+/**
+ * @file 主题皮肤与明暗模式
+ * @module theme/Theme
+ *
+ * 管理 `cherry-theme-*`（皮肤）与 `cherry-dark`（明暗）两类 class，
+ * 并通过 {@link EventBus} 广播 {@link THEME_EVENT_SKIN} / {@link THEME_EVENT_LIGHT_DARK}。
+ *
+ * ## class 分工
+ *
+ * | 元素 | class | 作用 |
+ * | ---- | ----- | ---- |
+ * | `rootElement`（`.cherry`） | `cherry-theme-{id}` | 皮肤变量与编辑器样式、明暗切换；`render |
+ * | `render`（预览挂载点） | `cherry-render` | 供 `.cherry-theme-* .cherry-render` 命中渲染样式 |
+ */
+
 import REGISTERED_THEMES from "@/theme/ThemeRegister";
 import { EventBus } from "@/core/event/EventBus";
 import { Log } from "@/core/Log";
@@ -7,23 +22,44 @@ import {
 } from "@/theme/event/ThemeLightDarkEvent";
 import { THEME_EVENT_SKIN } from "@/theme/event/ThemeSkinEvent";
 
+/**
+ * 主题状态：皮肤 id + 明暗模式。
+ *
+ * 不直接操作样式表，仅切换 DOM class 并发出事件，供 Renderer / 编辑器等订阅。
+ */
 export class Theme {
+  /** 当前皮肤 id，对应 `cherry-theme-{id}` */
   private id = "default";
+  /** 当前明暗模式 */
   private mode: LightDark = "light";
+  /** 预览挂载点；仅加 `cherry-render` */
   private render: HTMLElement | null = null;
-  private root: HTMLElement | null = null;
 
+  /**
+   * @param bus          实例级事件总线
+   * @param logger       日志门面
+   * @param rootElement  Cherry 根容器（`.cherry`），承载 `cherry-theme-*`
+   * @param themes       外部注册的皮肤 id 列表，与内置 {@link REGISTERED_THEMES} 合并
+   */
   constructor(
     private readonly bus: EventBus,
     private readonly logger: Log,
     private readonly rootElement: HTMLElement,
-    private readonly themes: string[], //外部注册的theme
+    private readonly themes: string[],
   ) {}
 
+  /** 可用皮肤 id：内置 + 外部注册 */
   list() {
     return [...REGISTERED_THEMES, ...this.themes];
   }
 
+  /**
+   * 切换皮肤；未知 id 时打错误日志并仍写入 id。
+   *
+   * id 变化时发出 {@link THEME_EVENT_SKIN}。
+   *
+   * @param id 皮肤 id，须出现在 {@link list} 中
+   */
   setTheme(id: string) {
     if (!this.list().includes(id)) {
       this.logger.logE('unknow theme "' + id + '" , skip it');
@@ -45,15 +81,23 @@ export class Theme {
     }
   }
 
+  /** 当前主题快照：id、mode、isDark 及 DOM 引用 */
   getTheme() {
     return {
       id: this.id,
       mode: this.mode,
       isDark: this.mode === "dark",
-      root: this.root,
+      root: this.rootElement,
     };
   }
 
+  /**
+   * 切换明暗模式；相同时 no-op。
+   *
+   * 发出 {@link THEME_EVENT_LIGHT_DARK}。
+   *
+   * @param mode `light` | `dark`
+   */
   setLightDark(mode: LightDark) {
     if (this.mode === mode) return;
     this.mode = mode;
@@ -65,7 +109,12 @@ export class Theme {
     });
   }
 
-  /** 主题 class 在 root；render 仅 cherry-render（供 `.cherry-theme-* .cherry-render` 命中） */
+  /**
+   * 同步皮肤 class。
+   *
+   * 主题 class 在 `rootElement`；`render` 仅保留 `cherry-render`
+   *（供 `.cherry-theme-* .cherry-render` 命中）。
+   */
   private applyThemeClasses() {
     if (!this.render) return;
 
@@ -81,8 +130,11 @@ export class Theme {
     this.rootElement.classList.add(`cherry-theme-${this.id}`);
   }
 
+  /**
+   * 同步明暗 class：`cherry-dark` 仅挂在 `rootElement`，`render` 上移除残留。
+   */
   private applyAppearanceClass() {
-    this.root?.classList.toggle("cherry-dark", this.mode === "dark");
+    this.rootElement.classList.toggle("cherry-dark", this.mode === "dark");
     this.render?.classList.remove("cherry-dark");
   }
 }
