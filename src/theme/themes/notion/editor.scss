@@ -1,12 +1,16 @@
 /** Notion 主题编辑器样式 */
 @use "tokens";
+@use "editor-chrome";
 
 .cherry-theme-notion.cherry,
 .cherry-theme-notion .cherry {
   @include tokens.theme-light;
+  @include editor-chrome.chrome;
 }
 
 .cherry-dark.cherry-theme-notion.cherry,
 .cherry-dark.cherry-theme-notion .cherry {
   @include tokens.theme-dark;
+  @include editor-chrome.chrome;
+  @include editor-chrome.chrome-dark;
 }
