@@ -1,10 +1,10 @@
 @use "../../style/common/rem" as *;
 @use "../../style/common/hljs-github" as hljs-github;
 
-// GitHub markdown-body 排版：无衬线、h1/h2 下划线、蓝色链接、网格表格
+// GitHub Docs 排版：14px 基准、系统字体、h1/h2 下划线、蓝色链接、扁平无阴影
 @mixin styles {
   box-sizing: border-box;
-  padding: rem(24) rem(32) rem(32);
+  padding: rem(24) rem(32);
   background-color: var(--cherry-c-bg);
   color: var(--cherry-c-text-1);
   font-family: var(--github-font-sans);
@@ -30,7 +30,7 @@
     margin-top: rem(24);
     margin-bottom: rem(16);
     padding-bottom: rem(6);
-    font-size: rem(32);
+    font-size: rem(28);
     border-bottom: rem(1) solid var(--cherry-c-border-soft);
   }
 
@@ -86,16 +86,30 @@
   }
 
   blockquote {
-    margin: 0 0 rem(16);
-    padding: rem(16);
+    margin: 0 0 rem(24);
+    padding: rem(16) rem(16);
     border-left: rem(4) solid var(--cherry-c-blockquote-border);
     color: var(--cherry-c-text-2);
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+
+    blockquote {
+      margin-top: rem(12);
+    }
   }
 
   hr {
-    height: rem(4);
+    box-sizing: content-box;
+    height: rem(2);
     margin: rem(24) 0;
     padding: 0;
+    overflow: hidden;
     border: 0;
     background-color: var(--cherry-c-hr-color);
   }
@@ -111,23 +125,24 @@
   }
 
   :not(pre) > code {
-    padding: rem(3) rem(6);
+    padding: rem(2) rem(6);
     font-family: var(--github-font-mono);
     font-size: 85%;
     color: var(--cherry-c-code-inline-fg);
     background: var(--cherry-c-code-inline-bg);
     border: 0;
-    border-radius: rem(6);
+    border-radius: var(--github-radius-interactive);
   }
 
   pre:not(.cherry-code-block__pre) {
     margin: 0 0 rem(16);
     padding: rem(16);
     font-family: var(--github-font-mono);
+    font-size: rem(13);
     color: var(--cherry-c-text-1);
     background: var(--cherry-c-bg-elevated);
     border: rem(1) solid var(--cherry-c-border-soft);
-    border-radius: rem(6);
+    border-radius: var(--github-radius-interactive);
     box-shadow: none;
   }
 
@@ -157,7 +172,7 @@
 
   img {
     max-width: 100%;
-    border-radius: rem(6);
+    border-radius: var(--github-radius);
   }
 
   .cherry-alert {
@@ -165,7 +180,7 @@
     padding: rem(12) rem(16);
     border: rem(1) solid var(--alert-border);
     border-left-width: rem(4);
-    border-radius: rem(6);
+    border-radius: var(--github-radius-interactive);
     box-shadow: none;
     background: var(--alert-bg);
     font-size: rem(14);
@@ -176,7 +191,7 @@
   }
 
   .cherry-code-block {
-    --cb-radius: #{rem(6)};
+    --cb-radius: var(--github-radius-interactive);
     --cb-border: var(--cherry-c-border-soft);
     --cb-shadow: none;
     --cb-header-bg: var(--cherry-c-bg-elevated);
@@ -217,7 +232,7 @@
   .cherry-link-card,
   .cherry-repo-card {
     border: rem(1) solid var(--cherry-c-border-soft);
-    border-radius: rem(6);
+    border-radius: var(--github-radius-interactive);
     background: var(--cherry-c-bg);
     box-shadow: none;
   }
@@ -230,7 +245,7 @@
   .cherry-tabs {
     margin: 0 0 rem(16);
     border: rem(1) solid var(--cherry-c-border-soft);
-    border-radius: rem(6);
+    border-radius: var(--github-radius-interactive);
     background: var(--cherry-c-bg);
     box-shadow: none;
 
@@ -251,7 +266,7 @@
 
   .cherry-collapse {
     border: rem(1) solid var(--cherry-c-border-soft);
-    border-radius: rem(6);
+    border-radius: var(--github-radius-interactive);
     background: var(--cherry-c-bg);
     box-shadow: none;
   }

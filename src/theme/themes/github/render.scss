@@ -8,6 +8,7 @@
 .cherry-theme-github {
   .cherry-render {
     @include tokens.theme-light;
+    @include hljs-github.light;
     @include overrides.styles;
   }
 }

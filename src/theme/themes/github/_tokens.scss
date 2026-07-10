@@ -13,8 +13,9 @@ $github-border: #d1d9e0;
 $github-border-muted: #d8dee4;
 
 $github-fg: #1f2328;
-$github-fg-muted: #59636e;
+$github-fg-muted: #656d76;
 $github-fg-subtle: #818b98;
+$github-success: #116329;
 
 $github-code-fg: #1f2328;
 
@@ -37,8 +38,8 @@ $github-light-semantics: (
     #add8e6,
   ),
   tip: (
-    #1a7f37,
-    #98fb98,
+    #{$github-success},
+    #dafbe1,
   ),
   warning: (
     #9a6700,
@@ -121,14 +122,17 @@ $github-dark-mark-mix: 65%;
 
 @mixin typography-tokens {
   --github-font-sans:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica,
-    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    -apple-system, "system-ui", "Segoe UI", "Noto Sans", Helvetica, Arial,
+    sans-serif;
   --github-font-mono:
     ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
     monospace;
-  --github-text-size: 1rem;
+  --github-text-size: 0.875rem;
   --github-text-leading: 1.5;
   --github-heading-leading: 1.25;
+  --github-radius: 0;
+  --github-radius-interactive: 6px;
+  --github-border-inset: inset 2px var(--cherry-c-border-soft);
 }
 
 @mixin generate-semantic-suite($palette, $is-dark: false) {
