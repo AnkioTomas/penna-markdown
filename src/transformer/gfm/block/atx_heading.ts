@@ -18,14 +18,28 @@ import type { RenderContext } from "@/transformer/core/context/RenderContext.js"
 import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
 import { escapeHtml, isEscaped } from "@/transformer/utils/escape.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
+import { ParserStore } from "@/transformer/core/ParserStore";
 
-/** `syntaxOptions.atx_heading`（setext 标题 id 亦读此配置） */
-export interface AtxHeadingOptions extends ParserOptions {
-  id?: boolean;
+/** ATX 和 Setext 标题节点类型 */
+export const HEADING_NODE_TYPES = new Set(["atx_heading", "setext_heading"]);
+
+/** 从 heading AST 节点提取纯文本标题。 */
+export function extractHeadingText(node: MarkdownNode): string {
+  if (node.value !== undefined) return node.value;
+  if (!node.children?.length) return "";
+
+  return node.children
+    .map((child) => {
+      if (child.type === "html_attrs") return "";
+      if (child.type === "image") return String(child.props?.alt ?? "");
+      return extractHeadingText(child);
+    })
+    .join("");
 }
 
-/** ATX / Setext 标题节点类型 */
-export const HEADING_NODE_TYPES = new Set(["atx_heading", "setext_heading"]);
+export interface AtxHeadingOptions extends ParserOptions {
+  slug?: boolean;
+}
 /** 标题文本 → slug：非法字符替换为 `-`。 */
 function slugify(text: string): string {
   return text
@@ -33,6 +47,49 @@ function slugify(text: string): string {
     .replace(/[^\w\u4e00-\u9fff-]+/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
+}
+
+/**
+ * 标题文本 → id：生成唯一 id（带去重）。
+ * 去 重逻辑由 store 中的 atxSlugs 注册表保证。
+ */
+export function assignId(text: string, store: ParserStore): string {
+  const base = slugify(text);
+
+  // 获取全局注册表
+  let used = store.get("atxSlugs") as Set<string>;
+  if (!used) {
+    used = new Set<string>();
+    store.set("atxSlugs", used);
+  }
+
+  // 生成唯一 id
+  let id = base;
+  let index = 1;
+  while (used.has(id)) {
+    id = `${base}-${index}`;
+    index++;
+  }
+  used.add(id);
+
+  return id;
+}
+
+/** 渲染标题 HTML，支持可选 id 属性。 */
+export function renderHeadingHtml(
+  node: MarkdownNode,
+  ctx: RenderContext,
+  options: AtxHeadingOptions,
+  sourceLineAttrs: string,
+): string {
+  const level = (node.props?.level as number) || 1;
+  const inner = ctx.renderInline(node.children);
+  const id = (node.props?.id as string) ?? null;
+
+  if (!options.slug) {
+    return `<h${level}${sourceLineAttrs}>${inner}</h${level}>`;
+  }
+  return `<h${level} id="${escapeHtml(id ?? "")}"${sourceLineAttrs}>${inner}</h${level}>`;
 }
 
 function getAtxHeadingInfo(
@@ -86,21 +143,6 @@ class HeadingBlockParser extends BaseBlockParser {
 
     // 获取全局 id 注册表
     const store = ctx.store;
-    let used = store.get("atxSlugs") as Set<string>;
-    if (!used) {
-      used = new Set<string>();
-      store.set("atxSlugs", used);
-    }
-
-    // 生成唯一 id
-    const baseSlug = slugify(atx.content);
-    let id = baseSlug;
-    let counter = 1;
-    while (used.has(id)) {
-      id = `${baseSlug}-${counter}`;
-      counter++;
-    }
-    used.add(id);
 
     const node = createNode(
       "atx_heading",
@@ -109,23 +151,21 @@ class HeadingBlockParser extends BaseBlockParser {
       ctx.parseInline(atx.content),
       {
         level: atx.level,
-        id: id,
+        id: assignId(atx.content, store),
       },
     );
     return { node, nextIndex: index + 1 };
   }
 
   render(node: MarkdownNode, ctx: RenderContext) {
-    const level = (node.props?.level as number) || 1;
-    const inner = ctx.renderInline(node.children);
-    const options = this.getOptions() as AtxHeadingOptions;
     const sourceLineAttrs = this.sourceLineAttrs(node);
-    const id = (node.props?.id as string) ?? null;
 
-    if (options.slug) {
-      return `<h${level} id="${escapeHtml(id)}"${sourceLineAttrs}>${inner}</h${level}>`;
-    }
-    return `<h${level}${sourceLineAttrs}>${inner}</h${level}>`;
+    return renderHeadingHtml(
+      node,
+      ctx,
+      this.getOptions() as AtxHeadingOptions,
+      sourceLineAttrs,
+    );
   }
 }
 

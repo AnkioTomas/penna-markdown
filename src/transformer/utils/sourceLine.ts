@@ -3,8 +3,6 @@ import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 export const SOURCE_LINE_ATTR = "data-cherry-source-line";
 export const SOURCE_END_LINE_ATTR = "data-cherry-source-end-line";
 
-export const SLUG_REGISTRY_KEY = "slugRegistry";
-
 export function countTopLevelDomRoots(html: string, doc?: Document): number {
   if (doc) {
     const tpl = doc.createElement("template");

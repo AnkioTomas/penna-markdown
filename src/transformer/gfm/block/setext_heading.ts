@@ -12,7 +12,8 @@ import { BlockParseContext } from "@/transformer/core/context/BlockParseContext"
 import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
 import { isBlankString } from "@/transformer/utils/normalize";
 import {
-  getAtxHeadingOptions,
+  assignId,
+  AtxHeadingOptions,
   renderHeadingHtml,
 } from "@/transformer/gfm/block/atx_heading.js";
 
@@ -69,7 +70,7 @@ class SetextHeadingBlockParser extends BaseBlockParser {
 
       if (underline > 0) {
         const content = contentLines.join("\n");
-
+        const store = ctx.store;
         const node = createNode(
           "setext_heading",
           i + 1 - index,
@@ -77,6 +78,7 @@ class SetextHeadingBlockParser extends BaseBlockParser {
           ctx.parseInline(content),
           {
             level: underline,
+            id: assignId(content, store),
           },
         );
 
@@ -93,15 +95,13 @@ class SetextHeadingBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext) {
-    const level = (node.props?.level as number) || 1;
-    const inner = ctx.renderInline(node.children).trim();
+    const sourceLineAttrs = this.sourceLineAttrs(node);
+
     return renderHeadingHtml(
       node,
       ctx,
-      level,
-      inner,
-      getAtxHeadingOptions(),
-      this.sourceLineAttrs(node),
+      this.getOptions() as AtxHeadingOptions,
+      sourceLineAttrs,
     );
   }
 }
