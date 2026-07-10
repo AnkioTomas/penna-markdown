@@ -1,0 +1,224 @@
+@use "../../style/common/rem" as *;
+
+/// Notion Task Board 编辑器 chrome：幽灵胶囊按钮、扁平、无阴影
+@mixin chrome {
+  font-family: var(--notion-font-sans);
+  font-size: var(--notion-text-size);
+  font-weight: 500;
+  color: var(--cherry-c-text-1);
+  background: var(--cherry-c-bg);
+
+  .cherry-toolbar {
+    border-bottom: rem(1) solid var(--cherry-c-border-soft);
+    background: var(--cherry-c-bg);
+    box-shadow: none;
+  }
+
+  .cherry-toolbar-scroll {
+    gap: rem(4);
+    padding: rem(8) rem(12);
+  }
+
+  .cherry-toolbar-group + .cherry-toolbar-group::before {
+    background: var(--cherry-c-border-soft);
+  }
+
+  .cherry-toolbar-btn,
+  .cherry-toolbar-menu-trigger {
+    min-width: rem(28);
+    height: rem(28);
+    padding: rem(4) rem(8);
+    border: 0;
+    border-radius: var(--notion-radius-pill);
+    background: transparent;
+    color: var(--cherry-c-text-2);
+    font-family: var(--notion-font-sans);
+    font-size: rem(14);
+    font-weight: 500;
+    box-shadow: none;
+    transition: background 0.1s linear;
+
+    &:hover,
+    &[aria-expanded="true"] {
+      background: var(--notion-hover-bg);
+      color: var(--cherry-c-text-1);
+    }
+  }
+
+  .cherry-toolbar-layout-btn.is-active {
+    background: var(--notion-hover-bg);
+    color: var(--cherry-c-text-1);
+  }
+
+  .cherry-toolbar-sep {
+    background: var(--cherry-c-border-soft);
+  }
+
+  .cherry-toolbar-menu-panel {
+    border: rem(1) solid var(--cherry-c-border-soft);
+    border-radius: var(--notion-radius-tag);
+    padding: rem(4);
+    background: var(--cherry-c-bg);
+    box-shadow: none;
+  }
+
+  .cherry-toolbar-menu-item,
+  .cherry-toolbar-menu-trigger--nested {
+    min-height: rem(28);
+    padding: rem(4) rem(8);
+    border: 0;
+    border-radius: var(--notion-radius-pill);
+    background: transparent;
+    color: var(--cherry-c-text-1);
+    font-family: var(--notion-font-sans);
+    font-size: rem(14);
+    font-weight: 500;
+    box-shadow: none;
+
+    &:hover {
+      background: var(--notion-hover-bg);
+    }
+  }
+
+  .cherry-toolbar-menu-header {
+    font-family: var(--notion-font-sans);
+    font-size: rem(12);
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--cherry-c-text-3);
+    border-bottom: rem(1) solid var(--cherry-c-border-soft);
+  }
+
+  .cherry-sidebar {
+    border-right: rem(1) solid var(--cherry-c-border-soft);
+    background: var(--cherry-c-bg);
+    font-family: var(--notion-font-sans);
+  }
+
+  .cherry-sidebar-tab {
+    border: 0;
+    border-radius: var(--notion-radius-pill);
+    font-family: var(--notion-font-sans);
+    font-size: rem(12);
+    font-weight: 500;
+    box-shadow: none;
+
+    &.is-active {
+      background: var(--notion-hover-bg);
+      color: var(--cherry-c-text-1);
+    }
+  }
+
+  .cherry-toc-item,
+  .cherry-file-item {
+    border: 0;
+    border-radius: var(--notion-radius-tag);
+
+    &:hover {
+      background: var(--notion-hover-bg);
+    }
+
+    &.is-active {
+      background: var(--notion-hover-bg);
+      color: var(--cherry-c-text-1);
+      font-weight: 500;
+    }
+  }
+
+  .cherry-editor-cm .cm-scroller,
+  .cherry-editor-cm .cm-content {
+    font-family: var(--notion-font-mono);
+    font-size: rem(14);
+    font-weight: 500;
+  }
+
+  .cherry-editor-cm .cm-gutters {
+    border-right: rem(1) solid var(--cherry-c-border-soft);
+    background: var(--cherry-c-bg);
+    font-family: var(--notion-font-mono);
+    font-size: rem(12);
+  }
+
+  .cherry-editor-cm .cm-activeLineGutter,
+  .cherry-editor-cm .cm-activeLine {
+    background: var(--notion-hover-bg);
+  }
+
+  .cherry-preview {
+    border-left: rem(1) solid var(--cherry-c-border-soft);
+    background: var(--cherry-c-bg);
+  }
+
+  .cherry-divider {
+    width: rem(4);
+    background: var(--cherry-c-border-soft);
+    box-shadow: none;
+  }
+
+  .cherry-statusbar {
+    border-top: rem(1) solid var(--cherry-c-border-soft);
+    background: var(--cherry-c-bg);
+    font-family: var(--notion-font-sans);
+    font-size: rem(12);
+    font-weight: 500;
+  }
+
+  .cherry-statusbar-btn {
+    border: 0;
+    border-radius: var(--notion-radius-pill);
+    background: transparent;
+    box-shadow: none;
+
+    &.is-active {
+      background: var(--notion-hover-bg);
+      color: var(--cherry-c-text-1);
+    }
+  }
+
+  .cherry-dialog-panel {
+    border: rem(1) solid var(--cherry-c-border-soft);
+    border-radius: var(--notion-radius-tag);
+    box-shadow: none;
+    font-family: var(--notion-font-sans);
+  }
+
+  .cherry-dialog-panel input,
+  .cherry-dialog-panel textarea,
+  .cherry-dialog-panel select {
+    border: rem(1) solid var(--cherry-c-border-soft);
+    border-radius: var(--notion-radius-tag);
+    background: var(--cherry-c-bg);
+    color: var(--cherry-c-text-1);
+    font-family: var(--notion-font-sans);
+    font-size: rem(14);
+    font-weight: 400;
+    box-shadow: none;
+  }
+
+  .cherry-dialog-panel button[type="submit"],
+  .cherry-dialog-actions .cherry-btn-primary {
+    border: 0;
+    border-radius: var(--notion-radius-pill);
+    background: var(--cherry-c-brand-1);
+    color: var(--cherry-c-brand-on-bg);
+    font-family: var(--notion-font-sans);
+    font-size: rem(14);
+    font-weight: 500;
+    box-shadow: none;
+
+    &:hover {
+      background: var(--cherry-c-brand-2);
+    }
+  }
+}
+
+@mixin chrome-dark {
+  .cherry-toolbar-btn,
+  .cherry-toolbar-menu-trigger {
+    &:hover,
+    &[aria-expanded="true"] {
+      color: var(--cherry-c-text-1);
+    }
+  }
+}

@@ -1,49 +1,33 @@
 import { expect, it } from "vitest";
-import { createNode } from "@/transformer/core/MarkdownNode.js";
-import { assignHeadingSlugs } from "@/transformer/gfm/block/atx_heading.js";
+import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import { extractToc, extractTocFlat } from "@/renderer/toc/extract.js";
+import type { ParserStore } from "@/transformer/core/ParserStore.js";
 
-const ast = createNode("document", 0, undefined, [
-  createNode(
-    "atx_heading",
-    10,
-    undefined,
-    [createNode("text", 5, "Intro", undefined)],
-    { level: 1 },
-  ),
-  createNode("paragraph", 5, undefined, [
-    createNode("text", 5, "body", undefined),
-  ]),
-  createNode(
-    "atx_heading",
-    8,
-    undefined,
-    [createNode("text", 4, "Setup", undefined)],
-    { level: 2 },
-  ),
-  createNode(
-    "atx_heading",
-    7,
-    undefined,
-    [createNode("text", 3, "API", undefined)],
-    { level: 2 },
-  ),
-  createNode(
-    "atx_heading",
-    9,
-    undefined,
-    [createNode("text", 5, "Details", undefined)],
-    { level: 3 },
-  ),
-]);
+function parseWithSlug(markdown: string) {
+  const engine = new TransformerEngine({
+    syntaxOptions: { atx_heading: { slug: true } },
+  });
+  const ast = engine.parse(markdown);
+  const store = ast.props?.store as ParserStore;
+  const ctx = engine.createRenderContext(store);
+  return { ast, ctx };
+}
 
 it("extractToc builds nested tree", () => {
-  assignHeadingSlugs(ast, { slug: true });
-  const toc = extractToc(ast);
+  const { ast, ctx } = parseWithSlug(
+    "# Intro\n\nbody\n\n## Setup\n\n## API\n\n### Details\n",
+  );
+  const toc = extractToc(ast, ctx);
   expect(toc).toHaveLength(1);
   expect(toc[0]?.text).toBe("Intro");
   expect(toc[0]?.children).toHaveLength(2);
   expect(toc[0]?.children[0]?.text).toBe("Setup");
   expect(toc[0]?.children[1]?.text).toBe("API");
   expect(toc[0]?.children[1]?.children[0]?.text).toBe("Details");
+});
+
+it("extractToc uses rendered inline text", () => {
+  const { ast, ctx } = parseWithSlug("# **Bold** [Link](https://x.test)\n");
+  const flat = extractTocFlat(ast, ctx);
+  expect(flat[0]?.text).toBe("Bold Link");
 });
