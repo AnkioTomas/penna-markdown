@@ -3,19 +3,17 @@
 @use "tokens";
 @use "overrides";
 
-// 独立 Renderer：挂载点即 .cherry-render（不含编辑器 .cherry 骨架）
-.cherry-theme-pollinations .cherry-render {
-  @include tokens.theme-light;
+// 与 github/claude 一致：theme 在祖先，cherry-render 在预览挂载点
+.cherry-theme-pollinations {
+  .cherry-render {
+    @include tokens.theme-light;
+    @include overrides.styles;
+  }
 }
 
-.cherry-theme-pollinations .cherry-render:not(:has(> .cherry)) {
-  @include overrides.styles;
-}
-
-.cherry-dark.cherry-theme-pollinations .cherry-render {
-  @include tokens.theme-dark;
-}
-
-.cherry-dark.cherry-theme-pollinations .cherry-render:not(:has(> .cherry)) {
-  @include overrides.styles-dark;
+.cherry-dark.cherry-theme-pollinations {
+  .cherry-render {
+    @include tokens.theme-dark;
+    @include overrides.styles-dark;
+  }
 }

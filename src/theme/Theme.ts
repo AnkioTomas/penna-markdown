@@ -10,7 +10,9 @@
  * | 元素 | class | 作用 |
  * | ---- | ----- | ---- |
  * | `rootElement`（用户挂载点） | `cherry-theme-{id}`、`cherry-dark` | 皮肤变量与编辑器 chrome |
- * | `render`（预览挂载点） | `cherry-render` | 供 `.cherry-theme-* .cherry-render` 命中渲染样式 |
+ * | 预览挂载点（由调用方标记） | `cherry-render` | 供 `.cherry-theme-* .cherry-render` 命中渲染样式 |
+ *
+ * Theme 只写 root 上的皮肤 class；`cherry-render` 由 Cherry / Demo HTML 自行挂在预览节点。
  */
 
 import REGISTERED_THEMES from "@/theme/ThemeRegister";
@@ -107,29 +109,18 @@ export class Theme {
     });
   }
 
-  /**
-   * 同步皮肤 class：主题 class 始终在 {@link rootElement}；
-   * `render` 仅保留 `cherry-render`。
-   */
+  /** 同步皮肤 class：仅 {@link rootElement}，不写 `cherry-render` */
   private applyThemeClasses() {
-    if (this.rootElement) {
-      this.rootElement.classList.add("cherry-render");
-      for (const name of [...this.rootElement.classList]) {
-        if (name.startsWith("cherry-theme-"))
-          this.rootElement.classList.remove(name);
+    for (const name of [...this.rootElement.classList]) {
+      if (name.startsWith("cherry-theme-")) {
+        this.rootElement.classList.remove(name);
       }
     }
 
-    for (const name of [...this.rootElement.classList]) {
-      if (name.startsWith("cherry-theme-"))
-        this.rootElement.classList.remove(name);
-    }
     this.rootElement.classList.add(`cherry-theme-${this.id}`);
   }
 
-  /**
-   * 同步明暗 class：`cherry-dark` 仅挂在 {@link rootElement}。
-   */
+  /** 同步明暗 class：`cherry-dark` 仅挂在 {@link rootElement} */
   private applyAppearanceClass() {
     this.rootElement.classList.toggle("cherry-dark", this.mode === "dark");
   }

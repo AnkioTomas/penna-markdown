@@ -8,6 +8,7 @@
   @include scrollbar-global;
 }
 
-.cherry-dark.cherry {
+.cherry-dark.cherry,
+.cherry-dark .cherry {
   @include tokens.theme-dark;
 }

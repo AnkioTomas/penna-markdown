@@ -2,7 +2,6 @@
 @use "fonts";
 @use "tokens";
 @use "editor-chrome";
-@use "overrides";
 
 .cherry-theme-pollinations.cherry,
 .cherry-theme-pollinations .cherry {
@@ -15,17 +14,4 @@
   @include tokens.theme-dark;
   @include editor-chrome.chrome;
   @include editor-chrome.chrome-dark;
-}
-
-// 编辑器预览区：像素画布 + 内容排版（勿挂在 #cherry-editor 根上）
-.cherry-theme-pollinations .cherry-preview {
-  @include tokens.theme-light;
-  @include overrides.surface;
-  @include overrides.content;
-}
-
-.cherry-dark.cherry-theme-pollinations .cherry-preview {
-  @include tokens.theme-dark;
-  @include overrides.surface-dark;
-  @include overrides.content-dark;
 }
