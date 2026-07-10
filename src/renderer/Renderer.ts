@@ -32,6 +32,7 @@ import { IncrementalSession } from "@/renderer/incremental/IncrementalSession.js
 import { BlockIndex } from "@/renderer/incremental/BlockIndex.js";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
 import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
+import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { ParserStore } from "@/transformer/core/ParserStore";
 import { Theme } from "@/theme/Theme";
 import { RenderResult } from "@/renderer/RenderResult";
@@ -191,14 +192,21 @@ export class Renderer {
     return this.session.blocks;
   }
 
+  private createRenderContextFromLastAst(): RenderContext | null {
+    const store = this.getStore();
+    return store ? this.transformer.createRenderContext(store) : null;
+  }
+
   /** 从最近 AST 提取层级 TOC；无 AST 时返回空数组 */
   getToc() {
-    return this.lastAst ? extractToc(this.lastAst) : [];
+    const ctx = this.createRenderContextFromLastAst();
+    return this.lastAst && ctx ? extractToc(this.lastAst, ctx) : [];
   }
 
   /** 从最近 AST 提取扁平 TOC；无 AST 时返回空数组 */
   getTocFlat() {
-    return this.lastAst ? extractTocFlat(this.lastAst) : [];
+    const ctx = this.createRenderContextFromLastAst();
+    return this.lastAst && ctx ? extractTocFlat(this.lastAst, ctx) : [];
   }
 
   /** 预览区挂载点 */
