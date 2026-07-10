@@ -6,4 +6,5 @@ export default [
   "latex",
   "vue",
   "notion",
+  "pollinations",
 ];

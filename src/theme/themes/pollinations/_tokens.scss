@@ -1,0 +1,365 @@
+@use "sass:list";
+@use "../../style/common/semantic-picks" as picks;
+
+// pollinations.ai 色板（cream 底 + 紫/蓝/绿/黄 pastel + 像素风硬阴影）
+$polli-dark: #110518;
+$polli-muted: #4a3f5c;
+$polli-subtle: #6b5f80;
+
+$polli-cream: #f3ebde;
+$polli-tan: #e8e2d8;
+$polli-border: #cfc8b8;
+
+$polli-primary-light: #e9d9ef;
+$polli-primary-strong: #c9a9e4;
+$polli-secondary-light: #d8dff8;
+$polli-secondary-strong: #a4b4de;
+$polli-tertiary-light: #d4f0d7;
+$polli-tertiary-strong: #a8e6a2;
+$polli-accent-light: #f5fabc;
+$polli-accent-strong: #e8f372;
+$polli-pink: #ffd1b3;
+$polli-flower-accent: #f472b6;
+$polli-nectar-accent: #fbbf24;
+
+$polli-h1: $polli-dark;
+$polli-h2: $polli-primary-strong;
+$polli-h3: $polli-secondary-strong;
+$polli-h4: $polli-tertiary-strong;
+$polli-h5: $polli-muted;
+$polli-h6: $polli-subtle;
+
+$polli-link: $polli-secondary-strong;
+$polli-link-hover: #7a8fc8;
+
+$polli-code-bg: $polli-tan;
+$polli-blockquote-bg: $polli-primary-light;
+$polli-table-head-bg: $polli-secondary-light;
+$polli-h1-rule: $polli-accent-strong;
+$polli-hr: $polli-border;
+
+$polli-dark-bg: #110518;
+$polli-dark-elevated: #1f1428;
+$polli-dark-text: #f3ebde;
+$polli-dark-text-muted: #b4a8c4;
+$polli-dark-text-subtle: #8a7a9e;
+
+$polli-dark-h1: $polli-accent-strong;
+$polli-dark-h2: $polli-primary-strong;
+$polli-dark-h3: $polli-secondary-strong;
+$polli-dark-h4: $polli-tertiary-strong;
+$polli-dark-h5: $polli-dark-text-muted;
+$polli-dark-h6: $polli-dark-text-subtle;
+
+$polli-dark-link: $polli-secondary-strong;
+$polli-dark-link-hover: #c4d0f0;
+$polli-dark-code-bg: #2a1f35;
+$polli-dark-blockquote-bg: #241830;
+$polli-dark-table-border: #4a3f5c;
+$polli-dark-table-head-bg: #2f2440;
+$polli-dark-h1-rule: $polli-accent-strong;
+$polli-dark-hr: #3a2f48;
+
+$polli-light-semantics: (
+  note: (
+    $polli-secondary-strong,
+    $polli-secondary-light,
+  ),
+  tip: (
+    $polli-tertiary-strong,
+    $polli-tertiary-light,
+  ),
+  warning: (
+    $polli-nectar-accent,
+    #fef3c7,
+  ),
+  caution: (
+    $polli-flower-accent,
+    #fce7f3,
+  ),
+  danger: (
+    #e05252,
+    #ffd1d1,
+  ),
+  important: (
+    $polli-primary-strong,
+    $polli-primary-light,
+  ),
+);
+
+$polli-dark-semantics: (
+  note: (
+    $polli-secondary-strong,
+    #5868a0,
+  ),
+  tip: (
+    $polli-tertiary-strong,
+    #4a8050,
+  ),
+  warning: (
+    $polli-nectar-accent,
+    #806820,
+  ),
+  caution: (
+    $polli-flower-accent,
+    #803858,
+  ),
+  danger: (
+    #f87171,
+    #803030,
+  ),
+  important: (
+    $polli-primary-strong,
+    #604878,
+  ),
+);
+
+$polli-dark-mark-mix: 60%;
+
+@function polli-surface($is-dark) {
+  @if $is-dark {
+    @return $polli-dark-bg;
+  }
+
+  @return $polli-cream;
+}
+
+@function polli-border-soft($is-dark) {
+  @if $is-dark {
+    @return #{$polli-dark-table-border};
+  }
+
+  @return #{$polli-border};
+}
+
+@function polli-border-faint($is-dark) {
+  @if $is-dark {
+    @return color-mix(in srgb, #{$polli-dark-table-border} 55%, transparent);
+  }
+
+  @return color-mix(in srgb, #{$polli-border} 55%, transparent);
+}
+
+@function polli-code-inline-bg($is-dark) {
+  @if $is-dark {
+    @return #{$polli-dark-code-bg};
+  }
+
+  @return #{$polli-code-bg};
+}
+
+@function polli-hr-color($is-dark) {
+  @if $is-dark {
+    @return $polli-dark-hr;
+  }
+
+  @return $polli-hr;
+}
+
+@function polli-blockquote-border($is-dark) {
+  @if $is-dark {
+    @return $polli-accent-strong;
+  }
+
+  @return $polli-primary-strong;
+}
+
+@mixin typography-tokens {
+  --polli-font-title: "Press Start 2P", "Courier New", Courier, monospace;
+  --polli-font-body:
+    "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    "Liberation Mono", monospace;
+  --polli-text-size: 1rem;
+  --polli-text-leading: 1.75;
+  --polli-heading-leading: 1.5;
+
+  --polli-h1-color: #{$polli-h1};
+  --polli-h2-color: #{$polli-h2};
+  --polli-h3-color: #{$polli-h3};
+  --polli-h4-color: #{$polli-h4};
+  --polli-h5-color: #{$polli-h5};
+  --polli-h6-color: #{$polli-h6};
+}
+
+@mixin typography-tokens-dark {
+  --polli-h1-color: #{$polli-dark-h1};
+  --polli-h2-color: #{$polli-dark-h2};
+  --polli-h3-color: #{$polli-dark-h3};
+  --polli-h4-color: #{$polli-dark-h4};
+  --polli-h5-color: #{$polli-dark-h5};
+  --polli-h6-color: #{$polli-dark-h6};
+}
+
+@mixin generate-semantic-suite($palette, $is-dark: false) {
+  @each $name, $pair in $palette {
+    $base-color: list.nth($pair, 1);
+    $mark-color: list.nth($pair, 2);
+    $surface: polli-surface($is-dark);
+    $contrast-color: picks.pick-contrast($is-dark);
+    $bg-opacity: picks.pick-bg-opacity($is-dark);
+    $border-opacity: picks.pick-border-opacity($is-dark);
+
+    --cherry-c-#{$name}: #{$base-color};
+    @if $is-dark {
+      --cherry-c-#{$name}-mark: color-mix(
+        in srgb,
+        #{$mark-color} #{$polli-dark-mark-mix},
+        #{$surface}
+      );
+    } @else {
+      --cherry-c-#{$name}-mark: #{$mark-color};
+    }
+
+    --cherry-c-#{$name}-on-bg: color-mix(
+      in srgb,
+      #{$base-color} 16%,
+      #{$contrast-color}
+    );
+
+    --cherry-c-alert-#{$name}-text: #{$base-color};
+    --cherry-c-alert-#{$name}-bg: color-mix(
+      in srgb,
+      #{$base-color} #{$bg-opacity},
+      transparent
+    );
+    --cherry-c-alert-#{$name}-border: color-mix(
+      in srgb,
+      #{$base-color} #{$border-opacity},
+      transparent
+    );
+  }
+}
+
+@mixin component-tokens($is-dark: false) {
+  $border-soft: polli-border-soft($is-dark);
+  $border-faint: polli-border-faint($is-dark);
+  $code-inline-bg: polli-code-inline-bg($is-dark);
+  $shadow-color: if($is-dark, $polli-dark-text, $polli-dark);
+
+  --polli-shadow-sm: 2px 2px 0 #{$shadow-color};
+  --polli-shadow-md: 4px 4px 0 #{$shadow-color};
+  --polli-shadow-accent: 2px 2px 0 #{$polli-accent-strong};
+
+  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
+  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
+  --cherry-c-image-card-info-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+  );
+  --cherry-c-image-card-info-bg-hover: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+  );
+
+  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-media-shade: var(--cherry-c-bg);
+  --cherry-c-on-brand: #{$polli-dark};
+
+  --cherry-c-code-inline-bg: #{$code-inline-bg};
+  --cherry-c-code-inline-fg: var(--polli-h3-color);
+  --cherry-c-code-inline-border: #{$border-soft};
+
+  --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-code-bg: var(--cherry-c-bg-elevated);
+  --cherry-c-code-block-shadow: var(--polli-shadow-sm);
+
+  --cherry-c-table-th-border: #{$border-soft};
+  --cherry-c-table-td-border: #{$border-faint};
+  --cherry-c-hr-color: #{polli-hr-color($is-dark)};
+  --cherry-c-blockquote-border: #{polli-blockquote-border($is-dark)};
+
+  --polli-h1-rule: #{if($is-dark, $polli-dark-h1-rule, $polli-h1-rule)};
+  --polli-blockquote-bg: #{if(
+      $is-dark,
+      $polli-dark-blockquote-bg,
+      $polli-blockquote-bg
+    )};
+  --polli-table-head-bg: #{if(
+      $is-dark,
+      $polli-dark-table-head-bg,
+      $polli-table-head-bg
+    )};
+
+  --cherry-c-hljs-bg: transparent;
+  --cherry-c-hljs-comment: #{if($is-dark, #8a7a9e, #6b5f80)};
+  --cherry-c-hljs-keyword: #{if($is-dark, $polli-primary-strong, #9060b8)};
+  --cherry-c-hljs-string: #{if($is-dark, $polli-tertiary-strong, #4a9e50)};
+  --cherry-c-hljs-number: #{if($is-dark, $polli-nectar-accent, #c08020)};
+  --cherry-c-hljs-title: #{if($is-dark, $polli-secondary-strong, #5060a0)};
+  --cherry-c-hljs-attr: #{if($is-dark, $polli-accent-strong, #806820)};
+  --cherry-c-hljs-meta: #{if($is-dark, $polli-flower-accent, #c05090)};
+  --cherry-c-hljs-section: #{if($is-dark, $polli-accent-strong, #607820)};
+}
+
+@mixin theme-light {
+  @include typography-tokens;
+
+  --cherry-c-brand-1: #{$polli-link};
+  --cherry-c-brand-2: #{$polli-link-hover};
+  --cherry-c-brand-3: #{$polli-flower-accent};
+  --cherry-c-brand-soft: rgba(164, 180, 222, 0.2);
+  --cherry-c-brand-on-bg: #{$polli-dark};
+
+  --cherry-c-text-1: #{$polli-dark};
+  --cherry-c-text-2: #{$polli-muted};
+  --cherry-c-text-3: #{$polli-subtle};
+
+  --cherry-c-bg: #{$polli-cream};
+  --cherry-c-bg-elevated: #{$polli-tan};
+
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #{$polli-dark};
+
+  --cherry-c-brand-mark: #{$polli-accent-strong};
+  --cherry-c-code-fg: #{$polli-dark};
+  --cherry-c-border-soft: #{$polli-border};
+  --cherry-c-border-faint: #{color-mix(
+      in srgb,
+      #{$polli-border} 45%,
+      transparent
+    )};
+
+  @include generate-semantic-suite($polli-light-semantics, false);
+  @include component-tokens(false);
+}
+
+@mixin theme-dark {
+  @include typography-tokens;
+  @include typography-tokens-dark;
+
+  --cherry-c-brand-1: #{$polli-dark-link};
+  --cherry-c-brand-2: #{$polli-dark-link-hover};
+  --cherry-c-brand-3: #{$polli-flower-accent};
+  --cherry-c-brand-soft: rgba(164, 180, 222, 0.14);
+  --cherry-c-brand-on-bg: #{$polli-dark-text};
+
+  --cherry-c-text-1: #{$polli-dark-text};
+  --cherry-c-text-2: #{$polli-dark-text-muted};
+  --cherry-c-text-3: #{$polli-dark-text-subtle};
+
+  --cherry-c-bg: #{$polli-dark-bg};
+  --cherry-c-bg-elevated: #{$polli-dark-elevated};
+
+  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-dark: #{$polli-dark};
+
+  --cherry-c-brand-mark: color-mix(
+    in srgb,
+    #{$polli-accent-strong} #{$polli-dark-mark-mix},
+    #{$polli-dark-bg}
+  );
+  --cherry-c-code-fg: #{$polli-dark-text};
+  --cherry-c-border-soft: #{$polli-dark-table-border};
+  --cherry-c-border-faint: #{color-mix(
+      in srgb,
+      #{$polli-dark-table-border} 45%,
+      transparent
+    )};
+
+  @include generate-semantic-suite($polli-dark-semantics, true);
+  @include component-tokens(true);
+}

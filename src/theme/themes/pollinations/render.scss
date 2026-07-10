@@ -1,0 +1,16 @@
+/** Pollinations 主题渲染样式 */
+@use "tokens";
+@use "overrides";
+
+.cherry-theme-pollinations {
+  .cherry-render {
+    @include tokens.theme-light;
+    @include overrides.styles;
+  }
+}
+
+.cherry-dark.cherry-theme-pollinations {
+  .cherry-render {
+    @include tokens.theme-dark;
+  }
+}
