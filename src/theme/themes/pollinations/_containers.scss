@@ -330,6 +330,12 @@
 
 @mixin styles-dark {
   $shadow: color-mix(in srgb, #{$polli-cream} 85%, transparent);
+  $surface: #352840;
+  $surface-alt: #2a3350;
+  $surface-green: #253528;
+  $surface-warm: #3a3828;
+  $tag-bg: #3a2f48;
+  $accent-hover-fg: #{$polli-dark};
 
   .cherry-alert,
   .cherry-card,
@@ -343,6 +349,10 @@
   }
 
   .cherry-alert {
+    &__title {
+      color: $polli-cream;
+    }
+
     &--note {
       @include alert-tone-dark(#2a3350, $shadow);
     }
@@ -373,12 +383,12 @@
   }
 
   .cherry-card {
-    @include brutal-box(#352840, $shadow);
+    @include brutal-box($surface, $shadow);
   }
 
   .cherry-link-card,
   .cherry-repo-card {
-    @include brutal-box(#2a3350, $shadow);
+    @include brutal-box($surface-alt, $shadow);
 
     &:hover {
       box-shadow: rem(8) rem(8) 0 0 #{$shadow};
@@ -386,34 +396,83 @@
   }
 
   .cherry-tabs {
-    @include brutal-box(#253528, $shadow);
+    @include brutal-box($surface-green, $shadow);
 
     &__nav {
       border-bottom-color: $shadow;
+      background: color-mix(
+        in srgb,
+        #{$polli-tertiary-strong} 18%,
+        transparent
+      );
+    }
+
+    &__label {
+      color: #b4a8c4;
+
+      &:hover {
+        color: $accent-hover-fg;
+      }
     }
 
     &__nav > &__label:has(&__radio:checked) {
+      color: $accent-hover-fg;
       border-bottom-color: $shadow;
     }
   }
 
   .cherry-collapse {
-    @include brutal-box(#3a3828, $shadow);
+    @include brutal-box($surface-warm, $shadow);
 
     details {
       border-bottom-color: $shadow;
     }
+
+    summary {
+      background: color-mix(in srgb, #{$polli-accent-strong} 24%, transparent);
+
+      &::before {
+        color: $polli-cream;
+      }
+    }
   }
 
   .cherry-field-group {
-    @include brutal-box(#2a3350, $shadow);
+    @include brutal-box($surface-alt, $shadow);
   }
 
   .cherry-field {
     border-bottom-color: $shadow;
+
+    &__tag {
+      background: $tag-bg;
+      color: $polli-cream;
+    }
   }
 
   .cherry-spoiler {
     border-color: $shadow;
+    background: color-mix(in srgb, #{$polli-flower-accent} 28%, #{$surface});
+    color: $polli-cream;
+  }
+
+  .cherry-badge {
+    background: $tag-bg;
+    color: $polli-cream;
+  }
+
+  .cherry-image-card {
+    background: $surface;
+  }
+
+  .cherry-card-masonry__item {
+    @include brutal-box(
+      color-mix(in srgb, #{$polli-tertiary-strong} 16%, #{$surface-green}),
+      $shadow
+    );
+  }
+
+  .cherry-steps > ol > li::before {
+    color: $accent-hover-fg;
   }
 }

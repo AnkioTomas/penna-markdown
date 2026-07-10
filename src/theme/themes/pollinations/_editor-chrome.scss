@@ -247,7 +247,8 @@
   .cherry-dialog-panel select {
     @include brutal.brutal-radius;
     border: rem(2) solid var(--cherry-c-text-1);
-    background: var(--cherry-c-contrast-light);
+    background: var(--cherry-c-bg-elevated);
+    color: var(--cherry-c-text-1);
     font-family: var(--polli-font-body);
     box-shadow: var(--polli-shadow-sm);
   }
@@ -259,6 +260,13 @@
 }
 
 @mixin chrome-dark {
+  .cherry-toolbar-menu-item,
+  .cherry-toolbar-menu-trigger--nested {
+    &:hover {
+      color: #{$polli-dark};
+    }
+  }
+
   .cherry-toolbar-btn,
   .cherry-toolbar-menu-trigger,
   .cherry-statusbar-btn {
@@ -270,5 +278,10 @@
       box-shadow: rem(5) rem(5) 0 0
         color-mix(in srgb, var(--cherry-c-text-1) 85%, transparent);
     }
+  }
+
+  .cherry-toc-item:hover,
+  .cherry-file-item:hover {
+    color: var(--cherry-c-text-1);
   }
 }

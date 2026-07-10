@@ -3,7 +3,7 @@
 @use "palette" as *;
 @use "containers";
 
-/// Neo-Brutalism 预览画布：米色底、无网格装饰
+/// Neo-Brutalism 预览画布：无网格装饰
 @mixin surface {
   position: relative;
   isolation: isolate;
@@ -38,8 +38,8 @@
     padding: rem(16);
     font-size: rem(24);
     line-height: 1.5;
-    color: #{$polli-dark};
-    background: #{$polli-accent-strong};
+    color: var(--polli-h1-fg);
+    background: var(--polli-h1-bg);
     border: 0;
     box-shadow: var(--polli-shadow-card);
   }
@@ -50,12 +50,8 @@
     padding: rem(8) rem(12);
     font-size: rem(18);
     line-height: 1.55;
-    color: #{$polli-dark};
-    background: color-mix(
-      in srgb,
-      #{$polli-primary-light} 65%,
-      #{$polli-cream}
-    );
+    color: var(--polli-h2-fg);
+    background: var(--polli-h2-bg);
     border: 0;
     box-shadow: var(--polli-shadow-sm);
   }
@@ -65,7 +61,7 @@
     margin: rem(24) 0 rem(8);
     padding: 0;
     font-size: rem(16);
-    color: #{$polli-dark};
+    color: var(--polli-h3-color);
     border: 0;
   }
 
@@ -74,7 +70,7 @@
     margin: rem(20) 0 rem(8);
     font-size: rem(15);
     font-weight: 700;
-    color: #{$polli-dark};
+    color: var(--polli-h4-fg);
   }
 
   h5,
@@ -89,12 +85,12 @@
 
   h5 {
     font-size: rem(14);
-    color: #{$polli-subtle};
+    color: var(--polli-h5-fg);
   }
 
   h6 {
     font-size: rem(12);
-    color: #{$polli-subtle};
+    color: var(--polli-h6-fg);
     font-weight: 700;
     letter-spacing: rem(0.4);
     text-transform: uppercase;
@@ -117,17 +113,13 @@
     margin: 0 0 rem(24);
     padding: rem(16);
     border: 0;
-    background: #{$polli-primary-light};
-    color: #{$polli-dark};
+    background: var(--polli-blockquote-bg);
+    color: var(--polli-blockquote-fg);
     box-shadow: var(--polli-shadow-card);
 
     blockquote {
       margin: rem(12) 0 0;
-      background: color-mix(
-        in srgb,
-        #{$polli-secondary-light} 55%,
-        #{$polli-cream}
-      );
+      background: var(--polli-blockquote-nested-bg);
     }
   }
 
@@ -136,7 +128,7 @@
     margin: var(--polli-space-block) 0;
     padding: 0;
     border: 0;
-    background: #{$polli-dark};
+    background: var(--polli-hr-bg);
     opacity: 1;
   }
 
@@ -153,10 +145,10 @@
 
   li {
     margin: rem(4) 0;
-    color: #{$polli-dark};
+    color: var(--polli-body-fg);
 
     &::marker {
-      color: #{$polli-subtle};
+      color: var(--polli-marker-fg);
     }
   }
 
@@ -175,8 +167,9 @@
     padding: rem(16);
     @include brutal.font-code;
     line-height: 1.45;
+    color: var(--cherry-c-text-1);
     border: 0;
-    background: #{$polli-tan};
+    background: var(--polli-pre-bg);
     box-shadow: var(--polli-shadow-card);
   }
 
@@ -205,11 +198,7 @@
     }
 
     tbody tr:nth-child(even) td {
-      background: color-mix(
-        in srgb,
-        #{$polli-secondary-light} 35%,
-        var(--cherry-c-bg)
-      );
+      background: var(--polli-table-stripe-bg);
     }
   }
 
@@ -224,10 +213,10 @@
     --cb-radius: 0;
     --cb-border: transparent;
     --cb-shadow: var(--polli-shadow-card);
-    --cb-header-bg: #{$polli-secondary-light};
+    --cb-header-bg: var(--polli-cb-header-bg);
     --cb-code-bg: var(--cherry-c-bg-elevated);
-    --cb-lang-fg: var(--cherry-c-text-1);
-    --cb-lang-bg: #{$polli-accent-strong};
+    --cb-lang-fg: var(--polli-h1-fg);
+    --cb-lang-bg: var(--polli-cb-lang-bg);
     --cb-line-highlight: color-mix(
       in srgb,
       var(--cherry-c-brand-mark) 22%,
@@ -242,7 +231,7 @@
     &__header {
       min-height: rem(36);
       padding: rem(8) rem(12);
-      border-bottom: rem(2) solid #{$polli-dark};
+      border-bottom: rem(2) solid var(--polli-cb-header-border);
     }
 
     &__lang {
@@ -318,11 +307,11 @@
 
   .task-list .task-item {
     &.todo .marker {
-      --marker-color: #{$polli-subtle};
+      --marker-color: var(--polli-task-todo);
     }
 
     &.done .marker {
-      --marker-color: #{$polli-tertiary-strong};
+      --marker-color: var(--polli-task-done);
     }
   }
 
@@ -339,55 +328,6 @@
   @include content;
 }
 
-@mixin surface-dark {
-  @include brutal.canvas-dark;
-}
-
-@mixin content-dark {
-  h1,
-  h2,
-  h3 {
-    color: #{$polli-cream};
-  }
-
-  h1 {
-    color: #{$polli-dark};
-  }
-
-  h4,
-  h5 {
-    color: #{$polli-cream};
-  }
-
-  h6 {
-    color: #{$polli-subtle};
-  }
-
-  li {
-    color: #{$polli-cream};
-
-    &::marker {
-      color: #{$polli-subtle};
-    }
-  }
-
-  blockquote {
-    color: #{$polli-cream};
-    background: var(--polli-blockquote-bg);
-  }
-
-  hr {
-    background: color-mix(in srgb, #{$polli-cream} 85%, transparent);
-  }
-
-  :not(pre) > code {
-    box-shadow: var(--polli-shadow-sm);
-  }
-
-  @include containers.styles-dark;
-}
-
 @mixin styles-dark {
-  @include surface-dark;
-  @include content-dark;
+  @include containers.styles-dark;
 }

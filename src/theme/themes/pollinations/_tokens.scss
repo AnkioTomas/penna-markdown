@@ -239,11 +239,85 @@ $polli-dark-mark-mix: 60%;
   }
 }
 
+@mixin polli-surface-tokens($is-dark: false) {
+  @if $is-dark {
+    --polli-h1-fg: #{$polli-dark};
+    --polli-h1-bg: #{$polli-accent-strong};
+    --polli-h2-fg: #{$polli-cream};
+    --polli-h2-bg: #{color-mix(
+        in srgb,
+        #{$polli-primary-strong} 32%,
+        #{$polli-dark-elevated}
+      )};
+    --polli-h4-fg: #{$polli-dark-h4};
+    --polli-h5-fg: #{$polli-dark-h5};
+    --polli-h6-fg: #{$polli-dark-h6};
+    --polli-body-fg: #{$polli-dark-text};
+    --polli-marker-fg: #{$polli-dark-text-subtle};
+    --polli-blockquote-fg: #{$polli-cream};
+    --polli-blockquote-nested-bg: #{color-mix(
+        in srgb,
+        #{$polli-secondary-strong} 22%,
+        #{$polli-dark-elevated}
+      )};
+    --polli-hr-bg: #{color-mix(in srgb, #{$polli-cream} 85%, transparent)};
+    --polli-pre-bg: #{$polli-dark-elevated};
+    --polli-table-stripe-bg: #{color-mix(
+        in srgb,
+        #{$polli-secondary-strong} 14%,
+        #{$polli-dark-bg}
+      )};
+    --polli-cb-header-bg: #{$polli-dark-table-head-bg};
+    --polli-cb-header-border: #{color-mix(
+        in srgb,
+        #{$polli-cream} 85%,
+        transparent
+      )};
+    --polli-cb-lang-bg: #{$polli-accent-strong};
+    --polli-task-todo: #{$polli-dark-text-subtle};
+    --polli-task-done: #{$polli-tertiary-strong};
+  } @else {
+    --polli-h1-fg: #{$polli-dark};
+    --polli-h1-bg: #{$polli-accent-strong};
+    --polli-h2-fg: #{$polli-dark};
+    --polli-h2-bg: #{color-mix(
+        in srgb,
+        #{$polli-primary-light} 65%,
+        #{$polli-cream}
+      )};
+    --polli-h4-fg: #{$polli-h4};
+    --polli-h5-fg: #{$polli-h5};
+    --polli-h6-fg: #{$polli-h6};
+    --polli-body-fg: #{$polli-dark};
+    --polli-marker-fg: #{$polli-subtle};
+    --polli-blockquote-fg: #{$polli-dark};
+    --polli-blockquote-nested-bg: #{color-mix(
+        in srgb,
+        #{$polli-secondary-light} 55%,
+        #{$polli-cream}
+      )};
+    --polli-hr-bg: #{$polli-dark};
+    --polli-pre-bg: #{$polli-tan};
+    --polli-table-stripe-bg: #{color-mix(
+        in srgb,
+        #{$polli-secondary-light} 35%,
+        #{$polli-cream}
+      )};
+    --polli-cb-header-bg: #{$polli-secondary-light};
+    --polli-cb-header-border: #{$polli-dark};
+    --polli-cb-lang-bg: #{$polli-accent-strong};
+    --polli-task-todo: #{$polli-subtle};
+    --polli-task-done: #{$polli-tertiary-strong};
+  }
+}
+
 @mixin component-tokens($is-dark: false) {
   $border-soft: polli-border-soft($is-dark);
   $border-faint: polli-border-faint($is-dark);
   $code-inline-bg: polli-code-inline-bg($is-dark);
   $shadow-color: polli-shadow-color($is-dark);
+
+  @include polli-surface-tokens($is-dark);
 
   --polli-shadow-sm: #{rem(2) rem(2) 0 0 #{$shadow-color}};
   --polli-shadow-btn: #{rem(4) rem(4) 0 0 #{$shadow-color}};
