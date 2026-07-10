@@ -14,6 +14,7 @@ import { isBlankString } from "@/transformer/utils/normalize";
 import {
   assignId,
   AtxHeadingOptions,
+  isSlug,
   renderHeadingHtml,
 } from "@/transformer/gfm/block/atx_heading.js";
 
@@ -78,7 +79,7 @@ class SetextHeadingBlockParser extends BaseBlockParser {
           ctx.parseInline(content),
           {
             level: underline,
-            id: assignId(content, store),
+            slug: isSlug(this.getOptions()) ? assignId(content, store) : "",
           },
         );
 
@@ -100,7 +101,7 @@ class SetextHeadingBlockParser extends BaseBlockParser {
     return renderHeadingHtml(
       node,
       ctx,
-      this.getOptions() as AtxHeadingOptions,
+      isSlug(this.getOptions()),
       sourceLineAttrs,
     );
   }

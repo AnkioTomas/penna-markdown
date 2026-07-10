@@ -35,6 +35,10 @@ function slugify(text: string): string {
     .replace(/^-|-$/g, "");
 }
 
+export function isSlug(options: ParserOptions) {
+  return (options as AtxHeadingOptions).slug!!;
+}
+
 /**
  * 标题文本 → id：生成唯一 id（带去重）。
  * 去 重逻辑由 store 中的 atxSlugs 注册表保证。
@@ -65,14 +69,14 @@ export function assignId(text: string, store: ParserStore): string {
 export function renderHeadingHtml(
   node: MarkdownNode,
   ctx: RenderContext,
-  options: AtxHeadingOptions,
+  slug: boolean,
   sourceLineAttrs: string,
 ): string {
   const level = (node.props?.level as number) || 1;
   const inner = ctx.renderInline(node.children);
-  const id = (node.props?.id as string) ?? null;
+  const id = (node.props?.slug as string) ?? null;
 
-  if (!options.slug) {
+  if (!slug) {
     return `<h${level}${sourceLineAttrs}>${inner}</h${level}>`;
   }
   return `<h${level} id="${escapeHtml(id ?? "")}"${sourceLineAttrs}>${inner}</h${level}>`;
@@ -137,7 +141,7 @@ class HeadingBlockParser extends BaseBlockParser {
       ctx.parseInline(atx.content),
       {
         level: atx.level,
-        id: assignId(atx.content, store),
+        slug: isSlug(this.getOptions()) ? assignId(atx.content, store) : "",
       },
     );
     return { node, nextIndex: index + 1 };
@@ -149,7 +153,7 @@ class HeadingBlockParser extends BaseBlockParser {
     return renderHeadingHtml(
       node,
       ctx,
-      this.getOptions() as AtxHeadingOptions,
+      isSlug(this.getOptions()),
       sourceLineAttrs,
     );
   }
