@@ -1,6 +1,6 @@
 const CHERRY_VERSION = "0.1.0";
 const PROJECT_NAME = "Cherry Markdown Next";
-const GITHUB_REPO = "https://github.com/AnkioTomas/cherry-markdown-net";
+const GITHUB_REPO = "https://github.com/AnkioTomas/cherry-markdown-next";
 const AUTHOR_BLOG = "https://ankio.net";
 
 function isBrowser(): boolean {
