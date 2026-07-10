@@ -1,5 +1,6 @@
 import { expect, it } from "vitest";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { assignHeadingSlugs } from "@/transformer/gfm/block/atx_heading.js";
 import { extractToc, extractTocFlat } from "@/renderer/toc/extract.js";
 
 const ast = createNode("document", 0, undefined, [
@@ -70,6 +71,7 @@ it("extractTocFlat returns headings in document order", () => {
       { level: 3 },
     ),
   ]);
+  assignHeadingSlugs(ast, { slug: true });
   const flat = extractTocFlat(ast);
   expect(flat).toEqual([
     { level: 1, text: "Intro", id: "Intro" },

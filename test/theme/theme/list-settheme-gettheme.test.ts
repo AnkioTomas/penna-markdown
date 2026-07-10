@@ -23,6 +23,7 @@ it("list / setTheme / getTheme", async () => {
     "vue",
 
     "notion",
+    "pollinations",
   ]);
 
   theme.setTheme("default", render, root);
@@ -65,4 +66,10 @@ it("list / setTheme / getTheme", async () => {
   expect(root.classList.contains("cherry-theme-notion")).toBe(true);
   expect(render.classList.contains("cherry-theme-notion")).toBe(false);
   expect(theme.getTheme().id).toBe("notion");
+
+  theme.setTheme("pollinations", render, root);
+  expect(root.classList.contains("cherry-theme-notion")).toBe(false);
+  expect(root.classList.contains("cherry-theme-pollinations")).toBe(true);
+  expect(render.classList.contains("cherry-theme-pollinations")).toBe(false);
+  expect(theme.getTheme().id).toBe("pollinations");
 });

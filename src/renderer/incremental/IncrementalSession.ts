@@ -21,12 +21,15 @@
 
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import type { TransformerEngine } from "@/transformer/TransformerEngine.js";
-import type { Theme } from "@/theme/Theme.js";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
 import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
 import { BlockIndex } from "@/renderer/incremental/BlockIndex";
-import { parseWithHashBoundary } from "@/renderer/incremental/HashBoundaryResolver";
+import {
+  parseWithHashBoundary,
+  dirtyTouchesGlobalEffect,
+} from "@/renderer/incremental/HashBoundaryResolver";
 import { reconcileDom } from "@/renderer/incremental/DomReconciler";
+import { Log } from "@/core/Log";
 
 /** {@link IncrementalSession.tryUpdate} 的返回值。 */
 export interface IncrementalUpdateResult {
@@ -42,7 +45,7 @@ export interface IncrementalUpdateResult {
    * 失败原因，例如：
    * `no-cache` | `no-changes` | `dom-cache-mismatch` |
    * `no-dirty-range` | `parse-incremental-failed` | `dom-sync-failed` |
-   * `dom-blocks-mismatch`
+   * `dom-blocks-mismatch` | `global-effect`
    */
   failReason?: string;
 }
@@ -105,14 +108,14 @@ export class IncrementalSession {
    * @param mount       预览区挂载点
    * @param markdown    编辑后的完整 markdown
    * @param transformer 解析与渲染引擎
-   * @param theme       主题（日志与 `preview:dom-updating` 事件）
+   * @param log
    * @param changes     CM 行变更集；缺失时直接失败
    */
   tryUpdate(
     mount: HTMLElement,
     markdown: string,
     transformer: TransformerEngine,
-    theme: Theme,
+    log: Log,
     changes?: CherryChangeLineSet[],
   ): IncrementalUpdateResult {
     const prevDomCount = mount.childElementCount;
@@ -120,7 +123,7 @@ export class IncrementalSession {
     const prevAst = this.ast;
 
     if (prevBlocks.length === 0 || !prevAst) {
-      theme.logD("render:incremental", "abort", { reason: "no-cache" });
+      log.logD("render:incremental", "abort", { reason: "no-cache" });
       return {
         ok: false,
         ast: prevAst!,
@@ -131,7 +134,7 @@ export class IncrementalSession {
     }
 
     if (prevBlocks.length !== prevDomCount) {
-      theme.logD("render:incremental", "abort", {
+      log.logD("render:incremental", "abort", {
         reason: `dom-cache-mismatch:dom=${prevDomCount},cache=${prevBlocks.length}`,
       });
       return {
@@ -166,6 +169,17 @@ export class IncrementalSession {
 
     const newLines = normalizeMarkdownLines(markdown);
 
+    if (dirtyTouchesGlobalEffect(prevAst, changes)) {
+      log.logD("render:incremental", "abort", { reason: "global-effect" });
+      return {
+        ok: false,
+        ast: prevAst,
+        html: "",
+        changedStartLines: [],
+        failReason: "global-effect",
+      };
+    }
+
     /** markdown 行级未变（如光标移动触发的 noop transaction）→ 跳过 parse/DOM */
     if (
       newLines.length === this.lines.length &&
@@ -189,7 +203,7 @@ export class IncrementalSession {
         transformer,
       );
     } catch (err) {
-      theme.logD("render:incremental", "abort", {
+      log.logD("render:incremental", "abort", {
         reason: err instanceof Error ? err.message : "parse-incremental-failed",
       });
       return {
@@ -214,8 +228,6 @@ export class IncrementalSession {
 
     const { resolve } = parsed;
 
-    console.log(resolve);
-
     // 如果没有找到任何前后锚点，说明整个文档都在脏区内，属于全文替换
     // 此时继续走增量解析没有意义，直接降级为全量渲染，确保 DOM 和 Store 状态彻底刷新
     if (!resolve.input.range.prevHash && !resolve.input.range.nextHash) {
@@ -230,22 +242,18 @@ export class IncrementalSession {
 
     const ast = prevAst;
 
-    theme.logD("render:incremental", "dirty", {
+    log.logD("render:incremental", "dirty", {
       dirtyRange: resolve.dirtyNew,
-      frontmatterEdited: resolve.frontmatterEdited,
       range: resolve.input.range,
       changedLines: changes,
     });
 
-    theme.emit("preview:dom-updating", {});
-
     const sync = reconcileDom(mount, ast, transformer, {
-      frontmatterEdited: resolve.frontmatterEdited,
       prevBlocks,
     });
 
     if (!sync.ok) {
-      theme.logD("render:incremental", "abort", {
+      log.logD("render:incremental", "abort", {
         reason: sync.failReason ?? "dom-sync-failed",
       });
       return {
@@ -258,7 +266,7 @@ export class IncrementalSession {
     }
 
     if (sync.blocks.length !== mount.childElementCount) {
-      theme.logD("render:incremental", "abort", {
+      log.logD("render:incremental", "abort", {
         reason: `dom-blocks-mismatch:dom=${mount.childElementCount},blocks=${sync.blocks.length}`,
       });
       return {
@@ -274,7 +282,7 @@ export class IncrementalSession {
     this.ast = ast;
     this.blocks = sync.blocks;
 
-    theme.logD("render:incremental", "ok", {
+    log.logD("render:incremental", "ok", {
       changedStartLines: sync.changedStartLines,
       unchangedBlocks: sync.blocks.length - sync.changedStartLines.length,
     });

@@ -3,7 +3,7 @@
  */
 
 import { expect, it, vi } from "vitest";
-import { logD } from "@/theme/log.js";
+import { logD } from "@/core/log.js";
 
 it("logD uses console.info", () => {
   const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});

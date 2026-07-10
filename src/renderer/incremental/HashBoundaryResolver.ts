@@ -27,7 +27,6 @@ import type {
   IncrementalParseRange,
   IncrementalParseResult,
 } from "@/transformer/core/Incremental/IncrementalParseRange.js";
-import { frontmatterEndLine } from "@/transformer/extends/block/frontmatter.js";
 import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
 import { iterateTopLevelLines } from "@/renderer/incremental/BlockIndex";
 
@@ -93,8 +92,6 @@ export interface HashBoundaryResolveResult {
   dirtyOld: { startLine: number; endLine: number };
   /** 新文档侧脏区（0-based 半开） */
   dirtyNew: { startLine: number; endLine: number };
-  /** frontmatter 区域是否被编辑（触发 `[[var]]` 块强制重渲染） */
-  frontmatterEdited: boolean;
 }
 
 /**
@@ -172,6 +169,35 @@ export function expandDirtyToBlockBounds(
   }
 
   return { startLine: expandedStart, endLine: expandedEnd };
+}
+
+/**
+ * 脏区是否与 `globalEffect` 顶层块相交。
+ *
+ * 定义块（frontmatter、footnote_def、linkReferenceDef 等）写入文档级 store，
+ * 编辑后引用块 hash 不变但渲染会变，应降级全量渲染。
+ */
+export function dirtyTouchesGlobalEffect(
+  ast: MarkdownNode,
+  changes: CherryChangeLineSet[],
+): boolean {
+  const rawDirty = dirtyLinesFromChanges(changes);
+  if (!rawDirty) return false;
+
+  const spans = astBlockSpans(ast);
+  const expanded = expandDirtyToBlockBounds(
+    spans,
+    rawDirty.startLine,
+    rawDirty.endLine,
+  );
+
+  for (const span of spans) {
+    if (!spanOverlapsDirty(span, expanded.startLine, expanded.endLine)) {
+      continue;
+    }
+    if (span.node.props?.globalEffect === true) return true;
+  }
+  return false;
 }
 
 /**
@@ -253,7 +279,7 @@ function sliceBounds(
  */
 function resolveHashBoundaryInternal(
   prevAst: MarkdownNode,
-  prevLines: string[],
+  _prevLines: string[],
   newLines: string[],
   changes: CherryChangeLineSet[],
 ): HashBoundaryResolveResult | undefined {
@@ -271,30 +297,6 @@ function resolveHashBoundaryInternal(
     startLine: mapOldLineToNew(changes, expandedOld.startLine + 1) - 1,
     endLine: mapOldLineToNew(changes, expandedOld.endLine + 1) - 1,
   };
-
-  const fmEndPrev = frontmatterEndLine(prevLines);
-  const fmEndNew = frontmatterEndLine(newLines);
-  const frontmatterEdited = fmEndNew > 0 && dirtyNew.startLine < fmEndNew;
-
-  if (frontmatterEdited) {
-    const nextSpanIdx = spans.findIndex((s) => s.startLine >= fmEndPrev);
-    const nextHash = nextSpanIdx >= 0 ? spans[nextSpanIdx]!.hash : "";
-    const sliceEnd =
-      nextSpanIdx >= 0
-        ? mapOldLineToNew(changes, spans[nextSpanIdx]!.startLine + 1) - 1
-        : fmEndNew;
-    const slice = newLines.slice(0, Math.max(sliceEnd + 1, fmEndNew));
-
-    return {
-      input: {
-        range: { prevHash: "", nextHash },
-        markdown: slice.length > 0 ? slice : "",
-      },
-      dirtyOld: expandedOld,
-      dirtyNew,
-      frontmatterEdited,
-    };
-  }
 
   const affected = findAffectedSpanRange(
     spans,
@@ -318,7 +320,6 @@ function resolveHashBoundaryInternal(
     },
     dirtyOld: expandedOld,
     dirtyNew,
-    frontmatterEdited,
   };
 }
 

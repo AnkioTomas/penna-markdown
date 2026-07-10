@@ -1,5 +1,6 @@
 import { expect, it } from "vitest";
 import { createNode } from "@/transformer/core/MarkdownNode.js";
+import { assignHeadingSlugs } from "@/transformer/gfm/block/atx_heading.js";
 import { extractToc, extractTocFlat } from "@/renderer/toc/extract.js";
 
 const ast = createNode("document", 0, undefined, [
@@ -37,6 +38,7 @@ const ast = createNode("document", 0, undefined, [
 ]);
 
 it("extractToc builds nested tree", () => {
+  assignHeadingSlugs(ast, { slug: true });
   const toc = extractToc(ast);
   expect(toc).toHaveLength(1);
   expect(toc[0]?.text).toBe("Intro");

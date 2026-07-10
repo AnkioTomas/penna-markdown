@@ -11,6 +11,8 @@
  * @property value    - 字面量文本（`text`、`html` 等叶子节点）
  * @property children - 子节点（块级容器、行内包装节点）
  * @property props    - 语法扩展属性（`href`、`lang`、`ordered`、`noMerge` …）
+ *                       `globalEffect` — 可选，`true` 表示该块写入/影响文档级 store，
+ *                       编辑时应降级全量渲染；默认 `false`
  */
 export interface MarkdownNode {
   type: string;

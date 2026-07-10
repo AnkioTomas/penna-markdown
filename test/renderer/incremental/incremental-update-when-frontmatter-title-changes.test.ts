@@ -72,7 +72,7 @@ it("incremental update when frontmatter title changes", () => {
   const result = renderer.render("---\ntitle: Hello\n---\n\n# [[title]]", [
     lineChange(2, 2, 2, 2),
   ]);
-  expect(result.partial).toBe(true);
+  expect(result.partial).toBe(false);
   expect(mount.querySelector("h1")!.textContent).toBe("Hello");
   renderer.destroy();
 

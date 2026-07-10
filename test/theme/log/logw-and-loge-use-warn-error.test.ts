@@ -3,7 +3,7 @@
  */
 
 import { expect, it, vi } from "vitest";
-import { logD, logE, logW } from "@/theme/log.js";
+import { logD, logE, logW } from "@/core/log.js";
 
 it("logW and logE use warn/error", () => {
   const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});

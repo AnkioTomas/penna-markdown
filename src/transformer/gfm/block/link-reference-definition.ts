@@ -7,6 +7,7 @@
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
+import { createNode } from "@/transformer/core/MarkdownNode.js";
 import { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
 import { skipBlockPrefixSpaces } from "@/transformer/utils/blockPrefix.js";
 import {
@@ -201,7 +202,14 @@ class LinkReferenceDefinitionParser extends BaseBlockParser {
       if (!ctx.store.has(key)) {
         ctx.store.set(key, parsed.result);
       }
-      return { node: null, nextIndex: parsed.nextIndex };
+      const lineCount = parsed.nextIndex - index;
+      return {
+        nextIndex: parsed.nextIndex,
+        node: createNode("linkReferenceDef", lineCount, undefined, undefined, {
+          invisible: true,
+          globalEffect: true,
+        }),
+      };
     }
 
     return null;

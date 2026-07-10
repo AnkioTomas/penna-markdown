@@ -255,7 +255,14 @@ class FootnoteDefBlockParser extends BaseBlockParser {
       ctx.store.set(key, ctx.parseBlocks(def.lines));
     }
 
-    return { nextIndex: def.nextIndex };
+    const lineCount = def.nextIndex - index;
+    return {
+      nextIndex: def.nextIndex,
+      node: createNode("footnote_def", lineCount, undefined, undefined, {
+        invisible: true,
+        globalEffect: true,
+      }),
+    };
   }
 
   render(): string {

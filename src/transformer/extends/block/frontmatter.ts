@@ -71,8 +71,8 @@ class FrontmatterBlockParser extends BaseBlockParser {
           nextIndex: i + 1,
           node: createNode("frontmatter", lineCount, undefined, undefined, {
             invisible: true,
+            globalEffect: true,
             anchorSourceLine: true,
-            sourceStartLine: 0,
             parserStore: { frontMatter: data },
           }),
         };

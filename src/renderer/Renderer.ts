@@ -135,7 +135,7 @@ export class Renderer {
       this.mount,
       markdown,
       this.transformer,
-      this.theme,
+      this.logger,
       changes,
     );
 

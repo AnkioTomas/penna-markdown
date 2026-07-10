@@ -9,12 +9,13 @@
  *
  * 1. 精确 `data-hash` 匹配 pool 中旧节点
  * 2. 否则按 {@link contentHashPrefix} 匹配（reparse 随机后缀变化、内容未变）
- * 3. frontmatter 编辑时，含 `frontmatter_var` 的块强制重渲染
  *
  * ## DOM 更新
  *
  * 使用 {@link syncMountOrder} 最小化 DOM 操作：顺序未变时不移动节点，
  * 避免 iframe/video 因 detach 重载。不可 parse 的块跳过（与全量渲染一致）。
+ *
+ * 定义块（`globalEffect`）编辑时由 {@link IncrementalSession} 降级全量渲染，本模块不做特判。
  */
 
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
@@ -39,19 +40,8 @@ export interface DomReconcileResult {
 
 /** {@link reconcileDom} 的可选参数。 */
 export interface DomReconcileOptions {
-  /** frontmatter 被编辑时为 `true`，含 `[[var]]` 的块强制重渲染 */
-  frontmatterEdited?: boolean;
   /** 上次渲染的块索引，用于行号漂移检测 */
   prevBlocks?: BlockIndex[];
-}
-
-/** 递归判断 AST 子树是否含 `frontmatter_var` 节点。 */
-function hasFrontmatterVar(node: MarkdownNode): boolean {
-  if (node.type === "frontmatter_var") return true;
-  for (const child of node.children ?? []) {
-    if (hasFrontmatterVar(child)) return true;
-  }
-  return false;
 }
 
 /**
@@ -132,7 +122,7 @@ function syncMountOrder(mount: HTMLElement, ordered: HTMLElement[]): void {
  * @param mount       预览区挂载点
  * @param ast         增量 parse 后的 AST 根
  * @param transformer 渲染引擎
- * @param options     可选：frontmatter 编辑标志、上次块索引
+ * @param options     可选：上次块索引
  */
 export function reconcileDom(
   mount: HTMLElement,
@@ -140,7 +130,7 @@ export function reconcileDom(
   transformer: TransformerEngine,
   options: DomReconcileOptions = {},
 ): DomReconcileResult {
-  const { frontmatterEdited = false, prevBlocks = [] } = options;
+  const { prevBlocks = [] } = options;
 
   const pool = buildDomPool(mount);
   const prevByHash = prevBlockByHash(prevBlocks);
@@ -152,9 +142,8 @@ export function reconcileDom(
 
   for (const block of BlockIndex.fromAst(ast)) {
     const hash = block.hash;
-    const forceRender = frontmatterEdited && hasFrontmatterVar(block.node);
 
-    if (!forceRender && hash) {
+    if (hash) {
       const reused = lookupByHashPrefix(pool, hash, true);
       if (reused) {
         const prev = lookupByHashPrefix(prevByHash, hash);

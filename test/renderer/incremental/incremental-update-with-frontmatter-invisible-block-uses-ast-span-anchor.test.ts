@@ -71,7 +71,7 @@ it("incremental update with frontmatter invisible block uses ast span anchor", (
   const result = renderer.render("---\ntitle: Hello\n---\n\nBody", [
     lineChange(2, 2, 2, 2),
   ]);
-  expect(result.partial).toBe(true);
+  expect(result.partial).toBe(false);
   expect(mount.textContent).toContain("Body");
   renderer.destroy();
 

@@ -11,7 +11,7 @@ function collectHeadings(
     if (HEADING_NODE_TYPES.has(node.type)) {
       const text = node.value as string;
       const level = Number(node.props?.level ?? 1);
-      const slug = node.props?.id;
+      const slug = node.props?.slug;
       out.push({
         level,
         text,
