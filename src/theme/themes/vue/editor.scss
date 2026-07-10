@@ -1,10 +1,12 @@
 /** Vue 主题编辑器样式 */
 @use "tokens";
 
-.cherry-theme-vue.cherry {
+.cherry-theme-vue.cherry,
+.cherry-theme-vue .cherry {
   @include tokens.theme-light;
 }
 
-.cherry-dark.cherry-theme-vue.cherry {
+.cherry-dark.cherry-theme-vue.cherry,
+.cherry-dark.cherry-theme-vue .cherry {
   @include tokens.theme-dark;
 }

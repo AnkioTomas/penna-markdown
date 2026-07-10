@@ -1,10 +1,12 @@
 /** LaTeX 主题编辑器样式 */
 @use "tokens";
 
-.cherry-theme-latex.cherry {
+.cherry-theme-latex.cherry,
+.cherry-theme-latex .cherry {
   @include tokens.theme-light;
 }
 
-.cherry-dark.cherry-theme-latex.cherry {
+.cherry-dark.cherry-theme-latex.cherry,
+.cherry-dark.cherry-theme-latex .cherry {
   @include tokens.theme-dark;
 }

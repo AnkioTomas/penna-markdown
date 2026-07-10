@@ -1,10 +1,12 @@
 /** GitHub 主题编辑器样式 */
 @use "tokens";
 
-.cherry-theme-github.cherry {
+.cherry-theme-github.cherry,
+.cherry-theme-github .cherry {
   @include tokens.theme-light;
 }
 
-.cherry-dark.cherry-theme-github.cherry {
+.cherry-dark.cherry-theme-github.cherry,
+.cherry-dark.cherry-theme-github .cherry {
   @include tokens.theme-dark;
 }

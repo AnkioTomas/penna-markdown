@@ -1,36 +1,20 @@
 @use "sass:list";
 @use "../../style/common/semantic-picks" as picks;
-
-// pollinations.ai 色板（cream 底 + 紫/蓝/绿/黄 pastel + 像素风硬阴影）
-$polli-dark: #110518;
-$polli-muted: #4a3f5c;
-$polli-subtle: #6b5f80;
-
-$polli-cream: #f3ebde;
-$polli-tan: #e8e2d8;
-$polli-border: #cfc8b8;
-
-$polli-primary-light: #e9d9ef;
-$polli-primary-strong: #c9a9e4;
-$polli-secondary-light: #d8dff8;
-$polli-secondary-strong: #a4b4de;
-$polli-tertiary-light: #d4f0d7;
-$polli-tertiary-strong: #a8e6a2;
-$polli-accent-light: #f5fabc;
-$polli-accent-strong: #e8f372;
-$polli-pink: #ffd1b3;
-$polli-flower-accent: #f472b6;
-$polli-nectar-accent: #fbbf24;
+@use "palette" as *;
 
 $polli-h1: $polli-dark;
-$polli-h2: $polli-primary-strong;
-$polli-h3: $polli-secondary-strong;
-$polli-h4: $polli-tertiary-strong;
+$polli-h2: $polli-dark;
+$polli-h3: $polli-dark;
+$polli-h4: color-mix(in srgb, #{$polli-dark} 88%, #{$polli-muted});
 $polli-h5: $polli-muted;
 $polli-h6: $polli-subtle;
 
 $polli-link: $polli-secondary-strong;
-$polli-link-hover: #7a8fc8;
+$polli-link-hover: color-mix(
+  in srgb,
+  #{$polli-secondary-strong} 70%,
+  #{$polli-dark}
+);
 
 $polli-code-bg: $polli-tan;
 $polli-blockquote-bg: $polli-primary-light;
@@ -38,24 +22,32 @@ $polli-table-head-bg: $polli-secondary-light;
 $polli-h1-rule: $polli-accent-strong;
 $polli-hr: $polli-border;
 
-$polli-dark-bg: #110518;
+$polli-dark-bg: $polli-dark;
 $polli-dark-elevated: #1f1428;
-$polli-dark-text: #f3ebde;
+$polli-dark-text: $polli-cream;
 $polli-dark-text-muted: #b4a8c4;
 $polli-dark-text-subtle: #8a7a9e;
 
-$polli-dark-h1: $polli-accent-strong;
-$polli-dark-h2: $polli-primary-strong;
-$polli-dark-h3: $polli-secondary-strong;
-$polli-dark-h4: $polli-tertiary-strong;
+$polli-dark-h1: $polli-cream;
+$polli-dark-h2: $polli-cream;
+$polli-dark-h3: color-mix(
+  in srgb,
+  #{$polli-cream} 94%,
+  #{$polli-dark-text-muted}
+);
+$polli-dark-h4: $polli-dark-text-muted;
 $polli-dark-h5: $polli-dark-text-muted;
 $polli-dark-h6: $polli-dark-text-subtle;
 
 $polli-dark-link: $polli-secondary-strong;
-$polli-dark-link-hover: #c4d0f0;
+$polli-dark-link-hover: color-mix(
+  in srgb,
+  #{$polli-secondary-strong} 75%,
+  #{$polli-white}
+);
 $polli-dark-code-bg: #2a1f35;
 $polli-dark-blockquote-bg: #241830;
-$polli-dark-table-border: #4a3f5c;
+$polli-dark-table-border: $polli-muted;
 $polli-dark-table-head-bg: #2f2440;
 $polli-dark-h1-rule: $polli-accent-strong;
 $polli-dark-hr: #3a2f48;
@@ -66,16 +58,16 @@ $polli-light-semantics: (
     $polli-secondary-light,
   ),
   tip: (
-    $polli-tertiary-strong,
-    $polli-tertiary-light,
+    $polli-seed-accent,
+    $polli-seed,
   ),
   warning: (
     $polli-nectar-accent,
-    #fef3c7,
+    $polli-nectar,
   ),
   caution: (
     $polli-flower-accent,
-    #fce7f3,
+    $polli-flower,
   ),
   danger: (
     #e05252,
@@ -93,8 +85,8 @@ $polli-dark-semantics: (
     #5868a0,
   ),
   tip: (
-    $polli-tertiary-strong,
-    #4a8050,
+    $polli-seed-accent,
+    #2d6a3e,
   ),
   warning: (
     $polli-nectar-accent,
@@ -169,9 +161,38 @@ $polli-dark-mark-mix: 60%;
   --polli-font-body:
     "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
     "Liberation Mono", monospace;
-  --polli-text-size: 1rem;
-  --polli-text-leading: 1.75;
-  --polli-heading-leading: 1.5;
+  --polli-font-heading: var(--polli-font-body);
+  --cherry-font-family: var(--polli-font-body);
+  --polli-text-size: 0.9375rem;
+  --polli-text-leading: 1.8;
+  --polli-heading-leading: 1.45;
+  --polli-edge: color-mix(in srgb, #{$polli-border} 55%, #{$polli-cream});
+  --polli-edge-strong: color-mix(
+    in srgb,
+    #{$polli-secondary-strong} 22%,
+    #{$polli-border}
+  );
+  --polli-surface-bg: color-mix(
+    in srgb,
+    #{$polli-cream} 92%,
+    #{$polli-secondary-light}
+  );
+  --polli-surface-tint: color-mix(
+    in srgb,
+    #{$polli-secondary-light} 28%,
+    transparent
+  );
+  --polli-panel-bg: color-mix(
+    in srgb,
+    #{$polli-primary-light} 22%,
+    #{$polli-cream}
+  );
+  --polli-panel-border: color-mix(
+    in srgb,
+    #{$polli-primary-strong} 28%,
+    #{$polli-border}
+  );
+  --polli-radius: 0;
 
   --polli-h1-color: #{$polli-h1};
   --polli-h2-color: #{$polli-h2};
@@ -182,6 +203,37 @@ $polli-dark-mark-mix: 60%;
 }
 
 @mixin typography-tokens-dark {
+  --polli-edge: color-mix(
+    in srgb,
+    #{$polli-dark-table-border} 38%,
+    transparent
+  );
+  --polli-edge-strong: color-mix(
+    in srgb,
+    #{$polli-secondary-strong} 24%,
+    #{$polli-dark-elevated}
+  );
+  --polli-surface-bg: color-mix(
+    in srgb,
+    #{$polli-dark-bg} 94%,
+    #{$polli-dark-elevated}
+  );
+  --polli-surface-tint: color-mix(
+    in srgb,
+    #{$polli-secondary-strong} 12%,
+    transparent
+  );
+  --polli-panel-bg: color-mix(
+    in srgb,
+    #{$polli-primary-strong} 10%,
+    #{$polli-dark-elevated}
+  );
+  --polli-panel-border: color-mix(
+    in srgb,
+    #{$polli-primary-strong} 22%,
+    #{$polli-dark-elevated}
+  );
+
   --polli-h1-color: #{$polli-dark-h1};
   --polli-h2-color: #{$polli-dark-h2};
   --polli-h3-color: #{$polli-dark-h3};
@@ -234,11 +286,15 @@ $polli-dark-mark-mix: 60%;
   $border-soft: polli-border-soft($is-dark);
   $border-faint: polli-border-faint($is-dark);
   $code-inline-bg: polli-code-inline-bg($is-dark);
-  $shadow-color: if($is-dark, $polli-dark-text, $polli-dark);
+  $shadow-color: if(
+    $is-dark,
+    color-mix(in srgb, #{$polli-secondary-strong} 18%, transparent),
+    color-mix(in srgb, #{$polli-secondary-strong} 12%, transparent)
+  );
 
-  --polli-shadow-sm: 2px 2px 0 #{$shadow-color};
-  --polli-shadow-md: 4px 4px 0 #{$shadow-color};
-  --polli-shadow-accent: 2px 2px 0 #{$polli-accent-strong};
+  --polli-shadow-sm: #{1px 1px 0 #{$shadow-color}};
+  --polli-shadow-md: #{2px 2px 0 #{$shadow-color}};
+  --polli-shadow-accent: #{2px 2px 0 #{$polli-accent-strong}};
 
   --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
   --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
@@ -260,7 +316,11 @@ $polli-dark-mark-mix: 60%;
   --cherry-c-on-brand: #{$polli-dark};
 
   --cherry-c-code-inline-bg: #{$code-inline-bg};
-  --cherry-c-code-inline-fg: var(--polli-h3-color);
+  --cherry-c-code-inline-fg: color-mix(
+    in srgb,
+    #{$polli-muted} 25%,
+    #{$polli-dark}
+  );
   --cherry-c-code-inline-border: #{$border-soft};
 
   --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
@@ -285,7 +345,11 @@ $polli-dark-mark-mix: 60%;
     )};
 
   --cherry-c-hljs-bg: transparent;
-  --cherry-c-hljs-comment: #{if($is-dark, #8a7a9e, #6b5f80)};
+  --cherry-c-hljs-comment: #{if(
+      $is-dark,
+      $polli-dark-text-subtle,
+      $polli-subtle
+    )};
   --cherry-c-hljs-keyword: #{if($is-dark, $polli-primary-strong, #9060b8)};
   --cherry-c-hljs-string: #{if($is-dark, $polli-tertiary-strong, #4a9e50)};
   --cherry-c-hljs-number: #{if($is-dark, $polli-nectar-accent, #c08020)};
@@ -301,7 +365,11 @@ $polli-dark-mark-mix: 60%;
   --cherry-c-brand-1: #{$polli-link};
   --cherry-c-brand-2: #{$polli-link-hover};
   --cherry-c-brand-3: #{$polli-flower-accent};
-  --cherry-c-brand-soft: rgba(164, 180, 222, 0.2);
+  --cherry-c-brand-soft: color-mix(
+    in srgb,
+    #{$polli-secondary-strong} 20%,
+    transparent
+  );
   --cherry-c-brand-on-bg: #{$polli-dark};
 
   --cherry-c-text-1: #{$polli-dark};
@@ -311,7 +379,7 @@ $polli-dark-mark-mix: 60%;
   --cherry-c-bg: #{$polli-cream};
   --cherry-c-bg-elevated: #{$polli-tan};
 
-  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-light: #{$polli-white};
   --cherry-c-contrast-dark: #{$polli-dark};
 
   --cherry-c-brand-mark: #{$polli-accent-strong};
@@ -334,7 +402,11 @@ $polli-dark-mark-mix: 60%;
   --cherry-c-brand-1: #{$polli-dark-link};
   --cherry-c-brand-2: #{$polli-dark-link-hover};
   --cherry-c-brand-3: #{$polli-flower-accent};
-  --cherry-c-brand-soft: rgba(164, 180, 222, 0.14);
+  --cherry-c-brand-soft: color-mix(
+    in srgb,
+    #{$polli-secondary-strong} 14%,
+    transparent
+  );
   --cherry-c-brand-on-bg: #{$polli-dark-text};
 
   --cherry-c-text-1: #{$polli-dark-text};
@@ -344,7 +416,7 @@ $polli-dark-mark-mix: 60%;
   --cherry-c-bg: #{$polli-dark-bg};
   --cherry-c-bg-elevated: #{$polli-dark-elevated};
 
-  --cherry-c-contrast-light: #fff;
+  --cherry-c-contrast-light: #{$polli-white};
   --cherry-c-contrast-dark: #{$polli-dark};
 
   --cherry-c-brand-mark: color-mix(

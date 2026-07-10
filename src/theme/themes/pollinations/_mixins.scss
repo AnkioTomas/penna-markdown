@@ -1,0 +1,170 @@
+@use "../../style/common/rem" as *;
+@use "palette" as *;
+
+/// pollinations.ai 像素风：零圆角、轻硬阴影
+@mixin pixel-radius {
+  border-radius: 0 !important;
+}
+
+@mixin pixel-shadow($offset: 1, $color: var(--polli-edge-strong)) {
+  box-shadow: rem($offset) rem($offset) 0 #{$color};
+}
+
+@mixin pixel-border($width: 1, $color: var(--polli-edge)) {
+  border: rem($width) solid #{$color};
+}
+
+@mixin pixel-font-title {
+  font-family: var(--polli-font-title);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.6;
+  text-transform: none;
+}
+
+@mixin pixel-font-heading {
+  font-family: var(--polli-font-heading);
+  font-weight: 600;
+  letter-spacing: rem(0.2);
+  line-height: var(--polli-heading-leading);
+}
+
+@mixin pixel-font-body {
+  font-family: var(--polli-font-body);
+  font-weight: 400;
+  line-height: var(--polli-text-leading);
+}
+
+@mixin scanline-overlay($strength: 0.6%) {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      color-mix(in srgb, var(--polli-h3-color) #{$strength}, transparent) 2px,
+      color-mix(in srgb, var(--polli-h3-color) #{$strength}, transparent) 4px
+    );
+  }
+}
+
+@mixin pixel-canvas-light {
+  background-color: var(--cherry-c-bg);
+  background-image:
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, #{$polli-accent-strong} 70%, transparent) 1.5px,
+      transparent 1.5px
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, #{$polli-secondary-light} 55%, transparent) 0%,
+      transparent 24%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent rem(7),
+      color-mix(in srgb, #{$polli-border} 65%, transparent) rem(7),
+      color-mix(in srgb, #{$polli-border} 65%, transparent) rem(8)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent rem(7),
+      color-mix(in srgb, #{$polli-border} 65%, transparent) rem(7),
+      color-mix(in srgb, #{$polli-border} 65%, transparent) rem(8)
+    );
+  background-size:
+    rem(24) rem(24),
+    100% rem(180),
+    rem(8) rem(8),
+    rem(8) rem(8);
+  background-position:
+    rem(4) rem(8),
+    top center,
+    top left,
+    top left;
+}
+
+@mixin pixel-canvas-dark {
+  background-color: var(--polli-surface-bg);
+  background-image:
+    linear-gradient(180deg, var(--polli-surface-tint) 0%, transparent 24%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent rem(7),
+      color-mix(in srgb, var(--polli-edge) 65%, transparent) rem(7),
+      color-mix(in srgb, var(--polli-edge) 65%, transparent) rem(8)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent rem(7),
+      color-mix(in srgb, var(--polli-edge) 65%, transparent) rem(7),
+      color-mix(in srgb, var(--polli-edge) 65%, transparent) rem(8)
+    );
+  background-size:
+    100% rem(160),
+    rem(8) rem(8),
+    rem(8) rem(8);
+}
+
+@mixin pixel-frame {
+  border: rem(2) solid
+    color-mix(in srgb, #{$polli-secondary-strong} 35%, #{$polli-border});
+  box-shadow: rem(2) rem(2) 0
+    color-mix(in srgb, #{$polli-secondary-strong} 22%, transparent);
+}
+
+@mixin pixel-cta {
+  @include pixel-radius;
+  @include pixel-border(1, var(--polli-edge-strong));
+  color: #{$polli-dark};
+  background: color-mix(
+    in srgb,
+    #{$polli-accent-strong} 72%,
+    #{$polli-accent-light}
+  );
+  box-shadow: var(--polli-shadow-sm);
+
+  &:hover {
+    background: #{$polli-accent-light};
+    transform: translate(rem(-1), rem(-1));
+    box-shadow: var(--polli-shadow-md);
+  }
+
+  &:active {
+    transform: translate(rem(1), rem(1));
+    box-shadow: none;
+  }
+}
+
+@mixin pixel-accent-panel {
+  padding: rem(12) rem(14);
+  background: var(--polli-panel-bg);
+  border: rem(1) solid var(--polli-panel-border);
+}
+
+@mixin pixel-link {
+  color: var(--cherry-c-brand-1);
+  text-decoration: underline;
+  text-decoration-thickness: rem(2);
+  text-underline-offset: rem(3);
+  text-decoration-color: color-mix(
+    in srgb,
+    var(--cherry-c-brand-1) 55%,
+    transparent
+  );
+
+  &:hover {
+    color: var(--cherry-c-brand-2);
+    text-decoration-color: var(--cherry-c-brand-2);
+    background: color-mix(in srgb, var(--cherry-c-brand-mark) 12%, transparent);
+  }
+}

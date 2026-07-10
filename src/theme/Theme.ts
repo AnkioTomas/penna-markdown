@@ -9,7 +9,7 @@
  *
  * | 元素 | class | 作用 |
  * | ---- | ----- | ---- |
- * | `rootElement`（`.cherry`） | `cherry-theme-{id}` | 皮肤变量与编辑器样式、明暗切换；`render |
+ * | `rootElement`（用户挂载点） | `cherry-theme-{id}`、`cherry-dark` | 皮肤变量与编辑器 chrome |
  * | `render`（预览挂载点） | `cherry-render` | 供 `.cherry-theme-* .cherry-render` 命中渲染样式 |
  */
 
@@ -32,20 +32,18 @@ export class Theme {
   private id = "default";
   /** 当前明暗模式 */
   private mode: LightDark = "light";
-  /** 预览挂载点；仅加 `cherry-render` */
-  private render: HTMLElement | null = null;
 
   /**
    * @param bus          实例级事件总线
    * @param logger       日志门面
-   * @param rootElement  Cherry 根容器（`.cherry`），承载 `cherry-theme-*`
+   * @param rootElement  用户传入的挂载根，承载 `cherry-theme-*` / `cherry-dark`
    * @param themes       外部注册的皮肤 id 列表，与内置 {@link REGISTERED_THEMES} 合并
    */
   constructor(
     private readonly bus: EventBus,
     private readonly logger: Log,
     private readonly rootElement: HTMLElement,
-    private readonly themes: string[],
+    private readonly themes: string[] = [],
   ) {}
 
   /** 可用皮肤 id：内置 + 外部注册 */
@@ -110,17 +108,16 @@ export class Theme {
   }
 
   /**
-   * 同步皮肤 class。
-   *
-   * 主题 class 在 `rootElement`；`render` 仅保留 `cherry-render`
-   *（供 `.cherry-theme-* .cherry-render` 命中）。
+   * 同步皮肤 class：主题 class 始终在 {@link rootElement}；
+   * `render` 仅保留 `cherry-render`。
    */
   private applyThemeClasses() {
-    if (!this.render) return;
-
-    this.render.classList.add("cherry-render");
-    for (const name of [...this.render.classList]) {
-      if (name.startsWith("cherry-theme-")) this.render.classList.remove(name);
+    if (this.rootElement) {
+      this.rootElement.classList.add("cherry-render");
+      for (const name of [...this.rootElement.classList]) {
+        if (name.startsWith("cherry-theme-"))
+          this.rootElement.classList.remove(name);
+      }
     }
 
     for (const name of [...this.rootElement.classList]) {
@@ -131,10 +128,9 @@ export class Theme {
   }
 
   /**
-   * 同步明暗 class：`cherry-dark` 仅挂在 `rootElement`，`render` 上移除残留。
+   * 同步明暗 class：`cherry-dark` 仅挂在 {@link rootElement}。
    */
   private applyAppearanceClass() {
     this.rootElement.classList.toggle("cherry-dark", this.mode === "dark");
-    this.render?.classList.remove("cherry-dark");
   }
 }

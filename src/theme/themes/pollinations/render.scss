@@ -1,16 +1,21 @@
-/** Pollinations 主题渲染样式 */
+/** Pollinations 主题渲染样式（pollinations.ai 像素风） */
+@use "fonts";
 @use "tokens";
 @use "overrides";
 
-.cherry-theme-pollinations {
-  .cherry-render {
-    @include tokens.theme-light;
-    @include overrides.styles;
-  }
+// 独立 Renderer：挂载点即 .cherry-render（不含编辑器 .cherry 骨架）
+.cherry-theme-pollinations .cherry-render {
+  @include tokens.theme-light;
 }
 
-.cherry-dark.cherry-theme-pollinations {
-  .cherry-render {
-    @include tokens.theme-dark;
-  }
+.cherry-theme-pollinations .cherry-render:not(:has(> .cherry)) {
+  @include overrides.styles;
+}
+
+.cherry-dark.cherry-theme-pollinations .cherry-render {
+  @include tokens.theme-dark;
+}
+
+.cherry-dark.cherry-theme-pollinations .cherry-render:not(:has(> .cherry)) {
+  @include overrides.styles-dark;
 }

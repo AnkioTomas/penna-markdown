@@ -1,0 +1,502 @@
+@use "../../style/common/rem" as *;
+@use "mixins" as pixel;
+@use "palette" as *;
+
+/// pollinations 扩展容器：像素框 + 粉彩底 + 同色系边框（禁止黑边）
+@mixin pixel-box($border, $bg, $shadow) {
+  @include pixel.pixel-radius;
+  border: rem(2) solid #{$border};
+  background: #{$bg};
+  box-shadow: rem(2) rem(2) 0 #{$shadow};
+}
+
+@mixin alert-tone($border, $bg, $shadow) {
+  --alert-text: #{$polli-dark};
+  --alert-bg: #{$bg};
+  --alert-border: #{$border};
+  color: #{$polli-dark};
+  box-shadow: rem(2) rem(2) 0 #{$shadow};
+}
+
+@mixin alert-tone-dark($border, $bg, $shadow, $text: $polli-cream) {
+  --alert-text: #{$text};
+  --alert-bg: #{$bg};
+  --alert-border: #{$border};
+  color: #{$text};
+  box-shadow: rem(2) rem(2) 0 #{$shadow};
+}
+
+/// 容器内正文：强制深色可读，不被全局粉彩标题色污染
+@mixin container-copy($text: $polli-dark, $muted: $polli-muted) {
+  color: #{$text};
+
+  p,
+  li,
+  td,
+  th,
+  dd,
+  dt,
+  label,
+  span,
+  div,
+  summary,
+  .cherry-card__body,
+  .cherry-collapse-body,
+  .cherry-field__description {
+    color: #{$text};
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .cherry-card__title,
+  .cherry-alert__title,
+  .cherry-field__name {
+    color: #{$text};
+  }
+
+  h5,
+  h6,
+  .cherry-tabs__label {
+    color: #{$muted};
+  }
+
+  a {
+    color: color-mix(in srgb, #{$polli-secondary-strong} 55%, #{$text});
+    font-weight: 600;
+
+    &:hover {
+      color: #{$text};
+    }
+  }
+
+  :not(pre) > code {
+    color: color-mix(in srgb, #{$muted} 20%, #{$text});
+  }
+}
+
+@mixin styles {
+  .cherry-alert {
+    @include container-copy;
+    margin: 0 0 rem(16);
+    padding: rem(12) rem(14);
+    @include pixel.pixel-radius;
+    border: rem(2) solid var(--alert-border);
+    border-left-width: rem(6);
+    background: var(--alert-bg);
+    font-size: rem(14);
+    line-height: 1.65;
+    box-shadow: rem(2) rem(2) 0
+      color-mix(in srgb, var(--alert-border) 45%, transparent);
+
+    &__title {
+      @include pixel.pixel-font-heading;
+      font-size: rem(13);
+      font-weight: 700;
+      color: #{$polli-dark};
+    }
+
+    &--note {
+      @include alert-tone(
+        $polli-secondary-strong,
+        $polli-secondary-light,
+        color-mix(in srgb, $polli-secondary-strong 50%, $polli-border)
+      );
+    }
+
+    &--tip {
+      @include alert-tone(
+        $polli-seed-accent,
+        $polli-seed,
+        color-mix(in srgb, $polli-seed-accent 45%, $polli-border)
+      );
+    }
+
+    &--important {
+      @include alert-tone(
+        $polli-primary-strong,
+        $polli-primary-light,
+        color-mix(in srgb, $polli-primary-strong 50%, $polli-border)
+      );
+    }
+
+    &--warning {
+      @include alert-tone(
+        $polli-nectar-accent,
+        $polli-nectar,
+        color-mix(in srgb, $polli-nectar-accent 45%, $polli-border)
+      );
+    }
+
+    &--caution {
+      @include alert-tone(
+        $polli-flower-accent,
+        $polli-flower,
+        color-mix(in srgb, $polli-flower-accent 45%, $polli-border)
+      );
+    }
+
+    &--danger {
+      @include alert-tone(
+        #e05252,
+        #ffd1d1,
+        color-mix(in srgb, #e05252 45%, $polli-border)
+      );
+    }
+
+    &--info {
+      @include alert-tone(
+        $polli-secondary-strong,
+        $polli-secondary-light,
+        color-mix(in srgb, $polli-secondary-strong 50%, $polli-border)
+      );
+    }
+  }
+
+  .cherry-card {
+    margin: 0 0 rem(16);
+    padding: rem(14) rem(16);
+    @include pixel-box(
+      $polli-primary-strong,
+      $polli-primary-light,
+      color-mix(in srgb, $polli-primary-strong 48%, $polli-border)
+    );
+    @include container-copy;
+    font-size: rem(14);
+    line-height: 1.65;
+
+    &__title {
+      @include pixel.pixel-font-heading;
+      margin: 0 0 rem(10);
+      font-size: rem(14);
+      font-weight: 700;
+    }
+
+    &__body > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .cherry-link-card,
+  .cherry-repo-card {
+    @include pixel-box(
+      $polli-secondary-strong,
+      color-mix(in srgb, $polli-secondary-light 82%, $polli-cream),
+      color-mix(in srgb, $polli-secondary-strong 48%, $polli-border)
+    );
+    @include container-copy;
+    transition:
+      transform 0.08s linear,
+      box-shadow 0.08s linear;
+
+    &:hover {
+      transform: translate(rem(-1), rem(-1));
+      box-shadow: rem(3) rem(3) 0
+        color-mix(in srgb, $polli-secondary-strong 48%, $polli-border);
+      border-color: $polli-secondary-strong;
+    }
+
+    &::after {
+      opacity: 0.55;
+    }
+  }
+
+  .cherry-tabs {
+    margin: 0 0 rem(16);
+    overflow: hidden;
+    @include pixel-box(
+      $polli-tertiary-strong,
+      color-mix(in srgb, $polli-tertiary-light 78%, $polli-cream),
+      color-mix(in srgb, $polli-tertiary-strong 45%, $polli-border)
+    );
+    @include container-copy;
+
+    &__nav {
+      gap: rem(4);
+      padding: rem(6) rem(8) 0;
+      border-bottom: rem(2) solid
+        color-mix(in srgb, $polli-tertiary-strong 35%, $polli-border);
+      background: color-mix(in srgb, $polli-tertiary-light 55%, transparent);
+    }
+
+    &__label {
+      padding: rem(8) rem(12);
+      font-size: rem(13);
+      font-weight: 600;
+      color: $polli-muted;
+      border-bottom: rem(2) solid transparent;
+
+      &:hover {
+        color: $polli-dark;
+        background: color-mix(in srgb, $polli-accent-light 35%, transparent);
+      }
+    }
+
+    &__panels {
+      padding: rem(14) rem(16);
+      background: color-mix(in srgb, $polli-cream 35%, transparent);
+    }
+
+    &__nav > &__label:has(&__radio:checked) {
+      color: $polli-dark;
+      border-bottom-color: color-mix(
+        in srgb,
+        $polli-tertiary-strong 65%,
+        $polli-border
+      );
+    }
+  }
+
+  .cherry-collapse {
+    margin: 0 0 rem(16);
+    overflow: hidden;
+    @include pixel-box(
+      $polli-accent-strong,
+      color-mix(in srgb, $polli-accent-light 70%, $polli-cream),
+      color-mix(in srgb, $polli-accent-strong 40%, $polli-border)
+    );
+    @include container-copy;
+
+    details {
+      border-bottom: rem(2) solid
+        color-mix(in srgb, $polli-accent-strong 28%, $polli-border);
+
+      &:last-child {
+        border-bottom: 0;
+      }
+    }
+
+    summary {
+      padding: rem(10) rem(14);
+      font-size: rem(13);
+      font-weight: 700;
+      background: color-mix(in srgb, $polli-accent-light 45%, transparent);
+
+      &::before {
+        color: $polli-dark;
+      }
+    }
+  }
+
+  .cherry-collapse-body {
+    padding: rem(12) rem(14);
+    background: color-mix(in srgb, $polli-cream 40%, transparent);
+  }
+
+  .cherry-field-group {
+    margin: 0 0 rem(16);
+    overflow: hidden;
+    @include pixel-box(
+      $polli-secondary-strong,
+      color-mix(in srgb, $polli-secondary-light 75%, $polli-cream),
+      color-mix(in srgb, $polli-secondary-strong 45%, $polli-border)
+    );
+    @include container-copy;
+  }
+
+  .cherry-field {
+    padding: rem(14) rem(16);
+    border-bottom: rem(2) solid
+      color-mix(in srgb, $polli-secondary-strong 22%, $polli-border);
+    background: transparent;
+    @include container-copy;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &__name {
+      @include pixel.pixel-font-heading;
+      font-size: rem(14);
+    }
+
+    &__tag {
+      @include pixel.pixel-radius;
+      border: rem(1) solid var(--alert-border);
+      font-size: rem(11);
+      font-weight: 600;
+    }
+  }
+
+  .cherry-spoiler {
+    @include pixel.pixel-radius;
+    padding: rem(1) rem(6);
+    border: rem(2) dashed
+      color-mix(in srgb, $polli-flower-accent 55%, $polli-border);
+    background: color-mix(in srgb, $polli-flower 70%, transparent);
+  }
+
+  .cherry-badge {
+    @include pixel.pixel-radius;
+    padding: rem(2) rem(8);
+    border: rem(2) solid
+      color-mix(in srgb, $polli-primary-strong 55%, $polli-border);
+    background: $polli-primary-light;
+    box-shadow: rem(1) rem(1) 0
+      color-mix(in srgb, $polli-primary-strong 35%, transparent);
+    font-size: rem(11);
+    font-weight: 700;
+  }
+
+  .cherry-image-card {
+    overflow: hidden;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+
+    img {
+      border: 0;
+      box-shadow: none;
+    }
+  }
+
+  .cherry-card-grid .cherry-card {
+    height: 100%;
+  }
+
+  .cherry-card-masonry__item {
+    @include pixel-box(
+      $polli-tertiary-strong,
+      color-mix(in srgb, $polli-tertiary-light 72%, $polli-cream),
+      color-mix(in srgb, $polli-tertiary-strong 42%, $polli-border)
+    );
+    padding: rem(8);
+  }
+
+  .cherry-steps > ol > li::before {
+    @include pixel.pixel-radius;
+    border: rem(2) solid $polli-secondary-strong;
+    background: $polli-secondary-light;
+    color: $polli-dark;
+    box-shadow: rem(2) rem(2) 0
+      color-mix(in srgb, $polli-secondary-strong 40%, $polli-border);
+    font-weight: 700;
+  }
+
+  .cherry-audio,
+  .cherry-video .cherry-media__player,
+  .cherry-iframe__frame {
+    @include pixel.pixel-radius;
+    border: 0;
+    box-shadow: none;
+  }
+}
+
+@mixin styles-dark {
+  .cherry-alert,
+  .cherry-card,
+  .cherry-link-card,
+  .cherry-repo-card,
+  .cherry-tabs,
+  .cherry-collapse,
+  .cherry-field-group,
+  .cherry-field {
+    @include container-copy($polli-cream, #b4a8c4);
+  }
+
+  .cherry-alert {
+    &--note {
+      @include alert-tone-dark(
+        $polli-secondary-strong,
+        #2a3350,
+        color-mix(in srgb, $polli-secondary-strong 35%, $polli-dark)
+      );
+    }
+
+    &--tip {
+      @include alert-tone-dark(
+        $polli-seed-accent,
+        #243528,
+        color-mix(in srgb, $polli-seed-accent 35%, $polli-dark)
+      );
+    }
+
+    &--important {
+      @include alert-tone-dark(
+        $polli-primary-strong,
+        #352840,
+        color-mix(in srgb, $polli-primary-strong 35%, $polli-dark)
+      );
+    }
+
+    &--warning {
+      @include alert-tone-dark(
+        $polli-nectar-accent,
+        #3a3020,
+        color-mix(in srgb, $polli-nectar-accent 35%, $polli-dark)
+      );
+    }
+
+    &--caution {
+      @include alert-tone-dark(
+        $polli-flower-accent,
+        #3a2430,
+        color-mix(in srgb, $polli-flower-accent 35%, $polli-dark)
+      );
+    }
+
+    &--danger {
+      @include alert-tone-dark(
+        #f87171,
+        #402828,
+        color-mix(in srgb, #f87171 35%, $polli-dark)
+      );
+    }
+
+    &--info {
+      @include alert-tone-dark(
+        $polli-secondary-strong,
+        #2a3350,
+        color-mix(in srgb, $polli-secondary-strong 35%, $polli-dark)
+      );
+    }
+  }
+
+  .cherry-card {
+    @include pixel-box(
+      $polli-primary-strong,
+      #352840,
+      color-mix(in srgb, $polli-primary-strong 35%, $polli-dark)
+    );
+  }
+
+  .cherry-link-card,
+  .cherry-repo-card {
+    @include pixel-box(
+      $polli-secondary-strong,
+      #2a3350,
+      color-mix(in srgb, $polli-secondary-strong 35%, $polli-dark)
+    );
+  }
+
+  .cherry-tabs {
+    @include pixel-box(
+      $polli-tertiary-strong,
+      #253528,
+      color-mix(in srgb, $polli-tertiary-strong 35%, $polli-dark)
+    );
+
+    &__panels {
+      background: color-mix(in srgb, $polli-dark 55%, transparent);
+    }
+  }
+
+  .cherry-collapse {
+    @include pixel-box(
+      $polli-accent-strong,
+      #3a3828,
+      color-mix(in srgb, $polli-accent-strong 32%, $polli-dark)
+    );
+  }
+
+  .cherry-field-group {
+    @include pixel-box(
+      $polli-secondary-strong,
+      #2a3350,
+      color-mix(in srgb, $polli-secondary-strong 35%, $polli-dark)
+    );
+  }
+}
