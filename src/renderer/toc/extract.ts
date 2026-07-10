@@ -1,47 +1,34 @@
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
-import {
-  assignSlug,
-  createSlugRegistry,
-  extractHeadingText,
-} from "@/transformer/gfm/block/atx_heading.js";
-
-export interface TocItem {
-  level: number;
-  text: string;
-  id: string;
-  children: TocItem[];
-}
-
-export interface TocFlatItem {
-  level: number;
-  text: string;
-  id: string;
-}
-
-const HEADING_TYPES = new Set(["atx_heading", "setext_heading"]);
+import { HEADING_NODE_TYPES } from "@/transformer/gfm/block/atx_heading.js";
+import { TocFlatItem } from "@/renderer/toc/TocFlatItem";
+import { TocItem } from "@/renderer/toc/TocItem";
 
 function collectHeadings(
   nodes: MarkdownNode[] | undefined,
   out: TocFlatItem[],
-  used: Set<string>,
 ): void {
   for (const node of nodes ?? []) {
-    if (HEADING_TYPES.has(node.type)) {
-      const text = extractHeadingText(node);
+    if (HEADING_NODE_TYPES.has(node.type)) {
+      const text = node.value as string;
       const level = Number(node.props?.level ?? 1);
+      const slug = node.props?.id;
       out.push({
         level,
         text,
-        id: assignSlug(text, used),
+        id: typeof slug === "string" ? slug : "",
       });
     }
-    collectHeadings(node.children, out, used);
+    collectHeadings(node.children, out);
   }
 }
 
+/**
+ * 从 AST 提取扁平 TOC。
+ * 须在全量/增量 parse 之后调用。
+ */
 export function extractTocFlat(ast: MarkdownNode): TocFlatItem[] {
   const items: TocFlatItem[] = [];
-  collectHeadings(ast.children, items, createSlugRegistry());
+  collectHeadings(ast.children, items);
   return items;
 }
 

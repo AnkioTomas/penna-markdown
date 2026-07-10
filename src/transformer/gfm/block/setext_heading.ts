@@ -74,7 +74,7 @@ class SetextHeadingBlockParser extends BaseBlockParser {
         const node = createNode(
           "setext_heading",
           i + 1 - index,
-          undefined,
+          content,
           ctx.parseInline(content),
           {
             level: underline,

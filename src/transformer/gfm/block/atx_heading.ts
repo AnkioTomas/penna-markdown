@@ -23,20 +23,6 @@ import { ParserStore } from "@/transformer/core/ParserStore";
 /** ATX 和 Setext 标题节点类型 */
 export const HEADING_NODE_TYPES = new Set(["atx_heading", "setext_heading"]);
 
-/** 从 heading AST 节点提取纯文本标题。 */
-export function extractHeadingText(node: MarkdownNode): string {
-  if (node.value !== undefined) return node.value;
-  if (!node.children?.length) return "";
-
-  return node.children
-    .map((child) => {
-      if (child.type === "html_attrs") return "";
-      if (child.type === "image") return String(child.props?.alt ?? "");
-      return extractHeadingText(child);
-    })
-    .join("");
-}
-
 export interface AtxHeadingOptions extends ParserOptions {
   slug?: boolean;
 }
@@ -147,7 +133,7 @@ class HeadingBlockParser extends BaseBlockParser {
     const node = createNode(
       "atx_heading",
       1,
-      undefined,
+      atx.content,
       ctx.parseInline(atx.content),
       {
         level: atx.level,
