@@ -11,6 +11,10 @@ export class EventBus {
     private readonly logger: Log,
   ) {}
 
+  isDebug(): boolean {
+    return this.debug;
+  }
+
   private logD(...args: unknown[]): void {
     if (!this.debug) return;
     this.logger.logD(this.logPrefix, ...args);
