@@ -1,8 +1,22 @@
 import type { Editor } from "@/editor/editor/Editor";
 import type { EventBus } from "@/core/event/EventBus";
+import { debounce } from "@/core/debounce";
+import type { BlockIndex } from "@/renderer/incremental/BlockIndex";
+import type {
+  PreviewRenderedPayload,
+  SidebarTocClickPayload,
+} from "@/editor/events";
 
+/** 顶/底吸附像素容差 */
+const SCROLL_EDGE_PX = 5;
+/** 预览二分查找时的顶部偏移容差 */
+const PREVIEW_HIT_SLACK_PX = 10;
+/** 单向同步结束后释放锁的延迟 */
+const SYNC_UNLOCK_MS = 50;
+
+/** 在编辑器和预览面板之间按源行位置同步滚动。 */
 export class ScrollSync {
-  private currentBlocks: any[] = [];
+  private currentBlocks: BlockIndex[] = [];
   private isSyncingLeft = false;
   private isSyncingRight = false;
   private readonly editorScroll: HTMLElement;
@@ -12,27 +26,30 @@ export class ScrollSync {
 
   private leftRaf: number | null = null;
   private rightRaf: number | null = null;
-  private leftTimer: ReturnType<typeof setTimeout> | null = null;
-  private rightTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly releaseRightSync = debounce(() => {
+    this.isSyncingRight = false;
+  }, SYNC_UNLOCK_MS);
+  private readonly releaseLeftSync = debounce(() => {
+    this.isSyncingLeft = false;
+  }, SYNC_UNLOCK_MS);
 
   private readonly onEditorScroll = () => {
     if (this.isSyncingLeft) return;
 
     this.isSyncingRight = true;
-    if (this.rightTimer != null) clearTimeout(this.rightTimer);
-    this.rightTimer = setTimeout(() => {
-      this.isSyncingRight = false;
-    }, 50);
+    this.releaseRightSync();
 
     if (this.leftRaf !== null) cancelAnimationFrame(this.leftRaf);
     this.leftRaf = requestAnimationFrame(() => {
       const editorView = this.editor.getView();
       if (
         this.editorScroll.scrollTop >=
-        this.editorScroll.scrollHeight - this.editorScroll.clientHeight - 5
+        this.editorScroll.scrollHeight -
+          this.editorScroll.clientHeight -
+          SCROLL_EDGE_PX
       ) {
         this.previewScroll.scrollTop = this.previewScroll.scrollHeight;
-      } else if (this.editorScroll.scrollTop <= 5) {
+      } else if (this.editorScroll.scrollTop <= SCROLL_EDGE_PX) {
         this.previewScroll.scrollTop = 0;
       } else {
         const topBlock = editorView.lineBlockAtHeight(
@@ -48,20 +65,19 @@ export class ScrollSync {
     if (this.isSyncingRight) return;
 
     this.isSyncingLeft = true;
-    if (this.leftTimer != null) clearTimeout(this.leftTimer);
-    this.leftTimer = setTimeout(() => {
-      this.isSyncingLeft = false;
-    }, 50);
+    this.releaseLeftSync();
 
     if (this.rightRaf !== null) cancelAnimationFrame(this.rightRaf);
     this.rightRaf = requestAnimationFrame(() => {
       const editorView = this.editor.getView();
       if (
         this.previewScroll.scrollTop >=
-        this.previewScroll.scrollHeight - this.previewScroll.clientHeight - 5
+        this.previewScroll.scrollHeight -
+          this.previewScroll.clientHeight -
+          SCROLL_EDGE_PX
       ) {
         this.editorScroll.scrollTop = this.editorScroll.scrollHeight;
-      } else if (this.previewScroll.scrollTop <= 5) {
+      } else if (this.previewScroll.scrollTop <= SCROLL_EDGE_PX) {
         this.editorScroll.scrollTop = 0;
       } else {
         const targetLine = this.getLineForPreviewScroll();
@@ -75,6 +91,13 @@ export class ScrollSync {
     });
   };
 
+  /**
+   * 创建双向滚动同步，并监听预览块索引和目录跳转事件。
+   *
+   * @param editor 提供 CodeMirror 滚动容器和文档行信息的编辑器实例。
+   * @param previewEl 可滚动的预览容器。
+   * @param eventBus 用于接收预览渲染和目录点击事件的事件总线。
+   */
   constructor(
     private readonly editor: Editor,
     previewEl: HTMLElement,
@@ -88,20 +111,26 @@ export class ScrollSync {
     this.previewScroll.style.position = "relative";
 
     this.offs.push(
-      this.eventBus.on("preview:rendered", (payload: any) => {
-        this.currentBlocks = payload.blocks || [];
-      }),
-      this.eventBus.on("sidebar:toc-click", (payload: any) => {
-        const target =
-          document.getElementById(payload.id) ||
-          this.previewScroll.querySelector(`[data-hash="${payload.id}"]`);
-        if (target) {
-          this.previewScroll.scrollTo({
-            top: (target as HTMLElement).offsetTop,
-            behavior: "smooth",
-          });
-        }
-      }),
+      this.eventBus.on<PreviewRenderedPayload>(
+        "preview:rendered",
+        (payload) => {
+          this.currentBlocks = payload.blocks ?? [];
+        },
+      ),
+      this.eventBus.on<SidebarTocClickPayload>(
+        "sidebar:toc-click",
+        (payload) => {
+          const target =
+            document.getElementById(payload.id) ||
+            this.previewScroll.querySelector(`[data-hash="${payload.id}"]`);
+          if (target) {
+            this.previewScroll.scrollTo({
+              top: (target as HTMLElement).offsetTop,
+              behavior: "smooth",
+            });
+          }
+        },
+      ),
     );
 
     this.editorScroll.addEventListener("scroll", this.onEditorScroll, {
@@ -118,14 +147,13 @@ export class ScrollSync {
     );
   }
 
+  /** 取消未执行的滚动任务并注销所有事件监听。 */
   destroy(): void {
     if (this.destroyed) return;
     this.destroyed = true;
 
-    if (this.leftTimer != null) clearTimeout(this.leftTimer);
-    if (this.rightTimer != null) clearTimeout(this.rightTimer);
-    this.leftTimer = null;
-    this.rightTimer = null;
+    this.releaseLeftSync.cancel();
+    this.releaseRightSync.cancel();
 
     if (this.leftRaf !== null) cancelAnimationFrame(this.leftRaf);
     if (this.rightRaf !== null) cancelAnimationFrame(this.rightRaf);
@@ -136,6 +164,12 @@ export class ScrollSync {
     this.offs.length = 0;
   }
 
+  /**
+   * 查找与编辑器源行对应的预览块顶部位置。
+   *
+   * @param targetLine 编辑器中从零开始计数的目标源行。
+   * @returns 预览容器应滚动到的垂直偏移量。
+   */
   private getPreviewScrollTopForLine(targetLine: number): number {
     const blocks = this.currentBlocks;
     if (!blocks || blocks.length === 0) return 0;
@@ -157,6 +191,11 @@ export class ScrollSync {
     return el ? el.offsetTop : 0;
   }
 
+  /**
+   * 查找当前预览滚动位置对应的源行。
+   *
+   * @returns 对应块的源行号；没有块时返回首行。
+   */
   private getLineForPreviewScroll(): number {
     const blocks = this.currentBlocks;
     if (!blocks || blocks.length === 0) return 1;
@@ -171,7 +210,7 @@ export class ScrollSync {
       const el = this.previewScroll.children[mid] as HTMLElement;
       if (!el) break;
 
-      if (el.offsetTop <= scrollTop + 10) {
+      if (el.offsetTop <= scrollTop + PREVIEW_HIT_SLACK_PX) {
         bestIndex = mid;
         low = mid + 1;
       } else {
