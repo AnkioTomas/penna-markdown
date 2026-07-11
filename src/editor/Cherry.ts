@@ -6,7 +6,7 @@ import { Toolbar } from "@/editor/toolbar/Toolbar";
 import { StatusBar } from "@/editor/statusbar/StatusBar";
 import type { CherryOptions } from "@/editor/CherryOptions";
 import type { EditorLayoutMode } from "@/editor/Layout";
-import { printCherryLogo } from "@/editor/printLogo";
+import { printCherryLogo } from "@/editor/Logo";
 import { ScrollSync } from "@/editor/sync/ScrollSync";
 import { CommandBridge } from "@/editor/CommandBridge.js";
 import { DialogHost } from "@/editor/dialog/DialogHost.js";
@@ -16,8 +16,23 @@ import type { EditorView } from "@codemirror/view";
 import { Theme } from "@/theme/Theme";
 import { EventBus } from "@/core/event/EventBus";
 import { Log } from "@/core/Log";
+import { createDefaultStorage } from "@/core/StorageAPI";
+import type { StorageAPI } from "@/core/StorageAPI";
+import type {
+  CherryLayoutPayload,
+  CherrySidebarPayload,
+  EditorChangePayload,
+  EditorLifecyclePayload,
+} from "@/editor/events";
 
-/** 创建带 class 的 DOM 元素 */
+/**
+ * 创建带 class 的 DOM 元素
+ *
+ * @param tag 要创建的 HTML 标签名。
+ * @param className 写入元素的 CSS 类名。
+ * @param attrs 可选的属性键值对。
+ * @returns 创建并初始化后的元素。
+ */
 export function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   className: string,
@@ -45,6 +60,7 @@ export function el<K extends keyof HTMLElementTagNameMap>(
 export class Cherry {
   readonly theme: Theme;
   readonly eventBus: EventBus;
+  readonly storage: StorageAPI;
 
   private readonly cherryEl: HTMLElement;
   private readonly toolbarEl: HTMLElement;
@@ -70,6 +86,12 @@ export class Cherry {
 
   private destroyed = false;
 
+  /**
+   * 创建 Cherry 编辑器实例并组装各个 UI 子模块。
+   *
+   * @param rootEl 承载编辑器 DOM 树的根元素。
+   * @param options 编辑器、主题及各子模块的初始化选项。
+   */
   constructor(
     private readonly rootEl: HTMLElement,
     options: CherryOptions = {},
@@ -77,17 +99,18 @@ export class Cherry {
     printCherryLogo();
     this.log = new Log(options.debug);
     this.eventBus = new EventBus(options.debug, "[cherry]", this.log);
+    this.storage = options.storage ?? createDefaultStorage();
 
     const {
       themeId = "default",
       appearance = "light",
       editor: editorOptions = {},
       preview: previewOptions = {},
-      transformer = {},
       statusbar = true,
     } = options;
 
     const initialLayout = options.layout ?? "split";
+    const onAiRequest = editorOptions.onAiRequest;
 
     this.cherryEl = el("div", "cherry");
     this.toolbarEl = el("div", "cherry-toolbar");
@@ -98,12 +121,7 @@ export class Cherry {
     this.dividerEl = el("div", "cherry-divider");
     this.previewEl = el("div", "cherry-preview cherry-render");
 
-    this.theme = new Theme(
-      this.eventBus,
-      this.log,
-      rootEl,
-      options.themes ?? [],
-    );
+    this.theme = new Theme(this.eventBus, this.log, rootEl, options.themes);
 
     this.cherryEl.appendChild(this.toolbarEl);
     this.bodyEl.appendChild(this.sidebarMaskEl);
@@ -133,36 +151,23 @@ export class Cherry {
       this.theme,
       this.eventBus,
       this.log,
-      {
-        inlineParsers:
-          previewOptions.inlineParsers ?? transformer.inlineParsers,
-        blockParsers: previewOptions.blockParsers ?? transformer.blockParsers,
-      },
+      previewOptions,
     );
 
-    this.editor = new Editor(this.editorEl, this.eventBus, {
-      ...editorOptions,
-      ai: options.ai,
-      storage: options.storage ?? editorOptions.storage,
-      transformerEngineOptions:
-        editorOptions.transformerEngineOptions ?? transformer,
-    });
+    this.editor = new Editor(this.editorEl, this.eventBus, editorOptions);
 
     if (statusbar && this.statusbarEl) {
       this.statusbar = new StatusBar(this.statusbarEl, this.eventBus);
     }
 
-    this.divider = new Divider(this.dividerEl, this.eventBus);
+    this.divider = new Divider(this.dividerEl, this.eventBus, this.storage);
     this.divider.setLayout(initialLayout);
 
     this.toolbar =
       options.toolbar === false
         ? null
-        : new Toolbar(
-            this.toolbarEl,
-            this.eventBus,
-            { ...options.toolbar, ai: options.ai },
-            () => this.editor.focus(),
+        : new Toolbar(this.toolbarEl, this.eventBus, options.toolbar!!, () =>
+            this.editor.focus(),
           );
 
     this.sidebar = new SideBar(
@@ -170,10 +175,6 @@ export class Cherry {
       this.eventBus,
       typeof options.sidebar === "object" ? options.sidebar : {},
     );
-
-    if (options.sidebar === false) {
-      this.sidebarEl.style.display = "none";
-    }
 
     this.scrollSync = new ScrollSync(
       this.editor,
@@ -189,49 +190,66 @@ export class Cherry {
       () => this.preview.getStore(),
     );
 
-    const initialMarkdown = editorOptions.value ?? "";
-    if (initialMarkdown) {
-      this.eventBus.emit("editor:change", { markdown: initialMarkdown });
-    }
-    this.eventBus.on("cherry:layout", (payload: any) => {
+    this.eventBus.on<CherryLayoutPayload>("cherry:layout", (payload) => {
       this.setLayout(payload.mode);
     });
 
-    this.eventBus.on("cherry:sidebar", (payload: any) => {
+    this.eventBus.on<CherrySidebarPayload>("cherry:sidebar", (payload) => {
       this.setSidebarVisible(payload.show);
     });
 
     queueMicrotask(() => {
       if (this.destroyed) return;
-      this.eventBus.emit("cherry:layout", { mode: initialLayout });
-      this.eventBus.emit("cherry:sidebar", { show: options.sidebar !== false });
-      this.eventBus.emit("editor:ready", { el: this.cherryEl });
+      this.eventBus.emit("cherry:layout", {
+        mode: initialLayout,
+      } satisfies CherryLayoutPayload);
+      this.eventBus.emit("cherry:sidebar", {
+        show: options.sidebar !== false,
+      } satisfies CherrySidebarPayload);
+      this.eventBus.emit("editor:ready", {
+        el: this.cherryEl,
+      } satisfies EditorLifecyclePayload);
     });
-
-    printCherryLogo();
   }
 
+  /** 获取当前 CodeMirror 中保存的 Markdown 文本。 */
   getMarkdown(): string {
     return this.editor.getMarkdown();
   }
 
+  /**
+   * 替换编辑器中的完整 Markdown 文本。
+   *
+   * @param markdown 要写入编辑器的新 Markdown 内容。
+   */
   setMarkdown(markdown: string): void {
     this.editor.setMarkdown(markdown);
   }
 
+  /** 获取当前编辑器布局模式。 */
   getLayout(): EditorLayoutMode {
     return this.divider.getLayout();
   }
 
+  /**
+   * 切换编辑器布局，并由 Divider 更新相应 DOM 状态。
+   *
+   * @param mode 要应用的编辑器布局模式。
+   */
   setLayout(mode: EditorLayoutMode): void {
     this.divider.setLayout(mode);
   }
 
+  /** 判断侧边栏当前是否处于可见状态。 */
   isSidebarVisible(): boolean {
     return this.sidebarEl.style.display !== "none";
   }
 
-  /** split 布局下显隐后会重算分栏比例 */
+  /**
+   * split 布局下显隐后会重算分栏比例
+   *
+   * @param show 为 `true` 时显示侧边栏，为 `false` 时隐藏。
+   */
   setSidebarVisible(show: boolean): void {
     this.sidebarEl.style.display = show ? "" : "none";
     this.sidebarMaskEl.classList.toggle("is-active", show);
@@ -240,33 +258,63 @@ export class Cherry {
     }
   }
 
+  /** 切换侧边栏的显示与隐藏状态。 */
   toggleSidebar(): void {
     this.setSidebarVisible(!this.isSidebarVisible());
   }
 
+  /**
+   * 标记侧边栏中指定文件为当前活动文件。
+   *
+   * @param fileId 要激活的文件标识。
+   */
   setSidebarActiveFile(fileId: string): void {
     this.sidebar?.setActiveFile(fileId);
   }
 
-  /** 进阶集成用；常规场景走 {@link runCommand} */
-  getEditorView(): EditorView {
-    return this.editor.getView();
+  /**
+   * 工具栏 / API 共用的命令上下文，保证 getStore 语义一致。
+   * 包含事件总线、主题及预览解析存储访问器的命令上下文。
+   * @returns
+   */
+  private commandCtx() {
+    return {
+      eventBus: this.eventBus,
+      theme: this.theme,
+      getStore: () => this.preview.getStore(),
+    };
   }
 
+  /**
+   * 执行已注册的编辑器命令。
+   *
+   * @param command 要执行的命令标识。
+   * @param payload 传递给命令的可选参数。
+   * @returns 命令是否执行成功；异步命令返回对应的 Promise。
+   */
   runCommand(
     command: EditorCommand | string,
     payload?: unknown,
   ): boolean | Promise<boolean> {
-    return executeCommand(this.editor.getView(), command, payload, {
-      eventBus: this.eventBus,
-      theme: this.theme,
-    });
+    return executeCommand(
+      this.editor.getView(),
+      command,
+      payload,
+      this.commandCtx(),
+    );
   }
 
+  /**
+   * 销毁编辑器及其全部子模块，并从挂载点移除 DOM。
+   *
+   * 重复调用不会产生额外副作用。
+   */
   destroy(): void {
     if (this.destroyed) return;
     this.destroyed = true;
-    this.eventBus.emit("editor:destroy", { el: this.cherryEl });
+    this.eventBus.emit("editor:destroy", {
+      el: this.cherryEl,
+    } satisfies EditorLifecyclePayload);
     this.commandBridge.destroy();
     this.dialogHost.destroy();
     this.toolbar?.destroy();

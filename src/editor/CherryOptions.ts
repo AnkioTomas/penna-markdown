@@ -43,16 +43,10 @@ export interface CherryOptions {
   sidebar?: SideBarOptions | boolean;
   /** `false` 时隐藏底部状态栏，默认为 `true` */
   statusbar?: boolean;
-  /** 文件解析/上传回调，粘贴或拖入文件时调用 */
-  onParseFile?: OnParseFile;
-  /** AI 请求回调；省略时不启用 AI 功能并隐藏 AI 菜单 */
-  onAiRequest?: OnAiRequest;
   /** 本地存储 API，默认使用 `localStorage` */
   storage?: StorageAPI;
   /** 编辑区选项 */
   editor?: EditorOptions;
   /** 预览区选项 */
   preview?: PreviewOptions;
-  /** Transformer 解析选项 */
-  transformer?: TransformerEngineOptions;
 }

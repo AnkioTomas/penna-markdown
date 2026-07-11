@@ -39,18 +39,19 @@ export class Theme {
    * @param bus          实例级事件总线
    * @param logger       日志门面
    * @param rootElement  用户传入的挂载根，承载 `cherry-theme-*` / `cherry-dark`
-   * @param themes       外部注册的皮肤 id 列表，与内置 {@link REGISTERED_THEMES} 合并
+   * @param themes       可用主题白名单；省略时使用全部内置主题
    */
   constructor(
     private readonly bus: EventBus,
     private readonly logger: Log,
     private readonly rootElement: HTMLElement,
-    private readonly themes: string[] = [],
+    private readonly themes?: string[],
   ) {}
 
-  /** 可用皮肤 id：内置 + 外部注册 */
+  /** 可用皮肤 id */
   list() {
-    return [...REGISTERED_THEMES, ...this.themes];
+    if (this.themes === undefined) return [...REGISTERED_THEMES];
+    return this.themes;
   }
 
   /**
