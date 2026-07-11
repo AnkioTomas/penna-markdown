@@ -4,6 +4,7 @@ import type {
   CherryLayoutPayload,
   CherrySidebarPayload,
   EditorChangePayload,
+  PreviewRenderedPayload,
 } from "@/editor/events";
 import type { EditorLayoutMode } from "@/editor/Layout";
 
@@ -20,6 +21,7 @@ export class StatusBar {
   private readonly leftEl: HTMLElement;
   private readonly rightEl: HTMLElement;
   private readonly countEl: HTMLElement;
+  private readonly perfEl: HTMLElement | null;
   private readonly offs: Set<() => void> = new Set();
 
   private sidebarVisible = true;
@@ -34,12 +36,23 @@ export class StatusBar {
    *
    * @param mount 承载状态栏的 DOM 元素。
    * @param eventBus 用于发布控制事件和接收状态变化的事件总线。
+   * @param debug 为 `true` 时显示预览渲染耗时（监听 `preview:rendered`）。
    */
   constructor(
     private readonly mount: HTMLElement,
     private readonly eventBus: EventBus,
+    private readonly debug = false,
   ) {
     this.mount.classList.add("cherry-statusbar");
+
+    if (this.debug) {
+      const perf = document.createElement("div");
+      perf.className = "cherry-statusbar-perf";
+      perf.textContent = "无";
+      this.perfEl = perf;
+    } else {
+      this.perfEl = null;
+    }
 
     this.leftEl = document.createElement("div");
     this.leftEl.className = "cherry-statusbar-left";
@@ -61,6 +74,17 @@ export class StatusBar {
         this.debouncedUpdateStats(payload.markdown);
       }),
     );
+
+    if (this.debug) {
+      this.offs.add(
+        this.eventBus.on<PreviewRenderedPayload>(
+          "preview:rendered",
+          (payload) => {
+            this.updatePerfDisplay(payload);
+          },
+        ),
+      );
+    }
   }
 
   /** 初始化左侧的侧边栏及布局切换按钮，并绑定状态同步事件。 */
@@ -147,8 +171,27 @@ export class StatusBar {
       }
     };
 
-    // Insert after countEl to be on the right side
     this.rightEl.appendChild(btnRefresh);
+
+    if (this.debug && this.perfEl) {
+      this.rightEl.appendChild(this.perfEl);
+    }
+  }
+
+  /** 更新 debug 模式下最近一次渲染类型与耗时。 */
+  private updatePerfDisplay(payload: PreviewRenderedPayload): void {
+    if (!this.perfEl) return;
+
+    const ms = payload.partial
+      ? payload.incrementalRenderMs
+      : payload.fullRenderMs;
+    if (ms == null) {
+      this.perfEl.textContent = "无";
+      return;
+    }
+
+    const label = payload.partial ? "增量" : "全量";
+    this.perfEl.textContent = `${label} ${ms.toFixed(1)}ms`;
   }
 
   /**
