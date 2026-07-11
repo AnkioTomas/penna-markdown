@@ -1,24 +1,38 @@
 import type { EditorLayoutMode } from "@/editor/Layout";
 import type { EventBus } from "@/core/event/EventBus";
+import type { StorageAPI } from "@/core/StorageAPI";
+import { createDefaultStorage } from "@/core/StorageAPI";
 
 const MIN_SPLIT = 0.15;
 const MAX_SPLIT = 0.85;
 const DEFAULT_SPLIT = 0.5;
-const SPLIT_STORAGE_KEY = "cherry-editor-split";
 
+/** 分栏比例在本地存储中使用的键名 */
+export const SPLIT_STORAGE_KEY = "cherry-editor-split";
+
+/**
+ * 将分栏比例约束在可拖拽的有效范围内。
+ *
+ * @param ratio 待约束的编辑区宽度比例。
+ * @returns 位于最小值和最大值之间的比例。
+ */
 function clampSplit(ratio: number): number {
   return Math.min(MAX_SPLIT, Math.max(MIN_SPLIT, ratio));
 }
 
-function readStoredSplit(): number {
-  try {
-    const raw = localStorage.getItem(SPLIT_STORAGE_KEY);
-    if (raw == null) return DEFAULT_SPLIT;
-    const value = Number.parseFloat(raw);
-    return Number.isFinite(value) ? clampSplit(value) : DEFAULT_SPLIT;
-  } catch {
-    return DEFAULT_SPLIT;
-  }
+/**
+ * 从存储读取上次使用的分栏比例。
+ *
+ * 值缺失或非法时回退到默认比例。
+ *
+ * @param storage 键值存储 API。
+ * @returns 有效的分栏比例。
+ */
+function readStoredSplit(storage: StorageAPI): number {
+  const raw = storage.getItem(SPLIT_STORAGE_KEY);
+  if (raw == null) return DEFAULT_SPLIT;
+  const value = Number.parseFloat(raw);
+  return Number.isFinite(value) ? clampSplit(value) : DEFAULT_SPLIT;
 }
 
 /** 分栏拖拽条：布局切换 + 左右宽度调整 */
@@ -27,7 +41,7 @@ export class Divider {
   private readonly sidebarEl: HTMLElement | null;
 
   private mode: EditorLayoutMode = "split";
-  private split = readStoredSplit();
+  private split: number;
   private dragging = false;
   private moved = false;
 
@@ -35,14 +49,23 @@ export class Divider {
   private readonly onPointerMove = (e: PointerEvent) => this.moveDrag(e);
   private readonly onPointerUp = (e: PointerEvent) => this.endDrag(e);
 
+  /**
+   * 创建分栏拖拽条并初始化布局状态。
+   *
+   * @param mount 承载拖拽条的 DOM 元素。
+   * @param eventBus 用于发布布局和分栏比例变化的事件总线。
+   * @param storage 用于持久化分栏比例的存储 API。
+   */
   constructor(
     private readonly mount: HTMLElement,
     private readonly eventBus: EventBus,
+    private readonly storage: StorageAPI = createDefaultStorage(),
   ) {
     if (!mount.parentElement) {
       throw new Error("Divider 必须挂载在有效的 DOM 树中");
     }
 
+    this.split = readStoredSplit(this.storage);
     this.bodyEl = mount.parentElement;
     this.sidebarEl = this.bodyEl.querySelector(".cherry-sidebar");
 
@@ -60,10 +83,16 @@ export class Divider {
     this.applyLayout();
   }
 
+  /** 获取当前编辑器布局模式。 */
   getLayout(): EditorLayoutMode {
     return this.mode;
   }
 
+  /**
+   * 设置编辑器布局并通知订阅者。
+   *
+   * @param mode 要应用的布局模式。
+   */
   setLayout(mode: EditorLayoutMode): void {
     if (this.mode === mode) return;
     const prev = this.mode;
@@ -72,20 +101,28 @@ export class Divider {
     this.eventBus.emit("editor:layout", { mode, prev });
   }
 
+  /** 获取编辑区在双栏模式下所占的宽度比例。 */
   getSplit(): number {
     return this.split;
   }
 
+  /**
+   * 设置编辑区宽度比例，并在双栏模式下立即更新样式。
+   *
+   * @param ratio 编辑区相对于可用轨道宽度的目标比例。
+   */
   setSplit(ratio: number): void {
     this.split = clampSplit(ratio);
     if (this.mode === "split") this.applySplit();
   }
 
+  /** 结束可能进行中的拖拽并注销 DOM 事件监听。 */
   destroy(): void {
     this.endDrag();
     this.mount.removeEventListener("pointerdown", this.onPointerDown);
   }
 
+  /** 将当前布局模式同步到容器 CSS 类和分栏样式。 */
   private applyLayout(): void {
     this.bodyEl.classList.remove(
       "cherry-body--split",
@@ -119,6 +156,11 @@ export class Divider {
     );
   }
 
+  /**
+   * 计算拖拽可用轨道及侧边栏的尺寸。
+   *
+   * @returns 容器总宽度、可用轨道宽度和可见侧边栏宽度。
+   */
   private getTrackMetrics(): {
     bodyWidth: number;
     track: number;
@@ -134,6 +176,11 @@ export class Divider {
     return { bodyWidth, track, sidebarWidth };
   }
 
+  /**
+   * 开始主指针拖拽，并注册文档级移动和结束监听。
+   *
+   * @param e 触发拖拽的指针事件。
+   */
   private startDrag(e: PointerEvent): void {
     if (this.mode !== "split" || e.button !== 0) return;
     e.preventDefault();
@@ -148,12 +195,22 @@ export class Divider {
     document.addEventListener("pointercancel", this.onPointerUp);
   }
 
+  /**
+   * 根据指针当前位置更新分栏比例。
+   *
+   * @param e 当前指针移动事件。
+   */
   private moveDrag(e: PointerEvent): void {
     if (!this.dragging) return;
     this.moved = true;
     this.updateSplitFromPointer(e.clientX);
   }
 
+  /**
+   * 结束拖拽、释放指针捕获，并在位置变更后持久化比例。
+   *
+   * @param e 可选的结束指针事件，用于释放对应的指针捕获。
+   */
   private endDrag(e?: PointerEvent): void {
     if (!this.dragging) return;
 
@@ -173,14 +230,16 @@ export class Divider {
     }
   }
 
+  /** 将当前分栏比例写入存储。 */
   private persistSplit(): void {
-    try {
-      localStorage.setItem(SPLIT_STORAGE_KEY, String(this.split));
-    } catch {
-      // 忽略隐私模式等写入失败
-    }
+    this.storage.setItem(SPLIT_STORAGE_KEY, String(this.split));
   }
 
+  /**
+   * 将页面横坐标换算为分栏比例并应用。
+   *
+   * @param clientX 指针相对视口的横坐标。
+   */
   private updateSplitFromPointer(clientX: number): void {
     const bodyRect = this.bodyEl.getBoundingClientRect();
     const { track, sidebarWidth } = this.getTrackMetrics();
