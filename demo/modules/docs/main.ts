@@ -32,8 +32,14 @@ const previewWrap = requiredEl<HTMLElement>("#preview-wrap");
 const tocEl = requiredEl<HTMLElement>("#toc");
 const timingEl = requiredEl<HTMLElement>("#timing");
 
-const theme = createDemoTheme();
-const renderer = new Renderer({ mount: preview, theme });
+const kit = createDemoTheme(previewWrap);
+const { theme, eventBus, log } = kit;
+const renderer = new Renderer({
+  mount: preview,
+  theme,
+  eventBus,
+  logger: log,
+});
 
 let docTree: DocTreeNode[] = [];
 let activeHref = localStorage.getItem(ACTIVE_KEY) ?? "";
@@ -275,7 +281,7 @@ previewWrap.addEventListener("scroll", () => updateActiveToc(), {
 });
 
 async function boot(): Promise<void> {
-  setupPreviewThemeAndAppearance(theme, preview, previewWrap, {
+  setupPreviewThemeAndAppearance(kit, preview, {
     onThemeChange: () => {
       if (activeHref) void loadDoc(activeHref);
     },

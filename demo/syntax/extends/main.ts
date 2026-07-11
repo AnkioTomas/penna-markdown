@@ -2,8 +2,10 @@ import "../../_common/cherry-demo.scss";
 import "../../_common/layout.scss";
 import "../syntax-demo.scss";
 import { Renderer } from "@/renderer/Renderer.js";
-import { Theme } from "@/theme/Theme.js";
-import { setupPreviewThemeAndAppearance } from "../../_common/theme.js";
+import {
+  createDemoTheme,
+  setupPreviewThemeAndAppearance,
+} from "../../_common/theme.js";
 import { requiredEl } from "../../_common/dom.js";
 import { EXTENDS_DATA } from "./data.js";
 
@@ -12,8 +14,13 @@ async function init() {
   const sourcePreview = requiredEl<HTMLElement>("#source-preview");
   const htmlPreview = requiredEl<HTMLElement>("#html-preview");
   const themeRoot = requiredEl<HTMLElement>("#theme-root");
-  const theme = new Theme();
-  const renderer = new Renderer({ mount: htmlPreview, theme });
+  const kit = createDemoTheme(themeRoot);
+  const renderer = new Renderer({
+    mount: htmlPreview,
+    theme: kit.theme,
+    eventBus: kit.eventBus,
+    logger: kit.log,
+  });
 
   let activeId = EXTENDS_DATA[0].id;
 
@@ -40,7 +47,7 @@ async function init() {
     }
   }
 
-  setupPreviewThemeAndAppearance(theme, htmlPreview, themeRoot, {
+  setupPreviewThemeAndAppearance(kit, htmlPreview, {
     onThemeChange: renderContent,
   });
 

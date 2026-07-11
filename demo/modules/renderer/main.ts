@@ -3,11 +3,9 @@ import "../../_common/cherry-demo.scss";
 import "../../_common/layout.scss";
 
 import { createDemoTheme } from "../../_common/theme.js";
-import {
-  Theme,
-  THEME_EVENT_LIGHT_DARK,
-  THEME_EVENT_SKIN,
-} from "@/theme/Theme.js";
+import { THEME_EVENT_LIGHT_DARK } from "@/theme/event/ThemeLightDarkEvent.js";
+import { THEME_EVENT_SKIN } from "@/theme/event/ThemeSkinEvent.js";
+import type { Theme } from "@/theme/Theme.js";
 import { Renderer } from "@/renderer/Renderer.js";
 import { requiredEl } from "../../_common/dom.js";
 import example from "../../../docs/test.md?raw";
@@ -43,21 +41,22 @@ const appearanceSelect = requiredEl<HTMLSelectElement>("#appearance-select");
 const resetBtn = requiredEl<HTMLButtonElement>("#reset-btn");
 
 let appearance = readAppearance();
-const theme = createDemoTheme();
+const kit = createDemoTheme(previewWrap);
+const { theme, eventBus, log } = kit;
 
 function readThemeId(): string {
   const saved = localStorage.getItem(THEME_KEY);
   const available = theme.list();
-  return saved && available.includes(saved as (typeof available)[number])
-    ? saved
-    : "default";
+  return saved && available.includes(saved) ? saved : "default";
 }
 
-theme.setTheme(readThemeId(), preview, previewWrap);
+theme.setTheme(readThemeId());
 
 const renderer = new Renderer({
   mount: preview,
   theme,
+  eventBus,
+  logger: log,
 });
 
 function escapeHtml(text: string): string {
@@ -164,8 +163,8 @@ function applyAppearance(next: AppearanceMode): void {
 }
 
 function applyThemeId(next: string): void {
-  if (!theme.list().includes(next as ReturnType<Theme["list"]>[number])) return;
-  theme.setTheme(next, preview, previewWrap);
+  if (!theme.list().includes(next)) return;
+  theme.setTheme(next);
   localStorage.setItem(THEME_KEY, next);
 }
 
@@ -210,8 +209,8 @@ function onThemeChanged(): void {
 function boot(): void {
   populateThemeSelect();
   markdownInput.value = example;
-  theme.on(THEME_EVENT_LIGHT_DARK, onThemeChanged);
-  theme.on(THEME_EVENT_SKIN, onThemeChanged);
+  eventBus.on(THEME_EVENT_LIGHT_DARK, onThemeChanged);
+  eventBus.on(THEME_EVENT_SKIN, onThemeChanged);
   theme.setLightDark(resolveAppearance(appearance));
   renderNow();
 
@@ -224,6 +223,16 @@ function boot(): void {
 }
 
 boot();
+
+declare global {
+  interface Window {
+    cherryRendererDemo?: {
+      get theme(): Theme;
+      get renderer(): Renderer;
+      renderNow: typeof renderNow;
+    };
+  }
+}
 
 window.cherryRendererDemo = {
   get theme() {

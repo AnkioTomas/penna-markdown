@@ -3,14 +3,13 @@ import "../../_common/cherry-demo.scss";
 import "../../_common/layout.scss";
 
 import { createDemoTheme } from "../../_common/theme.js";
-import { THEME_EVENT_LIGHT_DARK } from "@/theme/Theme.js";
+import { THEME_EVENT_LIGHT_DARK } from "@/theme/event/ThemeLightDarkEvent.js";
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import { requiredEl } from "../../_common/dom.js";
 import example from "../../../docs/test.md?raw";
 
 const THEME_KEY = "cherry-converter-theme";
 
-const theme = createDemoTheme();
 const markdownInput = requiredEl<HTMLTextAreaElement>("#markdown");
 const preview = requiredEl<HTMLElement>("#preview");
 const previewWrap = requiredEl<HTMLElement>("#preview-wrap");
@@ -18,7 +17,10 @@ const resetBtn = requiredEl<HTMLButtonElement>("#reset-btn");
 const themeBtn = requiredEl<HTMLButtonElement>("#theme-btn");
 const timing = requiredEl<HTMLElement>("#timing");
 
-theme.setTheme("default", preview, previewWrap);
+const kit = createDemoTheme(previewWrap);
+const { theme, eventBus } = kit;
+
+theme.setTheme("default");
 
 const savedAppearance = localStorage.getItem(THEME_KEY);
 const transformer = new TransformerEngine({
@@ -59,7 +61,8 @@ function applyThemeState(isDark: boolean): void {
   renderNow();
 }
 
-theme.on(THEME_EVENT_LIGHT_DARK, ({ isDark }) => {
+eventBus.on(THEME_EVENT_LIGHT_DARK, (payload) => {
+  const { isDark } = payload as { isDark: boolean };
   localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
   applyThemeState(isDark);
 });
@@ -138,6 +141,15 @@ const modeBeforeBoot = theme.getTheme().mode;
 theme.setLightDark(initialDark ? "dark" : "light");
 if (modeBeforeBoot === theme.getTheme().mode) {
   applyThemeState(theme.getTheme().isDark);
+}
+
+declare global {
+  interface Window {
+    cherryConverterDemo?: {
+      transformer: TransformerEngine;
+      renderNow: typeof renderNow;
+    };
+  }
 }
 
 window.cherryConverterDemo = { transformer, renderNow };

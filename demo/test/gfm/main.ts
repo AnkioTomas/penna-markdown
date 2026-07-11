@@ -2,8 +2,10 @@ import "../../_common/layout.scss";
 import "./gfm-test.scss";
 import "../../_common/cherry-demo.scss";
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
-import { Theme } from "@/theme/Theme.js";
-import { setupPreviewThemeAndAppearance } from "../../_common/theme.js";
+import {
+  createDemoTheme,
+  setupPreviewThemeAndAppearance,
+} from "../../_common/theme.js";
 import { requiredEl } from "../../_common/dom.js";
 import type { GfmCase, GfmCaseResult } from "../../_common/gfm-case.js";
 import allCasesJson from "../../../test/fixtures/gfm/cases.json";
@@ -25,8 +27,8 @@ const statusEl = requiredEl<HTMLElement>("#status");
 const themeMount = document.createElement("div");
 themeMount.hidden = true;
 document.body.appendChild(themeMount);
-const theme = new Theme();
-setupPreviewThemeAndAppearance(theme, themeMount, document.body);
+const kit = createDemoTheme(document.body);
+setupPreviewThemeAndAppearance(kit, themeMount);
 
 let allCases: GfmCase[] = [];
 let sections: string[] = [];

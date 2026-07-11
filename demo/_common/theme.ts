@@ -1,14 +1,16 @@
 import { Cherry } from "@/editor/Cherry.js";
-import {
-  Theme,
-  THEME_EVENT_LIGHT_DARK,
-  THEME_EVENT_SKIN,
-} from "@/theme/Theme.js";
+import { Theme } from "@/theme/Theme.js";
+import { EventBus } from "@/core/event/EventBus.js";
+import { Log } from "@/core/Log.js";
+import { THEME_EVENT_LIGHT_DARK } from "@/theme/event/ThemeLightDarkEvent.js";
+import { THEME_EVENT_SKIN } from "@/theme/event/ThemeSkinEvent.js";
 import REGISTERED_THEMES from "@/theme/ThemeRegister.js";
 
-/** 独立模块 Demo（渲染器 / 转换器）统一开启 Theme 调试日志 */
-export function createDemoTheme(): Theme {
-  return new Theme(true);
+/** 独立模块 Demo 的 Theme + EventBus + Log 组合 */
+export interface DemoThemeKit {
+  theme: Theme;
+  eventBus: EventBus;
+  log: Log;
 }
 
 const THEME_STORAGE_KEY = "cherry-demo-theme";
@@ -38,6 +40,19 @@ function readThemeId(): string {
     : "default";
 }
 
+/**
+ * 创建独立预览 Demo 用的 Theme 套件。
+ * @param rootElement 承载 `cherry-theme-*` 的根节点（通常为预览外层容器）
+ */
+export function createDemoTheme(
+  rootElement: HTMLElement = document.body,
+): DemoThemeKit {
+  const log = new Log(true);
+  const eventBus = new EventBus(true, "[cherry-demo]", log);
+  const theme = new Theme(eventBus, log, rootElement, []);
+  return { theme, eventBus, log };
+}
+
 export interface ThemeControlOptions {
   /** 主题/明暗变化后回调（用于独立 Renderer 重新渲染） */
   onThemeChange?: () => void;
@@ -48,27 +63,33 @@ export function setupThemeAndAppearance(
   editor: Cherry,
   options: ThemeControlOptions = {},
 ): void {
-  bindThemeControls(editor.theme, () => editor.theme.getTheme(), options);
+  bindThemeControls(
+    { theme: editor.theme, eventBus: editor.eventBus, log: new Log(true) },
+    options,
+  );
 }
 
 /**
  * 独立预览 Demo（语法演示 / 框架集成等）：绑定 Theme 到挂载点并接入顶栏控件。
+ * @param kit `createDemoTheme(root)` 返回值
+ * @param render 预览内容挂载点（调用方需保证其或其子节点带 `cherry-render`）
  */
 export function setupPreviewThemeAndAppearance(
-  theme: Theme,
+  kit: DemoThemeKit,
   render: HTMLElement,
-  root: HTMLElement,
   options: ThemeControlOptions = {},
 ): void {
-  theme.setTheme(readThemeId(), render, root);
-  bindThemeControls(theme, () => theme.getTheme(), options);
+  render.classList.add("cherry-render");
+  kit.theme.setTheme(readThemeId());
+  bindThemeControls(kit, options);
 }
 
 function bindThemeControls(
-  theme: Theme,
-  getSnapshot: () => ReturnType<Theme["getTheme"]>,
+  kit: DemoThemeKit,
   options: ThemeControlOptions,
 ): void {
+  const { theme, eventBus } = kit;
+
   const themeSelect = document.getElementById(
     "theme-select",
   ) as HTMLSelectElement | null;
@@ -96,11 +117,9 @@ function bindThemeControls(
     themeSelect.value = readThemeId();
     themeSelect.addEventListener("change", () => {
       const next = themeSelect.value;
-      const { render, root } = getSnapshot();
-      if (render && root) {
-        theme.setTheme(next, render, root);
-        localStorage.setItem(THEME_STORAGE_KEY, next);
-      }
+      theme.setTheme(next);
+      localStorage.setItem(THEME_STORAGE_KEY, next);
+      options.onThemeChange?.();
     });
   }
 
@@ -119,10 +138,9 @@ function bindThemeControls(
       if (currentAppearance === "auto") applyAppearance();
     });
 
-  theme.on(THEME_EVENT_SKIN, () => options.onThemeChange?.());
-  theme.on(THEME_EVENT_LIGHT_DARK, () => options.onThemeChange?.());
+  eventBus.on(THEME_EVENT_SKIN, () => options.onThemeChange?.());
+  eventBus.on(THEME_EVENT_LIGHT_DARK, () => options.onThemeChange?.());
 
-  const { render, root } = getSnapshot();
-  if (render && root) theme.setTheme(readThemeId(), render, root);
+  theme.setTheme(readThemeId());
   applyAppearance();
 }
