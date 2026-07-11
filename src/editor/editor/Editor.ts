@@ -31,7 +31,7 @@ import { pasteStateField, pasteTooltipPlugin } from "./pasteTooltip";
 import { createCustomSearchPanel } from "./searchPanel";
 import { createAIExtension, createAICommandListener } from "@/editor/ai";
 import type { EditorOptions } from "./EditorOptions";
-import type { Theme } from "@/theme/Theme";
+import type { EventBus } from "@/core/event/EventBus";
 
 /**
  * 编辑器核心类，是对 CodeMirror 6 的一层防腐层（Anti-Corruption Layer）封装。
@@ -40,7 +40,7 @@ import type { Theme } from "@/theme/Theme";
  * 为什么要包这一层？
  * 1. 隔离外部依赖：整个项目中，除了 `src/editor/editor` 目录下的几个文件外，
  *    其他任何业务模块都不应该直接引用 `@codemirror/*` 里的 API。
- * 2. 对接事件总线：这个类内部将 CodeMirror 的 `updateListener` 转译为我们的 `theme.emit("editor:change")` 事件。
+ * 2. 对接事件总线：这个类内部将 CodeMirror 的 `updateListener` 转译为我们的 `editor:change` 事件。
  * 3. 动态扩展高亮绑定：在初始化时，会调用 `resolveTransformerHighlight` 把基于 Transformer 的 AST
  *    高亮同步扩展动态打入 CodeMirror 中。
  */
@@ -48,7 +48,7 @@ export class Editor {
   private readonly view: EditorView;
   private aiCleanup: (() => void) | null = null;
 
-  constructor(mount: HTMLElement, theme: Theme, options: EditorOptions) {
+  constructor(mount: HTMLElement, eventBus: EventBus, options: EditorOptions) {
     mount.classList.add("cherry-editor-cm");
 
     const lineNumbersEnabled = options.lineNumbers !== false;
@@ -59,7 +59,7 @@ export class Editor {
         markdown: update.state.doc.toString(),
         tr: update.transactions,
       };
-      theme.emit("editor:change", payload);
+      eventBus.emit("editor:change", payload);
     });
 
     const extensions: Extension[] = [
@@ -108,7 +108,7 @@ export class Editor {
 
     if (options.ai) {
       this.aiCleanup = createAICommandListener(
-        theme,
+        eventBus,
         options.ai.AIRequest,
         () => this.view,
       );

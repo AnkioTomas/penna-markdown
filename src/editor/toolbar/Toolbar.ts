@@ -1,5 +1,5 @@
 import type { ToolbarOptions } from "@/editor/toolbar/ToolbarOptions";
-import type { Theme } from "@/theme/Theme";
+import type { EventBus } from "@/core/event/EventBus";
 import type { ToolbarContext } from "./ToolbarItem";
 import { resolveToolbarItems } from "@/editor/toolbar/resolve";
 import { renderToolbar } from "@/editor/toolbar/renderToolbar";
@@ -9,14 +9,14 @@ export class Toolbar {
 
   constructor(
     mount: HTMLElement,
-    theme: Theme,
+    eventBus: EventBus,
     options: ToolbarOptions,
     focus?: () => void,
   ) {
     const ctx: ToolbarContext = {
-      theme,
+      eventBus,
       execute: (command, payload) => {
-        theme.emit("editor:command", { command, payload });
+        eventBus.emit("editor:command", { command, payload });
         focus?.();
       },
       focus: () => focus?.(),

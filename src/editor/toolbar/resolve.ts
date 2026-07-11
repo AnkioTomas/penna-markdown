@@ -1,4 +1,5 @@
 import { DEFAULT_TOOLBAR_ITEMS } from "@/editor/toolbar/defaults";
+import { buildAIToolbarItems } from "@/editor/ai";
 import type { ToolbarItem } from "@/editor/toolbar/ToolbarItem";
 import type { ToolbarOptions } from "@/editor/toolbar/ToolbarOptions";
 
@@ -41,7 +42,18 @@ function resolveChildren(item: ToolbarItem): ToolbarItem {
  * 合并默认项与自定义项，递归清理隐藏节点，输出一维 ToolbarItem 列表。
  */
 export function resolveToolbarItems(options?: ToolbarOptions): ToolbarItem[] {
-  const merged = mergeItems(DEFAULT_TOOLBAR_ITEMS, options?.items);
+  const userItems = options?.items ?? [];
+  let custom: ToolbarItem[] | undefined;
+
+  if (options?.ai === false) {
+    custom = [{ id: "ai", hidden: true }, ...userItems];
+  } else if (options?.ai) {
+    custom = [...buildAIToolbarItems(options.ai.items), ...userItems];
+  } else if (userItems.length) {
+    custom = userItems;
+  }
+
+  const merged = mergeItems(DEFAULT_TOOLBAR_ITEMS, custom);
   return merged
     .map((item) => resolveChildren(item))
     .filter((item) => !item.hidden);

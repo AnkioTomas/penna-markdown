@@ -5,7 +5,6 @@ import { SideBar } from "@/editor/sidebar/SideBar";
 import { Toolbar } from "@/editor/toolbar/Toolbar";
 import { StatusBar } from "@/editor/statusbar/StatusBar";
 import type { CherryOptions } from "@/editor/CherryOptions";
-import { buildAIToolbarItems } from "@/editor/ai";
 import type { EditorLayoutMode } from "@/editor/Layout";
 import { printCherryLogo } from "@/editor/printLogo";
 import { ScrollSync } from "@/editor/sync/ScrollSync";
@@ -15,7 +14,10 @@ import { runCommand as executeCommand } from "@/editor/commands/index.js";
 import type { EditorCommand } from "@/editor/commands/index.js";
 import type { EditorView } from "@codemirror/view";
 import { Theme } from "@/theme/Theme";
+import { EventBus } from "@/core/event/EventBus";
+import { Log } from "@/core/Log";
 
+/** 创建带 class 的 DOM 元素 */
 export function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   className: string,
@@ -30,18 +32,19 @@ export function el<K extends keyof HTMLElementTagNameMap>(
 }
 
 /**
- * Cherry Markdown 的核心主控类。
+ * Cherry 主控：搭建 UI 骨架，子模块经 {@link EventBus} 事件总线通讯。
  *
- * 【架构说明】
- * 本类主要起到了“容器”和“协调者”的作用。
- * 1. 结构编排：在 rootEl 内构建了完整的骨架 UI（包括 toolbar, sidebar, editor, divider, preview 等 DOM 节点）。
- * 2. 状态通信：通过传入的 `Theme` 实例作为全局的 Event Bus（事件总线）。
- *    - editor 发生变化时会抛出 `editor:change` 事件。
- *    - preview 渲染完成后会抛出 `preview:rendered` 事件（侧边栏大纲依赖此事件）。
- *    - 其它 UI 控件也是通过这种松耦合的方式进行通讯，而不是互相持有实例引用。
+ * ```
+ * .cherry
+ * ├── toolbar
+ * ├── body → mask | sidebar | editor | divider | preview
+ * ├── statusbar（可选）
+ * └── dialog-host
+ * ```
  */
 export class Cherry {
   readonly theme: Theme;
+  readonly eventBus: EventBus;
 
   private readonly cherryEl: HTMLElement;
   private readonly toolbarEl: HTMLElement;
@@ -61,18 +64,19 @@ export class Cherry {
   private readonly statusbar: StatusBar | null = null;
   private readonly commandBridge: CommandBridge;
   private readonly dialogHost: DialogHost;
+  private readonly scrollSync: ScrollSync;
 
-  private readonly id: string | undefined;
+  private readonly log: Log;
+
   private destroyed = false;
-  private scrollSync: ScrollSync | null = null;
 
   constructor(
     private readonly rootEl: HTMLElement,
     options: CherryOptions = {},
   ) {
     printCherryLogo();
-    this.theme = new Theme(options.debug);
-    this.id = options.id;
+    this.log = new Log(options.debug);
+    this.eventBus = new EventBus(options.debug, "[cherry]", this.log);
 
     const {
       themeId = "default",
@@ -92,7 +96,14 @@ export class Cherry {
     this.sidebarEl = el("div", "cherry-sidebar");
     this.editorEl = el("div", "cherry-editor");
     this.dividerEl = el("div", "cherry-divider");
-    this.previewEl = el("div", "cherry-preview");
+    this.previewEl = el("div", "cherry-preview cherry-render");
+
+    this.theme = new Theme(
+      this.eventBus,
+      this.log,
+      rootEl,
+      options.themes ?? [],
+    );
 
     this.cherryEl.appendChild(this.toolbarEl);
     this.bodyEl.appendChild(this.sidebarMaskEl);
@@ -102,9 +113,9 @@ export class Cherry {
     this.bodyEl.appendChild(this.previewEl);
     this.cherryEl.appendChild(this.bodyEl);
 
-    // Mask click closes sidebar
+    // 遮罩点击关闭侧边栏
     this.sidebarMaskEl.addEventListener("click", () => {
-      this.theme.emit("cherry:sidebar", { show: false });
+      this.eventBus.emit("cherry:sidebar", { show: false });
     });
 
     if (statusbar) {
@@ -114,15 +125,22 @@ export class Cherry {
 
     this.rootEl.appendChild(this.cherryEl);
 
-    this.theme.setTheme(themeId, this.previewEl, this.cherryEl);
+    this.theme.setTheme(themeId);
     this.theme.setLightDark(appearance);
 
-    this.preview = new Preview(this.previewEl, this.theme, {
-      inlineParsers: previewOptions.inlineParsers ?? transformer.inlineParsers,
-      blockParsers: previewOptions.blockParsers ?? transformer.blockParsers,
-    });
+    this.preview = new Preview(
+      this.previewEl,
+      this.theme,
+      this.eventBus,
+      this.log,
+      {
+        inlineParsers:
+          previewOptions.inlineParsers ?? transformer.inlineParsers,
+        blockParsers: previewOptions.blockParsers ?? transformer.blockParsers,
+      },
+    );
 
-    this.editor = new Editor(this.editorEl, this.theme, {
+    this.editor = new Editor(this.editorEl, this.eventBus, {
       ...editorOptions,
       ai: options.ai,
       storage: options.storage ?? editorOptions.storage,
@@ -131,10 +149,10 @@ export class Cherry {
     });
 
     if (statusbar && this.statusbarEl) {
-      this.statusbar = new StatusBar(this.statusbarEl, this.theme);
+      this.statusbar = new StatusBar(this.statusbarEl, this.eventBus);
     }
 
-    this.divider = new Divider(this.dividerEl, this.theme);
+    this.divider = new Divider(this.dividerEl, this.eventBus);
     this.divider.setLayout(initialLayout);
 
     this.toolbar =
@@ -142,22 +160,14 @@ export class Cherry {
         ? null
         : new Toolbar(
             this.toolbarEl,
-            this.theme,
-            {
-              ...options.toolbar,
-              items: [
-                ...(options.ai !== false && options.ai
-                  ? buildAIToolbarItems(options.ai.items)
-                  : []),
-                ...(options.toolbar?.items ?? []),
-              ],
-            },
+            this.eventBus,
+            { ...options.toolbar, ai: options.ai },
             () => this.editor.focus(),
           );
 
     this.sidebar = new SideBar(
       this.sidebarEl,
-      this.theme,
+      this.eventBus,
       typeof options.sidebar === "object" ? options.sidebar : {},
     );
 
@@ -165,10 +175,15 @@ export class Cherry {
       this.sidebarEl.style.display = "none";
     }
 
-    this.scrollSync = new ScrollSync(this.editor, this.previewEl, this.theme);
+    this.scrollSync = new ScrollSync(
+      this.editor,
+      this.previewEl,
+      this.eventBus,
+    );
 
-    this.dialogHost = new DialogHost(this.cherryEl, this.theme);
+    this.dialogHost = new DialogHost(this.cherryEl, this.eventBus);
     this.commandBridge = new CommandBridge(
+      this.eventBus,
       this.theme,
       () => this.editor.getView(),
       () => this.preview.getStore(),
@@ -176,21 +191,21 @@ export class Cherry {
 
     const initialMarkdown = editorOptions.value ?? "";
     if (initialMarkdown) {
-      this.theme.emit("editor:change", { markdown: initialMarkdown });
+      this.eventBus.emit("editor:change", { markdown: initialMarkdown });
     }
-    this.theme.on("cherry:layout", (payload: any) => {
+    this.eventBus.on("cherry:layout", (payload: any) => {
       this.setLayout(payload.mode);
     });
 
-    this.theme.on("cherry:sidebar", (payload: any) => {
+    this.eventBus.on("cherry:sidebar", (payload: any) => {
       this.setSidebarVisible(payload.show);
     });
 
     queueMicrotask(() => {
       if (this.destroyed) return;
-      this.theme.emit("cherry:layout", { mode: initialLayout });
-      this.theme.emit("cherry:sidebar", { show: options.sidebar !== false });
-      this.theme.emit("editor:ready", { id: this.id });
+      this.eventBus.emit("cherry:layout", { mode: initialLayout });
+      this.eventBus.emit("cherry:sidebar", { show: options.sidebar !== false });
+      this.eventBus.emit("editor:ready", { el: this.cherryEl });
     });
 
     printCherryLogo();
@@ -216,6 +231,7 @@ export class Cherry {
     return this.sidebarEl.style.display !== "none";
   }
 
+  /** split 布局下显隐后会重算分栏比例 */
   setSidebarVisible(show: boolean): void {
     this.sidebarEl.style.display = show ? "" : "none";
     this.sidebarMaskEl.classList.toggle("is-active", show);
@@ -232,6 +248,7 @@ export class Cherry {
     this.sidebar?.setActiveFile(fileId);
   }
 
+  /** 进阶集成用；常规场景走 {@link runCommand} */
   getEditorView(): EditorView {
     return this.editor.getView();
   }
@@ -241,6 +258,7 @@ export class Cherry {
     payload?: unknown,
   ): boolean | Promise<boolean> {
     return executeCommand(this.editor.getView(), command, payload, {
+      eventBus: this.eventBus,
       theme: this.theme,
     });
   }
@@ -248,12 +266,13 @@ export class Cherry {
   destroy(): void {
     if (this.destroyed) return;
     this.destroyed = true;
-    this.theme.emit("editor:destroy", { id: this.id });
+    this.eventBus.emit("editor:destroy", { el: this.cherryEl });
     this.commandBridge.destroy();
     this.dialogHost.destroy();
     this.toolbar?.destroy();
     this.sidebar?.destroy();
     this.divider.destroy();
+    this.scrollSync.destroy();
     this.editor.destroy();
     this.preview.destroy();
     this.statusbar?.destroy();

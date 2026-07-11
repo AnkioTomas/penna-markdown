@@ -244,7 +244,7 @@ class FootnoteCommandImpl implements Command, DialogCapableCommand {
     _p: unknown,
     ctx: CommandContext,
   ): Promise<boolean> {
-    if (!ctx?.theme) return false;
+    if (!ctx?.eventBus) return false;
 
     let footnotes: FootnoteDefInfo[] = [];
     if (ctx.getStore) {
@@ -260,7 +260,7 @@ class FootnoteCommandImpl implements Command, DialogCapableCommand {
       }
     }
 
-    const data = (await requestDialog(ctx.theme, this.dialogType, {
+    const data = (await requestDialog(ctx.eventBus, this.dialogType, {
       footnotes,
     })) as FootnoteDialogResult | null;
     if (!data) return false;

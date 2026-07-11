@@ -1,7 +1,6 @@
-import type { Theme } from "@/theme/Theme";
+import type { EventBus } from "@/core/event/EventBus";
 import type { SideBarOptions, CherryFileItem } from "./SideBarOptions";
-import { extractToc, type TocItem } from "@/renderer/toc/extract.js";
-import type { MarkdownNode } from "@/transformer/core/MarkdownNode";
+import type { TocItem } from "@/renderer/toc/TocItem.js";
 
 export class SideBar {
   private readonly tabsEl: HTMLElement;
@@ -13,7 +12,7 @@ export class SideBar {
 
   constructor(
     private readonly mount: HTMLElement,
-    private readonly theme: Theme,
+    private readonly eventBus: EventBus,
     private readonly options: SideBarOptions = {},
   ) {
     this.mount.replaceChildren();
@@ -61,10 +60,9 @@ export class SideBar {
 
     // Listen to TOC updates
     this.offs.add(
-      this.theme.on("preview:rendered", (payload) => {
-        const ast = (payload as any).ast as MarkdownNode;
-        if (ast) {
-          const toc = extractToc(ast);
+      this.eventBus.on("preview:rendered", (payload) => {
+        const toc = (payload as { toc?: TocItem[] }).toc;
+        if (toc) {
           this.renderToc(toc);
         }
       }),
@@ -148,7 +146,7 @@ export class SideBar {
       el.textContent = item.text;
 
       el.onclick = () => {
-        this.theme.emit("sidebar:toc-click", { id: item.id });
+        this.eventBus.emit("sidebar:toc-click", { id: item.id });
       };
 
       parentEl.appendChild(el);

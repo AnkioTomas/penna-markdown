@@ -1,4 +1,4 @@
-import type { Theme } from "@/theme/Theme";
+import type { EventBus } from "@/core/event/EventBus";
 
 const ICON_SIDEBAR = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cherry-icon"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>`;
 const ICON_EDIT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cherry-icon"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
@@ -17,7 +17,7 @@ export class StatusBar {
 
   constructor(
     private readonly mount: HTMLElement,
-    private readonly theme: Theme,
+    private readonly eventBus: EventBus,
   ) {
     this.mount.classList.add("cherry-statusbar");
 
@@ -38,7 +38,7 @@ export class StatusBar {
 
     // 监听 preview:rendered 或 editor:change
     this.offs.add(
-      this.theme.on("editor:change", (payload) => {
+      this.eventBus.on("editor:change", (payload) => {
         const { markdown } = payload as { markdown: string };
         this.updateStats(markdown);
       }),
@@ -52,7 +52,7 @@ export class StatusBar {
     btnSidebar.title = "切换侧边栏";
     btnSidebar.onclick = () => {
       this.sidebarVisible = !this.sidebarVisible;
-      this.theme.emit("cherry:sidebar", { show: this.sidebarVisible });
+      this.eventBus.emit("cherry:sidebar", { show: this.sidebarVisible });
       btnSidebar.classList.toggle("is-active", this.sidebarVisible);
     };
     btnSidebar.classList.toggle("is-active", this.sidebarVisible);
@@ -83,7 +83,7 @@ export class StatusBar {
     btnSplit.classList.add("is-active");
 
     this.offs.add(
-      this.theme.on("cherry:layout", (payload) => {
+      this.eventBus.on("cherry:layout", (payload) => {
         const mode = (payload as any).mode;
         this.layoutMode = mode;
         const btns = this.leftEl.querySelectorAll(
@@ -97,7 +97,7 @@ export class StatusBar {
     );
 
     this.offs.add(
-      this.theme.on("cherry:sidebar", (payload) => {
+      this.eventBus.on("cherry:sidebar", (payload) => {
         const show = (payload as any).show;
         this.sidebarVisible = show;
         btnSidebar.classList.toggle("is-active", show);
@@ -111,7 +111,7 @@ export class StatusBar {
     btnRefresh.innerHTML = ICON_REFRESH;
     btnRefresh.title = "强制全量刷新渲染";
     btnRefresh.onclick = () => {
-      this.theme.emit("preview:force-refresh", {});
+      this.eventBus.emit("preview:force-refresh", {});
 
       const svg = btnRefresh.querySelector("svg");
       if (svg) {
@@ -133,7 +133,7 @@ export class StatusBar {
     _activeBtn: HTMLElement,
   ) {
     if (this.layoutMode === mode) return;
-    this.theme.emit("cherry:layout", { mode });
+    this.eventBus.emit("cherry:layout", { mode });
   }
 
   private updateStats(text: string): void {

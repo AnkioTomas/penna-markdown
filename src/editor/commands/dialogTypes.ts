@@ -1,7 +1,7 @@
 /**
  * 对话框类型定义。
  *
- * 与 `requestDialog(theme, type)` 配合，提供类型安全的提交结果推断。
+ * 与 `requestDialog(eventBus, type)` 配合，提供类型安全的提交结果推断。
  */
 import type { TableDialogResult } from "@/editor/commands/groups/TableCommand";
 import type {

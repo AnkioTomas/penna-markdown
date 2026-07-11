@@ -1,8 +1,8 @@
 import type { EditorCommand } from "@/editor/commands/index";
-import type { Theme } from "@/theme/Theme";
+import type { EventBus } from "@/core/event/EventBus";
 
 export interface ToolbarContext {
-  theme: Theme;
+  eventBus: EventBus;
   execute(command: EditorCommand | string, payload?: unknown): void;
   focus(): void;
 }

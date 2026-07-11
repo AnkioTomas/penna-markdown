@@ -10,6 +10,7 @@ export const THEME_LABELS: Record<string, string> = {
   vue: "Vue",
 
   notion: "Notion",
+  pollinations: "Pollinations",
 };
 
 export function buildThemeMenuItems() {

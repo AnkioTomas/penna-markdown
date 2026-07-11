@@ -111,8 +111,8 @@ async function insertMermaid(
   view: EditorView,
   ctx: CommandContext | undefined,
 ): Promise<boolean> {
-  if (!ctx?.theme) return false;
-  const data = await requestDialog(ctx.theme, "mermaid", {});
+  if (!ctx?.eventBus) return false;
+  const data = await requestDialog(ctx.eventBus, "mermaid", {});
   if (!data) return false;
   insertSnippet(view, mermaidMarkdown(data));
   return true;

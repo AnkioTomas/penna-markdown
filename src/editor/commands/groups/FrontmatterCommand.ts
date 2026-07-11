@@ -247,10 +247,10 @@ export class FrontmatterCommand implements Command, DialogCapableCommand {
     _p: unknown,
     ctx: CommandContext,
   ): Promise<boolean> {
-    if (!ctx?.theme) return false;
+    if (!ctx?.eventBus) return false;
     const doc = view.state.doc.toString();
     const match = doc.match(/^---\n([\s\S]*?)\n---/);
-    const data = await requestDialog(ctx.theme, "frontmatter", {
+    const data = await requestDialog(ctx.eventBus, "frontmatter", {
       yaml: match?.[1] ?? undefined,
     });
     if (!data) return false;
@@ -272,7 +272,7 @@ export class FrontmatterVarCommand implements Command, DialogCapableCommand {
     _p: unknown,
     ctx: CommandContext,
   ): Promise<boolean> {
-    if (!ctx?.theme) return false;
+    if (!ctx?.eventBus) return false;
 
     const vars = collectFrontmatterVars(ctx.getStore?.());
     const { from, to, empty } = view.state.selection.main;
@@ -286,7 +286,7 @@ export class FrontmatterVarCommand implements Command, DialogCapableCommand {
     }
 
     const data = (await requestDialog(
-      ctx.theme,
+      ctx.eventBus,
       "frontmatterVar",
       props,
     )) as FrontmatterVarDialogResult | null;

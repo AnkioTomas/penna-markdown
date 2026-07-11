@@ -135,10 +135,10 @@ export class MediaCommand implements Command, DialogCapableCommand {
     _p: unknown,
     ctx: CommandContext,
   ): Promise<boolean> {
-    if (!ctx?.theme) return false;
+    if (!ctx?.eventBus) return false;
     const { from, to, empty } = view.state.selection.main;
     const selected = empty ? "" : view.state.sliceDoc(from, to);
-    const data = await requestDialog(ctx.theme, "media", {
+    const data = await requestDialog(ctx.eventBus, "media", {
       kind: this.kind,
       label: selected || undefined,
     });

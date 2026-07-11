@@ -127,8 +127,8 @@ export class BadgeCommand implements Command, DialogCapableCommand {
       wrapSelection(view, "[", `]{.${variant}}`);
       return true;
     }
-    if (!ctx?.theme) return false;
-    const data = await requestDialog(ctx.theme, "badge");
+    if (!ctx?.eventBus) return false;
+    const data = await requestDialog(ctx.eventBus, "badge");
     if (!data?.text) return false;
     insertText(
       view,

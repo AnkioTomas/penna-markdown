@@ -347,10 +347,10 @@ class LinkRefCommandImpl implements Command, DialogCapableCommand {
     _payload: unknown,
     ctx: CommandContext,
   ): Promise<boolean> {
-    if (!ctx?.theme) return false;
+    if (!ctx?.eventBus) return false;
     const linkRefs = collectLinkRefs(ctx.getStore?.());
     const data = (await requestDialog(
-      ctx.theme,
+      ctx.eventBus,
       this.dialogType,
       this.buildProps(view, linkRefs),
     )) as LinkReferenceDialogResult | LinkRefDefDialogResult | null;
@@ -372,10 +372,10 @@ export class LinkCommand implements Command, DialogCapableCommand {
     _payload: unknown,
     ctx: CommandContext,
   ): Promise<boolean> {
-    if (!ctx?.theme) return false;
+    if (!ctx?.eventBus) return false;
     const { from, to, empty } = view.state.selection.main;
     const selected = empty ? "" : view.state.sliceDoc(from, to);
-    const data = await requestDialog(ctx.theme, "link", {
+    const data = await requestDialog(ctx.eventBus, "link", {
       text: selected,
       url: selected,
     });
@@ -401,10 +401,10 @@ export class ImageCommand implements Command, DialogCapableCommand {
     _p: unknown,
     ctx: CommandContext,
   ): Promise<boolean> {
-    if (!ctx?.theme) return false;
+    if (!ctx?.eventBus) return false;
     const { from, to, empty } = view.state.selection.main;
     const selected = empty ? "" : view.state.sliceDoc(from, to);
-    const data = await requestDialog(ctx.theme, "image", {
+    const data = await requestDialog(ctx.eventBus, "image", {
       text: selected || "",
       url: "",
     });

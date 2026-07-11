@@ -134,8 +134,8 @@ export class TimelineContainerCommand implements Command, DialogCapableCommand {
     _payload: unknown,
     ctx: CommandContext,
   ): Promise<boolean> {
-    if (!ctx?.theme) return false;
-    const data = await requestDialog(ctx.theme, "timelineContainer");
+    if (!ctx?.eventBus) return false;
+    const data = await requestDialog(ctx.eventBus, "timelineContainer");
     if (!data) return false;
 
     const attrs = [
@@ -163,8 +163,8 @@ export class TimelineNodeCommand implements Command, DialogCapableCommand {
     _payload: unknown,
     ctx: CommandContext,
   ): Promise<boolean> {
-    if (!ctx?.theme) return false;
-    const data = await requestDialog(ctx.theme, "timelineNode");
+    if (!ctx?.eventBus) return false;
+    const data = await requestDialog(ctx.eventBus, "timelineNode");
     if (!data) return false;
 
     // 如果是 info 就不需要写后缀，保持极简

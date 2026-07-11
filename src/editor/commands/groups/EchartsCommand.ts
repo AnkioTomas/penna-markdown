@@ -152,8 +152,8 @@ async function insertEcharts(
   view: EditorView,
   ctx: CommandContext | undefined,
 ): Promise<boolean> {
-  if (!ctx?.theme) return false;
-  const data = await requestDialog(ctx.theme, "echarts", {});
+  if (!ctx?.eventBus) return false;
+  const data = await requestDialog(ctx.eventBus, "echarts", {});
   if (!data) return false;
   insertSnippet(view, echartsMarkdown(data));
   return true;

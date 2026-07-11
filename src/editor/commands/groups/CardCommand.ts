@@ -521,8 +521,8 @@ async function insertCard(
     return true;
   }
 
-  if (!ctx?.theme) return false;
-  const data = await requestDialog(ctx.theme, "card", { variant });
+  if (!ctx?.eventBus) return false;
+  const data = await requestDialog(ctx.eventBus, "card", { variant });
   if (!data) return false;
   insertSnippet(view, cardMarkdown(data));
   return true;

@@ -268,7 +268,7 @@ export function listCommands(): string[] {
  * @param view - CodeMirror 编辑器实例
  * @param command - 命令名，须存在于 {@link COMMANDS}
  * @param payload - 可选参数（如 insertText 的文本、setTheme 的 id）
- * @param ctx - 上下文；弹窗命令须传入 `{ theme }`
+ * @param ctx - 上下文；弹窗命令须传入 `{ eventBus }`，主题命令须传入 `{ theme }`
  * @returns 命令不存在返回 false；弹窗命令可能返回 Promise
  */
 export function runCommand(

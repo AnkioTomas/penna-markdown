@@ -248,10 +248,10 @@ async function insertCodeBlock(
   ctx: CommandContext | undefined,
   variant: CodeBlockVariant,
 ): Promise<boolean> {
-  if (!ctx?.theme) return false;
+  if (!ctx?.eventBus) return false;
   const { from, to, empty } = view.state.selection.main;
   const selected = empty ? "" : view.state.sliceDoc(from, to);
-  const data = await requestDialog(ctx.theme, "codeBlock", {
+  const data = await requestDialog(ctx.eventBus, "codeBlock", {
     variant,
     code: selected || undefined,
   });

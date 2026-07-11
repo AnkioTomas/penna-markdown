@@ -1,5 +1,5 @@
 import type { EditorLayoutMode } from "@/editor/Layout";
-import type { Theme } from "@/theme/Theme";
+import type { EventBus } from "@/core/event/EventBus";
 
 const MIN_SPLIT = 0.15;
 const MAX_SPLIT = 0.85;
@@ -37,7 +37,7 @@ export class Divider {
 
   constructor(
     private readonly mount: HTMLElement,
-    private readonly theme: Theme,
+    private readonly eventBus: EventBus,
   ) {
     if (!mount.parentElement) {
       throw new Error("Divider 必须挂载在有效的 DOM 树中");
@@ -69,7 +69,7 @@ export class Divider {
     const prev = this.mode;
     this.mode = mode;
     this.applyLayout();
-    this.theme.emit("editor:layout", { mode, prev });
+    this.eventBus.emit("editor:layout", { mode, prev });
   }
 
   getSplit(): number {
@@ -169,7 +169,7 @@ export class Divider {
 
     if (this.moved) {
       this.persistSplit();
-      this.theme.emit("editor:split", { split: this.split });
+      this.eventBus.emit("editor:split", { split: this.split });
     }
   }
 

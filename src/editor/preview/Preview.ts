@@ -1,33 +1,41 @@
 import { Transaction } from "@codemirror/state";
 import { Renderer } from "@/renderer/Renderer";
 import type { PreviewOptions } from "./PreviewOptions";
-import {
-  THEME_EVENT_LIGHT_DARK,
-  THEME_EVENT_SKIN,
-  type Theme,
-} from "@/theme/Theme";
+import { THEME_EVENT_LIGHT_DARK } from "@/theme/event/ThemeLightDarkEvent";
+import { THEME_EVENT_SKIN } from "@/theme/event/ThemeSkinEvent";
+import type { Theme } from "@/theme/Theme";
+import type { EventBus } from "@/core/event/EventBus";
+import type { Log } from "@/core/Log";
 import { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
 import { ParserStore } from "@/transformer/core/ParserStore";
 
 export class Preview {
-  private readonly theme: Theme;
+  private readonly eventBus: EventBus;
   private readonly renderer: Renderer;
   private lastMarkdown = "";
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly debounceMs: number = 50;
   private readonly offs = new Set<() => void>();
 
-  constructor(mount: HTMLElement, theme: Theme, options: PreviewOptions = {}) {
-    this.theme = theme;
+  constructor(
+    mount: HTMLElement,
+    theme: Theme,
+    eventBus: EventBus,
+    logger: Log,
+    options: PreviewOptions = {},
+  ) {
+    this.eventBus = eventBus;
     this.renderer = new Renderer({
       mount,
       theme,
+      eventBus,
+      logger,
       inlineParsers: options.inlineParsers,
       blockParsers: options.blockParsers,
     });
 
     this.offs.add(
-      theme.on("editor:change", (payload) => {
+      eventBus.on("editor:change", (payload) => {
         const { markdown, tr } = payload as {
           markdown: string;
           tr: Transaction;
@@ -36,17 +44,17 @@ export class Preview {
       }),
     );
     this.offs.add(
-      theme.on(THEME_EVENT_LIGHT_DARK, () => {
+      eventBus.on(THEME_EVENT_LIGHT_DARK, () => {
         if (this.lastMarkdown) this.onEditorChange(this.lastMarkdown);
       }),
     );
     this.offs.add(
-      theme.on(THEME_EVENT_SKIN, () => {
+      eventBus.on(THEME_EVENT_SKIN, () => {
         if (this.lastMarkdown) this.onEditorChange(this.lastMarkdown);
       }),
     );
     this.offs.add(
-      theme.on("cherry:layout", (payload: any) => {
+      eventBus.on("cherry:layout", (payload: any) => {
         if (payload.mode === "preview" && options.maxWidth) {
           const maxWidth =
             typeof options.maxWidth === "number"
@@ -69,7 +77,7 @@ export class Preview {
       }),
     );
     this.offs.add(
-      theme.on("preview:force-refresh", () => {
+      eventBus.on("preview:force-refresh", () => {
         if (this.lastMarkdown) {
           this.pendingTransactions = [];
           const mount = this.renderer.getMount();
@@ -80,11 +88,12 @@ export class Preview {
           // DOM 替换后恢复滚动位置，避免强制重置到顶部导致滚动同步引擎误判
           mount.scrollTop = scrollTop;
 
-          this.theme.emit("preview:rendered", {
+          this.eventBus.emit("preview:rendered", {
             markdown: this.lastMarkdown,
             html: result.html,
             ast: result.ast,
             blocks: result.blocks,
+            toc: this.renderer.getToc(),
             partial: false,
             changedStartLines: [],
           });
@@ -126,11 +135,12 @@ export class Preview {
           transactionsToProcess.length > 0 ? transactionsToProcess : undefined,
         ),
       );
-      this.theme.emit("preview:rendered", {
+      this.eventBus.emit("preview:rendered", {
         markdown,
         html: result.html,
         ast: result.ast,
         blocks: result.blocks,
+        toc: this.renderer.getToc(),
         partial: result.partial ?? false,
         changedStartLines: result.changedStartLines ?? [],
       });

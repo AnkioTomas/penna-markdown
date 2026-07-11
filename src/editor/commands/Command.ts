@@ -6,6 +6,7 @@
  */
 import { EditorSelection } from "@codemirror/state";
 import type { EditorView } from "@codemirror/view";
+import type { EventBus } from "@/core/event/EventBus";
 import type { Theme } from "@/theme/Theme";
 import { ParserStore } from "@/transformer/core/ParserStore";
 
@@ -14,10 +15,13 @@ export type EditorCommand = string;
 
 /**
  * 命令执行上下文。
- * 弹窗类命令需要 `theme` 以触发 `editor:dialog:open` 事件。
+ * 弹窗类命令需要 `eventBus` 以触发 `editor:dialog:open` 事件；
+ * 主题切换命令需要 `theme`。
  */
 export interface CommandContext {
-  /** 主题实例，用于对话框、主题切换等 UI 交互。 */
+  /** 实例级事件总线，用于对话框等跨模块通讯。 */
+  eventBus?: EventBus;
+  /** 主题实例，用于 `setTheme` 等皮肤 API。 */
   theme?: Theme;
   /** 获取当前最新渲染的 AST。 */
   getStore?: () => ParserStore;

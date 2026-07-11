@@ -112,9 +112,11 @@ export class FieldCommand implements Command, DialogCapableCommand {
       return true;
     }
 
-    if (!ctx?.theme) return false;
+    if (!ctx?.eventBus) return false;
     // 如果选中文本，则覆盖弹窗默认的 description 字段
-    const data = await requestDialog(ctx.theme, "field", { description: desc });
+    const data = await requestDialog(ctx.eventBus, "field", {
+      description: desc,
+    });
     if (!data) return false;
 
     const lines = [`::: field ${data.name}`];

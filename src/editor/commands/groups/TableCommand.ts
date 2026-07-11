@@ -164,8 +164,8 @@ export class TableCommand implements Command, DialogCapableCommand {
     _payload: unknown,
     ctx: CommandContext,
   ): Promise<boolean> {
-    if (!ctx?.theme) return false;
-    const data = await requestDialog(ctx.theme, "table");
+    if (!ctx?.eventBus) return false;
+    const data = await requestDialog(ctx.eventBus, "table");
     if (!data) return false;
 
     const rows = Math.max(1, Math.min(10, data.rows));

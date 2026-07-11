@@ -164,8 +164,8 @@ export class EmojiCommand implements Command, DialogCapableCommand {
     _p: unknown,
     ctx: CommandContext,
   ): Promise<boolean> {
-    if (!ctx?.theme) return false;
-    const data = await requestDialog(ctx.theme, "emoji");
+    if (!ctx?.eventBus) return false;
+    const data = await requestDialog(ctx.eventBus, "emoji");
     if (!data?.code) return false;
     insertText(view, data.code);
     return true;

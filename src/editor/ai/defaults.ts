@@ -139,7 +139,7 @@ export function buildAIToolbarItems(items?: CherryAIItem[]): ToolbarItem[] {
         icon: item.icon,
         onClick: async (ctx) => {
           if (item.isCustom) {
-            const result = await requestDialog(ctx.theme, "aiCustom");
+            const result = await requestDialog(ctx.eventBus, "aiCustom");
             if (!result?.prompts) return;
             ctx.execute("ai", { action: item.id, prompts: result.prompts });
             return;

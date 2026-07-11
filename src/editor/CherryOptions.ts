@@ -4,7 +4,7 @@ import type { PreviewOptions } from "@/editor/preview/PreviewOptions";
 import type { SideBarOptions } from "@/editor/sidebar/SideBarOptions";
 import type { ToolbarOptions } from "@/editor/toolbar/ToolbarOptions";
 import type { TransformerEngineOptions } from "@/transformer/TransformerEngineOptions";
-import type { LightDark } from "@/theme/Theme";
+import { LightDark } from "@/theme/event/ThemeLightDarkEvent";
 
 /** 内置 action id：translate | continue | polish | custom */
 export type CherryAIAction = string;
@@ -58,6 +58,7 @@ export interface CherryOptions {
   appearance?: LightDark;
   /** 主题 id，默认 `default` */
   themeId?: string;
+  themes?: string[];
   /** 调试模式，透传给 {@link Theme}；开启后 `theme.logD` 才会输出 */
   debug?: boolean;
   /** `false` 时不实例化工具栏 */

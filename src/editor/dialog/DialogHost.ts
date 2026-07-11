@@ -1,16 +1,16 @@
-import type { Theme } from "@/theme/Theme";
+import type { EventBus } from "@/core/event/EventBus";
 import { DIALOG_RENDERERS } from "@/editor/commands/index.js";
 import type { DialogType } from "@/editor/commands/dialogTypes.js";
 
 export class DialogHost {
   private readonly root: HTMLElement;
-  private readonly theme: Theme;
+  private readonly eventBus: EventBus;
   private readonly offs: (() => void)[] = [];
   private cleanupForm: (() => void) | null = null;
   private activeId: string | null = null;
 
-  constructor(mount: HTMLElement, theme: Theme) {
-    this.theme = theme;
+  constructor(mount: HTMLElement, eventBus: EventBus) {
+    this.eventBus = eventBus;
     this.root = document.createElement("div");
     this.root.className = "cherry-dialog-host";
     this.root.hidden = true;
@@ -23,7 +23,7 @@ export class DialogHost {
     this.offs.push(() => document.removeEventListener("keydown", onKey));
 
     this.offs.push(
-      theme.on("editor:dialog:open", (payload) => {
+      eventBus.on("editor:dialog:open", (payload) => {
         const p = payload as {
           id: string;
           type: DialogType;
@@ -58,7 +58,7 @@ export class DialogHost {
       if (!this.activeId) return;
       const resultId = this.activeId;
       this.teardown();
-      this.theme.emit("editor:dialog:result", {
+      this.eventBus.emit("editor:dialog:result", {
         id: resultId,
         cancelled,
         data,
@@ -89,7 +89,7 @@ export class DialogHost {
       this.root.classList.remove("is-closing");
       this.teardown();
       if (silent)
-        this.theme.emit("editor:dialog:result", { id, cancelled: true });
+        this.eventBus.emit("editor:dialog:result", { id, cancelled: true });
     }, 200);
   }
 
