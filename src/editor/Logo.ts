@@ -3,20 +3,8 @@ const PROJECT_NAME = "Cherry Markdown Next";
 const GITHUB_REPO = "https://github.com/AnkioTomas/cherry-markdown-next";
 const AUTHOR_BLOG = "https://ankio.net";
 
-function isBrowser(): boolean {
-  return (
-    typeof globalThis !== "undefined" &&
-    typeof (globalThis as { document?: unknown }).document !== "undefined"
-  );
-}
-
-let logoPrinted = false;
-
 /** 浏览器控制台彩色欢迎语（全局仅输出一次） */
 export function printCherryLogo(): void {
-  if (!isBrowser() || logoPrinted) return;
-  logoPrinted = true;
-
   const muted = "color:#6b7280;font-size:14px;";
   const title = "color:#e11d48;font-size:18px;font-weight:700;";
   const name = "color:#111827;font-size:16px;font-weight:700;";
