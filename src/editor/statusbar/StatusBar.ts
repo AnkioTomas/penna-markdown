@@ -1,4 +1,11 @@
 import type { EventBus } from "@/core/event/EventBus";
+import { debounce } from "@/core/debounce";
+import type {
+  CherryLayoutPayload,
+  CherrySidebarPayload,
+  EditorChangePayload,
+} from "@/editor/events";
+import type { EditorLayoutMode } from "@/editor/Layout";
 
 const ICON_SIDEBAR = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cherry-icon"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>`;
 const ICON_EDIT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cherry-icon"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
@@ -6,6 +13,9 @@ const ICON_PREVIEW = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
 const ICON_SPLIT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cherry-icon"><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"></path></svg>`;
 const ICON_REFRESH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cherry-icon"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>`;
 
+const STATS_DEBOUNCE_MS = 200;
+
+/** 提供侧边栏、布局、刷新和文档统计控制的底部状态栏。 */
 export class StatusBar {
   private readonly leftEl: HTMLElement;
   private readonly rightEl: HTMLElement;
@@ -13,8 +23,18 @@ export class StatusBar {
   private readonly offs: Set<() => void> = new Set();
 
   private sidebarVisible = true;
-  private layoutMode: "edit" | "preview" | "split" = "split";
+  private layoutMode: EditorLayoutMode = "split";
+  private refreshTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly debouncedUpdateStats = debounce((markdown: string) => {
+    this.updateStats(markdown);
+  }, STATS_DEBOUNCE_MS);
 
+  /**
+   * 创建状态栏 DOM 并订阅编辑内容变化。
+   *
+   * @param mount 承载状态栏的 DOM 元素。
+   * @param eventBus 用于发布控制事件和接收状态变化的事件总线。
+   */
   constructor(
     private readonly mount: HTMLElement,
     private readonly eventBus: EventBus,
@@ -36,15 +56,14 @@ export class StatusBar {
     this.initButtons();
     this.initRightButtons();
 
-    // 监听 preview:rendered 或 editor:change
     this.offs.add(
-      this.eventBus.on("editor:change", (payload) => {
-        const { markdown } = payload as { markdown: string };
-        this.updateStats(markdown);
+      this.eventBus.on<EditorChangePayload>("editor:change", (payload) => {
+        this.debouncedUpdateStats(payload.markdown);
       }),
     );
   }
 
+  /** 初始化左侧的侧边栏及布局切换按钮，并绑定状态同步事件。 */
   private initButtons() {
     const btnSidebar = document.createElement("button");
     btnSidebar.className = "cherry-statusbar-btn";
@@ -52,7 +71,9 @@ export class StatusBar {
     btnSidebar.title = "切换侧边栏";
     btnSidebar.onclick = () => {
       this.sidebarVisible = !this.sidebarVisible;
-      this.eventBus.emit("cherry:sidebar", { show: this.sidebarVisible });
+      this.eventBus.emit("cherry:sidebar", {
+        show: this.sidebarVisible,
+      } satisfies CherrySidebarPayload);
       btnSidebar.classList.toggle("is-active", this.sidebarVisible);
     };
     btnSidebar.classList.toggle("is-active", this.sidebarVisible);
@@ -83,8 +104,8 @@ export class StatusBar {
     btnSplit.classList.add("is-active");
 
     this.offs.add(
-      this.eventBus.on("cherry:layout", (payload) => {
-        const mode = (payload as any).mode;
+      this.eventBus.on<CherryLayoutPayload>("cherry:layout", (payload) => {
+        const mode = payload.mode;
         this.layoutMode = mode;
         const btns = this.leftEl.querySelectorAll(
           ".cherry-statusbar-btn:not(:first-child)",
@@ -97,14 +118,14 @@ export class StatusBar {
     );
 
     this.offs.add(
-      this.eventBus.on("cherry:sidebar", (payload) => {
-        const show = (payload as any).show;
-        this.sidebarVisible = show;
-        btnSidebar.classList.toggle("is-active", show);
+      this.eventBus.on<CherrySidebarPayload>("cherry:sidebar", (payload) => {
+        this.sidebarVisible = payload.show;
+        btnSidebar.classList.toggle("is-active", payload.show);
       }),
     );
   }
 
+  /** 初始化右侧的强制预览刷新按钮。 */
   private initRightButtons() {
     const btnRefresh = document.createElement("button");
     btnRefresh.className = "cherry-statusbar-btn";
@@ -115,9 +136,11 @@ export class StatusBar {
 
       const svg = btnRefresh.querySelector("svg");
       if (svg) {
+        if (this.refreshTimer) clearTimeout(this.refreshTimer);
         svg.style.transition = "transform 0.5s ease";
         svg.style.transform = `rotate(360deg)`;
-        setTimeout(() => {
+        this.refreshTimer = setTimeout(() => {
+          this.refreshTimer = null;
           svg.style.transition = "none";
           svg.style.transform = `rotate(0deg)`;
         }, 500);
@@ -128,14 +151,22 @@ export class StatusBar {
     this.rightEl.appendChild(btnRefresh);
   }
 
-  private switchLayout(
-    mode: "edit" | "preview" | "split",
-    _activeBtn: HTMLElement,
-  ) {
+  /**
+   * 请求切换编辑器布局。
+   *
+   * @param mode 要切换到的布局模式。
+   * @param _activeBtn 触发请求的按钮，保留以维持按钮回调接口。
+   */
+  private switchLayout(mode: EditorLayoutMode, _activeBtn: HTMLElement) {
     if (this.layoutMode === mode) return;
-    this.eventBus.emit("cherry:layout", { mode });
+    this.eventBus.emit("cherry:layout", { mode } satisfies CherryLayoutPayload);
   }
 
+  /**
+   * 统计 Markdown 文本的词数和字符数，并更新显示。
+   *
+   * @param text 要统计的 Markdown 文本。
+   */
   private updateStats(text: string): void {
     const charCount = text.length;
     // 简单的字数统计（英文按空格分词，中文粗略按字算）
@@ -156,7 +187,11 @@ export class StatusBar {
     this.countEl.textContent = `${wordCount} 词 · ${charCount} 字符`;
   }
 
+  /** 清除刷新动画计时器并注销全部事件订阅。 */
   destroy(): void {
+    if (this.refreshTimer) clearTimeout(this.refreshTimer);
+    this.debouncedUpdateStats.cancel();
+    this.refreshTimer = null;
     for (const off of this.offs) off();
     this.offs.clear();
   }
