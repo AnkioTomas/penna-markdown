@@ -1,15 +1,26 @@
 import type { EventBus } from "@/core/event/EventBus";
 import type { SideBarOptions, CherryFileItem } from "./SideBarOptions";
 import type { TocItem } from "@/renderer/toc/TocItem.js";
+import type {
+  PreviewRenderedPayload,
+  SidebarTocClickPayload,
+} from "@/editor/events";
 
+/** 管理文件列表和文档大纲两个侧边栏面板。 */
 export class SideBar {
   private readonly tabsEl: HTMLElement;
   private readonly filePanelEl: HTMLElement;
   private readonly tocPanelEl: HTMLElement;
   private readonly offs: Set<() => void> = new Set();
-  private activeTab: "file" | "toc" = "toc";
   private activeFileId: string | null = null;
 
+  /**
+   * 创建侧边栏 DOM，并订阅预览渲染完成事件以更新大纲。
+   *
+   * @param mount 承载侧边栏内容的 DOM 元素。
+   * @param eventBus 用于接收大纲并发布大纲点击事件的事件总线。
+   * @param options 文件加载和点击行为的可选配置。
+   */
   constructor(
     private readonly mount: HTMLElement,
     private readonly eventBus: EventBus,
@@ -58,19 +69,22 @@ export class SideBar {
     this.mount.appendChild(panelsEl);
     this.switchTab(this.options.fetchFiles ? "file" : "toc");
 
-    // Listen to TOC updates
     this.offs.add(
-      this.eventBus.on("preview:rendered", (payload) => {
-        const toc = (payload as { toc?: TocItem[] }).toc;
-        if (toc) {
-          this.renderToc(toc);
-        }
-      }),
+      this.eventBus.on<PreviewRenderedPayload>(
+        "preview:rendered",
+        (payload) => {
+          if (payload.toc) this.renderToc(payload.toc);
+        },
+      ),
     );
   }
 
+  /**
+   * 切换文件列表或文档大纲面板。
+   *
+   * @param tab 要显示的侧边栏标签。
+   */
   private switchTab(tab: "file" | "toc") {
-    this.activeTab = tab;
     const btns = this.tabsEl.querySelectorAll(".cherry-sidebar-tab");
     btns[0]?.classList.toggle("is-active", tab === "file");
     btns[1]?.classList.toggle("is-active", tab === "toc");
@@ -79,6 +93,7 @@ export class SideBar {
     this.tocPanelEl.style.display = tab === "toc" ? "" : "none";
   }
 
+  /** 加载并渲染宿主提供的文件列表。 */
   private async loadFiles() {
     if (!this.options.fetchFiles) return;
     this.filePanelEl.innerHTML =
@@ -92,6 +107,11 @@ export class SideBar {
     }
   }
 
+  /**
+   * 将文件列表渲染为可选择的侧边栏项。
+   *
+   * @param files 要显示的文件元数据列表。
+   */
   private renderFiles(files: CherryFileItem[]) {
     this.filePanelEl.replaceChildren();
     for (const file of files) {
@@ -130,6 +150,11 @@ export class SideBar {
     }
   }
 
+  /**
+   * 根据预览生成的大纲数据渲染可点击目录。
+   *
+   * @param toc 按层级组织的文档大纲项。
+   */
   private renderToc(toc: TocItem[]) {
     this.tocPanelEl.replaceChildren();
 
@@ -146,7 +171,9 @@ export class SideBar {
       el.textContent = item.text;
 
       el.onclick = () => {
-        this.eventBus.emit("sidebar:toc-click", { id: item.id });
+        this.eventBus.emit("sidebar:toc-click", {
+          id: item.id,
+        } satisfies SidebarTocClickPayload);
       };
 
       parentEl.appendChild(el);
@@ -160,6 +187,11 @@ export class SideBar {
     }
   }
 
+  /**
+   * 设置当前活动文件并同步列表项高亮状态。
+   *
+   * @param fileId 要标记为活动状态的文件标识。
+   */
   setActiveFile(fileId: string): void {
     this.activeFileId = fileId;
     for (const el of this.filePanelEl.querySelectorAll<HTMLElement>(
@@ -169,6 +201,7 @@ export class SideBar {
     }
   }
 
+  /** 注销侧边栏订阅的全部事件监听。 */
   destroy(): void {
     for (const off of this.offs) off();
     this.offs.clear();
