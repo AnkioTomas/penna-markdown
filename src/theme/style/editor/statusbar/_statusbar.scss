@@ -51,3 +51,11 @@
 .cherry-statusbar-count {
   font-variant-numeric: tabular-nums;
 }
+
+.cherry-statusbar-perf {
+  margin-left: 8px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  font-size: 11px;
+  color: color-mix(in srgb, var(--cherry-c-text-3) 85%, var(--cherry-c-text-1));
+}
