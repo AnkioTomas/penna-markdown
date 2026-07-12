@@ -8,9 +8,54 @@ export interface DocFile {
   size?: number;
 }
 
-/** 通过 Vite 目录索引 API（`?json`）拉取文件列表 */
+/**
+ * dist-demo 站点根（同时含 demo/、docs/、logo/ 的那一层）。
+ * 用当前 URL 里的 `/demo/` 定位，避免绝对路径在子目录部署时打到错误根。
+ */
+export function getDemoSiteRoot(): URL {
+  const { pathname, origin } = window.location;
+  const normalized = pathname.replace(/\\/g, "/");
+
+  const demoDir = normalized.indexOf("/demo/");
+  if (demoDir >= 0) {
+    return new URL(normalized.slice(0, demoDir + 1), origin);
+  }
+
+  if (/\/demo\/index\.html$/i.test(normalized)) {
+    return new URL(normalized.replace(/demo\/index\.html$/i, ""), origin);
+  }
+
+  if (/\/demo$/i.test(normalized)) {
+    return new URL(`${normalized.replace(/demo$/i, "")}`, origin);
+  }
+
+  if (/\/index\.html$/i.test(normalized)) {
+    return new URL(normalized.replace(/index\.html$/i, ""), origin);
+  }
+
+  return new URL(
+    normalized.endsWith("/") ? normalized : normalized.replace(/[^/]+$/, ""),
+    origin,
+  );
+}
+
+/** 把站点根相对路径（如 `/docs/a.md`）解析成可 fetch 的绝对 URL */
+export function siteUrl(pathFromRoot: string): string {
+  const rel = pathFromRoot.replace(/^\/+/, "");
+  return new URL(rel, getDemoSiteRoot()).toString();
+}
+
+/** 通过静态 listing 或 Vite 目录索引 API（`?json`）拉取文件列表 */
 export async function fetchDirListing(dir: string): Promise<DocFile[]> {
   const base = dir.endsWith("/") ? dir : `${dir}/`;
+  const listingUrl = siteUrl(`${base}__listing__.json`);
+
+  const staticRes = await fetch(listingUrl);
+  if (staticRes.ok) {
+    return (await staticRes.json()) as DocFile[];
+  }
+
+  // 开发态：Vite middleware 仍挂在站点根绝对路径上
   const res = await fetch(`${base}?json`);
   if (!res.ok) throw new Error(`目录列表加载失败: ${base}`);
   return (await res.json()) as DocFile[];
@@ -28,7 +73,8 @@ export async function fetchDocsList(dir = "/docs/"): Promise<DocFile[]> {
 
 export async function fetchDocContent(href: string): Promise<string> {
   try {
-    const res = await fetch(href);
+    const url = href.startsWith("http") ? href : siteUrl(href);
+    const res = await fetch(url);
     if (!res.ok) throw new Error("Failed to fetch doc content");
     return await res.text();
   } catch (e) {

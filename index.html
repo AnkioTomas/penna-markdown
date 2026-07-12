@@ -11,19 +11,20 @@
           params.get("to") ||
           params.get("demo") ||
           (location.hash || "").replace(/^#\/?/, "");
-        var target = "/demo/";
+        // 显式 index.html：兼容不自动补目录首页的静态服务器（含 FastAPI StaticFiles）
+        var target = "./demo/index.html";
         if (to) {
           target =
-            "/demo/" +
+            "./demo/" +
             to.replace(/^\/+/, "").replace(/\/+$/, "") +
             "/index.html";
         }
         location.replace(target);
       })();
     </script>
-    <meta http-equiv="refresh" content="0;url=/demo/" />
+    <meta http-equiv="refresh" content="0;url=./demo/index.html" />
   </head>
   <body>
-    <p>正在跳转到 Demo… <a href="/demo/">点此继续</a></p>
+    <p>正在跳转到 Demo… <a href="./demo/index.html">点此继续</a></p>
   </body>
 </html>

@@ -1,4 +1,4 @@
-import { fetchDirListing } from "./api.js";
+import { fetchDirListing, siteUrl } from "./api.js";
 
 export const SIDEBAR_FILE = "_sidebar.md";
 export const INDEX_FILES = ["_index.md", "index.md"] as const;
@@ -99,9 +99,10 @@ export async function findExistingDoc(href: string): Promise<string | null> {
 
   for (const candidate of candidates) {
     try {
-      const head = await fetch(candidate, { method: "HEAD" });
+      const url = siteUrl(candidate);
+      const head = await fetch(url, { method: "HEAD" });
       if (head.ok) return candidate;
-      const get = await fetch(candidate);
+      const get = await fetch(url);
       if (get.ok) return candidate;
     } catch {
       /* try next */
@@ -117,7 +118,7 @@ export async function resolveDirIndexHref(dir: string): Promise<string | null> {
 async function tryFetchSidebar(dir: string): Promise<string | null> {
   const href = `${dirHref(dir)}${SIDEBAR_FILE}`;
   try {
-    const res = await fetch(href);
+    const res = await fetch(siteUrl(href));
     if (!res.ok) return null;
     return await res.text();
   } catch {
