@@ -1,37 +1,30 @@
 import { el } from "@/editor/Cherry";
-import { ICON_MORE, resolveCommandIcon } from "@/editor/toolbar/icons";
+import { ICON_MORE, resolveToolbarIcon } from "@/editor/toolbar/commandIcons";
 import type {
   ToolbarButtonItem,
   ToolbarContext,
   ToolbarItem,
-  ToolbarItemBase,
   ToolbarMenuItem,
 } from "@/editor/toolbar/ToolbarItem";
 
 /**
  * 判断当前项目是否为按钮项。
  * 在 `type` 未指定时，默认视为普通按钮。
+ *
+ * @param item 待判断的工具栏项目。
+ * @returns 项目是否为可执行的按钮项。
  */
 function isButtonItem(item: ToolbarItem): item is ToolbarButtonItem {
   return item.type === "button" || item.type === undefined;
 }
 
 /**
- * 决定项目最终呈现的 SVG 图标。
- * 优先级：
- * 1. 项中显式定义的自定义 `item.icon`
- * 2. 根据关联 `item.command` 解析出来的系统默认图标
- * 3. 兜底通用配置图标 `ICON_EXT`
- */
-function resolveIcon(
-  item: ToolbarItemBase & { command?: string; icon?: string },
-): string {
-  return item.icon ?? resolveCommandIcon(item.command);
-}
-
-/**
  * 组装并渲染按钮的核心内部结构。
  * 注入 SVG 片段。如果项目处于菜单面板内，或自身配置了 `label` 文本，则追加文字节点。
+ *
+ * @param btn 要填充内容的按钮元素。
+ * @param item 按钮的配置项。
+ * @param inMenu 按钮是否位于菜单面板内。
  */
 function setBtnContent(
   btn: HTMLElement,
@@ -39,7 +32,7 @@ function setBtnContent(
   inMenu: boolean,
 ) {
   btn.replaceChildren();
-  btn.insertAdjacentHTML("afterbegin", resolveIcon(item));
+  btn.insertAdjacentHTML("afterbegin", resolveToolbarIcon(item));
   btn.classList.add("has-icon");
 
   if (inMenu || item.label) {
@@ -52,6 +45,10 @@ function setBtnContent(
 /**
  * 构建下拉菜单触发器按钮（Trigger）的内部结构。
  * 注入菜单名，并在末尾附加指示箭头的 caret 节点。
+ *
+ * @param trigger 要填充内容的菜单触发按钮。
+ * @param item 菜单的配置项。
+ * @param nested 菜单是否为嵌套子菜单。
  */
 function setMenuTriggerContent(
   trigger: HTMLElement,
@@ -59,7 +56,7 @@ function setMenuTriggerContent(
   nested: boolean,
 ) {
   trigger.replaceChildren();
-  trigger.insertAdjacentHTML("afterbegin", resolveIcon(item));
+  trigger.insertAdjacentHTML("afterbegin", resolveToolbarIcon(item));
   trigger.classList.add("has-icon");
 
   const span = el("span", "cherry-toolbar-btn-label");
@@ -75,6 +72,10 @@ function setMenuTriggerContent(
 /**
  * 创建并初始化一个普通按钮的 DOM 实例。
  * 附加 `data-toolbar-id` 用于事件委托中的快速回溯定位。
+ *
+ * @param item 按钮的配置项。
+ * @param inMenu 按钮是否位于菜单面板内。
+ * @returns 初始化后的按钮元素。
  */
 export function renderButton(item: ToolbarButtonItem, inMenu: boolean) {
   const btn = el(
@@ -93,6 +94,10 @@ export function renderButton(item: ToolbarButtonItem, inMenu: boolean) {
 /**
  * 创建并组装一个下拉菜单（Menu）DOM 树。
  * 支持嵌套二级菜单（Submenu）结构。
+ *
+ * @param item 菜单的配置项及其子项目。
+ * @param nested 菜单是否作为子菜单渲染。
+ * @returns 组装完成的菜单容器元素。
  */
 export function renderMenu(item: ToolbarMenuItem, nested: boolean) {
   const wrap = el(
@@ -129,6 +134,10 @@ export function renderMenu(item: ToolbarMenuItem, nested: boolean) {
 
 /**
  * 路由并分发单个工具栏项的 DOM 节点追加逻辑。
+ *
+ * @param parent 要追加工具栏节点的父元素。
+ * @param item 待渲染的工具栏项目。
+ * @param inMenu 项目是否位于菜单面板内。
  */
 export function appendToolbarItem(
   parent: HTMLElement,
@@ -150,6 +159,9 @@ export function appendToolbarItem(
 
 /**
  * 拼装专属于移动端/小屏幕下的“更多”折叠下拉菜单。
+ *
+ * @param items 需要收纳到“更多”菜单中的项目。
+ * @returns 包含溢出项目的菜单元素。
  */
 export function renderOverflowMenu(items: ToolbarItem[]) {
   const menu: ToolbarMenuItem = {
@@ -173,6 +185,12 @@ export function renderOverflowMenu(items: ToolbarItem[]) {
  * 2. 建立 O(1) 的 Map 映射快速查找，避免在事件流中频繁进行 DOM 到树节点的递归搜索。
  * 3. 实现了健全的页面级点击收起（`onDocClick`）机制，点击菜单外部区域时自动闭合状态。
  * 4. 彻底解耦的生命周期管理：返回一个销毁函数（Cleanup），可安全注销全局/局部事件监听，防止内存泄露。
+ *
+ * @param mount 承载工具栏的 DOM 元素。
+ * @param items 要渲染的顶层工具栏项目。
+ * @param ctx 工具栏项目执行命令时使用的上下文。
+ * @param onClick 未配置命令或局部回调时的可选项目点击处理器。
+ * @returns 注销事件监听并清空工具栏的清理函数。
  */
 export function renderToolbar(
   mount: HTMLElement,
@@ -310,10 +328,10 @@ export function renderToolbar(
         if (item && isButtonItem(item)) {
           if (item.onClick) {
             item.onClick(ctx);
-          } else if (item.command) {
-            ctx.execute(item.command, item.payload);
           } else if (onClick) {
             onClick(id, ctx);
+          } else {
+            ctx.execute(item.id);
           }
           ctx.focus();
           closeOpenPanel();
