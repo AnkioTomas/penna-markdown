@@ -1,3 +1,4 @@
 allowBuilds:
   esbuild: true
-  "@parcel/watcher": true
+  # 静态构建不需要文件监听；云端编译原生模块会拖死 install
+  "@parcel/watcher": false
