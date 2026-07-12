@@ -29,25 +29,32 @@ import {
 import { clipboardExtension } from "./clipboard";
 import { pasteStateField, pasteTooltipPlugin } from "./pasteTooltip";
 import { createCustomSearchPanel } from "./searchPanel";
-import { createAIExtension, createAICommandListener } from "@/editor/ai";
+import { createAIExtension } from "@/editor/ai";
+import type { EditorChangePayload } from "@/editor/events";
 import type { EditorOptions } from "./EditorOptions";
 import type { EventBus } from "@/core/event/EventBus";
 
 /**
- * 编辑器核心类，是对 CodeMirror 6 的一层防腐层（Anti-Corruption Layer）封装。
+ * 编辑器核心：组装 CodeMirror 6 扩展，并把文档变更翻译为 `editor:change`。
  *
- * 【架构说明】
- * 为什么要包这一层？
- * 1. 隔离外部依赖：整个项目中，除了 `src/editor/editor` 目录下的几个文件外，
- *    其他任何业务模块都不应该直接引用 `@codemirror/*` 里的 API。
- * 2. 对接事件总线：这个类内部将 CodeMirror 的 `updateListener` 转译为我们的 `editor:change` 事件。
- * 3. 动态扩展高亮绑定：在初始化时，会调用 `resolveTransformerHighlight` 把基于 Transformer 的 AST
- *    高亮同步扩展动态打入 CodeMirror 中。
+ * 【CM 依赖边界（诚实声明）】
+ * 允许直接依赖 `@codemirror/*` 的目录：
+ *   - `src/editor/editor/**`
+ *   - `src/editor/commands/**`
+ *   - `src/editor/ai/**`
+ *   - `src/editor/CommandBridge.ts`（仅获取 EditorView）
+ * 禁止：toolbar / sidebar / statusbar / dialog / divider / preview 不得 import `@codemirror/*`。
  */
 export class Editor {
   private readonly view: EditorView;
-  private aiCleanup: (() => void) | null = null;
 
+  /**
+   * 创建 CodeMirror 编辑器并注册文档变更与 AI 命令监听。
+   *
+   * @param mount 编辑器 DOM 挂载容器。
+   * @param eventBus 供编辑器向外发布事件的共享事件总线。
+   * @param options 编辑器初始内容、扩展功能及外部依赖配置。
+   */
   constructor(mount: HTMLElement, eventBus: EventBus, options: EditorOptions) {
     mount.classList.add("cherry-editor-cm");
 
@@ -55,7 +62,7 @@ export class Editor {
 
     const updateListener = EditorView.updateListener.of((update) => {
       if (!update.docChanged) return;
-      const payload = {
+      const payload: EditorChangePayload = {
         markdown: update.state.doc.toString(),
         tr: update.transactions,
       };
@@ -83,7 +90,7 @@ export class Editor {
       createEditorSyntaxHighlighting(),
       codeInfoPlugin,
       updateListener,
-      clipboardExtension(options.storage),
+      clipboardExtension(options.onParseFile),
       pasteStateField,
       pasteTooltipPlugin,
       search({ top: true, createPanel: createCustomSearchPanel }), // Show search panel at the top
@@ -95,8 +102,8 @@ export class Editor {
 
     extensions.push(highlightActiveLine(), drawSelection());
 
-    if (options.ai) {
-      extensions.push(...createAIExtension(options.ai));
+    if (options.onAiRequest) {
+      extensions.push(...createAIExtension());
     }
 
     const state = EditorState.create({
@@ -105,20 +112,18 @@ export class Editor {
     });
 
     this.view = new EditorView({ state, parent: mount });
-
-    if (options.ai) {
-      this.aiCleanup = createAICommandListener(
-        eventBus,
-        options.ai.AIRequest,
-        () => this.view,
-      );
-    }
   }
 
+  /** 获取当前文档的完整 Markdown 文本。 */
   getMarkdown(): string {
     return this.view.state.doc.toString();
   }
 
+  /**
+   * 用给定 Markdown 替换整个编辑器文档。
+   *
+   * @param markdownText 要写入编辑器的 Markdown 文本。
+   */
   setMarkdown(markdownText: string): void {
     const current = this.getMarkdown();
     if (current === markdownText) return;
@@ -127,21 +132,23 @@ export class Editor {
     });
   }
 
+  /** 获取底层 CodeMirror 视图，供受控集成使用。 */
   getView(): EditorView {
     return this.view;
   }
 
+  /** 获取负责编辑器滚动的 DOM 元素。 */
   getScrollDOM(): HTMLElement {
     return this.view.scrollDOM;
   }
 
+  /** 将焦点移入底层 CodeMirror 编辑器。 */
   focus(): void {
     this.view.focus();
   }
 
+  /** 销毁底层 CodeMirror 视图。 */
   destroy(): void {
-    this.aiCleanup?.();
-    this.aiCleanup = null;
     this.view.destroy();
   }
 }

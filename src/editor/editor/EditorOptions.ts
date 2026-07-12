@@ -1,5 +1,5 @@
 import type { TransformerEngineOptions } from "@/transformer/TransformerEngineOptions";
-import type { CherryAIOptions, StorageAPI } from "@/editor/CherryOptions";
+import type { OnAiRequest, OnParseFile } from "@/editor/CherryOptions";
 
 export interface EditorOptions {
   /** 初始 Markdown 正文 */
@@ -7,12 +7,9 @@ export interface EditorOptions {
   /** 显示行号，默认 `true` */
   lineNumbers?: boolean;
 
-  /** 给 transformer 高亮的解析选项 */
-  transformerEngineOptions?: TransformerEngineOptions;
+  /** 文件解析/上传回调，粘贴或拖入文件时调用 */
+  onParseFile?: OnParseFile;
 
-  /** 存储 API 契约配置 */
-  storage?: StorageAPI;
-
-  /** `false` 时禁用 AI 功能 */
-  ai?: CherryAIOptions | false;
+  /** AI 请求回调；省略时不启用 AI 功能 */
+  onAiRequest?: OnAiRequest;
 }

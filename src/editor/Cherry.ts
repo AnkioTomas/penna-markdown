@@ -4,7 +4,7 @@ import { Preview } from "@/editor/preview/Preview";
 import { SideBar } from "@/editor/sidebar/SideBar";
 import { Toolbar } from "@/editor/toolbar/Toolbar";
 import { StatusBar } from "@/editor/statusbar/StatusBar";
-import type { CherryOptions } from "@/editor/CherryOptions";
+import type { CherryOptions, OnAiRequest } from "@/editor/CherryOptions";
 import type { EditorLayoutMode } from "@/editor/Layout";
 import { printCherryLogo } from "@/editor/Logo";
 import { ScrollSync } from "@/editor/sync/ScrollSync";
@@ -83,6 +83,7 @@ export class Cherry {
   private readonly scrollSync: ScrollSync;
 
   private readonly log: Log;
+  private readonly onAiRequest?: OnAiRequest;
 
   private destroyed = false;
 
@@ -104,13 +105,18 @@ export class Cherry {
     const {
       themeId = "default",
       appearance = "light",
-      editor: editorOptions = {},
       preview: previewOptions = {},
       statusbar = true,
     } = options;
 
+    const editorOptions = {
+      ...(options.editor ?? {}),
+      onAiRequest: options.editor?.onAiRequest ?? options.onAiRequest,
+      onParseFile: options.editor?.onParseFile ?? options.onParseFile,
+    };
+
     const initialLayout = options.layout ?? "split";
-    const onAiRequest = editorOptions.onAiRequest;
+    this.onAiRequest = editorOptions.onAiRequest;
 
     this.cherryEl = el("div", "cherry");
     this.toolbarEl = el("div", "cherry-toolbar");
@@ -151,13 +157,17 @@ export class Cherry {
       this.theme,
       this.eventBus,
       this.log,
-      previewOptions,
+      { ...previewOptions, debug: options.debug },
     );
 
     this.editor = new Editor(this.editorEl, this.eventBus, editorOptions);
 
     if (statusbar && this.statusbarEl) {
-      this.statusbar = new StatusBar(this.statusbarEl, this.eventBus);
+      this.statusbar = new StatusBar(
+        this.statusbarEl,
+        this.eventBus,
+        options.debug === true,
+      );
     }
 
     this.divider = new Divider(this.dividerEl, this.eventBus, this.storage);
@@ -166,8 +176,12 @@ export class Cherry {
     this.toolbar =
       options.toolbar === false
         ? null
-        : new Toolbar(this.toolbarEl, this.eventBus, options.toolbar!!, () =>
-            this.editor.focus(),
+        : new Toolbar(
+            this.toolbarEl,
+            this.eventBus,
+            options.toolbar!!,
+            options.themes,
+            () => this.editor.focus(),
           );
 
     this.sidebar = new SideBar(
@@ -188,6 +202,7 @@ export class Cherry {
       this.theme,
       () => this.editor.getView(),
       () => this.preview.getStore(),
+      this.onAiRequest,
     );
 
     this.eventBus.on<CherryLayoutPayload>("cherry:layout", (payload) => {
@@ -282,6 +297,7 @@ export class Cherry {
       eventBus: this.eventBus,
       theme: this.theme,
       getStore: () => this.preview.getStore(),
+      onAiRequest: this.onAiRequest,
     };
   }
 

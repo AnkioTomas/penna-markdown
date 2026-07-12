@@ -16,6 +16,14 @@ const ICON_CLOSE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 
 type Attrs = Record<string, string | boolean | ((e: Event) => void)>;
 
+/**
+ * 创建元素并应用属性、事件处理器与子节点。
+ *
+ * @param tag 要创建的 HTML 标签名。
+ * @param attrs 元素属性或以 `on` 开头的事件处理器。
+ * @param children 要追加的文本或 DOM 子节点。
+ * @returns 已配置的元素。
+ */
 function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   attrs: Attrs = {},
@@ -39,6 +47,16 @@ function el<K extends keyof HTMLElementTagNameMap>(
   return node;
 }
 
+/**
+ * 创建带图标的搜索面板按钮。
+ *
+ * @param name 按钮名称。
+ * @param label 用于无障碍提示的文本标签。
+ * @param icon 按钮内的 SVG 标记。
+ * @param onclick 点击时执行的操作。
+ * @param extraClass 额外的 CSS 类名。
+ * @returns 创建的按钮元素。
+ */
 function iconBtn(
   name: string,
   label: string,
@@ -58,6 +76,14 @@ function iconBtn(
   return btn;
 }
 
+/**
+ * 创建带文本标签的搜索面板按钮。
+ *
+ * @param name 按钮名称。
+ * @param label 按钮显示文本。
+ * @param onclick 点击时执行的操作。
+ * @returns 创建的按钮元素。
+ */
 function textBtn(
   name: string,
   label: string,
@@ -75,6 +101,15 @@ function textBtn(
   );
 }
 
+/**
+ * 创建切换搜索选项的按钮。
+ *
+ * @param name 按钮名称。
+ * @param label 按钮显示文本。
+ * @param title 用于提示和无障碍说明的选项名称。
+ * @param onclick 点击时执行的切换操作。
+ * @returns 创建的按钮元素。
+ */
 function optionBtn(
   name: string,
   label: string,
@@ -95,6 +130,13 @@ function optionBtn(
   );
 }
 
+/**
+ * 统计当前查询在文档中的匹配总数及当前选区所在匹配序号。
+ *
+ * @param view 要搜索的编辑器视图。
+ * @param query 当前搜索查询。
+ * @returns 当前匹配序号和匹配总数。
+ */
 function getMatchStats(
   view: EditorView,
   query: SearchQuery,
@@ -115,12 +157,20 @@ function getMatchStats(
   return { index, total };
 }
 
+/**
+ * 将匹配统计格式化为面板显示文本。
+ *
+ * @param index 当前匹配序号。
+ * @param total 匹配总数。
+ * @returns 用于显示的匹配统计文本。
+ */
 function formatMatchCount(index: number, total: number): string {
   if (total === 0) return "无结果";
   if (index === 0) return `${total} 处`;
   return `${index}/${total}`;
 }
 
+/** 提供查找、替换及搜索选项控制的 CodeMirror 搜索面板。 */
 class CherrySearchPanel implements Panel {
   private readonly view: EditorView;
   private query: SearchQuery;
@@ -132,6 +182,11 @@ class CherrySearchPanel implements Panel {
   private readonly wordBtn: HTMLButtonElement;
   readonly dom: HTMLElement;
 
+  /**
+   * 创建搜索面板并用编辑器当前查询初始化控件。
+   *
+   * @param view 面板关联的编辑器视图。
+   */
   constructor(view: EditorView) {
     this.view = view;
     this.query = getSearchQuery(view.state);
@@ -229,15 +284,22 @@ class CherrySearchPanel implements Panel {
     this.refreshMatchCount();
   }
 
+  /** 指示面板应显示在编辑器顶部。 */
   get top() {
     return true;
   }
 
+  /** 面板挂载后聚焦并选中搜索输入框内容。 */
   mount() {
     this.searchField.focus();
     this.searchField.select();
   }
 
+  /**
+   * 同步外部查询变更，并在文档或选区变化后刷新匹配统计。
+   *
+   * @param update CodeMirror 视图更新信息。
+   */
   update(update: ViewUpdate) {
     for (const tr of update.transactions) {
       for (const effect of tr.effects) {
@@ -251,6 +313,11 @@ class CherrySearchPanel implements Panel {
     }
   }
 
+  /**
+   * 切换指定搜索选项并提交新查询。
+   *
+   * @param key 要切换的查询选项。
+   */
   private toggleOption(key: "caseSensitive" | "regexp" | "wholeWord") {
     this.syncQuery(
       new SearchQuery({
@@ -268,6 +335,11 @@ class CherrySearchPanel implements Panel {
     this.commit();
   }
 
+  /**
+   * 将查询状态同步到输入框、选项按钮和匹配统计。
+   *
+   * @param query 要显示的搜索查询。
+   */
   private syncQuery(query: SearchQuery) {
     this.query = query;
     this.searchField.value = query.search;
@@ -278,6 +350,7 @@ class CherrySearchPanel implements Panel {
     this.refreshMatchCount();
   }
 
+  /** 将面板输入内容提交到 CodeMirror 搜索状态。 */
   private commit() {
     const query = new SearchQuery({
       search: this.searchField.value,
@@ -293,6 +366,7 @@ class CherrySearchPanel implements Panel {
     this.refreshMatchCount();
   }
 
+  /** 根据当前查询与选区更新匹配数量显示。 */
   private refreshMatchCount() {
     const { index, total } = getMatchStats(this.view, this.query);
     this.matchCount.textContent = formatMatchCount(index, total);
@@ -302,12 +376,22 @@ class CherrySearchPanel implements Panel {
     );
   }
 
+  /**
+   * 提交输入后执行搜索命令，并刷新匹配统计。
+   *
+   * @param command 要对关联编辑器执行的 CodeMirror 搜索命令。
+   */
   private run(command: (view: EditorView) => boolean) {
     this.commit();
     command(this.view);
     this.refreshMatchCount();
   }
 
+  /**
+   * 处理搜索和替换输入框中的 Enter 快捷键。
+   *
+   * @param e 触发面板事件的键盘事件。
+   */
   private keydown(e: KeyboardEvent) {
     if (e.key === "Enter" && e.target === this.searchField) {
       e.preventDefault();
@@ -319,6 +403,12 @@ class CherrySearchPanel implements Panel {
   }
 }
 
+/**
+ * 创建 Cherry 定制的 CodeMirror 搜索面板。
+ *
+ * @param view 要关联的编辑器视图。
+ * @returns 新建的搜索面板。
+ */
 export function createCustomSearchPanel(view: EditorView): Panel {
   return new CherrySearchPanel(view);
 }

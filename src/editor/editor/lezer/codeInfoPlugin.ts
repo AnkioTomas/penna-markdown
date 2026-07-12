@@ -12,16 +12,32 @@ export const codeInfoPlugin = ViewPlugin.fromClass(
   class {
     decorations: DecorationSet;
 
+    /**
+     * 为当前可见代码信息节点创建初始装饰。
+     *
+     * @param view 插件关联的编辑器视图。
+     */
     constructor(view: EditorView) {
       this.decorations = this.buildDecorations(view);
     }
 
+    /**
+     * 在文档或可视区域变化后重建代码信息装饰。
+     *
+     * @param update CodeMirror 视图更新信息。
+     */
     update(update: ViewUpdate) {
       if (update.docChanged || update.viewportChanged) {
         this.decorations = this.buildDecorations(update.view);
       }
     }
 
+    /**
+     * 为可见 `CodeInfo` 节点中的属性键、值和标志构建语法装饰。
+     *
+     * @param view 要读取语法树的编辑器视图。
+     * @returns 可应用到编辑器的装饰集合。
+     */
     buildDecorations(view: EditorView) {
       const builder = new RangeSetBuilder<Decoration>();
       for (const { from, to } of view.visibleRanges) {

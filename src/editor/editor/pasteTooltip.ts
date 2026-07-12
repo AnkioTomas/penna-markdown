@@ -39,6 +39,11 @@ export const pasteTooltipPlugin = ViewPlugin.fromClass(
     btnMd: HTMLButtonElement;
     view: EditorView;
 
+    /**
+     * 创建粘贴格式切换浮层并挂载到编辑器。
+     *
+     * @param view 浮层关联的编辑器视图。
+     */
     constructor(view: EditorView) {
       this.view = view;
       this.dom = document.createElement("div");
@@ -86,6 +91,12 @@ export const pasteTooltipPlugin = ViewPlugin.fromClass(
       this.syncUI(view.state.field(pasteStateField));
     }
 
+    /**
+     * 将刚粘贴的内容切换为原文或转换后的 Markdown。
+     *
+     * @param e 触发切换的鼠标事件。
+     * @param targetMode 要应用的粘贴文本格式。
+     */
     handleSwitch(e: MouseEvent, targetMode: "plain" | "markdown") {
       e.preventDefault();
       e.stopPropagation();
@@ -105,6 +116,11 @@ export const pasteTooltipPlugin = ViewPlugin.fromClass(
       this.view.focus();
     }
 
+    /**
+     * 在粘贴状态变化时同步浮层显示。
+     *
+     * @param update CodeMirror 视图更新信息。
+     */
     update(update: ViewUpdate) {
       const state = update.state.field(pasteStateField);
       const prevState = update.startState.field(pasteStateField);
@@ -113,6 +129,11 @@ export const pasteTooltipPlugin = ViewPlugin.fromClass(
       }
     }
 
+    /**
+     * 根据当前粘贴状态显示、隐藏并标记格式切换按钮。
+     *
+     * @param state 当前粘贴状态；为空时隐藏浮层。
+     */
     syncUI(state: PasteState | null) {
       if (!state) {
         this.dom.style.display = "none";
@@ -136,6 +157,7 @@ export const pasteTooltipPlugin = ViewPlugin.fromClass(
       updateBtnStyle(this.btnMd, state.active === "markdown");
     }
 
+    /** 从编辑器 DOM 中移除粘贴格式切换浮层。 */
     destroy() {
       this.dom.remove();
     }

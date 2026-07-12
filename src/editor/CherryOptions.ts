@@ -31,7 +31,7 @@ export interface CherryOptions {
   /** 主题 id，默认 `default` */
   themeId?: string;
   /**
-   * 可用主题白名单，同时控制工具栏主题菜单。
+   * 可用主题白名单，控制 {@link Theme} 与工具栏主题菜单。
    * 省略时使用全部内置主题；传入 `["github"]` 则仅显示该主题。
    */
   themes?: string[];
@@ -45,6 +45,13 @@ export interface CherryOptions {
   statusbar?: boolean;
   /** 本地存储 API，默认使用 `localStorage` */
   storage?: StorageAPI;
+  /**
+   * AI 请求回调；与 `editor.onAiRequest` 等价，`editor` 内配置优先。
+   * 未配置时 AI 工具栏命令会静默失败。
+   */
+  onAiRequest?: OnAiRequest;
+  /** 文件解析/上传回调；与 `editor.onParseFile` 等价，`editor` 内配置优先。 */
+  onParseFile?: OnParseFile;
   /** 编辑区选项 */
   editor?: EditorOptions;
   /** 预览区选项 */
