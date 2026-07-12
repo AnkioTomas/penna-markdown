@@ -17,7 +17,7 @@ features:
   - AST 可视化
   - 代码高亮与主题
 description: 基于 AST 语法树的 Markdown 解析引擎，完整演示 GFM 与 Cherry 扩展语法。
-repo: https://github.com/AutoAccountingOrg/cherry-markdown-next
+repo: https://github.com/AnkioTomas/cherry-markdown-next
 ---
 
 ==默认== ==重要=={.important} ==注意=={.note} ==提示=={.tip} ==警告=={.warning} ==谨慎=={.caution} ==危险=={.danger}

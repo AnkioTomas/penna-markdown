@@ -6,7 +6,7 @@ author:
   url: https://github.com
 version: 0.1.0
 tags: [demo, simple, gfm, cherry]
-repo: https://github.com/AutoAccountingOrg/cherry-markdown-next
+repo: https://github.com/AnkioTomas/cherry-markdown-next
 ---
 
 # [[title]]
@@ -553,4 +553,4 @@ VuePress 2 核心库
 
 ---
 
-_文档路径：`docs/simple.md` · 编辑器页头可切换 `test.md` / `simple.md`（选择会记住）_
+_文档路径：`docs/simple.md` · 完整文档见 [文档中心](_index.md) · 回归见 [test.md](test.md)_
