@@ -189,7 +189,7 @@ export function renderOverflowMenu(items: ToolbarItem[]) {
  * @param mount 承载工具栏的 DOM 元素。
  * @param items 要渲染的顶层工具栏项目。
  * @param ctx 工具栏项目执行命令时使用的上下文。
- * @param onClick 未配置命令或局部回调时的可选项目点击处理器。
+ * @param onClick 命令执行后的可选旁路回调（不得替代 \`ctx.execute\`）。
  * @returns 注销事件监听并清空工具栏的清理函数。
  */
 export function renderToolbar(
@@ -319,7 +319,7 @@ export function renderToolbar(
       return;
     }
 
-    // 拦截普通按钮点击，分发至 onClick 属性、内置 command 或全局 onClick 处理器
+    // 拦截普通按钮点击，分发至 item.onClick、内置 command，可选全局 onClick 旁路通知
     const btn = target.closest("[data-toolbar-id]") as HTMLButtonElement;
     if (btn) {
       const id = btn.dataset.toolbarId;
@@ -328,10 +328,10 @@ export function renderToolbar(
         if (item && isButtonItem(item)) {
           if (item.onClick) {
             item.onClick(ctx);
-          } else if (onClick) {
-            onClick(id, ctx);
           } else {
+            // 先走命令；全局 onClick 只作旁路，不得吞掉 execute（否则 AI 等全部失效）
             ctx.execute(item.id);
+            onClick?.(id, ctx);
           }
           ctx.focus();
           closeOpenPanel();

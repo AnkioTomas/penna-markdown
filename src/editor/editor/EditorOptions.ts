@@ -1,4 +1,3 @@
-import type { TransformerEngineOptions } from "@/transformer/TransformerEngineOptions";
 import type { OnAiRequest, OnParseFile } from "@/editor/CherryOptions";
 
 export interface EditorOptions {
