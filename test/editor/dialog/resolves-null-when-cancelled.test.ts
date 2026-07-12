@@ -3,18 +3,18 @@
  */
 
 import { expect, it } from "vitest";
-import { Theme } from "@/theme/Theme";
+import { EventBus } from "@/core/event/EventBus";
+import { Log } from "@/core/Log";
 import { requestDialog } from "@/editor/dialog/requestDialog.js";
-import { validateFrontmatterYaml } from "@/editor/commands/groups/FrontmatterCommand.js";
 
 it("resolves null when cancelled", async () => {
-  const theme = new Theme();
+  const eventBus = new EventBus(false, "[test]", new Log(false));
   let id = "";
-  theme.on("editor:dialog:open", (payload) => {
+  eventBus.on("editor:dialog:open", (payload) => {
     id = (payload as { id: string }).id;
   });
-  const p = requestDialog(theme, "table");
+  const p = requestDialog(eventBus, "table");
   await Promise.resolve();
-  theme.emit("editor:dialog:result", { id, cancelled: true });
+  eventBus.emit("editor:dialog:result", { id, cancelled: true });
   expect(await p).toBeNull();
 });

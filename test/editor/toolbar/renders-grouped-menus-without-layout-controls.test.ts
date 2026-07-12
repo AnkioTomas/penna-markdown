@@ -3,14 +3,14 @@
  */
 
 import { expect, it } from "vitest";
-import { Theme } from "@/theme/Theme.js";
+import { createTestEventBus } from "../../_helpers/eventBus";
 import { Toolbar } from "@/editor/toolbar/Toolbar.js";
 
 it("renders grouped menus without layout controls", () => {
   const mount = document.createElement("div");
   document.body.appendChild(mount);
-  const theme = new Theme();
-  const toolbar = new Toolbar(mount, theme, {});
+  const eventBus = createTestEventBus();
+  const toolbar = new Toolbar(mount, eventBus, {});
 
   expect(mount.querySelector(".cherry-toolbar-scroll")).toBeTruthy();
   expect(mount.querySelector(".cherry-toolbar-layout")).toBeFalsy();

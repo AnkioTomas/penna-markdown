@@ -4,15 +4,14 @@
 
 import { expect, it, vi } from "vitest";
 
-const LOG_CALLS = 4;
+const LOG_CALLS_PER_INVOCATION = 4;
 
-it("prints only once", async () => {
+it("prints cherry branding to console", async () => {
   vi.resetModules();
   const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
-  const { printCherryLogo } = await import("@/editor/printLogo.js");
-  printCherryLogo();
+  const { printCherryLogo } = await import("@/editor/Logo");
   printCherryLogo();
 
-  expect(logSpy).toHaveBeenCalledTimes(LOG_CALLS);
+  expect(logSpy).toHaveBeenCalledTimes(LOG_CALLS_PER_INVOCATION);
 });

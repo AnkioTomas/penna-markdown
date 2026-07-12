@@ -3,14 +3,14 @@
  */
 
 import { expect, it } from "vitest";
-import { Theme } from "@/theme/Theme.js";
+import { createTestEventBus } from "../../_helpers/eventBus";
 import { Toolbar } from "@/editor/toolbar/Toolbar.js";
 
 it("shows icon and label together in menu items", () => {
   const mount = document.createElement("div");
   document.body.appendChild(mount);
-  const theme = new Theme();
-  const toolbar = new Toolbar(mount, theme, {});
+  const eventBus = createTestEventBus();
+  const toolbar = new Toolbar(mount, eventBus, {});
 
   const formatMenu = mount.querySelector('[data-toolbar-id="textFormat"]');
   const trigger = formatMenu?.querySelector(

@@ -1,45 +1,53 @@
 import { expect, it, vi } from "vitest";
-import { Theme, THEME_EVENT_SKIN } from "@/theme/Theme.js";
+import { EventBus } from "@/core/event/EventBus";
+import { Log } from "@/core/Log";
+import { Theme } from "@/theme/Theme.js";
+import { THEME_EVENT_SKIN } from "@/theme/event/ThemeSkinEvent";
 
 async function createRenderTree() {
   const dom = new (await import("jsdom")).JSDOM(
     `<div id="root"><div id="render"></div></div>`,
   );
   const root = dom.window.document.getElementById("root")! as HTMLElement;
-  const render = dom.window.document.getElementById("render")! as HTMLElement;
-  return { root, render };
+  return { root };
 }
 
 it("logs emit/on/off in debug mode", async () => {
-  const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-  const { root, render } = await createRenderTree();
-  const theme = new Theme(true);
+  const infoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
+  const { root } = await createRenderTree();
+  const log = new Log(true);
+  const eventBus = new EventBus(true, "[cherry]", log);
+  const theme = new Theme(eventBus, log, root);
   const handler = vi.fn();
 
-  theme.on(THEME_EVENT_SKIN, handler);
-  theme.setTheme("claude", render, root);
-  theme.off(THEME_EVENT_SKIN, handler);
+  eventBus.on(THEME_EVENT_SKIN, handler);
+  theme.setTheme("claude");
+  eventBus.off(THEME_EVENT_SKIN, handler);
 
-  expect(logSpy).toHaveBeenCalledWith("[cherry]", "event:on", THEME_EVENT_SKIN);
-  expect(logSpy).toHaveBeenCalledWith("[cherry]", "setTheme", {
+  expect(infoSpy).toHaveBeenCalledWith(
+    "[cherry]",
+    "event:on",
+    THEME_EVENT_SKIN,
+  );
+  expect(infoSpy).toHaveBeenCalledWith("setTheme", {
     prev: "default",
     id: "claude",
   });
-  expect(logSpy).toHaveBeenCalledWith(
+  expect(infoSpy).toHaveBeenCalledWith(
     "[cherry]",
     "event:emit",
     THEME_EVENT_SKIN,
     {
       prev: "default",
       id: "claude",
-      render,
+      root,
     },
   );
-  expect(logSpy).toHaveBeenCalledWith(
+  expect(infoSpy).toHaveBeenCalledWith(
     "[cherry]",
     "event:off",
     THEME_EVENT_SKIN,
   );
 
-  logSpy.mockRestore();
+  infoSpy.mockRestore();
 });

@@ -1,18 +1,9 @@
 import { expect, it } from "vitest";
-import { JSDOM } from "jsdom";
-import { Theme } from "@/theme/Theme.js";
-import { Renderer } from "@/renderer/Renderer.js";
+import { createJsdomRenderer } from "../helpers";
 import { BLOCK_HASH_ATTR } from "@/renderer/incremental/BlockIndex.js";
 
 it("render parses markdown and exposes sidebar", () => {
-  const dom = new JSDOM(`<div id="preview" class="cherry"></div>`, {
-    runScripts: "outside-only",
-  });
-  const mount = dom.window.document.getElementById("preview") as HTMLElement;
-  const theme = new Theme();
-  theme.setTheme("default", mount);
-
-  const renderer = new Renderer({ mount, theme });
+  const { renderer, mount } = createJsdomRenderer();
 
   const result = renderer.render("# Hello\n\n## World");
   expect(result.html).toContain('id="Hello"');
@@ -27,7 +18,6 @@ it("render parses markdown and exposes sidebar", () => {
 
   const h1 = mount.querySelector("h1") as HTMLElement;
   expect(h1.id).toBe("Hello");
-  expect(renderer.theme).toBe(theme);
 
   renderer.destroy();
 });

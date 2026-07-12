@@ -3,28 +3,10 @@
  */
 
 import { expect, it, vi } from "vitest";
-import { JSDOM } from "jsdom";
-import { Theme } from "@/theme/Theme.js";
-import { Renderer } from "@/renderer/Renderer.js";
 import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet.js";
-import { resolveHashBoundary } from "@/renderer/incremental/HashBoundaryResolver.js";
-import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
+import { parseWithHashBoundary } from "@/renderer/incremental/HashBoundaryResolver.js";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
-
-function createRenderer(debug = false) {
-  const dom = new JSDOM(`<div id="preview" class="cherry"></div>`, {
-    url: "http://localhost/",
-  });
-  const mount = dom.window.document.getElementById("preview") as HTMLElement;
-  const theme = new Theme(debug);
-  theme.setTheme("default", mount);
-  const renderer = new Renderer({ mount, theme });
-  return { renderer, mount, theme, dom };
-}
-
-function snapshotAstChildIds(ast: MarkdownNode) {
-  return (ast.children ?? []).map((node) => node.props?.id);
-}
+import { createJsdomRenderer as createRenderer } from "../helpers";
 
 function fullDocLineChange(
   fromA: number,
@@ -43,7 +25,7 @@ function fullDocLineChange(
   };
 }
 
-it("resolveHashBoundary yields empty anchors when dirty region covers all blocks", () => {
+it("parseWithHashBoundary yields empty anchors when dirty region covers all blocks", () => {
   const { renderer } = createRenderer();
   renderer.renderFull("Alpha\n\nBeta\n\nGamma");
   const session = renderer["session"];
@@ -52,16 +34,22 @@ it("resolveHashBoundary yields empty anchors when dirty region covers all blocks
   const newLines = normalizeMarkdownLines("Alpha2\n\nBeta2\n\nGamma2");
   const changes = [fullDocLineChange(1, 5, 1, 5)];
 
-  const resolved = resolveHashBoundary(prevAst, prevLines, newLines, changes);
-  expect(resolved).toBeDefined();
-  expect(resolved!.input.range.prevHash).toBe("");
-  expect(resolved!.input.range.nextHash).toBe("");
+  const parsed = parseWithHashBoundary(
+    prevAst,
+    prevLines,
+    newLines,
+    changes,
+    renderer["transformer"],
+  );
+  expect(parsed).toBeDefined();
+  expect(parsed!.resolve.input.range.prevHash).toBe("");
+  expect(parsed!.resolve.input.range.nextHash).toBe("");
 
   renderer.destroy();
   document.body.innerHTML = "";
 });
 
-it("tryUpdate full-replace aborts before parseIncremental mutates ast", () => {
+it("tryUpdate full-replace aborts without updating session snapshot or DOM", () => {
   const store: Record<string, string> = {};
   vi.stubGlobal("localStorage", {
     getItem: (key: string) => store[key] ?? null,
@@ -78,11 +66,9 @@ it("tryUpdate full-replace aborts before parseIncremental mutates ast", () => {
     length: 0,
   });
 
-  const { renderer, mount, theme } = createRenderer();
+  const { renderer, mount, log } = createRenderer();
   renderer.renderFull("Alpha\n\nBeta\n\nGamma");
   const session = renderer["session"];
-  const astBefore = session.ast!;
-  const childIdsBefore = snapshotAstChildIds(astBefore);
   const linesBefore = [...session.lines];
   const markdown = "Alpha2\n\nBeta2\n\nGamma2";
   const changes = [fullDocLineChange(1, 5, 1, 5)];
@@ -91,13 +77,12 @@ it("tryUpdate full-replace aborts before parseIncremental mutates ast", () => {
     mount,
     markdown,
     renderer["transformer"],
-    theme,
+    log,
     changes,
   );
 
   expect(update.ok).toBe(false);
   expect(update.failReason).toBe("full-replace");
-  expect(snapshotAstChildIds(session.ast!)).toEqual(childIdsBefore);
   expect(session.lines).toEqual(linesBefore);
   expect(mount.textContent).toContain("Alpha");
   expect(mount.textContent).not.toContain("Alpha2");

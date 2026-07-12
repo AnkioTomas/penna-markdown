@@ -3,14 +3,14 @@
  */
 
 import { expect, it, vi } from "vitest";
-import { logD } from "@/core/log.js";
+import { Log } from "@/core/Log";
 
 it("logD uses console.info", () => {
-  const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
   const infoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
 
-  logD("[cherry]", "browser debug");
+  const log = new Log(true);
+  log.logD("[cherry]", "browser debug");
 
   expect(infoSpy).toHaveBeenCalledWith("[cherry]", "browser debug");
-  expect(logSpy).not.toHaveBeenCalled();
+  infoSpy.mockRestore();
 });

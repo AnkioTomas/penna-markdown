@@ -4,8 +4,6 @@ import {
   createEnhancedEngine,
   renderMarkdown,
 } from "../../../../helpers/engine.js";
-import { buildMathImageSrc } from "@/transformer/extends/block/mathBlock.js";
-
 const MATH_BLOCK =
   '<div class="cherry-math cherry-math-block" data-type="mathBlock"><img class="cherry-math-latex" data-latex="E=mc^2" data-inline="false" alt="E=mc^2" src="https://math-api-delta.vercel.app/?from=E%3Dmc%5E2" loading="lazy" /></div>';
 

@@ -3,15 +3,15 @@
  */
 
 import { expect, it } from "vitest";
-import { Theme } from "@/theme/Theme.js";
+import { createTestEventBus } from "../../_helpers/eventBus";
 import { Toolbar } from "@/editor/toolbar/Toolbar.js";
 
 it("calls options.onClick when a custom added item without command is clicked", () => {
   const mount = document.createElement("div");
   document.body.appendChild(mount);
-  const theme = new Theme();
+  const eventBus = createTestEventBus();
   let clickedId = "";
-  const toolbar = new Toolbar(mount, theme, {
+  const toolbar = new Toolbar(mount, eventBus, {
     items: [{ id: "my-custom-btn", label: "Custom" }],
     onClick: (id) => {
       clickedId = id;

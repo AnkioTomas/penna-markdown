@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { buildHunks, diffLines } from "@/editor/ai/diffLines";
+import { diffLines } from "@/editor/ai";
 
 it("detects single line change", () => {
   const chunks = diffLines("a\nb\nc\n", "a\nB\nc\n");

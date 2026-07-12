@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { buildHunks, diffLines } from "@/editor/ai/diffLines";
+import { buildHunks } from "@/editor/ai";
 
 it("builds hunks from line diff", () => {
   const original = "line1\nline2\nline3\n";

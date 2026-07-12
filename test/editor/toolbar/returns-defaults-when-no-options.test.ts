@@ -1,6 +1,6 @@
 import { expect, it } from "vitest";
 import { DEFAULT_TOOLBAR_ITEMS } from "@/editor/toolbar/defaults.js";
-import { resolveToolbarItems } from "@/editor/toolbar/resolve.js";
+import { resolveToolbarItems } from "@/editor/toolbar/Toolbar.js";
 
 it("returns defaults when no options", () => {
   const items = resolveToolbarItems();

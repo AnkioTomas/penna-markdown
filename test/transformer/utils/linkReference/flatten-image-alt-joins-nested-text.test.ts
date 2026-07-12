@@ -3,10 +3,11 @@ import { flattenImageAlt } from "@/transformer/utils/linkReference.js";
 
 it("flattenImageAlt joins nested text nodes for image alt text", () => {
   const alt = flattenImageAlt([
-    { type: "text", value: "a" },
+    { type: "text", length: 1, value: "a" },
     {
       type: "emphasis",
-      children: [{ type: "text", value: "b" }],
+      length: 1,
+      children: [{ type: "text", length: 1, value: "b" }],
     },
   ]);
 

@@ -1,5 +1,7 @@
 import { expect, it } from "vitest";
-import { Theme, THEME_EVENT_SKIN } from "@/theme/Theme.js";
+import { EventBus } from "@/core/event/EventBus";
+import { Log } from "@/core/Log";
+import { Theme } from "@/theme/Theme.js";
 
 async function createRenderTree() {
   const dom = new (await import("jsdom")).JSDOM(
@@ -12,9 +14,11 @@ async function createRenderTree() {
 
 it("setLightDark toggles cherry-dark on root, not render", async () => {
   const { root, render } = await createRenderTree();
-  const theme = new Theme();
+  const log = new Log(false);
+  const eventBus = new EventBus(false, "[cherry]", log);
+  const theme = new Theme(eventBus, log, root);
 
-  theme.setTheme("default", render, root);
+  theme.setTheme("default");
   theme.setLightDark("dark");
 
   expect(root.classList.contains("cherry-dark")).toBe(true);

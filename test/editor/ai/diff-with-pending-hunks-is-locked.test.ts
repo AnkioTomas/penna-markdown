@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { isAILocked } from "@/editor/ai/aiState";
+import { isAILocked } from "@/editor/ai";
 
 it("diff with pending hunks is locked", () => {
   expect(

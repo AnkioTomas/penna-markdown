@@ -5,11 +5,9 @@
 import { expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { JSDOM } from "jsdom";
-import { Theme } from "@/theme/Theme.js";
-import { Renderer } from "@/renderer/Renderer.js";
 import { Preview } from "@/editor/preview/Preview";
 import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet.js";
+import { createJsdomRenderer as createRenderer } from "../helpers";
 import {
   dirtyLinesFromChanges,
   mapOldLineToNew,
@@ -36,17 +34,6 @@ function lineChange(
     deletedLines: deletedLines ?? toA - fromA,
     insertedLines: insertedLines ?? toB - fromB,
   };
-}
-
-function createRenderer(debug = false) {
-  const dom = new JSDOM(`<div id="preview" class="cherry"></div>`, {
-    url: "http://localhost/",
-  });
-  const mount = dom.window.document.getElementById("preview") as HTMLElement;
-  const theme = new Theme(debug);
-  theme.setTheme("default", mount);
-  const renderer = new Renderer({ mount, theme });
-  return { renderer, mount, theme, dom };
 }
 
 it("patches only changed paragraph when appending text", () => {

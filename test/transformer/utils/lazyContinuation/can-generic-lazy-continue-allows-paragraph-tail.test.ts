@@ -6,12 +6,19 @@ import { canGenericLazyContinue } from "@/transformer/utils/lazyContinuation.js"
 it("canGenericLazyContinue allows continuation when deepest open block is a paragraph", () => {
   const ctx = {
     canStrongBreak: () => false,
-  } as BlockParseContext;
+  } as unknown as BlockParseContext;
 
   const parseFn = (lines: string[]): MarkdownNode[] => [
     {
       type: "paragraph",
-      children: [{ type: "text", value: lines.join("\n") }],
+      length: 1,
+      children: [
+        {
+          type: "text",
+          length: lines.join("\n").length,
+          value: lines.join("\n"),
+        },
+      ],
     },
   ];
 

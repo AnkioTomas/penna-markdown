@@ -3,22 +3,17 @@
  */
 
 import { expect, it, vi } from "vitest";
-import { Cherry } from "@/editor/Cherry";
-
-function createCherry(options: Parameters<typeof Cherry>[1] = {}) {
-  const mount = document.getElementById("cherry-editor")!;
-  return new Cherry(mount, options);
-}
+import { createCherry } from "./helpers";
 
 it("emits editor:ready on mount", async () => {
   document.body.innerHTML = '<div id="cherry-editor"></div>';
   const handler = vi.fn();
-  const cherry = createCherry({ id: "cherry-editor" });
-  cherry.theme.on("editor:ready", handler);
+  const cherry = createCherry();
+  cherry.eventBus.on("editor:ready", handler);
 
   await Promise.resolve();
   expect(handler).toHaveBeenCalledTimes(1);
-  expect(handler.mock.calls[0][0].id).toBe("cherry-editor");
+  expect(handler.mock.calls[0][0].el).toBeInstanceOf(HTMLElement);
 
   cherry.destroy();
 });

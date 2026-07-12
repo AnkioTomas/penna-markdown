@@ -3,18 +3,18 @@
  */
 
 import { expect, it } from "vitest";
-import { Theme } from "@/theme/Theme.js";
+import { createTestTheme } from "../../_helpers/busTheme";
 import { Toolbar } from "@/editor/toolbar/Toolbar.js";
 
 it("emits editor:command when bold is clicked from format menu", () => {
   const mount = document.createElement("div");
   document.body.appendChild(mount);
-  const theme = new Theme();
+  const { eventBus } = createTestTheme();
   let command = "";
-  theme.on("editor:command", (payload) => {
+  eventBus.on("editor:command", (payload) => {
     command = (payload as { command: string }).command;
   });
-  const toolbar = new Toolbar(mount, theme, {});
+  const toolbar = new Toolbar(mount, eventBus, {});
 
   const formatMenu = mount.querySelector('[data-toolbar-id="textFormat"]');
   (

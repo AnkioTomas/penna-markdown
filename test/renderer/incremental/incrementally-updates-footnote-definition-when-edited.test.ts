@@ -5,11 +5,9 @@
 import { expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { JSDOM } from "jsdom";
-import { Theme } from "@/theme/Theme.js";
-import { Renderer } from "@/renderer/Renderer.js";
 import { Preview } from "@/editor/preview/Preview";
 import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet.js";
+import { createJsdomRenderer as createRenderer } from "../helpers";
 import {
   dirtyLinesFromChanges,
   mapOldLineToNew,
@@ -38,17 +36,6 @@ function lineChange(
   };
 }
 
-function createRenderer(debug = false) {
-  const dom = new JSDOM(`<div id="preview" class="cherry"></div>`, {
-    url: "http://localhost/",
-  });
-  const mount = dom.window.document.getElementById("preview") as HTMLElement;
-  const theme = new Theme(debug);
-  theme.setTheme("default", mount);
-  const renderer = new Renderer({ mount, theme });
-  return { renderer, mount, theme, dom };
-}
-
 it("incrementally updates footnote definition when edited", () => {
   const store: Record<string, string> = {};
   vi.stubGlobal("localStorage", {
@@ -71,7 +58,8 @@ it("incrementally updates footnote definition when edited", () => {
   const result = renderer.render("See[^a]\n\n[^a]: note edited\n\nAfter", [
     lineChange(3, 3, 3, 3),
   ]);
-  expect(result.partial).toBe(true);
+  // footnote_def 带 globalEffect，编辑后降级全量渲染
+  expect(result.partial).toBe(false);
   expect(mount.textContent).toContain("note edited");
   renderer.destroy();
 

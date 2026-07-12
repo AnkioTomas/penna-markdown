@@ -3,7 +3,7 @@ import { collectFullReferenceCandidates } from "@/transformer/utils/linkReferenc
 
 it("collectFullReferenceCandidates finds full reference links in span", () => {
   const candidates = collectFullReferenceCandidates("[text][ref]", (text) => [
-    { type: "text", value: text },
+    { type: "text", length: text.length, value: text },
   ]);
 
   expect(candidates).toHaveLength(1);

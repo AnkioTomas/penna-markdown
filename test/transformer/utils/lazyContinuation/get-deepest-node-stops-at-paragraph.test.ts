@@ -5,10 +5,12 @@ import { getDeepestNode } from "@/transformer/utils/lazyContinuation.js";
 it("getDeepestNode stops at paragraph instead of drilling into inline children", () => {
   const paragraph: MarkdownNode = {
     type: "paragraph",
-    children: [{ type: "text", value: "hello" }],
+    length: 1,
+    children: [{ type: "text", length: 5, value: "hello" }],
   };
   const blockquote: MarkdownNode = {
     type: "blockquote",
+    length: 1,
     children: [paragraph],
   };
 

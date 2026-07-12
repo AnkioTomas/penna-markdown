@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { buildHunks, diffLines } from "@/editor/ai/diffLines";
+import { buildHunks } from "@/editor/ai";
 
 it("returns no hunks when text is unchanged", () => {
   const text = "same line\n";

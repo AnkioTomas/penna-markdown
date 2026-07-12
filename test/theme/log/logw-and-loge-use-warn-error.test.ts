@@ -3,15 +3,18 @@
  */
 
 import { expect, it, vi } from "vitest";
-import { logD, logE, logW } from "@/core/log.js";
+import { Log } from "@/core/Log";
 
 it("logW and logE use warn/error", () => {
   const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
   const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-  logW("[cherry]", "w");
-  logE("[cherry]", "e");
+  const log = new Log(false);
+  log.logW("warn-msg");
+  log.logE("error-msg");
 
-  expect(warnSpy).toHaveBeenCalledWith("[cherry]", "w");
-  expect(errorSpy).toHaveBeenCalledWith("[cherry]", "e");
+  expect(warnSpy).toHaveBeenCalledWith("warn-msg");
+  expect(errorSpy).toHaveBeenCalledWith("error-msg");
+  warnSpy.mockRestore();
+  errorSpy.mockRestore();
 });

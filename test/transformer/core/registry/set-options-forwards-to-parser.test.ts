@@ -10,3 +10,11 @@ it("Registry setOptions forwards options to parser instance", () => {
     apiHost: "https://math.example.test",
   });
 });
+
+it("setext_heading reads syntaxOptions.atx_heading via syntaxKey", () => {
+  const registry = new Registry();
+  registry.setOptions({ atx_heading: { slug: true } });
+  expect(registry.getBlockParser("setext_heading")?.getOptions()).toEqual({
+    slug: true,
+  });
+});

@@ -1,5 +1,8 @@
 import { expect, it, vi } from "vitest";
-import { Theme, THEME_EVENT_SKIN } from "@/theme/Theme.js";
+import { EventBus } from "@/core/event/EventBus";
+import { Log } from "@/core/Log";
+import { Theme } from "@/theme/Theme.js";
+import { THEME_EVENT_SKIN } from "@/theme/event/ThemeSkinEvent";
 
 async function createRenderTree() {
   const dom = new (await import("jsdom")).JSDOM(
@@ -11,16 +14,18 @@ async function createRenderTree() {
 }
 
 it("on / emit / off", async () => {
-  const { root, render } = await createRenderTree();
-  const theme = new Theme();
+  const { root } = await createRenderTree();
+  const log = new Log(false);
+  const eventBus = new EventBus(false, "[cherry]", log);
+  const theme = new Theme(eventBus, log, root);
   const handler = vi.fn();
 
-  theme.on(THEME_EVENT_SKIN, handler);
-  theme.setTheme("default", render, root);
-  theme.setTheme("claude", render, root);
+  eventBus.on(THEME_EVENT_SKIN, handler);
+  theme.setTheme("default");
+  theme.setTheme("claude");
   expect(handler).toHaveBeenCalledTimes(1);
 
-  theme.off(THEME_EVENT_SKIN, handler);
-  theme.setTheme("default", render, root);
+  eventBus.off(THEME_EVENT_SKIN, handler);
+  theme.setTheme("default");
   expect(handler).toHaveBeenCalledTimes(1);
 });

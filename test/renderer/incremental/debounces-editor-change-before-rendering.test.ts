@@ -3,28 +3,26 @@
  */
 
 import { expect, it, vi } from "vitest";
-import { Theme } from "@/theme/Theme.js";
+import { createTestTheme } from "../../_helpers/busTheme";
 import { Preview } from "@/editor/preview/Preview";
 
 it("debounces editor:change before rendering", () => {
   vi.useFakeTimers();
   document.body.innerHTML = '<div id="preview"></div>';
   const mount = document.getElementById("preview") as HTMLElement;
-  const theme = new Theme();
-  theme.setTheme("default", mount);
+  const { theme, eventBus, log } = createTestTheme();
+  const preview = new Preview(mount, theme, eventBus, log);
 
   const renderSpy = vi.fn();
-  const preview = new Preview(mount, theme, { debounceMs: 100 });
-
-  theme.on("preview:rendered", renderSpy);
-  theme.emit("editor:change", { markdown: "a" });
+  eventBus.on("preview:rendered", renderSpy);
+  eventBus.emit("editor:change", { markdown: "a" });
   renderSpy.mockClear();
 
-  theme.emit("editor:change", { markdown: "ab" });
-  theme.emit("editor:change", { markdown: "abc" });
+  eventBus.emit("editor:change", { markdown: "ab" });
+  eventBus.emit("editor:change", { markdown: "abc" });
   expect(renderSpy).not.toHaveBeenCalled();
 
-  vi.advanceTimersByTime(100);
+  vi.advanceTimersByTime(50);
   expect(renderSpy).toHaveBeenCalledTimes(1);
 
   preview.destroy();
