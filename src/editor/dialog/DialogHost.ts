@@ -1,14 +1,26 @@
 import type { EventBus } from "@/core/event/EventBus";
 import { DIALOG_RENDERERS } from "@/editor/commands/index.js";
 import type { DialogType } from "@/editor/commands/dialogTypes.js";
+import type {
+  EditorDialogOpenPayload,
+  EditorDialogResultPayload,
+} from "@/editor/events";
 
+/** 管理编辑器弹窗生命周期，并将结果通过事件总线回传给请求方。 */
 export class DialogHost {
   private readonly root: HTMLElement;
   private readonly eventBus: EventBus;
   private readonly offs: (() => void)[] = [];
   private cleanupForm: (() => void) | null = null;
   private activeId: string | null = null;
+  private closeTimer: ReturnType<typeof setTimeout> | null = null;
 
+  /**
+   * 创建弹窗宿主，并开始监听弹窗打开事件。
+   *
+   * @param mount 宿主 DOM 的挂载容器。
+   * @param eventBus 用于接收打开请求和发布结果的事件总线。
+   */
   constructor(mount: HTMLElement, eventBus: EventBus) {
     this.eventBus = eventBus;
     this.root = document.createElement("div");
@@ -23,19 +35,21 @@ export class DialogHost {
     this.offs.push(() => document.removeEventListener("keydown", onKey));
 
     this.offs.push(
-      eventBus.on("editor:dialog:open", (payload) => {
-        const p = payload as {
-          id: string;
-          type: DialogType;
-          props?: Record<string, unknown>;
-        };
-        this.show(p.id, p.type, p.props);
+      eventBus.on<EditorDialogOpenPayload>("editor:dialog:open", (payload) => {
+        this.show(payload.id, payload.type, payload.props);
       }),
     );
   }
 
+  /**
+   * 渲染指定类型的弹窗，并将其结果回传到事件总线。
+   *
+   * @param id 当前弹窗请求的唯一标识。
+   * @param type 要渲染的弹窗类型。
+   * @param props 传递给弹窗渲染器的可选属性。
+   */
   private show(id: string, type: DialogType, props?: Record<string, unknown>) {
-    this.dismiss(true);
+    this.cancelActive();
     this.activeId = id;
     this.root.hidden = false;
 
@@ -58,11 +72,12 @@ export class DialogHost {
       if (!this.activeId) return;
       const resultId = this.activeId;
       this.teardown();
-      this.eventBus.emit("editor:dialog:result", {
+      const result: EditorDialogResultPayload = {
         id: resultId,
         cancelled,
         data,
-      });
+      };
+      this.eventBus.emit("editor:dialog:result", result);
     };
 
     const cbs = {
@@ -78,21 +93,54 @@ export class DialogHost {
     this.cleanupForm = render(body, props ?? {}, cbs);
   }
 
+  /**
+   * 关闭当前弹窗，并按需发布取消结果。
+   *
+   * @param silent 是否将关闭作为取消结果通知请求方。
+   */
   private dismiss(silent: boolean) {
-    if (!this.activeId) {
-      this.teardown();
-      return;
-    }
     const id = this.activeId;
+    if (!id) return;
+
+    this.activeId = null;
+    this.cleanupForm?.();
+    this.cleanupForm = null;
+    if (silent) {
+      const result: EditorDialogResultPayload = { id, cancelled: true };
+      this.eventBus.emit("editor:dialog:result", result);
+    }
+
     this.root.classList.add("is-closing");
-    setTimeout(() => {
+    this.closeTimer = setTimeout(() => {
+      this.closeTimer = null;
+      if (this.activeId) return;
       this.root.classList.remove("is-closing");
       this.teardown();
-      if (silent)
-        this.eventBus.emit("editor:dialog:result", { id, cancelled: true });
     }, 200);
   }
 
+  /**
+   * 在替换宿主内容前取消当前或正在关闭的弹窗。
+   *
+   * 副作用：会清除关闭定时器、运行表单清理函数，并为活动请求发布取消结果。
+   */
+  private cancelActive(): void {
+    if (this.closeTimer != null) {
+      clearTimeout(this.closeTimer);
+      this.closeTimer = null;
+    }
+
+    const id = this.activeId;
+    if (id) {
+      this.activeId = null;
+      const result: EditorDialogResultPayload = { id, cancelled: true };
+      this.eventBus.emit("editor:dialog:result", result);
+    }
+    this.root.classList.remove("is-closing");
+    this.teardown();
+  }
+
+  /** 清理当前表单和宿主内容，并恢复隐藏状态。 */
   private teardown() {
     this.cleanupForm?.();
     this.cleanupForm = null;
@@ -101,8 +149,9 @@ export class DialogHost {
     this.root.replaceChildren();
   }
 
+  /** 取消活动弹窗、移除宿主节点并解除全部事件监听。 */
   destroy(): void {
-    this.teardown();
+    this.cancelActive();
     this.root.remove();
     for (const off of this.offs) off();
     this.offs.length = 0;
