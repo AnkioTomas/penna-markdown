@@ -48,14 +48,14 @@ export class Theme {
     private readonly themes?: string[],
   ) {}
 
-  /** 可用皮肤 id */
+  /** 可用皮肤 id；未传或空数组视为全部内置主题 */
   list() {
-    if (this.themes === undefined) return [...REGISTERED_THEMES];
-    return this.themes;
+    if (!this.themes?.length) return [...REGISTERED_THEMES];
+    return [...this.themes];
   }
 
   /**
-   * 切换皮肤；未知 id 时打错误日志并仍写入 id。
+   * 切换皮肤；未知 id 时打错误日志并跳过。
    *
    * id 变化时发出 {@link THEME_EVENT_SKIN}。
    *
@@ -63,7 +63,8 @@ export class Theme {
    */
   setTheme(id: string) {
     if (!this.list().includes(id)) {
-      this.logger.logE('unknow theme "' + id + '" , skip it');
+      this.logger.logE(`unknown theme "${id}", skip it`);
+      return;
     }
 
     const prev = this.id;

@@ -49,7 +49,7 @@ export function createDemoTheme(
 ): DemoThemeKit {
   const log = new Log(true);
   const eventBus = new EventBus(true, "[cherry-demo]", log);
-  const theme = new Theme(eventBus, log, rootElement, []);
+  const theme = new Theme(eventBus, log, rootElement);
   return { theme, eventBus, log };
 }
 
