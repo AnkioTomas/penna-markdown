@@ -2,6 +2,9 @@ import "../../_common/cherry-demo.scss";
 import "../../_common/layout.scss";
 
 import { Cherry } from "@/editor/Cherry.js";
+import type { StorageAPI } from "@/core/StorageAPI.js";
+import type { CherryFileItem } from "@/editor/sidebar/SideBarOptions.js";
+import REGISTERED_THEMES from "@/theme/ThemeRegister.js";
 import { setupThemeAndAppearance } from "../../_common/theme.js";
 import {
   fetchDocsList,
@@ -9,7 +12,6 @@ import {
   fetchMarkdownFileItems,
 } from "../../_common/api.js";
 
-// 引入所需的基础类库用于演示自定义高亮与解析
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import {
   createNode,
@@ -18,13 +20,17 @@ import {
 import type { InlineParseContext } from "@/transformer/core/context/InlineParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import type { InlineParseResult } from "@/transformer/core/ParserBase.js";
-import { MatchDecorator, Decoration, ViewPlugin } from "@codemirror/view";
-import { StateEffect } from "@codemirror/state";
 
 const DOCS_DIR = "/docs/";
 
+const VIRTUAL = {
+  options: "virtual:options",
+  ai: "virtual:ai",
+  custom: "virtual:custom",
+} as const;
+
 // ==========================================
-// 演示 1：自定义语法解析器（解析 @@text@@）
+// 自定义行内语法：@@text@@
 // ==========================================
 class CustomAtParser extends BaseInlineParser {
   constructor() {
@@ -38,59 +44,76 @@ class CustomAtParser extends BaseInlineParser {
   override parse(
     src: string,
     index: number,
-    ctx: InlineParseContext,
+    _ctx: InlineParseContext,
   ): InlineParseResult | null {
     const start = index + 2;
     const end = src.indexOf("@@", start);
-    if (end > -1) {
-      const text = src.slice(start, end);
-      return {
-        node: createNode("custom_at", end - index + 2, undefined, undefined, {
-          text,
-        }),
-        nextIndex: end + 2,
-      };
-    }
-    return null;
+    if (end < 0) return null;
+    const text = src.slice(start, end);
+    return {
+      node: createNode("custom_at", end - index + 2, undefined, undefined, {
+        text,
+      }),
+      nextIndex: end + 2,
+    };
   }
 
-  override render(node: MarkdownNode, ctx: RenderContext): string {
+  override render(node: MarkdownNode, _ctx: RenderContext): string {
     const text = (node.props?.text as string) || "";
-    return `<span style="color: #007aff; font-weight: bold; background: rgba(0,122,255,0.1); padding: 0 4px; border-radius: 4px;">@${text}</span>`;
+    return `<span style="color:#007aff;font-weight:bold;background:rgba(0,122,255,.1);padding:0 4px;border-radius:4px;">@${text}</span>`;
   }
 }
 
 // ==========================================
-// 演示 2：自定义高亮（同步高亮编辑器里的 @@text@@）
+// 演示文档
 // ==========================================
-const customAtDecorator = new MatchDecorator({
-  regexp: /@@(.*?)@@/g,
-  decoration: Decoration.mark({
-    class: "cm-custom-at",
-    style:
-      "color: #007aff; font-weight: bold; background: rgba(0,122,255,0.1); border-radius: 2px;",
-  }),
-});
-const customAtPlugin = ViewPlugin.define(
-  (view) => ({
-    decorations: customAtDecorator.createDeco(view),
-    update(u) {
-      this.decorations = customAtDecorator.updateDeco(u, this.decorations);
-    },
-  }),
-  { decorations: (v) => v.decorations },
-);
-
-// ==========================================
-// 演示 3：AI 工具栏（mockAIRequest 返回修改后的文档正文，走 diff）
-// ==========================================
-const AI_DEMO_APPEND = `
-
+const OPTIONS_GUIDE = `---
+title: 编辑器 Options 导览
+subtitle: CherryOptions 全量演示
+version: 0.1.0
 ---
 
-## AI 功能演示
+# [[title]]
 
-> 选中一段文字只处理选区；不选则处理全文。AI 返回的是**修改后的正文**，编辑器会展示行级 diff。
+> [[subtitle]] — 本页说明当前 Demo **已经启用** 的构造选项；语法样例见侧栏 \`simple\` / \`test\`。
+
+## 已启用的 CherryOptions
+
+| 选项 | 本 Demo 取值 | 作用 |
+| --- | --- | --- |
+| \`layout\` | \`"split"\` | 初始分栏；可用工具栏切换 edit / preview / split |
+| \`appearance\` | 顶栏明暗控件 | \`light\` / \`dark\` / 跟随系统 |
+| \`themeId\` | 顶栏主题控件 | 初始皮肤 id |
+| \`themes\` | 全部内置主题 | 工具栏主题菜单白名单 |
+| \`debug\` | \`true\` | 打开调试日志；状态栏显示渲染耗时 |
+| \`toolbar\` | 自定义按钮 + \`onClick\` | 扩展/覆盖工具栏；\`onClick\` 在命令执行后旁路通知 |
+| \`sidebar\` | 文件列表 + 大纲 | \`fetchFiles\` / \`onFileClick\` / \`maxWidth\` |
+| \`statusbar\` | \`true\` | 底部字数 / 选区 / 调试信息 |
+| \`storage\` | 带前缀的 localStorage | 持久化分栏比例等 |
+| \`editor.value\` | 加载占位文案 | 初始 Markdown |
+| \`editor.lineNumbers\` | \`true\` | 编辑区行号 |
+| \`editor.onAiRequest\` | mock AI | 启用 AI 工具栏与行级 diff |
+| \`editor.onParseFile\` | mock 上传 | 粘贴/拖入图片等文件 |
+| \`preview.maxWidth\` | \`"720px"\` | **仅预览布局**下限制预览宽度 |
+| \`preview.transformerEngineOptions.inlineParsers\` | \`CustomAtParser\` | 注入自定义行内语法 |
+
+## 建议体验路径
+
+1. 侧栏打开 **simple** — GFM + Cherry 扩展语法全集（精简）
+2. 侧栏打开 **test** — 边界 / 压力 / 回归活文档
+3. 侧栏打开 **AI Diff 演示** — 选区润色后逐块确认
+4. 侧栏打开 **自定义语法** — 预览区渲染 \`@@text@@\`
+5. 工具栏切换布局，确认 \`preview.maxWidth\` 只在预览模式生效
+6. 拖一张图片进编辑区，观察 \`onParseFile\` 上传占位
+
+## 工具栏命令覆盖面
+
+默认工具栏已覆盖：强调、标题、列表、引用、表格、链接/图、代码、Alert、容器、Tabs/Steps/Timeline、卡片、Mermaid/ECharts、媒体、脚注、Frontmatter、主题与布局、AI。可逐一点开插入语法，再对照预览。
+`;
+
+const AI_DEMO = `# AI Diff 演示
+
+> 选中一段文字只处理选区；不选则处理全文。AI 返回**修改后的正文**，编辑器展示行级 diff；未全部确认前禁止编辑。
 
 ### 段落 A（润色 / 纠错）
 
@@ -111,9 +134,13 @@ The quick brown fox jumps over the lazy dog. This sentence is commonly used for 
 - 无选区时默认处理全文
 `;
 
-const AI_DEMO_ONLY = `# AI 演示文档
+const CUSTOM_SYNTAX_DEMO = `# 自定义语法演示
 
-${AI_DEMO_APPEND.trim()}
+通过 \`preview.transformerEngineOptions.inlineParsers\` 注入 \`@@text@@\` 解析器（预览区生效）。
+
+试试：@@这里是高亮内容@@
+
+也可混排：**粗体**、==高亮==、\`code\`、@@自定义标记@@。
 `;
 
 function delay(ms: number) {
@@ -126,7 +153,7 @@ function ensureChanged(text: string, result: string): string {
   return text.endsWith("\n") ? `${text} ` : `${text}\n`;
 }
 
-/** 模拟 AI：返回替换后的文档片段（非 UI 提示） */
+/** 模拟 AI：返回替换后的文档片段 */
 async function mockAIRequest(
   action: string,
   text: string,
@@ -307,101 +334,162 @@ async function mockAIRequest(
   return ensureChanged(text, result);
 }
 
+/** Demo 专用存储：与其它页面隔离，仍持久化分栏比例 */
+function createDemoStorage(): StorageAPI {
+  const prefix = "cherry-editor-demo:";
+  return {
+    getItem(key) {
+      try {
+        return localStorage.getItem(prefix + key);
+      } catch {
+        return null;
+      }
+    },
+    setItem(key, value) {
+      try {
+        localStorage.setItem(prefix + key, value);
+      } catch {
+        /* 隐私模式等忽略 */
+      }
+    },
+  };
+}
+
+function virtualFile(
+  id: string,
+  title: string,
+  summary: string,
+): CherryFileItem {
+  return {
+    id,
+    title,
+    updateTime: "Demo",
+    summary,
+  };
+}
+
+function preferSimpleFirst(items: CherryFileItem[]): CherryFileItem[] {
+  const rank = (id: string) => {
+    if (id.endsWith("/simple.md")) return 0;
+    if (id.endsWith("/test.md")) return 1;
+    return 2;
+  };
+  return [...items].sort((a, b) => {
+    const d = rank(a.id) - rank(b.id);
+    return d !== 0 ? d : a.title.localeCompare(b.title, "zh");
+  });
+}
+
 async function init() {
   const docs = await fetchDocsList(DOCS_DIR);
-
   let editor: Cherry;
 
-  async function loadDoc(href: string) {
-    const content = await fetchDocContent(href);
-    editor.setMarkdown(content + AI_DEMO_APPEND);
-    editor.setSidebarActiveFile(href);
+  async function resolveContent(fileId: string): Promise<string> {
+    switch (fileId) {
+      case VIRTUAL.options:
+        return OPTIONS_GUIDE;
+      case VIRTUAL.ai:
+        return AI_DEMO;
+      case VIRTUAL.custom:
+        return CUSTOM_SYNTAX_DEMO;
+      default:
+        return fetchDocContent(fileId);
+    }
   }
 
-  editor = new Cherry(document.querySelector("#cherry-editor")!!, {
-    id: "cherry-demo-editor",
+  async function loadDoc(fileId: string) {
+    editor.setMarkdown(await resolveContent(fileId));
+    editor.setSidebarActiveFile(fileId);
+  }
+
+  editor = new Cherry(document.querySelector("#cherry-editor")!, {
     layout: "split",
     appearance: "light",
     themeId: "default",
+    /** 显式传入白名单 = 工具栏主题菜单可见项 */
+    themes: [...REGISTERED_THEMES],
     debug: true,
+    storage: createDemoStorage(),
+    statusbar: true,
 
-    ai: {
-      AIRequest: mockAIRequest,
-    },
-    // ==========================================
-    // 演示 4：自定义 Toolbar（新增一个工具栏按钮）
-    // ==========================================
     toolbar: {
       items: [
         {
           id: "custom-btn",
           type: "button",
           label: "🚀 起飞",
-          title: "自定义按钮演示",
+          title: "自定义工具栏按钮（toolbar.items）",
           onClick: (ctx) => {
-            alert("点击了自定义工具栏按钮！");
+            alert("toolbar.items[].onClick：自定义按钮被点击");
             ctx.focus();
           },
         },
       ],
+      onClick: (id) => {
+        if (id === "custom-btn") return;
+        console.info("[demo] toolbar.onClick", id);
+      },
     },
 
     sidebar: {
-      maxWidth: 300,
-      fetchFiles: () => fetchMarkdownFileItems(DOCS_DIR),
-      onFileClick: (fileId) => loadDoc(fileId),
-    },
-    statusbar: true,
-    storage: {
-      upload: async (file, context) => {
-        console.log(`模拟上传: ${file.name}, 大小: ${file.size} 字节`);
-        console.log(
-          `上传来源: ${context.source}, 弹窗类型: ${context.dialogType}`,
+      maxWidth: 320,
+      fetchFiles: async () => {
+        const real = (await fetchMarkdownFileItems(DOCS_DIR)).filter(
+          (f) => !f.title.startsWith("_"),
         );
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        return [
+          virtualFile(
+            VIRTUAL.options,
+            "Options 导览",
+            "CherryOptions 全量说明",
+          ),
+          virtualFile(VIRTUAL.ai, "AI Diff 演示", "行级 diff / 逐块确认"),
+          virtualFile(
+            VIRTUAL.custom,
+            "自定义语法 @@",
+            "inlineParsers 预览渲染",
+          ),
+          ...preferSimpleFirst(real),
+        ];
+      },
+      onFileClick: (fileId) => {
+        void loadDoc(fileId);
+      },
+    },
+
+    editor: {
+      value: "加载中…\n\n正在拉取侧栏文档列表。",
+      lineNumbers: true,
+      onAiRequest: mockAIRequest,
+      onParseFile: async (file) => {
+        console.info(`[demo] onParseFile: ${file.name} (${file.size} bytes)`);
+        await delay(800);
         return {
           url: "https://api.ankio.net/picsum",
-          name: file.name,
+          msg: file.name,
         };
       },
     },
-    editor: {
-      value:
-        "加载中…\n\n请从左侧打开文档，或等待 AI 演示区加载。\n\n" +
-        AI_DEMO_ONLY,
-      lineNumbers: true,
-    },
+
     preview: {
-      maxWidth: "600px",
-    },
-    transformer: {
-      inlineParsers: {
-        1001: new CustomAtParser(), // 注入自定义语法，优先级为 1001
+      /** 仅在纯预览布局下生效 */
+      maxWidth: "720px",
+      transformerEngineOptions: {
+        inlineParsers: {
+          1001: new CustomAtParser(),
+        },
       },
     },
-  });
-
-  // 注入自定义高亮插件到 CodeMirror 实例中
-  editor.getEditorView().dispatch({
-    effects: StateEffect.appendConfig.of(customAtPlugin),
   });
 
   setupThemeAndAppearance(editor);
 
-  if (docs.length === 0) {
-    editor.setMarkdown(
-      "请确保 docs 目录下有 Markdown 文件（pnpm demo 下访问 /docs/?json）\n\n你可以试试输入自定义语法：@@这里是高亮内容@@" +
-        AI_DEMO_APPEND,
-    );
-    return;
-  }
+  const defaultId =
+    docs.find((d) => d.name === "simple.md")?.href ??
+    docs.find((d) => d.name === "test.md")?.href ??
+    VIRTUAL.options;
 
-  await loadDoc(docs[0].href);
-
-  editor.setMarkdown(
-    editor.getMarkdown() +
-      "\n\n**自定义语法演示**：试试输入 @@这里是高亮内容@@，或点击工具栏 🚀 按钮。",
-  );
+  await loadDoc(defaultId);
 }
 
-init();
+void init();
