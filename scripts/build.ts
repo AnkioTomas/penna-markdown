@@ -6,9 +6,10 @@
  * - 主题样式：Vite 编译 SCSS → dist/cherry-*.min.css
  */
 import * as esbuild from "esbuild";
-import { mkdirSync, readFileSync, rmSync, statSync } from "node:fs";
+import { mkdirSync, rmSync, statSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 import { build as viteBuild } from "vite";
 import REGISTERED_THEMES from "../src/theme/ThemeRegister.js";
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -108,6 +109,29 @@ async function buildBundleEntry(entry: BundleEntry) {
 async function buildThemeStyles() {
   await viteBuild({ configFile: themeViteConfig, logLevel: "info" });
 }
+
+function runOrThrow(command: string, args: string[], label: string) {
+  console.log(`${label}: ${command} ${args.join(" ")}`);
+  const result = spawnSync(command, args, {
+    cwd: rootDir,
+    stdio: "inherit",
+    shell: process.platform === "win32",
+  });
+  if (result.status !== 0) {
+    throw new Error(`${label} failed with exit ${result.status ?? "null"}`);
+  }
+}
+
+/** 生成可被消费者引用的 .d.ts（并把 @/ 别名改成相对路径） */
+function buildDeclarations() {
+  runOrThrow("pnpm", ["exec", "tsc", "-p", "tsconfig.dts.json"], "dts:tsc");
+  runOrThrow(
+    "pnpm",
+    ["exec", "tsc-alias", "-p", "tsconfig.dts.json"],
+    "dts:alias",
+  );
+}
+
 const stylesOnly = process.argv.includes("--styles-only");
 mkdirSync(distDir, { recursive: true });
 if (stylesOnly) {
@@ -119,10 +143,11 @@ if (stylesOnly) {
 } else {
   rmSync(distDir, { recursive: true, force: true });
   mkdirSync(distDir, { recursive: true });
-  console.log("mode: full (css + js)");
+  console.log("mode: full (css + js + dts)");
   await buildThemeStyles();
   for (const entry of entries) {
     await buildBundleEntry(entry);
   }
-  console.log("build done (min only):", entries.map((e) => e.name).join(", "));
+  buildDeclarations();
+  console.log("build done (min + dts):", entries.map((e) => e.name).join(", "));
 }

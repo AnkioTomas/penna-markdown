@@ -1,6 +1,6 @@
 {
   "name": "cherry-markdown-next",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Next-generation Markdown editor and renderer with GFM and Cherry extensions",
   "license": "MIT",
   "author": "AnkioTomas",
@@ -29,35 +29,42 @@
   ],
   "main": "./dist/cherry.min.cjs",
   "module": "./dist/cherry.min.mjs",
+  "types": "./dist/types/editor/Cherry.d.ts",
   "unpkg": "./dist/cherry.min.js",
   "jsdelivr": "./dist/cherry.min.js",
   "exports": {
     ".": {
+      "types": "./dist/types/editor/Cherry.d.ts",
       "import": "./dist/cherry.min.mjs",
       "require": "./dist/cherry.min.cjs",
       "default": "./dist/cherry.min.mjs"
     },
     "./editor": {
+      "types": "./dist/types/editor/Cherry.d.ts",
       "import": "./dist/cherry.min.mjs",
       "require": "./dist/cherry.min.cjs",
       "default": "./dist/cherry.min.mjs"
     },
     "./renderer": {
+      "types": "./dist/types/renderer/Renderer.d.ts",
       "import": "./dist/cherry-render.min.mjs",
       "require": "./dist/cherry-render.min.cjs",
       "default": "./dist/cherry-render.min.mjs"
     },
     "./transformer": {
+      "types": "./dist/types/transformer/TransformerEngine.d.ts",
       "import": "./dist/cherry-transformer.min.mjs",
       "require": "./dist/cherry-transformer.min.cjs",
       "default": "./dist/cherry-transformer.min.mjs"
     },
     "./transformer.min": {
+      "types": "./dist/types/transformer/TransformerEngine.d.ts",
       "import": "./dist/cherry-transformer.min.mjs",
       "require": "./dist/cherry-transformer.min.cjs",
       "default": "./dist/cherry-transformer.min.mjs"
     },
     "./theme": {
+      "types": "./dist/types/renderer/Renderer.d.ts",
       "import": "./dist/cherry-render.min.mjs",
       "require": "./dist/cherry-render.min.cjs",
       "default": "./dist/cherry-render.min.mjs"
@@ -124,6 +131,7 @@
     "jsdom": "^26.1.0",
     "prettier": "^3.9.4",
     "sass": "^1.100.0",
+    "tsc-alias": "^1.9.0",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
     "vite": "^6.3.5",

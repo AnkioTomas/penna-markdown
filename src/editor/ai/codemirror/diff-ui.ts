@@ -288,8 +288,8 @@ function positionHunkPanel(
 export const aiDiffHunkActionsPlugin = ViewPlugin.fromClass(
   class {
     panels = new Map<string, HTMLElement>();
-    private readonly onScroll: () => void;
-    private readonly onResize: () => void;
+    readonly onScroll: () => void;
+    readonly onResize: () => void;
 
     constructor(readonly view: EditorViewType) {
       this.onScroll = () => this.repositionAll();

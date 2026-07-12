@@ -33,6 +33,20 @@ export type {
   ToolbarSeparatorItem,
   ToolbarContext,
 } from "@/editor/toolbar/ToolbarItem";
+export type {
+  CherryOptions,
+  OnAiRequest,
+  OnParseFile,
+} from "@/editor/CherryOptions";
+export type { EditorOptions } from "@/editor/editor/EditorOptions";
+export type { PreviewOptions } from "@/editor/preview/PreviewOptions";
+export type {
+  SideBarOptions,
+  CherryFileItem,
+} from "@/editor/sidebar/SideBarOptions";
+export type { ToolbarOptions } from "@/editor/toolbar/ToolbarOptions";
+export type { StorageAPI } from "@/core/StorageAPI";
+export type { EditorLayoutMode } from "@/editor/Layout";
 
 /**
  * 创建带 class 的 DOM 元素
