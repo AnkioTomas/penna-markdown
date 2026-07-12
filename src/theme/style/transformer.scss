@@ -35,6 +35,7 @@
 @use "transformer/extends/math";
 @use "transformer/extends/footnote";
 @use "transformer/extends/code-block";
+@use "renderer/image-preview";
 
 .cherry {
   @include tokens.theme-default;
@@ -80,7 +81,10 @@
   @include math.styles;
   @include footnote.styles;
   @include code-block.styles;
+  @include image-preview.interactive-cursors;
 }
+
+@include image-preview.overlay;
 
 .cherry-dark {
   .cherry-render {

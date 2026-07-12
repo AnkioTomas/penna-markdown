@@ -26,6 +26,7 @@ import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { extractToc, extractTocFlat } from "@/renderer/toc/extract";
 import { replaceGraph } from "@/renderer/graph/graph";
 import { CodeListener } from "@/renderer/code/code";
+import { ImageListener } from "@/renderer/image/image";
 import hljs from "highlight.js/lib/common";
 import { RenderOption } from "@/renderer/RenderOption";
 import { IncrementalSession } from "@/renderer/incremental/IncrementalSession.js";
@@ -58,6 +59,8 @@ export class Renderer {
   private lastAst: MarkdownNode | null = null;
   /** 代码块复制按钮等客户端增强 */
   private codeListener: CodeListener | null = null;
+  /** 预览区图片 / SVG 点击放大 */
+  private imageListener: ImageListener | null = null;
 
   /**
    * @param options 挂载点、主题、事件总线、日志及可选解析器扩展
@@ -88,6 +91,7 @@ export class Renderer {
     this.eventBus.on(THEME_EVENT_LIGHT_DARK, this.onLightDarkChanged);
 
     this.codeListener = new CodeListener(this.mount);
+    this.imageListener = new ImageListener(this.mount);
   }
 
   /** 明暗切换：同步 transformer 并重绘 Mermaid/ECharts 等图表 */
@@ -226,5 +230,6 @@ export class Renderer {
     this.lastAst = null;
     this.session.reset();
     this.codeListener?.destroy();
+    this.imageListener?.destroy();
   }
 }
