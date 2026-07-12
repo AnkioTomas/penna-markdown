@@ -1,16 +1,22 @@
 import type { EditorView } from "@codemirror/view";
-import type { CherryAIOptions } from "@/editor/CherryOptions";
-import { enterDiffPhase } from "./aiDiff";
+import type { OnAiRequest } from "@/editor/CherryOptions";
+import { enterDiffPhase } from "./codemirror/diff-ui";
 import {
   allocGenId,
   aiStateField,
   isAILocked,
   setAIState,
   IDLE_STATE,
-} from "./aiState";
+} from "./codemirror/extension";
 
-export type AIRequestFn = CherryAIOptions["AIRequest"];
+export type AIRequestFn = OnAiRequest;
 
+/**
+ * 获取 AI 操作目标范围：优先当前选区，否则使用整个文档。
+ *
+ * @param view 要读取选区和文档内容的编辑器视图。
+ * @returns 目标文本及其在文档中的起止位置。
+ */
 export function getAITargetRange(view: EditorView): {
   from: number;
   to: number;
@@ -32,6 +38,15 @@ export function getAITargetRange(view: EditorView): {
   };
 }
 
+/**
+ * 发起 AI 操作，并在有效响应返回后进入差异确认阶段。
+ *
+ * @param view 要读取和更新的编辑器视图。
+ * @param action 要执行的 AI 操作标识。
+ * @param aiRequest 调用 AI 服务的请求函数。
+ * @param prompts 自定义操作附带的可选提示词。
+ * @param range 覆盖当前选区的可选目标范围。
+ */
 export function runAIAction(
   view: EditorView,
   action: string,
@@ -44,13 +59,7 @@ export function runAIAction(
 
   const target = range ?? getAITargetRange(view);
   const { from, to, text } = target;
-  if (
-    !text &&
-    action !== "summarize" &&
-    action !== "keyPoints" &&
-    action !== "custom"
-  )
-    return;
+  if (!text && action !== "summarize" && action !== "custom") return;
 
   const genId = allocGenId();
   view.dispatch({

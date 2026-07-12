@@ -1,6 +1,12 @@
-import type { DiffChunk } from "./diffChars";
+export type DiffChunk = { type: "equal" | "add" | "del"; value: string };
 
-function splitLines(text: string): string[] {
+type DiffMode = "char" | "line";
+
+/**
+ * 将文本拆分为 diff 单元：字符或保留换行符的行片段。
+ */
+function splitUnits(text: string, mode: DiffMode): string[] {
+  if (mode === "char") return [...text];
   if (!text) return [];
   const parts = text.split("\n");
   return parts.map((line, index) =>
@@ -8,12 +14,14 @@ function splitLines(text: string): string[] {
   );
 }
 
-/** 行级 diff，基于 LCS */
-export function diffLines(a: string, b: string): DiffChunk[] {
-  const aLines = splitLines(a);
-  const bLines = splitLines(b);
-  const m = aLines.length;
-  const n = bLines.length;
+/**
+ * 基于最长公共子序列计算文本差异。
+ */
+function diffText(a: string, b: string, mode: DiffMode): DiffChunk[] {
+  const aUnits = splitUnits(a, mode);
+  const bUnits = splitUnits(b, mode);
+  const m = aUnits.length;
+  const n = bUnits.length;
 
   const dp: number[][] = Array.from({ length: m + 1 }, () =>
     Array<number>(n + 1).fill(0),
@@ -21,7 +29,7 @@ export function diffLines(a: string, b: string): DiffChunk[] {
 
   for (let i = 1; i <= m; i++) {
     for (let j = 1; j <= n; j++) {
-      if (aLines[i - 1] === bLines[j - 1]) {
+      if (aUnits[i - 1] === bUnits[j - 1]) {
         dp[i][j] = dp[i - 1][j - 1] + 1;
       } else {
         dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
@@ -34,15 +42,15 @@ export function diffLines(a: string, b: string): DiffChunk[] {
   let j = n;
 
   while (i > 0 || j > 0) {
-    if (i > 0 && j > 0 && aLines[i - 1] === bLines[j - 1]) {
-      raw.push({ type: "equal", value: aLines[i - 1] });
+    if (i > 0 && j > 0 && aUnits[i - 1] === bUnits[j - 1]) {
+      raw.push({ type: "equal", value: aUnits[i - 1] });
       i--;
       j--;
     } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
-      raw.push({ type: "add", value: bLines[j - 1] });
+      raw.push({ type: "add", value: bUnits[j - 1] });
       j--;
     } else {
-      raw.push({ type: "del", value: aLines[i - 1] });
+      raw.push({ type: "del", value: aUnits[i - 1] });
       i--;
     }
   }
@@ -62,6 +70,16 @@ export function diffLines(a: string, b: string): DiffChunk[] {
   return merged;
 }
 
+/** 字符级差异 */
+export function diffChars(a: string, b: string): DiffChunk[] {
+  return diffText(a, b, "char");
+}
+
+/** 行级差异 */
+export function diffLines(a: string, b: string): DiffChunk[] {
+  return diffText(a, b, "line");
+}
+
 export type HunkStatus = "pending" | "accepted" | "rejected";
 
 export type DiffHunk = {
@@ -73,7 +91,10 @@ export type DiffHunk = {
   to: number;
 };
 
-/** 从行级 diff 构建可逐块确认的 hunk 列表（文档已替换为 result） */
+/**
+ * 从行级差异构建可逐块确认的差异块；调用时文档已替换为结果文本。
+ * 一块连续变更（中间无未改行）合并为一个 hunk，整块只需一次接受/拒绝。
+ */
 export function buildHunks(
   original: string,
   result: string,
@@ -119,6 +140,7 @@ export function buildHunks(
   return hunks;
 }
 
+/** 差异块列表中是否仍有待确认项 */
 export function hasPendingHunks(hunks: DiffHunk[]): boolean {
   return hunks.some((h) => h.status === "pending");
 }

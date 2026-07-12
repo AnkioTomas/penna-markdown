@@ -1,11 +1,17 @@
 import type { Extension } from "@codemirror/state";
-import type { CherryAIOptions } from "@/editor/CherryOptions";
-import { aiStateField } from "./aiState";
-import { createAIKeymap } from "./aiKeymap";
-import { aiMaskPlugin, aiLockedReadOnly } from "./aiMask";
-import { aiDiffDecorations, aiDiffHunkActionsPlugin } from "./aiDiff";
+import {
+  aiLockedReadOnly,
+  aiMaskPlugin,
+  aiStateField,
+} from "./codemirror/extension";
+import {
+  aiDiffDecorations,
+  aiDiffHunkActionsPlugin,
+  createAIKeymap,
+} from "./codemirror/diff-ui";
 
-export function createAIExtension(_options: CherryAIOptions): Extension[] {
+/** 创建 AI 功能所需的 CodeMirror 扩展 */
+export function createAIExtension(): Extension[] {
   return [
     aiStateField,
     aiLockedReadOnly,
@@ -16,7 +22,26 @@ export function createAIExtension(_options: CherryAIOptions): Extension[] {
   ];
 }
 
-export { diffChars } from "./diffChars";
-export { diffLines, buildHunks } from "./diffLines";
-export { buildAIToolbarItems } from "./defaults";
-export { createAICommandListener } from "./aiBridge";
+export {
+  aiStateField,
+  isAILocked,
+  IDLE_STATE,
+  setAIState,
+  allocGenId,
+  type AIState,
+} from "./codemirror/extension";
+export {
+  aiDiffDecorations,
+  enterDiffPhase,
+  cancelDiffPhase,
+} from "./codemirror/diff-ui";
+export { runAIAction, getAITargetRange, type AIRequestFn } from "./runAction";
+export {
+  buildHunks,
+  diffLines,
+  diffChars,
+  hasPendingHunks,
+  type DiffHunk,
+  type HunkStatus,
+  type DiffChunk,
+} from "./diff";

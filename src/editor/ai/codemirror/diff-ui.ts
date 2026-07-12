@@ -1,39 +1,66 @@
-import { StateField, RangeSetBuilder } from "@codemirror/state";
+import {
+  StateField,
+  RangeSetBuilder,
+  type Extension,
+  type Text,
+} from "@codemirror/state";
 import {
   Decoration,
   DecorationSet,
   EditorView,
   ViewPlugin,
   WidgetType,
+  keymap,
   type EditorView as EditorViewType,
   type ViewUpdate,
 } from "@codemirror/view";
-import { diffChars } from "./diffChars";
-import { buildHunks, hasPendingHunks, type DiffHunk } from "./diffLines";
-import { ICON_AI_ACCEPT, ICON_AI_REJECT } from "./defaults";
-import { positionFixedPanel } from "./positionPanel";
+import { buildHunks, hasPendingHunks, type DiffHunk } from "../diff";
 import {
   IDLE_STATE,
   aiStateField,
   aiTransaction,
+  resolveAIState,
   setAIState,
   type AIState,
-} from "./aiState";
+} from "./extension";
 
-class DeletedTextWidget extends WidgetType {
-  constructor(readonly text: string) {
+const ICON_SIZE = 18;
+
+function svg(path: string): string {
+  return `<svg viewBox="0 0 24 24" width="${ICON_SIZE}" height="${ICON_SIZE}" class="cherry-ai-icon" aria-hidden="true"><path fill="currentColor" d="${path}"/></svg>`;
+}
+
+const ICON_AI_ACCEPT = svg(
+  "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z",
+);
+
+const ICON_AI_REJECT = svg(
+  "M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z",
+);
+
+/** 在变更行上方展示被删除的整行内容 */
+class DeletedLinesWidget extends WidgetType {
+  constructor(readonly lines: string[]) {
     super();
   }
 
-  eq(other: DeletedTextWidget) {
-    return other.text === this.text;
+  eq(other: DeletedLinesWidget) {
+    return (
+      other.lines.length === this.lines.length &&
+      other.lines.every((line, i) => line === this.lines[i])
+    );
   }
 
   toDOM() {
-    const span = document.createElement("span");
-    span.className = "cherry-ai-diff-del";
-    span.textContent = this.text;
-    return span;
+    const block = document.createElement("div");
+    block.className = "cherry-ai-diff-del-block";
+    for (const line of this.lines) {
+      const row = document.createElement("div");
+      row.className = "cherry-ai-diff-del-line";
+      row.textContent = line;
+      block.appendChild(row);
+    }
+    return block;
   }
 
   ignoreEvent() {
@@ -41,54 +68,80 @@ class DeletedTextWidget extends WidgetType {
   }
 }
 
+function splitDisplayLines(text: string): string[] {
+  if (!text) return [];
+  const parts = text.split("\n");
+  if (parts.length > 1 && parts[parts.length - 1] === "") {
+    parts.pop();
+  }
+  return parts;
+}
+
+function docAfterTransaction(tr: {
+  startState: { doc: Text };
+  changes: { empty: boolean; apply: (doc: Text) => Text };
+}): Text {
+  return tr.changes.empty
+    ? tr.startState.doc
+    : tr.changes.apply(tr.startState.doc);
+}
+
+function hunkAnchorPos(hunk: DiffHunk): number {
+  return hunk.from;
+}
+
 function buildHunkDecorations(
   diff: Extract<AIState, { phase: "diff" }>,
+  doc: Text,
 ): DecorationSet {
   const builder = new RangeSetBuilder<Decoration>();
+  const hunks = [...diff.hunks]
+    .filter((h) => h.status === "pending")
+    .sort((a, b) => a.from - b.from);
 
-  for (const hunk of diff.hunks) {
-    if (hunk.status !== "pending") continue;
+  type PendingDeco = { pos: number; kind: 0 | 1; deco: Decoration };
+  const pending: PendingDeco[] = [];
 
-    const startLine = hunk.from;
-    const endPos = Math.max(hunk.from, hunk.to);
-    builder.add(
-      startLine,
-      startLine,
-      Decoration.line({ class: "cherry-ai-diff-line" }),
-    );
-    if (endPos > hunk.from) {
-      const endLine = hunk.to;
-      if (endLine > hunk.from) {
-        builder.add(
-          endLine,
-          endLine,
-          Decoration.line({ class: "cherry-ai-diff-line" }),
-        );
-      }
+  for (const hunk of hunks) {
+    const deletedLines = splitDisplayLines(hunk.original);
+    if (deletedLines.length > 0) {
+      pending.push({
+        pos: hunk.from,
+        kind: 0,
+        deco: Decoration.widget({
+          widget: new DeletedLinesWidget(deletedLines),
+          block: true,
+          side: -1,
+        }),
+      });
     }
 
-    const chunks = diffChars(hunk.original, hunk.result);
-    let pos = hunk.from;
-
-    for (const chunk of chunks) {
-      if (chunk.type === "equal") {
-        pos += chunk.value.length;
-      } else if (chunk.type === "add") {
-        const from = pos;
-        const to = pos + chunk.value.length;
-        builder.add(from, to, Decoration.mark({ class: "cherry-ai-diff-add" }));
-        pos = to;
-      } else if (chunk.type === "del") {
-        builder.add(
-          pos,
-          pos,
-          Decoration.widget({
-            widget: new DeletedTextWidget(chunk.value),
-            side: -1,
-          }),
-        );
+    if (hunk.to > hunk.from) {
+      let pos = hunk.from;
+      while (pos < hunk.to) {
+        const line = doc.lineAt(pos);
+        pending.push({
+          pos: line.from,
+          kind: 1,
+          deco: Decoration.line({ class: "cherry-ai-diff-line" }),
+        });
+        pos = line.to + 1;
       }
+    } else if (deletedLines.length > 0) {
+      const line = doc.lineAt(hunk.from);
+      pending.push({
+        pos: line.from,
+        kind: 1,
+        deco: Decoration.line({
+          class: "cherry-ai-diff-line cherry-ai-diff-line--del-only",
+        }),
+      });
     }
+  }
+
+  pending.sort((a, b) => a.pos - b.pos || a.kind - b.kind);
+  for (const item of pending) {
+    builder.add(item.pos, item.pos, item.deco);
   }
 
   return builder.finish();
@@ -99,9 +152,10 @@ export const aiDiffDecorations = StateField.define<DecorationSet>({
     return Decoration.none;
   },
   update(_deco, tr) {
-    const ai = tr.state.field(aiStateField);
+    const ai = resolveAIState(tr);
     if (ai.phase !== "diff") return Decoration.none;
-    return buildHunkDecorations(ai);
+    const doc = docAfterTransaction(tr);
+    return buildHunkDecorations(ai, doc);
   },
   provide: (f) => EditorView.decorations.from(f),
 });
@@ -140,16 +194,14 @@ function rejectHunk(view: EditorViewType, hunkId: string) {
     return h;
   });
 
-  const effects = [
-    aiTransaction.of(null),
-    setAIState.of(
-      hasPendingHunks(hunks) ? { phase: "diff", hunks } : IDLE_STATE,
-    ),
-  ];
-
   view.dispatch({
     changes: { from: hunk.from, to: hunk.to, insert: hunk.original },
-    effects,
+    effects: [
+      aiTransaction.of(null),
+      setAIState.of(
+        hasPendingHunks(hunks) ? { phase: "diff", hunks } : IDLE_STATE,
+      ),
+    ],
   });
 }
 
@@ -163,6 +215,7 @@ function buildHunkActionBtn(
   btn.type = "button";
   btn.className = `cherry-ai-diff-btn ${className}`;
   btn.setAttribute("aria-label", label);
+  btn.title = label;
   btn.innerHTML = icon;
   const text = document.createElement("span");
   text.className = "cherry-ai-diff-btn-label";
@@ -195,6 +248,41 @@ function buildHunkPanel(view: EditorViewType, hunk: DiffHunk): HTMLElement {
     ),
   );
   return dom;
+}
+
+function positionHunkPanel(
+  view: EditorViewType,
+  panel: HTMLElement,
+  hunk: DiffHunk,
+) {
+  const coords = view.coordsAtPos(hunkAnchorPos(hunk));
+  const scrollerRect = view.scrollDOM.getBoundingClientRect();
+
+  if (!coords) {
+    panel.style.display = "none";
+    return;
+  }
+
+  const margin = 8;
+  const panelW = panel.offsetWidth || 140;
+  const panelH = panel.offsetHeight || 32;
+  const lineMid = coords.top + (coords.bottom - coords.top) / 2;
+
+  let top = lineMid - panelH / 2;
+  let left = scrollerRect.right - panelW - margin;
+
+  const minTop = scrollerRect.top + margin;
+  const maxTop = scrollerRect.bottom - panelH - margin;
+  top = Math.max(minTop, Math.min(top, maxTop));
+
+  const minLeft = scrollerRect.left + margin;
+  left = Math.max(minLeft, left);
+
+  panel.style.display = "flex";
+  panel.style.position = "fixed";
+  panel.style.left = `${left}px`;
+  panel.style.top = `${top}px`;
+  panel.style.zIndex = "10000";
 }
 
 export const aiDiffHunkActionsPlugin = ViewPlugin.fromClass(
@@ -239,9 +327,8 @@ export const aiDiffHunkActionsPlugin = ViewPlugin.fromClass(
       }
 
       for (const hunk of pending) {
-        let panel = this.panels.get(hunk.id);
-        if (!panel) {
-          panel = buildHunkPanel(this.view, hunk);
+        if (!this.panels.has(hunk.id)) {
+          const panel = buildHunkPanel(this.view, hunk);
           document.body.appendChild(panel);
           this.panels.set(hunk.id, panel);
         }
@@ -258,8 +345,7 @@ export const aiDiffHunkActionsPlugin = ViewPlugin.fromClass(
         if (hunk.status !== "pending") continue;
         const panel = this.panels.get(hunk.id);
         if (!panel) continue;
-        const anchor = hunk.to > hunk.from ? hunk.to : hunk.from;
-        positionFixedPanel(this.view, panel, anchor, false);
+        positionHunkPanel(this.view, panel, hunk);
       }
     }
 
@@ -302,4 +388,36 @@ export function enterDiffPhase(
   });
 }
 
-export { acceptHunk, rejectHunk };
+/** Esc 取消差异确认：从后向前拒绝全部待确认块 */
+export function cancelDiffPhase(view: EditorViewType) {
+  const ai = view.state.field(aiStateField);
+  if (ai.phase !== "diff") return;
+
+  const pending = ai.hunks
+    .filter((h) => h.status === "pending")
+    .sort((a, b) => b.from - a.from);
+  for (const hunk of pending) {
+    rejectHunk(view, hunk.id);
+  }
+}
+
+/** Esc 取消 AI 生成或差异确认 */
+export function createAIKeymap(): Extension {
+  return keymap.of([
+    {
+      key: "Escape",
+      run(view) {
+        const ai = view.state.field(aiStateField);
+        if (ai.phase === "generating") {
+          view.dispatch({ effects: setAIState.of(IDLE_STATE) });
+          return true;
+        }
+        if (ai.phase === "diff") {
+          cancelDiffPhase(view);
+          return true;
+        }
+        return false;
+      },
+    },
+  ]);
+}
