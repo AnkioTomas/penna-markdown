@@ -37,12 +37,9 @@ pnpm add cherry-markdown-next
 />
 <link
   rel="stylesheet"
-  href="node_modules/cherry-markdown-next/dist/cherry-theme-default-editor.min.css"
+  href="node_modules/cherry-markdown-next/dist/cherry-render.min.css"
 />
-<link
-  rel="stylesheet"
-  href="node_modules/cherry-markdown-next/dist/cherry-theme-default-render.min.css"
-/>
+<!-- 可选皮肤（非 default）：再引入 cherry-theme-{id}-editor/render.min.css -->
 ```
 
 ```typescript
@@ -91,4 +88,4 @@ pnpm typecheck
 
 ## License
 
-以仓库内声明为准；当前为早期 `0.x`，API 可能调整，请锁定版本。
+[MIT](./LICENSE) © AnkioTomas

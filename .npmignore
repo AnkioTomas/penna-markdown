@@ -1,0 +1,4 @@
+# 不进入 npm 包的构建噪音
+dist/index.html
+dist/**/*.map
+*.tgz

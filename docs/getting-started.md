@@ -73,14 +73,8 @@ pnpm test
 
 ```html
 <link rel="stylesheet" href="cherry-markdown-next/cherry-editor-base.min.css" />
-<link
-  rel="stylesheet"
-  href="cherry-markdown-next/cherry-theme-default-editor.min.css"
-/>
-<link
-  rel="stylesheet"
-  href="cherry-markdown-next/cherry-theme-default-render.min.css"
-/>
+<link rel="stylesheet" href="cherry-markdown-next/cherry-render.min.css" />
+<!-- 可选皮肤：cherry-theme-github-editor/render.min.css 等（default 无单独主题文件） -->
 ```
 
 3. **初始化**

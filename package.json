@@ -1,8 +1,32 @@
 {
   "name": "cherry-markdown-next",
   "version": "0.1.0",
+  "description": "Next-generation Markdown editor and renderer with GFM and Cherry extensions",
+  "license": "MIT",
+  "author": "AnkioTomas",
+  "homepage": "https://github.com/AnkioTomas/cherry-markdown-next#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnkioTomas/cherry-markdown-next.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AnkioTomas/cherry-markdown-next/issues"
+  },
+  "keywords": [
+    "markdown",
+    "editor",
+    "renderer",
+    "gfm",
+    "codemirror",
+    "cherry",
+    "wysiwyg",
+    "ast"
+  ],
   "packageManager": "pnpm@11.5.0",
   "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "main": "./dist/cherry.min.cjs",
   "module": "./dist/cherry.min.mjs",
   "unpkg": "./dist/cherry.min.js",
@@ -51,11 +75,13 @@
     "./transformer.css": "./dist/cherry-render.min.css",
     "./transformer.min.css": "./dist/cherry-render.min.css",
     "./editor.css": "./dist/cherry-editor-base.min.css",
-    "./editor.min.css": "./dist/cherry-editor-base.min.css"
+    "./editor.min.css": "./dist/cherry-editor-base.min.css",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
-    "src"
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "build": "tsx scripts/build.ts",
@@ -68,7 +94,12 @@
     "test:watch": "vitest",
     "clean": "rm -rf dist",
     "format:imports": "tsx scripts/format-imports.ts",
-    "format": "npm run format:imports && prettier --write ."
+    "format": "npm run format:imports && prettier --write .",
+    "prepublishOnly": "npm run build && npm run test",
+    "pack:check": "npm pack --dry-run"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "@codemirror/commands": "^6.8.1",
@@ -78,7 +109,6 @@
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.38.6",
     "entities": "^6.0.1",
-    "esbuild": "^0.28.0",
     "highlight.js": "11.11.1",
     "yaml": "^2.9.0"
   },
@@ -87,6 +117,7 @@
     "@lezer/markdown": "^1.6.4",
     "@types/jsdom": "^28.0.3",
     "@types/node": "^25.9.3",
+    "esbuild": "^0.28.0",
     "jsdom": "^26.1.0",
     "prettier": "^3.9.4",
     "sass": "^1.100.0",

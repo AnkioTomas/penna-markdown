@@ -13,25 +13,33 @@ tags: [guide, themes]
 
 ## 内置皮肤
 
-| id        | 说明         |
-| --------- | ------------ |
-| `default` | 默认         |
-| `claude`  | Claude 风格  |
-| `github`  | GitHub       |
-| `morandi` | 莫兰迪       |
-| `latex`   | 学术 / LaTeX |
-| `vue`     | Vue 绿       |
-| `notion`  | Notion       |
+| id        | 说明                                                                |
+| --------- | ------------------------------------------------------------------- |
+| `default` | 默认（仅用 `cherry-editor-base` + `cherry-render`，无单独主题文件） |
+| `claude`  | Claude 风格                                                         |
+| `github`  | GitHub                                                              |
+| `morandi` | 莫兰迪                                                              |
+| `latex`   | 学术 / LaTeX                                                        |
+| `vue`     | Vue 绿                                                              |
+| `notion`  | Notion                                                              |
 
 ---
 
 ## 需要引入的 CSS
 
 ::: tabs
-@tab:active 完整编辑器
+@tab:active 完整编辑器（default）
 
 ```html
 <link rel="stylesheet" href="cherry-markdown-next/cherry-editor-base.min.css" />
+<link rel="stylesheet" href="cherry-markdown-next/cherry-render.min.css" />
+```
+
+@tab 完整编辑器（其它皮肤）
+
+```html
+<link rel="stylesheet" href="cherry-markdown-next/cherry-editor-base.min.css" />
+<link rel="stylesheet" href="cherry-markdown-next/cherry-render.min.css" />
 <link
   rel="stylesheet"
   href="cherry-markdown-next/cherry-theme-{id}-editor.min.css"
@@ -45,15 +53,13 @@ tags: [guide, themes]
 @tab 仅渲染
 
 ```html
-<link
-  rel="stylesheet"
-  href="cherry-markdown-next/cherry-theme-{id}-render.min.css"
-/>
+<link rel="stylesheet" href="cherry-markdown-next/cherry-render.min.css" />
+<!-- 非 default 时再加 cherry-theme-{id}-render.min.css -->
 ```
 
 :::
 
-把 `{id}` 换成上表中的皮肤 id。也可用：
+把 `{id}` 换成上表中的皮肤 id（`default` 除外）。也可用：
 
 ```typescript
 import "cherry-markdown-next/theme/github/editor.css";

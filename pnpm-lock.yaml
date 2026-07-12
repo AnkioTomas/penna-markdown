@@ -28,9 +28,6 @@ importers:
       entities:
         specifier: ^6.0.1
         version: 6.0.1
-      esbuild:
-        specifier: ^0.28.0
-        version: 0.28.0
       highlight.js:
         specifier: 11.11.1
         version: 11.11.1
@@ -50,6 +47,9 @@ importers:
       "@types/node":
         specifier: ^25.9.3
         version: 25.9.3
+      esbuild:
+        specifier: ^0.28.0
+        version: 0.28.0
       jsdom:
         specifier: ^26.1.0
         version: 26.1.0
