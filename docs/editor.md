@@ -77,7 +77,7 @@ cherry.destroy();
 ::: field toolbar
 @type ToolbarOptions | false
 @optional
-`false` 关闭工具栏；`items` 按 id 覆盖/追加。
+`false` 关闭工具栏；`items` 为整表替换（省略则用默认表）。基于默认增删请展开 `DEFAULT_TOOLBAR_ITEMS`。
 :::
 
 ::: field sidebar
@@ -128,10 +128,18 @@ AI 请求；与 `editor.onAiRequest` 等价，**editor 内优先**。
 
 ## 自定义工具栏
 
+`toolbar.items` **整表替换**默认项。省略 `items` 时使用内置默认表；传入（含 `[]`）则完全以你的列表为准。
+
+基于默认项增删/重排时，展开 `DEFAULT_TOOLBAR_ITEMS`：
+
 ```typescript
+import { Cherry, DEFAULT_TOOLBAR_ITEMS } from "cherry-markdown-next";
+
 new Cherry(el, {
   toolbar: {
     items: [
+      // 去掉「格式」，其余默认保留，末尾追加自定义按钮
+      ...DEFAULT_TOOLBAR_ITEMS.filter((item) => item.id !== "textFormat"),
       {
         id: "my-btn",
         type: "button",
@@ -150,6 +158,7 @@ new Cherry(el, {
 
 > [!IMPORTANT]
 > 全局 `toolbar.onClick` **不会替代**命令分发。需要拦截行为时用 `items[].onClick`。
+> 只传一个自定义按钮而不展开默认表，工具栏将**只显示**该按钮。
 
 ---
 

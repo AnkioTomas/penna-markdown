@@ -1,7 +1,7 @@
 import "../../_common/cherry-demo.scss";
 import "../../_common/layout.scss";
 
-import { Cherry } from "@/editor/Cherry.js";
+import { Cherry, DEFAULT_TOOLBAR_ITEMS } from "@/editor/Cherry.js";
 import type { StorageAPI } from "@/core/StorageAPI.js";
 import type { CherryFileItem } from "@/editor/sidebar/SideBarOptions.js";
 import REGISTERED_THEMES from "@/theme/ThemeRegister.js";
@@ -86,7 +86,7 @@ version: 0.1.0
 | \`themeId\` | 顶栏主题控件 | 初始皮肤 id |
 | \`themes\` | 全部内置主题 | 工具栏主题菜单白名单 |
 | \`debug\` | \`true\` | 打开调试日志；状态栏显示渲染耗时 |
-| \`toolbar\` | 自定义按钮 + \`onClick\` | 扩展/覆盖工具栏；\`onClick\` 在命令执行后旁路通知 |
+| \`toolbar\` | 默认表 + 自定义按钮 + \`onClick\` | \`items\` 整表替换；展开 \`DEFAULT_TOOLBAR_ITEMS\` 再追加 |
 | \`sidebar\` | 文件列表 + 大纲 | \`fetchFiles\` / \`onFileClick\` / \`maxWidth\` |
 | \`statusbar\` | \`true\` | 底部字数 / 选区 / 调试信息 |
 | \`storage\` | 带前缀的 localStorage | 持久化分栏比例等 |
@@ -414,6 +414,7 @@ async function init() {
 
     toolbar: {
       items: [
+        ...DEFAULT_TOOLBAR_ITEMS,
         {
           id: "custom-btn",
           type: "button",

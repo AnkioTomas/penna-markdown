@@ -25,6 +25,15 @@ import type {
   EditorLifecyclePayload,
 } from "@/editor/events";
 
+export { DEFAULT_TOOLBAR_ITEMS } from "@/editor/toolbar/defaults";
+export type {
+  ToolbarItem,
+  ToolbarButtonItem,
+  ToolbarMenuItem,
+  ToolbarSeparatorItem,
+  ToolbarContext,
+} from "@/editor/toolbar/ToolbarItem";
+
 /**
  * 创建带 class 的 DOM 元素
  *
