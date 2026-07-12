@@ -157,7 +157,7 @@ export class Cherry {
       this.theme,
       this.eventBus,
       this.log,
-      { ...previewOptions, debug: options.debug },
+      { ...previewOptions },
     );
 
     this.editor = new Editor(this.editorEl, this.eventBus, editorOptions);
