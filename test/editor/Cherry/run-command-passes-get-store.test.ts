@@ -42,11 +42,7 @@ function installProbe(): {
   };
 }
 
-function primePreview(cherry: Cherry) {
-  cherry.eventBus.emit("editor:change", { markdown: cherry.getMarkdown() });
-}
-
-it("runCommand injects getStore (present after initial markdown render)", () => {
+it("runCommand injects getStore (present after initial markdown render)", async () => {
   document.body.innerHTML = '<div id="cherry-editor"></div>';
   const probe = installProbe();
   const cherry = new Cherry(document.getElementById("cherry-editor")!, {
@@ -57,7 +53,7 @@ it("runCommand injects getStore (present after initial markdown render)", () => 
   });
 
   try {
-    primePreview(cherry);
+    await Promise.resolve();
     const ok = cherry.runCommand(PROBE);
     expect(ok).toBe(true);
     const result = probe.last();
@@ -68,7 +64,7 @@ it("runCommand injects getStore (present after initial markdown render)", () => 
   }
 });
 
-it("runCommand getStore is null when preview never rendered", () => {
+it("runCommand getStore is present after empty initial value paint", async () => {
   document.body.innerHTML = '<div id="cherry-editor"></div>';
   const probe = installProbe();
   const cherry = new Cherry(document.getElementById("cherry-editor")!, {
@@ -79,16 +75,17 @@ it("runCommand getStore is null when preview never rendered", () => {
   });
 
   try {
+    await Promise.resolve();
     const ok = cherry.runCommand(PROBE);
     expect(ok).toBe(true);
-    expect(probe.last()?.kind).toBe("null");
+    expect(probe.last()?.kind).toBe("present");
   } finally {
     probe.uninstall();
     cherry.destroy();
   }
 });
 
-it("editor:command bus path injects the same getStore semantics", () => {
+it("editor:command bus path injects the same getStore semantics", async () => {
   document.body.innerHTML = '<div id="cherry-editor"></div>';
   const probe = installProbe();
   const cherry = new Cherry(document.getElementById("cherry-editor")!, {
@@ -99,7 +96,7 @@ it("editor:command bus path injects the same getStore semantics", () => {
   });
 
   try {
-    primePreview(cherry);
+    await Promise.resolve();
     cherry.eventBus.emit("editor:command", { command: PROBE });
     const result = probe.last();
     expect(result?.kind).toBe("present");

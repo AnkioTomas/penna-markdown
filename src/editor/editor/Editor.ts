@@ -47,6 +47,7 @@ import type { EventBus } from "@/core/event/EventBus";
  */
 export class Editor {
   private readonly view: EditorView;
+  private disposed = false;
 
   /**
    * 创建 CodeMirror 编辑器并注册文档变更与 AI 命令监听。
@@ -112,6 +113,15 @@ export class Editor {
     });
 
     this.view = new EditorView({ state, parent: mount });
+
+    // 初始 doc 不经过 updateListener。延后到 microtask：等 Cherry 把 SideBar
+    // 等订阅者挂上，再驱动 Preview 首屏与 TOC。
+    queueMicrotask(() => {
+      if (this.disposed) return;
+      eventBus.emit("editor:change", {
+        markdown: this.view.state.doc.toString(),
+      } satisfies EditorChangePayload);
+    });
   }
 
   /** 获取当前文档的完整 Markdown 文本。 */
@@ -149,6 +159,7 @@ export class Editor {
 
   /** 销毁底层 CodeMirror 视图。 */
   destroy(): void {
+    this.disposed = true;
     this.view.destroy();
   }
 }

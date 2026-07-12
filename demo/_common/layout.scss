@@ -39,6 +39,9 @@ body.demo-dark {
 }
 
 .back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   text-decoration: none;
   color: var(--cherry-c-brand-1);
   font-size: 13px;
@@ -47,6 +50,13 @@ body.demo-dark {
     text-decoration: underline;
     color: var(--cherry-c-brand-2);
   }
+}
+
+.header-logo {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  flex-shrink: 0;
 }
 
 .title {

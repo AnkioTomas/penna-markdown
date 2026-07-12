@@ -3,11 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vanilla JS 集成演示</title>
+    <title>Vanilla JS · Cherry Markdown Next</title>
+    <link rel="icon" href="/logo/favicon.ico" sizes="any" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/logo/favicon-32x32.png"
+      sizes="32x32"
+    />
+    <link rel="apple-touch-icon" href="/logo/apple-touch-icon.png" />
   </head>
   <body>
     <div class="header">
-      <a class="back" href="../../index.html">返回入口</a>
+      <a class="back" href="/demo/index.html">
+        <img
+          class="header-logo"
+          src="/logo/favicon-32x32.png"
+          width="20"
+          height="20"
+          alt=""
+        />
+        返回入口
+      </a>
       <div class="title">Vanilla JS 集成演示</div>
       <div class="header-controls">
         <label>
@@ -32,10 +49,15 @@
       import { setupThemeAndAppearance } from "../../_common/theme.js";
       import { fetchDocContent } from "../../_common/api.js";
 
-      const editor = new Cherry(document.getElementById("cherry-editor"), {
+      const mount = document.getElementById("cherry-editor");
+      const editor = new Cherry(mount, {
         editor: { value: await fetchDocContent("/docs/simple.md") },
       });
       setupThemeAndAppearance(editor);
+
+      window.addEventListener("beforeunload", () => editor.destroy(), {
+        once: true,
+      });
     </script>
   </body>
 </html>

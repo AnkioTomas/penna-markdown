@@ -3,11 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vue 3 集成演示</title>
+    <title>Vue 3 · Cherry Markdown Next</title>
+    <link rel="icon" href="/logo/favicon.ico" sizes="any" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/logo/favicon-32x32.png"
+      sizes="32x32"
+    />
+    <link rel="apple-touch-icon" href="/logo/apple-touch-icon.png" />
   </head>
   <body>
     <div class="header">
-      <a class="back" href="../../index.html">返回入口</a>
+      <a class="back" href="/demo/index.html">
+        <img
+          class="header-logo"
+          src="/logo/favicon-32x32.png"
+          width="20"
+          height="20"
+          alt=""
+        />
+        返回入口
+      </a>
       <div class="title">Vue 3 集成演示</div>
       <div class="header-controls">
         <label>
@@ -24,9 +41,7 @@
         </label>
       </div>
     </div>
-    <div id="app" class="app-container">
-      <div ref="editorRef" style="flex: 1"></div>
-    </div>
+    <div id="app" class="app-container"></div>
     <script type="module">
       import "../../_common/layout.scss";
       import "../../_common/cherry-demo.scss";
@@ -38,26 +53,34 @@
         ref,
         onMounted,
         onBeforeUnmount,
+        h,
       } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
 
       createApp({
         setup() {
           const editorRef = ref(null);
-          let editorInstance = null;
+          /** @type {import('@/editor/Cherry.js').Cherry | null} */
+          let editor = null;
 
           onMounted(async () => {
-            const initialContent = await fetchDocContent("/docs/simple.md");
-            editorInstance = new Cherry(editorRef.value, {
-              editor: { value: initialContent },
+            const el = editorRef.value;
+            if (!el) return;
+            editor = new Cherry(el, {
+              editor: { value: await fetchDocContent("/docs/simple.md") },
             });
-            setupThemeAndAppearance(editorInstance);
+            setupThemeAndAppearance(editor);
           });
 
           onBeforeUnmount(() => {
-            // TODO: call editorInstance.destroy() if implemented
+            editor?.destroy();
+            editor = null;
           });
 
-          return { editorRef };
+          return () =>
+            h("div", {
+              ref: editorRef,
+              style: { flex: "1", minHeight: "0" },
+            });
         },
       }).mount("#app");
     </script>

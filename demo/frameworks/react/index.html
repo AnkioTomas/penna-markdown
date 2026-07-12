@@ -3,11 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>React 集成演示</title>
+    <title>React · Cherry Markdown Next</title>
+    <link rel="icon" href="/logo/favicon.ico" sizes="any" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/logo/favicon-32x32.png"
+      sizes="32x32"
+    />
+    <link rel="apple-touch-icon" href="/logo/apple-touch-icon.png" />
   </head>
   <body>
     <div class="header">
-      <a class="back" href="../../index.html">返回入口</a>
+      <a class="back" href="/demo/index.html">
+        <img
+          class="header-logo"
+          src="/logo/favicon-32x32.png"
+          width="20"
+          height="20"
+          alt=""
+        />
+        返回入口
+      </a>
       <div class="title">React 集成演示</div>
       <div class="header-controls">
         <label>
@@ -32,11 +49,7 @@
       import { setupThemeAndAppearance } from "../../_common/theme.js";
       import { fetchDocContent } from "../../_common/api.js";
 
-      import React, {
-        useEffect,
-        useRef,
-        useState,
-      } from "https://esm.sh/react@18/?dev";
+      import React, { useEffect, useRef } from "https://esm.sh/react@18/?dev";
       import { createRoot } from "https://esm.sh/react-dom@18/client?dev";
       import htm from "https://esm.sh/htm";
 
@@ -48,8 +61,9 @@
 
         useEffect(() => {
           let mounted = true;
+
           fetchDocContent("/docs/simple.md").then((initialContent) => {
-            if (!mounted) return;
+            if (!mounted || !editorRef.current) return;
             editorInstance.current = new Cherry(editorRef.current, {
               editor: { value: initialContent },
             });
@@ -58,11 +72,15 @@
 
           return () => {
             mounted = false;
-            // TODO: Cleanup editor instance
+            editorInstance.current?.destroy();
+            editorInstance.current = null;
           };
         }, []);
 
-        return html`<div ref=${editorRef} style=${{ flex: 1 }}></div>`;
+        return html`<div
+          ref=${editorRef}
+          style=${{ flex: 1, minHeight: 0 }}
+        ></div>`;
       }
 
       const root = createRoot(document.getElementById("app"));

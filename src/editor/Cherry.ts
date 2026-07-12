@@ -179,7 +179,7 @@ export class Cherry {
         : new Toolbar(
             this.toolbarEl,
             this.eventBus,
-            options.toolbar!!,
+            options.toolbar ?? {},
             options.themes,
             () => this.editor.focus(),
           );
