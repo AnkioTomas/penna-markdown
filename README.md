@@ -1,4 +1,14 @@
-# Cherry Markdown Next
+<p align="center">
+  <img src="https://socialify.git.ci/AnkioTomas/cherry-markdown-next/image?description=1&font=Source%20Code%20Pro&forks=1&issues=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2FAnkioTomas%2Fcherry-markdown-next%2Fmain%2Flogo%2Fandroid-chrome-512x512.png&name=1&pattern=Floating%20Cogs&pulls=1&stargazers=1&theme=Auto" alt="Cherry Markdown Next" width="640" height="320" />
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/cherry-markdown-next"><img src="https://img.shields.io/npm/v/cherry-markdown-next.svg?style=flat-square" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/cherry-markdown-next"><img src="https://img.shields.io/npm/dm/cherry-markdown-next.svg?style=flat-square" alt="npm downloads" /></a>
+  <a href="https://www.npmjs.com/package/cherry-markdown-next"><img src="https://img.shields.io/npm/l/cherry-markdown-next.svg?style=flat-square" alt="license" /></a>
+  <a href="https://github.com/AnkioTomas/cherry-markdown-next/stargazers"><img src="https://img.shields.io/github/stars/AnkioTomas/cherry-markdown-next.svg?style=flat-square" alt="GitHub stars" /></a>
+  <a href="https://github.com/AnkioTomas/cherry-markdown-next/issues"><img src="https://img.shields.io/github/issues/AnkioTomas/cherry-markdown-next.svg?style=flat-square" alt="GitHub issues" /></a>
+</p>
 
 浏览器端 Markdown **编辑 + 渲染** 套件：GFM 标准语法，加上 Alert、容器、卡片、公式、Mermaid/ECharts 等 Cherry 扩展；编辑时走增量预览。
 

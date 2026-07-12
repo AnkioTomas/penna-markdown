@@ -5,8 +5,10 @@ body.demo-home {
   display: block;
   min-height: 100vh;
   padding: 2rem;
-  background: var(--cherry-c-bg-elevated);
+  background: #fff7eb;
   color: var(--cherry-c-text-1);
+  font-family:
+    "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 .wrap {
@@ -14,17 +16,145 @@ body.demo-home {
   margin: 0 auto;
 }
 
-.header {
-  margin-bottom: 2rem;
+.hero {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+  padding: 2.5rem 1.5rem 2rem;
   text-align: center;
+  border: 1px solid color-mix(in srgb, #e11d48 18%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, #fff 82%, #fff7eb);
+  box-shadow: 0 8px 28px color-mix(in srgb, #e11d48 10%, transparent);
+}
+
+.hero-pattern {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image:
+    radial-gradient(
+      circle at 18% 28%,
+      color-mix(in srgb, #e11d48 28%, transparent) 0 2px,
+      transparent 3px
+    ),
+    radial-gradient(
+      circle at 72% 22%,
+      color-mix(in srgb, #9f1239 24%, transparent) 0 1.5px,
+      transparent 2.5px
+    ),
+    radial-gradient(
+      circle at 48% 78%,
+      color-mix(in srgb, #e11d48 20%, transparent) 0 2px,
+      transparent 3px
+    ),
+    repeating-linear-gradient(
+      115deg,
+      transparent 0 18px,
+      color-mix(in srgb, #9f1239 8%, transparent) 18px 19px,
+      transparent 19px 36px
+    );
+  mask-image: radial-gradient(ellipse at center, #000 35%, transparent 78%);
+}
+
+.hero-logo {
+  position: relative;
+  z-index: 1;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 1rem;
+  border-radius: 22px;
+  box-shadow: 0 6px 18px color-mix(in srgb, #e11d48 22%, transparent);
+}
+
+.hero-title {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #111827;
+}
+
+.hero-desc {
+  position: relative;
+  z-index: 1;
+  max-width: 36rem;
+  margin: 0 auto 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--cherry-c-text-2);
+}
+
+.hero-badges {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0 0 1.25rem;
+
+  a {
+    line-height: 0;
+  }
+
+  img {
+    height: 20px;
+  }
+}
+
+.hero-links {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.hero-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid color-mix(in srgb, #e11d48 28%, transparent);
+  border-radius: 999px;
+  background: #fff;
+  color: #9f1239;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+
+  &:hover {
+    border-color: #e11d48;
+    background: color-mix(in srgb, #e11d48 8%, #fff);
+  }
+
+  &--primary {
+    border-color: #e11d48;
+    background: #e11d48;
+    color: #fff;
+
+    &:hover {
+      background: #be123c;
+      border-color: #be123c;
+      color: #fff;
+    }
+  }
 }
 
 .section-title {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   margin-top: 2rem;
   margin-bottom: 1rem;
-  border-bottom: 2px solid
-    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  border-bottom: 2px solid color-mix(in srgb, #e11d48 18%, transparent);
   padding-bottom: 0.5rem;
   color: var(--cherry-c-text-1);
 }
@@ -36,22 +166,22 @@ body.demo-home {
 }
 
 .card {
-  background: var(--cherry-c-bg);
+  background: #fff;
   padding: 1.5rem;
-  border-radius: 8px;
+  border-radius: 12px;
   text-decoration: none;
   color: inherit;
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
-  box-shadow: 0 1px 3px
-    color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
+  border: 1px solid color-mix(in srgb, #e11d48 12%, transparent);
+  box-shadow: 0 1px 3px color-mix(in srgb, #9f1239 8%, transparent);
   transition:
     transform 0.2s,
-    box-shadow 0.2s;
+    box-shadow 0.2s,
+    border-color 0.2s;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px
-      color-mix(in srgb, var(--cherry-c-text-3) 16%, transparent);
+    border-color: color-mix(in srgb, #e11d48 35%, transparent);
+    box-shadow: 0 6px 14px color-mix(in srgb, #e11d48 14%, transparent);
   }
 }
 
@@ -59,7 +189,7 @@ body.demo-home {
   font-size: 1.125rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: var(--cherry-c-brand-1);
+  color: #be123c;
 }
 
 .card-desc {
@@ -74,7 +204,6 @@ body.demo-home {
 
   &:hover {
     transform: none;
-    box-shadow: 0 1px 3px
-      color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
+    box-shadow: 0 1px 3px color-mix(in srgb, #9f1239 8%, transparent);
   }
 }

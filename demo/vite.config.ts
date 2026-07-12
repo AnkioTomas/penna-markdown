@@ -26,10 +26,13 @@ function listDirEntries(dirPath: string, urlPath: string) {
 }
 
 export default defineConfig({
-  root: ".",
+  root: rootDir,
   server: {
     port: 5173,
     open: "/demo/",
+    fs: {
+      allow: [rootDir],
+    },
   },
   resolve: {
     alias: {
