@@ -7,6 +7,13 @@ import { EditorSelection } from "@codemirror/state";
 import type { Command, CommandContext } from "@/editor/commands/Command";
 
 export class HtmlAttrCommand implements Command {
+  /**
+   * 在选区末尾插入可编辑的 HTML 属性块并选中类名。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _payload - 未使用的命令参数
+   * @param _ctx - 未使用的命令上下文
+   * @returns 始终返回 true，表示已插入属性块
+   */
   execute(view: EditorView, _payload: unknown, _ctx: CommandContext): boolean {
     const attr = "{.className}";
     const { from, to, empty } = view.state.selection.main;

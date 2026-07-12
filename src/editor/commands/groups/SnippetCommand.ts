@@ -17,6 +17,11 @@ export class SnippetCommand implements Command {
     private selectEnd?: number,
   ) {}
 
+  /**
+   * 在当前选区处插入构造时指定的 Markdown 片段。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @returns 始终返回 true，表示已插入片段
+   */
   execute(view: EditorView): boolean {
     insertSnippet(view, this.snippet, this.selectFrom, this.selectEnd);
     return true;

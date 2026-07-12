@@ -25,12 +25,6 @@ export interface CardItem {
   content: string;
 }
 
-export interface BasicCardDialogResult {
-  variant: "basic";
-  title: string;
-  content: string;
-}
-
 export interface LinkCardDialogResult {
   variant: "link";
   title: string;
@@ -76,7 +70,6 @@ export interface MasonryCardDialogResult {
 
 /** `card` 弹窗提交结果。 */
 export type CardDialogResult =
-  | BasicCardDialogResult
   | LinkCardDialogResult
   | ImageCardDialogResult
   | RepoCardDialogResult
@@ -101,17 +94,35 @@ const CONTENT_FIELD: FormFieldDef = {
   defaultValue: "卡片正文",
 };
 
+/**
+ * 生成可选的卡片属性片段。
+ * @param name - 属性名
+ * @param value - 待写入的属性值
+ * @returns 值为空时为空字符串，否则返回转义后的属性
+ */
 function attr(name: string, value: string | undefined): string {
   const v = String(value ?? "").trim();
   return v ? ` ${name}="${v.replace(/"/g, '\\"')}"` : "";
 }
 
+/**
+ * 解析并限制正整数表单字段。
+ * @param raw - 待解析的原始文本
+ * @param fallback - 输入无效时使用的默认值
+ * @param max - 可选的最大允许值
+ * @returns 介于有效范围内的正整数
+ */
 function parsePositiveInt(raw: string, fallback: number, max?: number): number {
   const n = Number.parseInt(String(raw ?? "").trim(), 10);
   if (Number.isNaN(n) || n < 1) return fallback;
   return max != null ? Math.min(n, max) : n;
 }
 
+/**
+ * 根据网格列配置生成 `cols` 属性。
+ * @param data - 网格卡片表单数据
+ * @returns 均匀或响应式列配置的属性片段
+ */
 function gridColsAttr(data: GridCardDialogResult): string {
   if (data.colsMode === "uniform" && data.colsUniform) {
     return ` cols="${data.colsUniform}"`;
@@ -125,6 +136,11 @@ function gridColsAttr(data: GridCardDialogResult): string {
   return "";
 }
 
+/**
+ * 生成指定数量的默认卡片子项。
+ * @param count - 要生成的占位卡片数量
+ * @returns 以空行分隔的卡片 Markdown
+ */
 function renderCardItemsPlaceholders(count: number): string {
   const items: string[] = [];
   for (let i = 1; i <= count; i++) {
@@ -133,12 +149,13 @@ function renderCardItemsPlaceholders(count: number): string {
   return items.join("\n\n");
 }
 
-/** 根据 variant 生成卡片 Markdown。 */
+/**
+ * 根据 variant 生成卡片 Markdown。
+ * @param data - 已校验的卡片表单数据
+ * @returns 可插入编辑器的卡片 Markdown
+ */
 export function cardMarkdown(data: CardDialogResult): string {
   switch (data.variant) {
-    case "basic":
-      // 基础卡片改为直接插入，不通过 dialogResult
-      return `::: card 卡片标题\n内容\n:::\n`;
     case "link": {
       const head = `::: link-card ${data.title}${attr("link", data.link)}${attr("icon", data.icon)}`;
       return `${head}\n${data.content}\n:::\n`;
@@ -170,21 +187,13 @@ export function cardMarkdown(data: CardDialogResult): string {
   }
 }
 
-class BasicCardFormDialog extends FormDialog<BasicCardDialogResult> {
-  override get title() {
-    return VARIANT_LABELS.basic;
-  }
-  readonly fields: FormFieldDef[] = [];
-  toResult(): BasicCardDialogResult | null {
-    return null;
-  }
-}
-
 class LinkCardFormDialog extends FormDialog<LinkCardDialogResult> {
+  /** 返回链接卡片弹窗标题。 */
   override get title() {
     return VARIANT_LABELS.link;
   }
 
+  /** 返回链接卡片配置提示。 */
   override get hint() {
     return "整卡可点击跳转；icon 为左侧小图，也可用 image 别名";
   }
@@ -214,6 +223,11 @@ class LinkCardFormDialog extends FormDialog<LinkCardDialogResult> {
     CONTENT_FIELD,
   ];
 
+  /**
+   * 将链接卡片表单转换为插入数据。
+   * @param raw - 表单提交的字段值
+   * @returns 标题或链接为空时返回 null
+   */
   toResult(raw: Record<string, string | boolean>): LinkCardDialogResult | null {
     const title = String(raw.title ?? "").trim();
     const link = String(raw.link ?? "").trim();
@@ -230,10 +244,12 @@ class LinkCardFormDialog extends FormDialog<LinkCardDialogResult> {
 }
 
 class ImageCardFormDialog extends FormDialog<ImageCardDialogResult> {
+  /** 返回图片卡片弹窗标题。 */
   override get title() {
     return VARIANT_LABELS.image;
   }
 
+  /** 返回图片描述优先级提示。 */
   override get hint() {
     return "description 为属性描述；正文区域可作为备用描述段落";
   }
@@ -287,6 +303,11 @@ class ImageCardFormDialog extends FormDialog<ImageCardDialogResult> {
     },
   ];
 
+  /**
+   * 将图片卡片表单转换为插入数据。
+   * @param raw - 表单提交的字段值
+   * @returns 图片地址或标题为空时返回 null
+   */
   toResult(
     raw: Record<string, string | boolean>,
   ): ImageCardDialogResult | null {
@@ -312,10 +333,12 @@ class ImageCardFormDialog extends FormDialog<ImageCardDialogResult> {
 }
 
 class RepoCardFormDialog extends FormDialog<RepoCardDialogResult> {
+  /** 返回仓库卡片弹窗标题。 */
   override get title() {
     return VARIANT_LABELS.repo;
   }
 
+  /** 返回仓库标识格式提示。 */
   override get hint() {
     return "仓库格式 owner/repo，如 vuepress/ecosystem";
   }
@@ -354,12 +377,22 @@ class RepoCardFormDialog extends FormDialog<RepoCardDialogResult> {
     },
   ];
 
+  /**
+   * 校验仓库标识包含 owner/repo 分隔符。
+   * @param raw - 表单提交的字段值
+   * @returns 格式有效时返回 null，否则返回错误信息
+   */
   override validate(raw: Record<string, string | boolean>): string | null {
     const repo = String(raw.repo ?? "").trim();
     if (!repo.includes("/")) return "仓库格式须为 owner/repo";
     return null;
   }
 
+  /**
+   * 将仓库卡片表单转换为插入数据。
+   * @param raw - 表单提交的字段值
+   * @returns 仓库标识为空时返回 null
+   */
   toResult(raw: Record<string, string | boolean>): RepoCardDialogResult | null {
     const repo = String(raw.repo ?? "").trim();
     if (!repo) return null;
@@ -375,9 +408,11 @@ class RepoCardFormDialog extends FormDialog<RepoCardDialogResult> {
 }
 
 class GridCardFormDialog extends FormDialog<GridCardDialogResult> {
+  /** 返回网格卡片弹窗标题。 */
   override get title() {
     return VARIANT_LABELS.grid;
   }
+  /** 返回响应式列配置提示。 */
   override get hint() {
     return "响应式列数可分别设置 sm/md/lg";
   }
@@ -423,6 +458,11 @@ class GridCardFormDialog extends FormDialog<GridCardDialogResult> {
     },
   ];
 
+  /**
+   * 将网格列数字段转换为受限配置。
+   * @param raw - 表单提交的字段值
+   * @returns 含默认列数的网格配置
+   */
   toResult(raw: Record<string, string | boolean>): GridCardDialogResult | null {
     const colsMode = String(
       raw.colsMode ?? "responsive",
@@ -451,6 +491,7 @@ class GridCardFormDialog extends FormDialog<GridCardDialogResult> {
 }
 
 class MasonryCardFormDialog extends FormDialog<MasonryCardDialogResult> {
+  /** 返回瀑布流卡片弹窗标题。 */
   override get title() {
     return VARIANT_LABELS.masonry;
   }
@@ -474,6 +515,11 @@ class MasonryCardFormDialog extends FormDialog<MasonryCardDialogResult> {
     },
   ];
 
+  /**
+   * 将瀑布流列数和间距转换为受限配置。
+   * @param raw - 表单提交的字段值
+   * @returns 含默认列数和间距的瀑布流配置
+   */
   toResult(
     raw: Record<string, string | boolean>,
   ): MasonryCardDialogResult | null {
@@ -483,8 +529,10 @@ class MasonryCardFormDialog extends FormDialog<MasonryCardDialogResult> {
   }
 }
 
-const CARD_FORMS: Record<CardVariant, FormDialog<CardDialogResult>> = {
-  basic: new BasicCardFormDialog(),
+const CARD_FORMS: Record<
+  Exclude<CardVariant, "basic">,
+  FormDialog<CardDialogResult>
+> = {
   link: new LinkCardFormDialog(),
   image: new ImageCardFormDialog(),
   repo: new RepoCardFormDialog(),
@@ -495,17 +543,29 @@ const CARD_FORMS: Record<CardVariant, FormDialog<CardDialogResult>> = {
 /**
  * 按 `props.variant` 选择对应表单渲染。
  * 六个 command 共用此渲染器，避免互相覆盖。
+ * @param host - 弹窗内容挂载元素
+ * @param props - 包含卡片变体的弹窗预填充属性
+ * @param callbacks - 提交或取消的回调
+ * @returns 关闭弹窗时调用的清理函数
  */
 export function renderCardDialog(
   host: HTMLElement,
   props: Record<string, unknown>,
   callbacks: DialogCallbacks<CardDialogResult>,
 ): () => void {
-  const variant = (props.variant as CardVariant) ?? "basic";
-  const form = CARD_FORMS[variant] ?? CARD_FORMS.basic;
+  const variant = props.variant as Exclude<CardVariant, "basic">;
+  const form = CARD_FORMS[variant];
+  if (!form) throw new Error(`Unsupported card dialog variant: ${variant}`);
   return form.render(host, props, callbacks);
 }
 
+/**
+ * 插入基础卡片，或请求指定高级卡片的表单。
+ * @param view - 要修改的 CodeMirror 编辑器实例
+ * @param ctx - 提供事件总线的命令上下文
+ * @param variant - 要插入的卡片变体
+ * @returns 用户取消或缺少事件总线时返回 false
+ */
 async function insertCard(
   view: EditorView,
   ctx: CommandContext | undefined,
@@ -534,8 +594,19 @@ export class CardCommand implements Command, DialogCapableCommand {
 
   renderDialog = renderCardDialog;
 
+  /**
+   * 创建固定卡片变体的命令。
+   * @param variant - 传给共享表单的卡片变体
+   */
   constructor(private readonly variant: CardVariant) {}
 
+  /**
+   * 插入该命令固定的卡片变体。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _payload - 未使用的命令参数
+   * @param ctx - 提供事件总线的命令上下文
+   * @returns 卡片插入结果
+   */
   execute(
     view: EditorView,
     _payload: unknown,

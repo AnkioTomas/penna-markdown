@@ -21,8 +21,19 @@ const PRESET_KIND: Record<Exclude<AlertVariant, "custom">, AlertKind> = {
 };
 
 export class AlertCommand implements Command {
+  /**
+   * 创建固定告警类型的命令。
+   * @param variant - 命令对应的预设告警类型或自定义占位类型
+   */
   constructor(private readonly variant: AlertVariant) {}
 
+  /**
+   * 将选区转成 GFM 告警块，或插入带占位内容的新告警块。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _payload - 未使用的命令参数
+   * @param _ctx - 未使用的命令上下文
+   * @returns 始终返回 true，表示已插入告警块
+   */
   execute(view: EditorView, _payload: unknown, _ctx: CommandContext): boolean {
     const kind = this.variant === "custom" ? "NOTE" : PRESET_KIND[this.variant];
     const { from, to, empty } = view.state.selection.main;

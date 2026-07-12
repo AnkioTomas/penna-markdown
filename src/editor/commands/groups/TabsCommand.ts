@@ -11,6 +11,13 @@ import {
 
 /** `tabs` — 插入多标签页容器 */
 export class TabsCommand implements Command {
+  /**
+   * 用标签页模板包裹选区，或插入默认的两个标签页。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _payload - 未使用的命令参数
+   * @param _ctx - 未使用的命令上下文
+   * @returns 始终返回 true，表示已插入标签页
+   */
   execute(view: EditorView, _payload: unknown, _ctx: CommandContext): boolean {
     const state = view.state;
     const selection = state.selection.main;

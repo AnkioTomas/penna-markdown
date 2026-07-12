@@ -5,6 +5,11 @@ class HeadingCommand implements Command {
   /** @param level - 标题级别，1–6 对应 `#` ~ `######` */
   constructor(private level: number) {}
 
+  /**
+   * 将当前行设置为该命令固定级别的标题。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @returns 标题级别无效时返回 false，否则返回前缀设置结果
+   */
   execute(view: EditorView): boolean {
     if (this.level < 1 || this.level > 6) return false;
     return setLinePrefix(view, "#".repeat(this.level) + " ");

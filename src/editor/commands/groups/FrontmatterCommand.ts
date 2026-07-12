@@ -35,7 +35,11 @@ author:
   name: 作者
 tags: [demo]`;
 
-/** 校验 YAML 字符串，无效时返回错误文案。 */
+/**
+ * 校验 YAML 字符串，无效时返回错误文案。
+ * @param yaml - 待解析的 YAML 文本
+ * @returns YAML 有效时返回 null，否则返回错误信息
+ */
 export function validateFrontmatterYaml(yaml: string): string | null {
   const body = yaml.trim();
   if (!body) return "YAML 不能为空";
@@ -54,12 +58,21 @@ export function validateFrontmatterYaml(yaml: string): string | null {
   }
 }
 
-/** 包装为 frontmatter 围栏 Markdown。 */
+/**
+ * 包装为 frontmatter 围栏 Markdown。
+ * @param yaml - 要包裹的 YAML 文本
+ * @returns 带首尾围栏和空行的 frontmatter Markdown
+ */
 export function frontmatterMarkdown(yaml: string): string {
   return `---\n${yaml.trim()}\n---\n\n`;
 }
 
-/** 将 frontmatter 对象展平为点分路径列表（供 [[path]] 引用）。 */
+/**
+ * 将 frontmatter 对象展平为点分路径列表（供 [[path]] 引用）。
+ * @param obj - 待遍历的 frontmatter 对象
+ * @param prefix - 当前递归层级的路径前缀
+ * @returns 排序后的叶子字段路径列表
+ */
 export function flattenFrontmatterKeys(
   obj: Record<string, unknown>,
   prefix = "",
@@ -78,9 +91,13 @@ export function flattenFrontmatterKeys(
   return keys.sort((a, b) => a.localeCompare(b));
 }
 
-/** 从 ParserStore 读取 frontmatter 变量路径。 */
+/**
+ * 从 ParserStore 读取 frontmatter 变量路径。
+ * @param store - 最近一次渲染生成的可选 ParserStore
+ * @returns 可用于变量引用的点分字段路径
+ */
 export function collectFrontmatterVars(
-  store: ParserStore | undefined,
+  store: ParserStore | null | undefined,
 ): string[] {
   if (!store?.has("frontMatter")) return [];
   const data = store.get<Record<string, unknown>>("frontMatter");
@@ -89,14 +106,17 @@ export function collectFrontmatterVars(
 }
 
 class FrontmatterFormDialog extends FormDialog<FrontmatterDialogResult> {
+  /** 返回 frontmatter 编辑弹窗标题。 */
   override get title() {
     return "文档头（YAML）";
   }
 
+  /** 返回替换文档头的提示信息。 */
   override get hint() {
     return "插入到文档顶部，替换已有 frontmatter";
   }
 
+  /** 返回提交按钮文案。 */
   override get submitText() {
     return "插入到顶部";
   }
@@ -112,6 +132,11 @@ class FrontmatterFormDialog extends FormDialog<FrontmatterDialogResult> {
     },
   ];
 
+  /**
+   * 为首次打开的表单补充默认 YAML。
+   * @param props - 调用方传入的预填充属性
+   * @returns 保留原属性并补齐默认 YAML 的属性
+   */
   override prepareProps(
     props: Record<string, unknown>,
   ): Record<string, unknown> {
@@ -121,10 +146,20 @@ class FrontmatterFormDialog extends FormDialog<FrontmatterDialogResult> {
     };
   }
 
+  /**
+   * 校验 YAML 文本。
+   * @param raw - 表单提交的字段值
+   * @returns YAML 有效时返回 null，否则返回错误信息
+   */
   override validate(raw: Record<string, string | boolean>): string | null {
     return validateFrontmatterYaml(String(raw.yaml ?? ""));
   }
 
+  /**
+   * 将表单字段转换为 frontmatter 数据。
+   * @param raw - 表单提交的字段值
+   * @returns YAML 为空时返回 null
+   */
   toResult(
     raw: Record<string, string | boolean>,
   ): FrontmatterDialogResult | null {
@@ -137,22 +172,33 @@ class FrontmatterFormDialog extends FormDialog<FrontmatterDialogResult> {
 class FrontmatterVarFormDialog extends FormDialog<FrontmatterVarDialogResult> {
   private fieldsForRender: FormFieldDef[] = [];
 
+  /** 返回变量引用弹窗标题。 */
   override get title() {
     return "插入变量引用";
   }
 
+  /** 返回变量引用语法提示。 */
   override get hint() {
     return "生成 [[变量路径]]；可选取文档 frontmatter 中已有字段";
   }
 
+  /** 返回变量引用表单的样式类名。 */
   override get className() {
     return "cherry-dialog-form--frontmatter-var";
   }
 
+  /** 返回本次渲染动态构建的字段列表。 */
   override get fields() {
     return this.fieldsForRender;
   }
 
+  /**
+   * 根据已有变量路径构造选择字段后渲染表单。
+   * @param host - 弹窗内容挂载元素
+   * @param props - 包含已有变量路径的预填充属性
+   * @param callbacks - 提交或取消的回调
+   * @returns 父表单提供的清理函数
+   */
   override render(
     host: HTMLElement,
     props: Record<string, unknown>,
@@ -196,6 +242,11 @@ class FrontmatterVarFormDialog extends FormDialog<FrontmatterVarDialogResult> {
     return super.render(host, props, callbacks);
   }
 
+  /**
+   * 从已有选择或自定义输入中解析变量路径。
+   * @param raw - 表单提交的字段值
+   * @returns 路径为空时返回 null
+   */
   toResult(
     raw: Record<string, string | boolean>,
   ): FrontmatterVarDialogResult | null {
@@ -207,6 +258,11 @@ class FrontmatterVarFormDialog extends FormDialog<FrontmatterVarDialogResult> {
     return { path };
   }
 
+  /**
+   * 同步“自定义路径”输入框的显隐和必填状态。
+   * @param form - 已挂载的表单元素
+   * @returns 可选的事件监听清理函数
+   */
   override onMount(form: HTMLFormElement) {
     const select = form.elements.namedItem("selectedVar");
     const customInput = form.elements.namedItem("customVar");
@@ -242,6 +298,13 @@ export class FrontmatterCommand implements Command, DialogCapableCommand {
 
   renderDialog = frontmatterFormDialog.render.bind(frontmatterFormDialog);
 
+  /**
+   * 打开 YAML 表单并替换或插入文档头。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _p - 未使用的命令参数
+   * @param ctx - 提供事件总线的命令上下文
+   * @returns 用户取消或缺少事件总线时返回 false
+   */
   async execute(
     view: EditorView,
     _p: unknown,
@@ -267,6 +330,13 @@ export class FrontmatterVarCommand implements Command, DialogCapableCommand {
 
   renderDialog = frontmatterVarFormDialog.render.bind(frontmatterVarFormDialog);
 
+  /**
+   * 从 AST 收集变量路径，打开表单并插入变量引用。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _p - 未使用的命令参数
+   * @param ctx - 提供事件总线和可选 ParserStore 的命令上下文
+   * @returns 用户取消或缺少事件总线时返回 false
+   */
   async execute(
     view: EditorView,
     _p: unknown,

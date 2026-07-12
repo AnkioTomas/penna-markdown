@@ -126,8 +126,13 @@ import { mermaidCommand } from "@/editor/commands/groups/MermaidCommand";
 import { echartsCommand } from "@/editor/commands/groups/EchartsCommand";
 import { mathBlockCommand } from "@/editor/commands/groups/MathBlockCommand";
 import { commentBlockCommand } from "@/editor/commands/groups/CommentBlockCommand";
-import { setThemeCommand } from "@/editor/commands/groups/SetThemeCommand";
+import {
+  setThemeCommand,
+  createThemeCommand,
+} from "@/editor/commands/groups/SetThemeCommand";
 import { insertTextCommand } from "@/editor/commands/groups/InsertTextCommand";
+import { AI_COMMANDS } from "@/editor/commands/groups/AICommand";
+import REGISTERED_THEMES from "@/theme/ThemeRegister.js";
 import {
   heading1Command,
   heading2Command,
@@ -139,9 +144,13 @@ import {
 
 export type { EditorCommand } from "@/editor/commands/Command";
 
+const THEME_COMMANDS = Object.fromEntries(
+  REGISTERED_THEMES.map((id) => [`theme-${id}`, createThemeCommand(id)]),
+);
+
 /**
  * 内置命令注册表。
- * 键名为 toolbar `command` 字段及 `runCommand` 第一参数。
+ * 键名与工具栏项 `id` 一致，Toolbar / 快捷键 / `cherry.runCommand()` 均通过此表调度。
  */
 export const COMMANDS: Record<string, Command> = {
   /* ---- 行内标记 (groups/InlineWrapCommand) ---- */
@@ -247,9 +256,11 @@ export const COMMANDS: Record<string, Command> = {
   /* ---- 块级公式 / 注释 ---- */
   mathBlock: mathBlockCommand,
   commentBlock: commentBlockCommand,
-  /* ---- 主题 / 通用插入 ---- */
+  /* ---- 主题 / 通用插入 / AI ---- */
   setTheme: setThemeCommand,
   insertText: insertTextCommand,
+  ...AI_COMMANDS,
+  ...THEME_COMMANDS,
 };
 
 /** 从 {@link COMMANDS} 收集的弹窗渲染器，键为 {@link DialogType}。 */

@@ -12,8 +12,19 @@ import {
 export type CollapseVariant = "default" | "expanded" | "expand";
 
 export class CollapseCommand implements Command {
+  /**
+   * 创建固定折叠面板样式的命令。
+   * @param variant - 手风琴或独立展开面板的输出变体
+   */
   constructor(private readonly variant: CollapseVariant) {}
 
+  /**
+   * 用折叠面板模板包裹选区，或插入默认面板内容。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _payload - 未使用的命令参数
+   * @param _ctx - 未使用的命令上下文
+   * @returns 始终返回 true，表示已插入面板模板
+   */
   execute(view: EditorView, _payload: unknown, _ctx: CommandContext): boolean {
     const state = view.state;
     const selection = state.selection.main;

@@ -25,10 +25,12 @@ export interface FieldDialogResult {
 }
 
 class BasicFieldFormDialog extends FormDialog<FieldDialogResult> {
+  /** 返回字段弹窗标题。 */
   override get title() {
     return "插入字段";
   }
 
+  /** 返回字段语法提示。 */
   override get hint() {
     return "生成 ::: field name + @type / @required 等指令";
   }
@@ -75,6 +77,11 @@ class BasicFieldFormDialog extends FormDialog<FieldDialogResult> {
     },
   ];
 
+  /**
+   * 将表单字段转换为字段块数据并补齐默认值。
+   * @param raw - 表单提交的字段值
+   * @returns 名称为空时返回 null，否则返回字段数据
+   */
   toResult(raw: Record<string, string | boolean>): FieldDialogResult | null {
     const name = String(raw.name ?? "").trim();
     if (!name) return null;
@@ -94,8 +101,19 @@ export class FieldCommand implements Command, DialogCapableCommand {
   readonly dialogType: DialogType = "field";
   renderDialog = basicFieldFormDialog.render.bind(basicFieldFormDialog);
 
+  /**
+   * 创建固定字段或字段组变体的命令。
+   * @param variant - 插入单字段表单或字段组模板的变体
+   */
   constructor(private readonly variant: FieldVariant) {}
 
+  /**
+   * 插入字段组模板，或通过弹窗插入单个字段块。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _payload - 未使用的命令参数
+   * @param ctx - 单字段模式打开表单所需的命令上下文
+   * @returns 用户取消弹窗或缺少事件总线时返回 false
+   */
   async execute(
     view: EditorView,
     _payload: unknown,

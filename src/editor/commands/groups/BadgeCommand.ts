@@ -43,6 +43,11 @@ const POSITION_LABELS: Record<BadgePosition, string> = {
   bottom: "底部",
 };
 
+/**
+ * 根据徽章选项生成尾随属性块。
+ * @param result - 已校验的徽章表单数据
+ * @returns 包含样式和可选位置的 Cherry 属性块
+ */
 function badgeSuffix(result: BadgeDialogResult): string {
   const parts: string[] = [result.variant];
   if (result.position && result.position !== "middle")
@@ -51,6 +56,7 @@ function badgeSuffix(result: BadgeDialogResult): string {
 }
 
 class BadgeFormDialog extends FormDialog<BadgeDialogResult> {
+  /** 返回弹窗标题。 */
   override get title() {
     return "插入徽章";
   }
@@ -85,6 +91,11 @@ class BadgeFormDialog extends FormDialog<BadgeDialogResult> {
     },
   ];
 
+  /**
+   * 将原始表单字段规范化为徽章数据。
+   * @param raw - 表单提交的字段值
+   * @returns 文本为空时返回 null，否则返回徽章数据
+   */
   toResult(raw: Record<string, string | boolean>): BadgeDialogResult | null {
     const text = String(raw.text ?? "").trim();
     if (!text) return null;
@@ -107,6 +118,13 @@ export class BadgeCommand implements Command, DialogCapableCommand {
 
   renderDialog = badgeFormDialog.render.bind(badgeFormDialog);
 
+  /**
+   * 执行徽章插入。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param payload - 可选的预设徽章变体
+   * @param ctx - 用于打开无选区表单的命令上下文
+   * @returns 是否插入成功；无选区时等待弹窗结果
+   */
   execute(
     view: EditorView,
     payload: unknown,
@@ -115,6 +133,13 @@ export class BadgeCommand implements Command, DialogCapableCommand {
     return BadgeCommand.applyBadge(view, ctx, payload);
   }
 
+  /**
+   * 有选区时直接包裹文本；否则请求表单并插入徽章。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param ctx - 可选的事件总线上下文
+   * @param payload - 可选的预设徽章变体
+   * @returns 取消弹窗或缺少事件总线时返回 false
+   */
   static async applyBadge(
     view: EditorView,
     ctx?: CommandContext,

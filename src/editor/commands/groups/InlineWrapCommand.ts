@@ -23,6 +23,11 @@ class InlineWrapCommand implements Command {
     private perLine = false,
   ) {}
 
+  /**
+   * 在选区外切换行内标记；多行模式逐行处理。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @returns 始终返回 true，表示已切换标记
+   */
   execute(view: EditorView): boolean {
     if (this.perLine) {
       toggleInlinePerLine(view, this.before, this.after, this.placeholder);

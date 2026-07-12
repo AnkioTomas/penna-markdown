@@ -41,8 +41,19 @@ const PRESET_DEFAULTS: Record<
 };
 
 export class ContainerCommand implements Command {
+  /**
+   * 创建固定容器预设的命令。
+   * @param variant - 决定容器类型和默认标题的预设标识
+   */
   constructor(private readonly variant: ContainerVariant) {}
 
+  /**
+   * 用容器语法包裹选区，或插入可编辑的默认容器。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _payload - 未使用的命令参数
+   * @param _ctx - 未使用的命令上下文
+   * @returns 始终返回 true，表示已插入容器
+   */
   execute(view: EditorView, _payload: unknown, _ctx: CommandContext): boolean {
     const preset =
       this.variant === "custom"

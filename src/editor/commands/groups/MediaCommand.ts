@@ -29,7 +29,11 @@ const KIND_LABELS: Record<MediaDialogResult["kind"], string> = {
   iframe: "嵌入页",
 };
 
-/** 将媒体数据转为 Cherry 媒体 Markdown。 */
+/**
+ * 将媒体数据转为 Cherry 媒体 Markdown。
+ * @param data - 已校验的媒体表单数据
+ * @returns 可插入编辑器的媒体语法
+ */
 export function mediaMarkdown(data: MediaDialogResult): string {
   const label = data.label;
   let md = `!${data.kind}[${label}](${data.url})`;
@@ -44,14 +48,20 @@ export function mediaMarkdown(data: MediaDialogResult): string {
 }
 
 class MediaFormDialog extends FormDialog<MediaDialogResult> {
+  /**
+   * 创建固定媒体类型的表单。
+   * @param kind - 表单生成字段和输出语法对应的媒体类型
+   */
   constructor(private readonly kind: MediaDialogResult["kind"]) {
     super();
   }
 
+  /** 返回当前媒体类型对应的弹窗标题。 */
   override get title() {
     return `插入${KIND_LABELS[this.kind]}`;
   }
 
+  /** 根据媒体类型返回所需的表单字段。 */
   override get fields(): FormFieldDef[] {
     const list: FormFieldDef[] = [
       {
@@ -98,6 +108,11 @@ class MediaFormDialog extends FormDialog<MediaDialogResult> {
     return list;
   }
 
+  /**
+   * 将媒体表单转换为插入数据。
+   * @param raw - 表单提交的字段值
+   * @returns URL 为空时返回 null
+   */
   toResult(raw: Record<string, string | boolean>): MediaDialogResult | null {
     const url = String(raw.url ?? "").trim();
     if (!url) return null;
@@ -119,6 +134,10 @@ class MediaFormDialog extends FormDialog<MediaDialogResult> {
 export class MediaCommand implements Command, DialogCapableCommand {
   readonly dialogType: DialogType = "media";
 
+  /**
+   * 创建固定媒体类型的命令。
+   * @param kind - 打开表单时预选的媒体类型
+   */
   constructor(private readonly kind: MediaDialogResult["kind"]) {}
 
   renderDialog = (
@@ -130,6 +149,13 @@ export class MediaCommand implements Command, DialogCapableCommand {
     return new MediaFormDialog(kind).render(host, props, callbacks);
   };
 
+  /**
+   * 打开媒体表单并用提交数据替换当前选区。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _p - 未使用的命令参数
+   * @param ctx - 提供事件总线的命令上下文
+   * @returns 用户取消、URL 为空或缺少事件总线时返回 false
+   */
   async execute(
     view: EditorView,
     _p: unknown,

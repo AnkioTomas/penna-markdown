@@ -11,6 +11,12 @@ export class LinePrefixCommand implements Command {
    */
   constructor(private prefix: string | ((payload: unknown) => string)) {}
 
+  /**
+   * 解析固定或动态前缀并设置到当前行。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param payload - 动态前缀函数的输入参数
+   * @returns 行首前缀设置结果
+   */
   execute(view: EditorView, payload: unknown): boolean {
     const pref =
       typeof this.prefix === "function" ? this.prefix(payload) : this.prefix;

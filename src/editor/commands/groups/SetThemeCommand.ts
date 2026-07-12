@@ -14,12 +14,25 @@ class SetThemeCommand implements Command {
    */
   execute(_view: EditorView, payload: unknown, ctx: CommandContext): boolean {
     const id = String((payload as { id?: string })?.id ?? "");
-    const theme = ctx.theme;
-    if (!theme) return false;
-    if (!theme.list().includes(id)) return false;
-    theme.setTheme(id);
-    return true;
+    return applyTheme(ctx, id);
   }
+}
+
+function applyTheme(ctx: CommandContext, id: string): boolean {
+  const theme = ctx.theme;
+  if (!theme) return false;
+  if (!theme.list().includes(id)) return false;
+  theme.setTheme(id);
+  return true;
+}
+
+/** 创建绑定固定主题 id 的命令，命令名与工具栏 id 一致（如 `theme-github`）。 */
+export function createThemeCommand(themeId: string): Command {
+  return {
+    execute(_view, _payload, ctx) {
+      return applyTheme(ctx, themeId);
+    },
+  };
 }
 
 /**

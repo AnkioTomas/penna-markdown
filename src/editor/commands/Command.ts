@@ -9,6 +9,7 @@ import type { EditorView } from "@codemirror/view";
 import type { EventBus } from "@/core/event/EventBus";
 import type { Theme } from "@/theme/Theme";
 import { ParserStore } from "@/transformer/core/ParserStore";
+import type { OnAiRequest } from "@/editor/CherryOptions";
 
 /** 命令注册表中的命令名字符串，如 `"bold"`、`"link"`。 */
 export type EditorCommand = string;
@@ -23,8 +24,13 @@ export interface CommandContext {
   eventBus?: EventBus;
   /** 主题实例，用于 `setTheme` 等皮肤 API。 */
   theme?: Theme;
-  /** 获取当前最新渲染的 AST。 */
-  getStore?: () => ParserStore;
+  /**
+   * 获取最近一次成功渲染的 ParserStore。
+   * 尚未渲染或无 AST 时返回 `null`（禁止伪造空 store）。
+   */
+  getStore?: () => ParserStore | null;
+  /** AI 请求回调，AI 命令执行时使用。 */
+  onAiRequest?: OnAiRequest;
 }
 
 /** 光标所在行的位置与文本信息。 */
@@ -56,7 +62,11 @@ export interface Command {
   ): boolean | Promise<boolean>;
 }
 
-/** 获取光标所在行的范围与内容。 */
+/**
+ * 获取主光标所在行的范围与内容。
+ * @param view - 要读取状态的 CodeMirror 编辑器实例
+ * @returns 行的起止位置、文本和一基行号
+ */
 export function getLineAtCursor(view: EditorView): LineInfo {
   const pos = view.state.selection.main.head;
   const line = view.state.doc.lineAt(pos);
@@ -70,8 +80,8 @@ export function getLineAtCursor(view: EditorView): LineInfo {
 
 /**
  * 在选区处插入文本，可选设置插入后的选区范围。
- * @param view
- * @param text
+ * @param view - 要写入的 CodeMirror 编辑器实例
+ * @param text - 替换当前选区的文本
  * @param selectFrom - 相对于插入起点的选区起始偏移
  * @param selectTo - 相对于插入起点的选区结束偏移
  */
@@ -99,8 +109,8 @@ export function insertText(
 /**
  * 智能插入块级 Markdown 片段。
  * 空选区时自动补换行；光标在行首空行时从行首插入。
- * @param view
- * @param snippet
+ * @param view - 要写入的 CodeMirror 编辑器实例
+ * @param snippet - 待插入的块级 Markdown 片段
  * @param selectFrom - 相对于最终插入文本起点的选区起始
  * @param selectEnd - 相对于最终插入文本起点的选区结束
  */
@@ -133,6 +143,10 @@ export function insertSnippet(
 
 /**
  * 用前后标记包裹选区；空选区时插入占位文本并选中。
+ * @param view - 要修改的 CodeMirror 编辑器实例
+ * @param before - 置于选区或占位文本前的标记
+ * @param after - 置于选区或占位文本后的标记
+ * @param placeholder - 空选区时插入并选中的默认文本
  */
 export function wrapSelection(
   view: EditorView,
@@ -163,7 +177,12 @@ export function wrapSelection(
   });
 }
 
-/** 替换整行文本，不改变其他行。 */
+/**
+ * 替换整行文本，不改变其他行。
+ * @param view - 要修改的 CodeMirror 编辑器实例
+ * @param line - 待替换行的原始范围
+ * @param newText - 写入该行的新文本
+ */
 export function replaceLineText(
   view: EditorView,
   line: LineInfo,
@@ -178,6 +197,9 @@ export function replaceLineText(
 /**
  * 设置当前行行首前缀（会先剥离已有 `#` 标题前缀）。
  * 用于标题、引用、列表等行首语法。
+ * @param view - 要修改的 CodeMirror 编辑器实例
+ * @param prefix - 写入当前行的行首 Markdown 前缀
+ * @returns 始终返回 true，表示已派发编辑事务
  */
 export function setLinePrefix(view: EditorView, prefix: string): boolean {
   const line = getLineAtCursor(view);
@@ -204,6 +226,10 @@ export function setLinePrefix(view: EditorView, prefix: string): boolean {
 /**
  * 行内标记 toggle：选区已有标记则移除，否则包裹。
  * 空选区时插入占位符。
+ * @param view - 要修改的 CodeMirror 编辑器实例
+ * @param before - 行内语法的起始标记
+ * @param after - 行内语法的结束标记
+ * @param placeholder - 空选区时插入的默认内容
  */
 export function toggleInlineWrap(
   view: EditorView,
@@ -237,6 +263,10 @@ export function toggleInlineWrap(
 
 /**
  * 多行选区时逐行 toggle 行内标记；单行时等同 {@link toggleInlineWrap}。
+ * @param view - 要修改的 CodeMirror 编辑器实例
+ * @param before - 每行前插入或匹配的标记
+ * @param after - 每行后插入或匹配的标记
+ * @param placeholder - 空选区时传给单行包裹逻辑的默认内容
  */
 export function toggleInlinePerLine(
   view: EditorView,
@@ -289,6 +319,8 @@ export function toggleInlinePerLine(
 
 /**
  * 在选区末尾（或光标处）追加 Cherry HTML 属性块，如 `{.highlight}`。
+ * @param view - 要修改的 CodeMirror 编辑器实例
+ * @param rawAttr - 用户输入的类名、id 或属性表达式
  */
 export function appendHtmlAttr(view: EditorView, rawAttr: string): void {
   const attr = normalizeHtmlAttr(rawAttr);
@@ -306,6 +338,8 @@ export function appendHtmlAttr(view: EditorView, rawAttr: string): void {
 /**
  * 将用户输入规范化为 Cherry HTML 属性语法。
  * 如 `.highlight` → `{.highlight}`，`#id` → `{#id}`。
+ * @param raw - 未包裹的属性输入或完整属性块
+ * @returns 可直接插入的属性块；空白输入返回空字符串
  */
 export function normalizeHtmlAttr(raw: string): string {
   const trimmed = raw.trim();
@@ -319,6 +353,8 @@ export function normalizeHtmlAttr(raw: string): string {
 
 /**
  * 在文档顶部插入文本；若已有 frontmatter 则替换之。
+ * @param view - 要修改的 CodeMirror 编辑器实例
+ * @param text - 要作为文档头写入的文本
  */
 export function insertAtDocumentTop(view: EditorView, text: string): void {
   const doc = view.state.doc.toString();
@@ -344,7 +380,11 @@ export function insertAtDocumentTop(view: EditorView, text: string): void {
   });
 }
 
-/** 在文档末尾追加文本，必要时自动补前导换行。 */
+/**
+ * 在文档末尾追加文本，必要时自动补前导换行。
+ * @param view - 要修改的 CodeMirror 编辑器实例
+ * @param text - 要追加到文档末尾的文本
+ */
 export function appendToDocumentEnd(view: EditorView, text: string): void {
   const end = view.state.doc.length;
   const needsNl = end > 0 && view.state.doc.sliceString(end - 1, end) !== "\n";

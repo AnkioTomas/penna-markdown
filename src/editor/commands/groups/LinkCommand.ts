@@ -51,7 +51,11 @@ interface LinkRefInfo {
   title: string;
 }
 
-/** 将引用定义转为 Markdown。 */
+/**
+ * 将引用定义转为 Markdown。
+ * @param data - 已校验的链接引用定义数据
+ * @returns 可插入编辑器的引用定义行
+ */
 export function linkRefDefMarkdown(data: LinkRefDefDialogResult): string {
   const label = data.label.trim();
   const url = data.url.trim();
@@ -59,14 +63,26 @@ export function linkRefDefMarkdown(data: LinkRefDefDialogResult): string {
   return `[${label}]: ${url}${titleStr}\n`;
 }
 
+/**
+ * 截断 URL 以供引用下拉选项展示。
+ * @param url - 待展示的 URL
+ * @param max - 截断前允许的最大字符数
+ * @returns 非空的完整或截断 URL 预览
+ */
 function previewUrl(url: string, max = 40): string {
   const trimmed = url.trim();
   if (!trimmed) return "无链接";
   return trimmed.length > max ? `${trimmed.slice(0, max)}…` : trimmed;
 }
 
-/** 从 ParserStore 收集已有链接引用定义（键 ref_*）。 */
-export function collectLinkRefs(store: ParserStore | undefined): LinkRefInfo[] {
+/**
+ * 从 ParserStore 收集已有链接引用定义（键 ref_*）。
+ * @param store - 最近一次渲染生成的可选 ParserStore
+ * @returns 按标识排序的链接引用定义
+ */
+export function collectLinkRefs(
+  store: ParserStore | null | undefined,
+): LinkRefInfo[] {
   if (!store) return [];
   const refs: LinkRefInfo[] = [];
   for (const [key, value] of Object.entries(store.getAll())) {
@@ -82,6 +98,12 @@ export function collectLinkRefs(store: ParserStore | undefined): LinkRefInfo[] {
   return refs.sort((a, b) => a.id.localeCompare(b.id));
 }
 
+/**
+ * 为引用标识输入框添加已有链接定义的数据列表。
+ * @param form - 已挂载的表单元素
+ * @param fieldName - 应绑定数据列表的输入字段名
+ * @param existingRefs - 可供选择的已有链接定义
+ */
 function applyRefIdDatalist(
   form: HTMLFormElement,
   fieldName: string,
@@ -103,6 +125,11 @@ function applyRefIdDatalist(
   }
 }
 
+/**
+ * 同步“新建引用标识”输入框的显隐和必填状态。
+ * @param form - 已挂载的表单元素
+ * @returns 找到所需字段时返回事件监听清理函数
+ */
 function mountRefIdSelectSync(form: HTMLFormElement): (() => void) | void {
   const select = form.elements.namedItem("selectedRefId");
   const customInput = form.elements.namedItem("customRefId");
@@ -133,6 +160,11 @@ class LinkFormDialog extends FormDialog<LinkDialogResult> {
     { name: "title", label: "标题（可选）", type: "text" as const },
   ];
 
+  /**
+   * 将链接表单转换为插入数据。
+   * @param raw - 表单提交的字段值
+   * @returns URL 为空时返回 null
+   */
   toResult(raw: Record<string, string | boolean>): LinkDialogResult | null {
     const url = String(raw.url ?? "").trim();
     if (!url) return null;
@@ -148,6 +180,7 @@ class LinkFormDialog extends FormDialog<LinkDialogResult> {
 const linkFormDialog = new LinkFormDialog();
 
 class ImageFormDialog extends FormDialog<ImageDialogResult> {
+  /** 返回图片弹窗标题。 */
   override get title() {
     return "插入图片";
   }
@@ -164,6 +197,11 @@ class ImageFormDialog extends FormDialog<ImageDialogResult> {
     },
   ];
 
+  /**
+   * 将图片表单转换为插入数据。
+   * @param raw - 表单提交的字段值
+   * @returns URL 为空时返回 null
+   */
   toResult(raw: Record<string, string | boolean>): ImageDialogResult | null {
     const url = String(raw.url ?? "").trim();
     if (!url) return null;
@@ -183,22 +221,33 @@ const imageFormDialog = new ImageFormDialog();
 class LinkReferenceFormDialog extends FormDialog<LinkReferenceDialogResult> {
   private fieldsForRender: FormFieldDef[] = [];
 
+  /** 返回引用式链接弹窗标题。 */
   override get title() {
     return "插入引用式链接";
   }
 
+  /** 返回引用式链接语法提示。 */
   override get hint() {
     return "生成 [文本][标识]；可选取文档中已有的链接引用定义";
   }
 
+  /** 返回引用式链接表单的样式类名。 */
   override get className() {
     return "cherry-dialog-form--link-reference";
   }
 
+  /** 返回本次渲染动态构建的字段列表。 */
   override get fields() {
     return this.fieldsForRender;
   }
 
+  /**
+   * 根据已有引用定义构造选择字段后渲染表单。
+   * @param host - 弹窗内容挂载元素
+   * @param props - 包含已有链接定义的预填充属性
+   * @param callbacks - 提交或取消的回调
+   * @returns 父表单提供的清理函数
+   */
   override render(
     host: HTMLElement,
     props: Record<string, unknown>,
@@ -253,6 +302,11 @@ class LinkReferenceFormDialog extends FormDialog<LinkReferenceDialogResult> {
     return super.render(host, props, callbacks);
   }
 
+  /**
+   * 从已有选择或自定义输入中解析引用式链接。
+   * @param raw - 表单提交的字段值
+   * @returns 文本或标识为空时返回 null
+   */
   toResult(
     raw: Record<string, string | boolean>,
   ): LinkReferenceDialogResult | null {
@@ -266,16 +320,23 @@ class LinkReferenceFormDialog extends FormDialog<LinkReferenceDialogResult> {
     return { text, refId };
   }
 
+  /**
+   * 挂载引用选择字段的联动逻辑。
+   * @param form - 已挂载的表单元素
+   * @returns 事件监听清理函数
+   */
   override onMount(form: HTMLFormElement) {
     return mountRefIdSelectSync(form);
   }
 }
 
 class LinkRefDefFormDialog extends FormDialog<LinkRefDefDialogResult> {
+  /** 返回链接定义弹窗标题。 */
   override get title() {
     return "插入链接引用定义";
   }
 
+  /** 返回链接定义语法提示。 */
   override get hint() {
     return '生成 [标识]: url "标题"，供引用式链接使用';
   }
@@ -292,6 +353,11 @@ class LinkRefDefFormDialog extends FormDialog<LinkRefDefDialogResult> {
     { name: "title", label: "标题（可选）", type: "text" as const },
   ];
 
+  /**
+   * 将链接定义表单转换为插入数据。
+   * @param raw - 表单提交的字段值
+   * @returns URL 或标识为空时返回 null
+   */
   toResult(
     raw: Record<string, string | boolean>,
   ): LinkRefDefDialogResult | null {
@@ -303,6 +369,11 @@ class LinkRefDefFormDialog extends FormDialog<LinkRefDefDialogResult> {
     return { label, url, title: title || undefined };
   }
 
+  /**
+   * 为链接定义标识输入框挂载已有定义数据列表。
+   * @param form - 已挂载的表单元素
+   * @param props - 包含已有链接定义的预填充属性
+   */
   override onMount(form: HTMLFormElement, props: Record<string, unknown>) {
     applyRefIdDatalist(
       form,
@@ -315,6 +386,11 @@ class LinkRefDefFormDialog extends FormDialog<LinkRefDefDialogResult> {
 const linkReferenceFormDialog = new LinkReferenceFormDialog();
 const linkRefDefFormDialog = new LinkRefDefFormDialog();
 
+/**
+ * 将选中文本转换为可用的引用标识。
+ * @param text - 待转换的显示文本
+ * @returns 小写连字符标识；无法转换时为 `ref`
+ */
 function slugRefId(text: string): string {
   const slug = text
     .trim()
@@ -325,6 +401,13 @@ function slugRefId(text: string): string {
 }
 
 class LinkRefCommandImpl implements Command, DialogCapableCommand {
+  /**
+   * 创建共享表单的链接引用命令。
+   * @param dialogType - 要打开的弹窗类型
+   * @param dialog - 负责收集链接数据的表单
+   * @param apply - 将提交数据写入编辑器的函数
+   * @param buildProps - 根据编辑器和已有定义构造弹窗属性的函数
+   */
   constructor(
     public readonly dialogType: DialogType,
     private readonly dialog: FormDialog<
@@ -342,6 +425,13 @@ class LinkRefCommandImpl implements Command, DialogCapableCommand {
 
   renderDialog = this.dialog.render.bind(this.dialog);
 
+  /**
+   * 收集已有定义，打开表单并应用链接引用编辑。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _payload - 未使用的命令参数
+   * @param ctx - 提供事件总线和可选 ParserStore 的命令上下文
+   * @returns 用户取消或缺少事件总线时返回 false
+   */
   async execute(
     view: EditorView,
     _payload: unknown,
@@ -367,6 +457,13 @@ export class LinkCommand implements Command, DialogCapableCommand {
 
   renderDialog = linkFormDialog.render.bind(linkFormDialog);
 
+  /**
+   * 打开链接表单并用提交数据替换当前选区。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _payload - 未使用的命令参数
+   * @param ctx - 提供事件总线的命令上下文
+   * @returns 用户取消、URL 为空或缺少事件总线时返回 false
+   */
   async execute(
     view: EditorView,
     _payload: unknown,
@@ -396,6 +493,13 @@ export class ImageCommand implements Command, DialogCapableCommand {
 
   renderDialog = imageFormDialog.render.bind(imageFormDialog);
 
+  /**
+   * 打开图片表单并用提交数据替换当前选区。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _p - 未使用的命令参数
+   * @param ctx - 提供事件总线的命令上下文
+   * @returns 用户取消、URL 为空或缺少事件总线时返回 false
+   */
   async execute(
     view: EditorView,
     _p: unknown,

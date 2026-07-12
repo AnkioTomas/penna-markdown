@@ -35,7 +35,11 @@ export interface DialogCapableCommand {
   renderDialog: DialogRenderer;
 }
 
-/** 类型守卫：判断对象是否实现了弹窗能力。 */
+/**
+ * 类型守卫：判断对象是否实现了弹窗能力。
+ * @param cmd - 待检查的未知命令对象
+ * @returns 对象同时具有弹窗类型和渲染函数时返回 true
+ */
 export function isDialogCapable(cmd: unknown): cmd is DialogCapableCommand {
   return (
     typeof cmd === "object" &&
@@ -49,6 +53,8 @@ export function isDialogCapable(cmd: unknown): cmd is DialogCapableCommand {
 /**
  * 从命令注册表扫描所有带弹窗的命令，构建 type → renderDialog 映射。
  * 供 `DialogHost` 通过 `DIALOG_RENDERERS[type]` 查找渲染器。
+ * @param commands - 命令名到命令实例的注册表
+ * @returns 弹窗类型到已绑定渲染函数的映射
  */
 export function buildDialogRenderers(
   commands: Record<string, unknown>,

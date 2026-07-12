@@ -34,6 +34,13 @@ const CATEGORY_ICONS: Record<string, string> = {
   Flags: "🚩",
 };
 
+/**
+ * 构建 Emoji 分类和搜索选择面板。
+ * @param host - 弹窗内容挂载元素
+ * @param _props - 未使用的弹窗预填充属性
+ * @param callbacks - 选择 shortcode 或取消时的回调
+ * @returns 销毁面板 DOM 的清理函数
+ */
 function renderEmojiDialog(
   host: HTMLElement,
   _props: Record<string, unknown>,
@@ -159,6 +166,13 @@ export class EmojiCommand implements Command, DialogCapableCommand {
 
   renderDialog = renderEmojiDialog;
 
+  /**
+   * 打开 Emoji 选择器并插入选中的 shortcode。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _p - 未使用的命令参数
+   * @param ctx - 提供事件总线的命令上下文
+   * @returns 用户取消、未选择 Emoji 或缺少事件总线时返回 false
+   */
   async execute(
     view: EditorView,
     _p: unknown,

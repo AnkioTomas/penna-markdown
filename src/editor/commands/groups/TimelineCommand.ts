@@ -27,6 +27,7 @@ export interface TimelineNodeDialogResult {
 
 // 容器配置弹窗
 class TimelineContainerDialog extends FormDialog<TimelineContainerDialogResult> {
+  /** 返回时间线容器弹窗标题。 */
   override get title() {
     return "插入时间线容器";
   }
@@ -55,6 +56,11 @@ class TimelineContainerDialog extends FormDialog<TimelineContainerDialogResult> 
     },
   ];
 
+  /**
+   * 将容器配置字段转换为时间线属性。
+   * @param raw - 表单提交的字段值
+   * @returns 包含布局和连线样式的容器数据
+   */
   toResult(
     raw: Record<string, string | boolean>,
   ): TimelineContainerDialogResult {
@@ -67,6 +73,7 @@ class TimelineContainerDialog extends FormDialog<TimelineContainerDialogResult> 
 
 // 节点配置弹窗
 class TimelineNodeDialog extends FormDialog<TimelineNodeDialogResult> {
+  /** 返回时间线节点弹窗标题。 */
   override get title() {
     return "插入时间线节点";
   }
@@ -83,7 +90,6 @@ class TimelineNodeDialog extends FormDialog<TimelineNodeDialogResult> {
       label: "时间",
       type: "text" as const,
       required: true,
-      defaultValue: new Date().toISOString().split("T")[0],
     },
     {
       name: "type",
@@ -108,6 +114,25 @@ class TimelineNodeDialog extends FormDialog<TimelineNodeDialogResult> {
     },
   ];
 
+  /**
+   * 为节点时间字段提供当天的默认值。
+   * @param props - 调用方传入的预填充属性
+   * @returns 带默认日期的弹窗属性
+   */
+  override prepareProps(
+    props: Record<string, unknown>,
+  ): Record<string, unknown> {
+    return {
+      time: new Date().toISOString().split("T")[0],
+      ...props,
+    };
+  }
+
+  /**
+   * 将表单字段转换为时间线节点数据。
+   * @param raw - 表单提交的字段值
+   * @returns 标题为空时返回 null，否则返回节点数据
+   */
   toResult(
     raw: Record<string, string | boolean>,
   ): TimelineNodeDialogResult | null {
@@ -129,6 +154,13 @@ export class TimelineContainerCommand implements Command, DialogCapableCommand {
   readonly dialogType: DialogType = "timelineContainer";
   renderDialog = timelineContainerDialog.render.bind(timelineContainerDialog);
 
+  /**
+   * 请求容器配置并插入含默认节点的时间线。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _payload - 未使用的命令参数
+   * @param ctx - 提供事件总线的命令上下文
+   * @returns 用户取消或缺少事件总线时返回 false
+   */
   async execute(
     view: EditorView,
     _payload: unknown,
@@ -158,6 +190,13 @@ export class TimelineNodeCommand implements Command, DialogCapableCommand {
   readonly dialogType: DialogType = "timelineNode";
   renderDialog = timelineNodeDialog.render.bind(timelineNodeDialog);
 
+  /**
+   * 请求节点配置并在当前选区处插入时间线节点。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _payload - 未使用的命令参数
+   * @param ctx - 提供事件总线的命令上下文
+   * @returns 用户取消或缺少事件总线时返回 false
+   */
   async execute(
     view: EditorView,
     _payload: unknown,

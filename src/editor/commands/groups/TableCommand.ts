@@ -23,6 +23,13 @@ export interface TableDialogResult {
 
 const GRID_SIZE = 10;
 
+/**
+ * 构建用于选择表格行列的交互网格。
+ * @param host - 弹窗内容挂载元素
+ * @param _props - 未使用的弹窗预填充属性
+ * @param callbacks - 选定尺寸或取消时的回调
+ * @returns 卸载鼠标监听器并移除表单的清理函数
+ */
 function renderTableDialog(
   host: HTMLElement,
   _props: Record<string, unknown>,
@@ -140,6 +147,12 @@ function renderTableDialog(
   };
 }
 
+/**
+ * 生成包含表头和分隔行的 GFM 表格骨架。
+ * @param rows - 请求的总行数，最少为两行
+ * @param cols - 请求的列数，最少为一列
+ * @returns 带前后换行的表格 Markdown
+ */
 function buildTableMarkdown(rows: number, cols: number): string {
   const safeRows = Math.max(2, rows);
   const safeCols = Math.max(1, cols);
@@ -159,6 +172,13 @@ export class TableCommand implements Command, DialogCapableCommand {
 
   renderDialog = renderTableDialog;
 
+  /**
+   * 请求表格尺寸并插入限定在 10×10 内的表格。
+   * @param view - 要修改的 CodeMirror 编辑器实例
+   * @param _payload - 未使用的命令参数
+   * @param ctx - 提供事件总线的命令上下文
+   * @returns 用户取消或缺少事件总线时返回 false
+   */
   async execute(
     view: EditorView,
     _payload: unknown,
