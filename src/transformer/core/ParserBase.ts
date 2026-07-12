@@ -78,12 +78,15 @@ export abstract class BaseInlineParser {
 /** 块级语法解析器基类 */
 export abstract class BaseBlockParser {
   readonly type: string;
+  /** `syntaxOptions` 中的键；默认与 {@link type} 相同 */
+  readonly syntaxKey: string;
   /** 强打断：打断段落 / list 行收集等（默认 true） */
   readonly strongBreak: boolean;
   private options: ParserOptions = {};
 
-  protected constructor(type: string, strongBreak = true) {
+  protected constructor(type: string, strongBreak = true, syntaxKey?: string) {
     this.type = type;
+    this.syntaxKey = syntaxKey ?? type;
     this.strongBreak = strongBreak;
   }
 

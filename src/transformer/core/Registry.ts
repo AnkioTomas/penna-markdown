@@ -73,9 +73,13 @@ export class Registry {
   }
 
   setOptions(syntaxOptions: SyntaxOptions): void {
-    for (const [key, options] of Object.entries(syntaxOptions)) {
-      this.getInlineParser(key)?.setOptions(options);
-      this.getBlockParser(key)?.setOptions(options);
+    for (const entry of this._inline) {
+      const options = syntaxOptions[entry.parser.type];
+      if (options) entry.parser.setOptions(options);
+    }
+    for (const entry of this._block) {
+      const options = syntaxOptions[entry.parser.syntaxKey];
+      if (options) entry.parser.setOptions(options);
     }
   }
 

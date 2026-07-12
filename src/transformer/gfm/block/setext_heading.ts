@@ -32,9 +32,8 @@ export function getSetextUnderlineInfo(line: string): number {
 }
 
 class SetextHeadingBlockParser extends BaseBlockParser {
-  // 优先级必须高于 Paragraph
   constructor() {
-    super("setext_heading");
+    super("setext_heading", true, "atx_heading");
   }
 
   /** @inheritdoc */
