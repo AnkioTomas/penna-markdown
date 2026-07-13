@@ -69,7 +69,11 @@ class SetextHeadingBlockParser extends BaseBlockParser {
       const underline = getSetextUnderlineInfo(line);
 
       if (underline > 0) {
-        const content = contentLines.join("\n");
+        // CommonMark：拼接内容行后去掉首尾 space/tab（含行首 ≤3 空格缩进）
+        const content = contentLines
+          .join("\n")
+          .replace(/^[ \t]+/, "")
+          .replace(/[ \t]+$/, "");
         const store = ctx.store;
         const node = createNode(
           "setext_heading",
@@ -85,8 +89,8 @@ class SetextHeadingBlockParser extends BaseBlockParser {
         return { node, nextIndex: i + 1 };
       }
 
-      // 吃掉文本
-      contentLines.push(line);
+      // 吃掉文本：与段落一致，剥掉块级前导空格（最多 3 列）
+      contentLines.push(line.slice(skipBlockPrefixSpaces(line)));
       i++;
     }
 
