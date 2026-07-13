@@ -31,6 +31,11 @@
   display: none;
 }
 
+/* toolbar 是 body 的兄弟节点；preview 下编辑命令无意义，直接藏 */
+.cherry:has(> .cherry-body--preview) > .cherry-toolbar {
+  display: none;
+}
+
 .cherry-body--edit .cherry-editor {
   border-right: none;
 }
