@@ -80,7 +80,9 @@ export const extendBlockSyntax: Record<number, BaseBlockParser> = {
   83: mediaBlockParser,
   510: alertBlock,
   316: taskListParser,
-  110: enhancedCodeParser,
+  // 与 gfm `code`(420) 同 type，Registry 会按 type 覆盖；必须保持 ≥420，
+  // 否则会被 setext_heading(310) 抢先，```yaml 内的 --- 会被当成标题下划线。
+  420: enhancedCodeParser,
   109: specialCodeParser,
   87: containerBlock,
   96: cardMasonryBlockParser,
