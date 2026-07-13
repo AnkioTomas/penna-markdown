@@ -6,3 +6,9 @@
   background: var(--cherry-c-bg);
   padding: 14px;
 }
+
+/* 纯预览：滚动条在外缘，内容块限宽居中 */
+.cherry-body--preview .cherry-preview > * {
+  max-width: var(--cherry-preview-max-width, none);
+  margin-inline: auto;
+}

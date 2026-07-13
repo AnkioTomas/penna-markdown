@@ -11,7 +11,6 @@ import { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
 import type { RenderResult } from "@/renderer/RenderResult";
 import type { ParserStore } from "@/transformer/core/ParserStore";
 import type {
-  CherryLayoutPayload,
   EditorChangePayload,
   PreviewRenderedPayload,
 } from "@/editor/events";
@@ -66,28 +65,13 @@ export class Preview {
         if (this.lastMarkdown) this.onEditorChange(this.lastMarkdown);
       }),
     );
-    this.offs.add(
-      eventBus.on<CherryLayoutPayload>("cherry:layout", (payload) => {
-        if (payload.mode === "preview" && options.maxWidth) {
-          mount.style.maxWidth =
-            typeof options.maxWidth === "number"
-              ? `${options.maxWidth}px`
-              : options.maxWidth;
-          mount.style.marginLeft = "auto";
-          mount.style.marginRight = "auto";
-          if (mount.parentElement) {
-            mount.parentElement.style.backgroundColor = "var(--cherry-c-bg)";
-          }
-        } else {
-          mount.style.maxWidth = "";
-          mount.style.marginLeft = "";
-          mount.style.marginRight = "";
-          if (mount.parentElement) {
-            mount.parentElement.style.backgroundColor = "";
-          }
-        }
-      }),
-    );
+    if (options.maxWidth != null) {
+      const value =
+        typeof options.maxWidth === "number"
+          ? `${options.maxWidth}px`
+          : String(options.maxWidth);
+      mount.style.setProperty("--cherry-preview-max-width", value);
+    }
     this.offs.add(
       eventBus.on("preview:force-refresh", () => {
         if (this.lastMarkdown) {
