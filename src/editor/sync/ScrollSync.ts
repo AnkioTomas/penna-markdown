@@ -21,6 +21,8 @@ export class ScrollSync {
   private isSyncingRight = false;
   private readonly editorScroll: HTMLElement;
   private readonly previewScroll: HTMLElement;
+  /** 块 DOM 挂载点（`.cherry-render`）；无内层时等于 `previewScroll` */
+  private readonly previewContent: HTMLElement;
   private readonly offs: (() => void)[] = [];
   private destroyed = false;
 
@@ -105,6 +107,9 @@ export class ScrollSync {
   ) {
     this.editorScroll = editor.getView().scrollDOM;
     this.previewScroll = previewEl;
+    this.previewContent =
+      (previewEl.querySelector(":scope > .cherry-render") as HTMLElement) ??
+      previewEl;
 
     if (!this.editorScroll || !this.previewScroll) return;
 
@@ -122,7 +127,7 @@ export class ScrollSync {
         (payload) => {
           const target =
             document.getElementById(payload.id) ||
-            this.previewScroll.querySelector(`[data-hash="${payload.id}"]`);
+            this.previewContent.querySelector(`[data-hash="${payload.id}"]`);
           if (target) {
             this.previewScroll.scrollTo({
               top: (target as HTMLElement).offsetTop,
@@ -187,7 +192,7 @@ export class ScrollSync {
         high = mid - 1;
       }
     }
-    const el = this.previewScroll.children[bestIndex] as HTMLElement;
+    const el = this.previewContent.children[bestIndex] as HTMLElement;
     return el ? el.offsetTop : 0;
   }
 
@@ -202,12 +207,12 @@ export class ScrollSync {
 
     const scrollTop = this.previewScroll.scrollTop;
     let low = 0;
-    let high = this.previewScroll.children.length - 1;
+    let high = this.previewContent.children.length - 1;
     let bestIndex = 0;
 
     while (low <= high) {
       const mid = (low + high) >> 1;
-      const el = this.previewScroll.children[mid] as HTMLElement;
+      const el = this.previewContent.children[mid] as HTMLElement;
       if (!el) break;
 
       if (el.offsetTop <= scrollTop + PREVIEW_HIT_SLACK_PX) {

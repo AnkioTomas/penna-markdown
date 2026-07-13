@@ -4,11 +4,16 @@
   min-height: 0;
   overflow: auto;
   background: var(--cherry-c-bg);
+}
+
+.cherry-preview > .cherry-render {
+  box-sizing: border-box;
+  min-height: 100%;
   padding: 14px;
 }
 
-/* 纯预览：滚动条在外缘，内容块限宽居中 */
-.cherry-body--preview .cherry-preview > * {
-  max-width: var(--cherry-preview-max-width, none);
+/* 纯预览限宽：外壳全宽滚动，内层版心居中 */
+.cherry-body--preview .cherry-preview--constrained > .cherry-render {
+  max-width: var(--cherry-preview-max-width);
   margin-inline: auto;
 }

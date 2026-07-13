@@ -19,6 +19,8 @@ export class Preview {
   private readonly eventBus: EventBus;
   private readonly renderer: Renderer;
   private readonly debug: boolean;
+  /** 实际滚动容器：有外壳时是 `.cherry-preview`，否则退化为 mount */
+  private readonly scrollEl: HTMLElement;
   private lastMarkdown = "";
   private readonly scheduleRender = debounce(() => this.flushRender(), 50);
   private readonly offs = new Set<() => void>();
@@ -26,7 +28,7 @@ export class Preview {
   /**
    * 创建预览渲染器，并订阅编辑、主题和强制刷新事件。
    *
-   * @param mount 承载渲染结果的 DOM 元素。
+   * @param mount 承载渲染结果的 DOM 元素（`.cherry-render`）。
    * @param theme 当前编辑器使用的主题实例。
    * @param eventBus 用于接收和发布预览相关事件的事件总线。
    * @param logger 渲染器使用的日志记录器。
@@ -41,6 +43,9 @@ export class Preview {
   ) {
     this.eventBus = eventBus;
     this.debug = eventBus.isDebug();
+    this.scrollEl = mount.parentElement?.classList.contains("cherry-preview")
+      ? mount.parentElement
+      : mount;
     this.renderer = new Renderer({
       mount,
       theme,
@@ -70,22 +75,21 @@ export class Preview {
         typeof options.maxWidth === "number"
           ? `${options.maxWidth}px`
           : String(options.maxWidth);
-      mount.style.setProperty("--cherry-preview-max-width", value);
+      this.scrollEl.style.setProperty("--cherry-preview-max-width", value);
+      this.scrollEl.classList.add("cherry-preview--constrained");
     }
     this.offs.add(
       eventBus.on("preview:force-refresh", () => {
         if (this.lastMarkdown) {
           this.scheduleRender.cancel();
           this.pendingTransactions = [];
-          const mount = this.renderer.getMount();
-          const scrollTop = mount.scrollTop;
+          const scrollTop = this.scrollEl.scrollTop;
 
           const { result, durationMs } = this.measureFullRender(
             this.lastMarkdown,
           );
 
-          // DOM 替换后恢复滚动位置，避免强制重置到顶部导致滚动同步引擎误判
-          mount.scrollTop = scrollTop;
+          this.scrollEl.scrollTop = scrollTop;
 
           this.emitRendered(this.lastMarkdown, result, [], durationMs);
         }

@@ -10,9 +10,9 @@
  * | 元素 | class | 作用 |
  * | ---- | ----- | ---- |
  * | `rootElement`（用户挂载点） | `cherry-theme-{id}`、`cherry-dark` | 皮肤变量与编辑器 chrome |
- * | 预览挂载点（由调用方标记） | `cherry-render` | 供 `.cherry-theme-* .cherry-render` 命中渲染样式 |
+ * | 预览内容层（由 Cherry 创建） | `cherry-render` | 供 `.cherry-theme-* .cherry-render` 命中渲染样式；外层 `cherry-preview` 负责滚动 |
  *
- * Theme 只写 root 上的皮肤 class；`cherry-render` 由 Cherry / Demo HTML 自行挂在预览节点。
+ * Theme 只写 root 上的皮肤 class；`cherry-render` 由 Cherry 挂在预览滚动壳内侧。
  */
 
 import REGISTERED_THEMES from "@/theme/ThemeRegister";

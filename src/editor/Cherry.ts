@@ -148,7 +148,10 @@ export class Cherry {
     this.sidebarEl = el("div", "cherry-sidebar");
     this.editorEl = el("div", "cherry-editor");
     this.dividerEl = el("div", "cherry-divider");
-    this.previewEl = el("div", "cherry-preview cherry-render");
+    // 外层滚动、内层版心：限宽只缩 .cherry-render，滚动条留在 .cherry-preview
+    this.previewEl = el("div", "cherry-preview");
+    const previewMountEl = el("div", "cherry-render");
+    this.previewEl.appendChild(previewMountEl);
 
     this.theme = new Theme(this.eventBus, this.log, rootEl, options.themes);
 
@@ -176,7 +179,7 @@ export class Cherry {
     this.theme.setLightDark(appearance);
 
     this.preview = new Preview(
-      this.previewEl,
+      previewMountEl,
       this.theme,
       this.eventBus,
       this.log,
