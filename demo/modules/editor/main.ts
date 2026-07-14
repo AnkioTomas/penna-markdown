@@ -158,8 +158,12 @@ async function mockAIRequest(
   action: string,
   text: string,
   prompts?: string,
+  onUpdate?: (content: string, thinking?: string) => void,
 ): Promise<string> {
-  await delay(700 + Math.random() * 600);
+  if (onUpdate) {
+    onUpdate("", "AI思考中...");
+  }
+  await delay(600 + Math.random() * 400);
 
   let result: string;
 
@@ -331,7 +335,19 @@ async function mockAIRequest(
       result = text;
   }
 
-  return ensureChanged(text, result);
+  result = ensureChanged(text, result);
+
+  if (onUpdate) {
+    onUpdate("", "AI生成中...");
+    let current = "";
+    for (let i = 0; i < result.length; i++) {
+      current += result[i];
+      onUpdate(current, "AI生成中...");
+      await delay(10 + Math.random() * 20);
+    }
+  }
+
+  return result;
 }
 
 /** Demo 专用存储：与其它页面隔离，仍持久化分栏比例 */

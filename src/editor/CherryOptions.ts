@@ -20,6 +20,7 @@ export type OnAiRequest = (
   action: string,
   text: string,
   prompts?: string,
+  onUpdate?: (content: string, thinking?: string) => void,
 ) => Promise<string>;
 
 /** {@link Cherry} 构造选项 */

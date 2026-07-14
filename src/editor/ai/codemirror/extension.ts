@@ -94,13 +94,22 @@ export const aiMaskPlugin = ViewPlugin.fromClass(
         this.view.state.field(aiStateField).phase === "generating";
 
       if (generating && !this.mask) {
+        const root = this.view.dom.closest(".cherry") || this.view.dom;
         const mask = document.createElement("div");
-        mask.className = "cherry-ai-mask";
+        mask.className = "cherry-ai-mask-global";
         mask.setAttribute("aria-busy", "true");
-        const spinner = document.createElement("div");
-        spinner.className = "cherry-ai-mask-spinner";
-        mask.appendChild(spinner);
-        this.view.dom.appendChild(mask);
+        mask.innerHTML = `
+          <div class="cherry-ai-mask-layout">
+            <div class="cherry-ai-mask-header">
+              <div class="cherry-ai-mask-spinner"></div>
+              <div class="cherry-ai-mask-thinking">正在处理，请稍候...</div>
+            </div>
+            <div class="cherry-ai-mask-body">
+              <div class="cherry-ai-mask-partial"></div>
+            </div>
+          </div>
+        `;
+        root.appendChild(mask);
         this.mask = mask;
       } else if (!generating && this.mask) {
         this.mask.remove();

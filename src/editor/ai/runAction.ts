@@ -74,7 +74,30 @@ export function runAIAction(
     }),
   });
 
-  aiRequest(action, text, prompts)
+  aiRequest(action, text, prompts, (content, thinking) => {
+    const state = view.state.field(aiStateField);
+    if (state.phase !== "generating" || state.genId !== genId) return;
+
+    const mask = view.dom
+      .closest(".cherry")
+      ?.querySelector(".cherry-ai-mask-global");
+    if (!mask) return;
+
+    const thinkingEl = mask.querySelector(".cherry-ai-mask-thinking");
+    const partialEl = mask.querySelector(".cherry-ai-mask-partial");
+    const bodyEl = mask.querySelector(".cherry-ai-mask-body");
+
+    if (thinkingEl && thinking) {
+      thinkingEl.textContent = thinking;
+    }
+    if (partialEl && content !== undefined) {
+      const oldText = partialEl.textContent;
+      partialEl.textContent = content;
+      if (bodyEl && oldText !== content) {
+        bodyEl.scrollTop = bodyEl.scrollHeight;
+      }
+    }
+  })
     .then((result) => {
       const state = view.state.field(aiStateField);
       if (state.phase !== "generating" || state.genId !== genId) return;

@@ -3,26 +3,85 @@
   flex-shrink: 0;
 }
 
-.cherry-editor-cm .cm-editor .cherry-ai-mask {
+.cherry .cherry-ai-mask-global {
   position: absolute;
   inset: 0;
-  z-index: 150;
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--cherry-c-bg) 55%, transparent);
-  backdrop-filter: blur(2px);
+  background: color-mix(in srgb, var(--cherry-c-bg) 60%, transparent);
+  backdrop-filter: blur(8px) saturate(150%);
   pointer-events: all;
   cursor: wait;
+  animation: cherry-ai-fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.cherry-editor-cm .cherry-ai-mask-spinner {
-  width: 28px;
-  height: 28px;
+@keyframes cherry-ai-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.cherry .cherry-ai-mask-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 60px 40px;
+  box-sizing: border-box;
+}
+
+.cherry .cherry-ai-mask-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--cherry-c-border) 20%, transparent);
+  flex-shrink: 0;
+}
+
+.cherry .cherry-ai-mask-body {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 16px;
+  scrollbar-width: thin;
+}
+
+.cherry .cherry-ai-mask-thinking {
+  color: color-mix(in srgb, var(--cherry-c-text-1) 80%, transparent);
+  font-size: 14px;
+  font-family: var(--cherry-font-family);
+  white-space: pre-wrap;
+  flex: 1;
+}
+
+.cherry .cherry-ai-mask-partial {
+  color: var(--cherry-c-text-1);
+  font-size: 16px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  font-family: var(--cherry-font-family);
+}
+
+.cherry .cherry-ai-mask-spinner {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
   border-radius: 50%;
-  border: 3px solid color-mix(in srgb, var(--cherry-c-brand-1) 20%, transparent);
+  border: 3px solid color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
   border-top-color: var(--cherry-c-brand-1);
-  animation: cherry-ai-spin 0.8s linear infinite;
+  animation: cherry-ai-spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  margin: 0 auto;
 }
 
 @keyframes cherry-ai-spin {
