@@ -103,9 +103,10 @@ export const aiMaskPlugin = ViewPlugin.fromClass(
           <div class="cherry-ai-mask-layout">
             <div class="cherry-ai-mask-header">
               <div class="cherry-ai-mask-spinner"></div>
-              <div class="cherry-ai-mask-thinking">正在处理，请稍候... (按 Esc 取消)</div>
+              <div class="cherry-ai-mask-title">正在处理，请稍候... (按 Esc 取消)</div>
             </div>
             <div class="cherry-ai-mask-body">
+              <div class="cherry-ai-mask-thinking"></div>
               <div class="cherry-ai-mask-partial"></div>
             </div>
           </div>

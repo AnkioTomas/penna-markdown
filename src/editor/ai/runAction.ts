@@ -87,15 +87,24 @@ export function runAIAction(
     const partialEl = mask.querySelector(".cherry-ai-mask-partial");
     const bodyEl = mask.querySelector(".cherry-ai-mask-body");
 
+    let changed = false;
     if (thinkingEl && thinking) {
-      thinkingEl.textContent = thinking;
+      const oldThinking = thinkingEl.textContent;
+      if (oldThinking !== thinking) {
+        thinkingEl.textContent = thinking;
+        changed = true;
+      }
     }
     if (partialEl && content !== undefined) {
       const oldText = partialEl.textContent;
-      partialEl.textContent = content;
-      if (bodyEl && oldText !== content) {
-        bodyEl.scrollTop = bodyEl.scrollHeight;
+      if (oldText !== content) {
+        partialEl.textContent = content;
+        changed = true;
       }
+    }
+
+    if (changed && bodyEl) {
+      bodyEl.scrollTop = bodyEl.scrollHeight;
     }
   })
     .then((result) => {

@@ -350,6 +350,106 @@ async function mockAIRequest(
   return result;
 }
 
+async function localAIRequest(
+  action: string,
+  text: string,
+  prompts?: string,
+  onUpdate?: (content: string, thinking?: string) => void,
+): Promise<string> {
+  const switchEl = document.getElementById(
+    "local-ai-switch",
+  ) as HTMLInputElement | null;
+  if (!switchEl?.checked) {
+    return mockAIRequest(action, text, prompts, onUpdate);
+  }
+
+  let prompt = `你是一个 Markdown 编辑器 AI 助手。请根据提供的操作和文本直接输出修改后的内容，不要包含额外的解释或 Markdown 代码块包裹。\n`;
+  prompt += `操作指令：${action}\n`;
+  if (prompts) prompt += `补充说明：${prompts}\n`;
+  prompt += `目标文本：\n${text}`;
+
+  if (onUpdate) onUpdate("", "正在连接本地AI...");
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "GLM-4.7-Flash-MLX-8bit",
+        messages: [{ role: "user", content: prompt }],
+        stream: true,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API 返回错误状态：${response.status}`);
+    }
+
+    const reader = response.body?.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let contentResult = "";
+    let thinkingResult = "";
+    let buffer = "";
+
+    if (!reader) throw new Error("无法读取响应流");
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        // 处理最后可能残留的 buffer
+        if (buffer.trim().startsWith("data: ") && !buffer.includes("[DONE]")) {
+          try {
+            const data = JSON.parse(buffer.slice(6).trim());
+            if (data.choices && data.choices[0].delta?.content)
+              contentResult += data.choices[0].delta.content;
+            if (data.choices && data.choices[0].delta?.reasoning_content)
+              thinkingResult += data.choices[0].delta.reasoning_content;
+          } catch (e) {}
+        }
+        break;
+      }
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      // 最后一行可能是不完整的，留到下一个 chunk
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith("data: ") || trimmed === "data: [DONE]")
+          continue;
+
+        try {
+          const data = JSON.parse(trimmed.slice(6));
+          const delta = data.choices?.[0]?.delta;
+          if (!delta) continue;
+
+          let updated = false;
+          if (delta.reasoning_content) {
+            thinkingResult += delta.reasoning_content;
+            updated = true;
+          }
+          if (delta.content) {
+            contentResult += delta.content;
+            updated = true;
+          }
+
+          if (updated && onUpdate) {
+            onUpdate(contentResult, thinkingResult || "正在思考...");
+          }
+        } catch (e) {
+          // ignore partial json
+        }
+      }
+    }
+
+    return ensureChanged(text, contentResult);
+  } catch (err: any) {
+    console.error("Local AI 请求失败，回退到 Mock", err);
+    return mockAIRequest(action, text, prompts, onUpdate);
+  }
+}
+
 /** Demo 专用存储：与其它页面隔离，仍持久化分栏比例 */
 function createDemoStorage(): StorageAPI {
   const prefix = "cherry-editor-demo:";
@@ -477,7 +577,7 @@ async function init() {
     editor: {
       value: "加载中…\n\n正在拉取侧栏文档列表。",
       lineNumbers: true,
-      onAiRequest: mockAIRequest,
+      onAiRequest: localAIRequest,
       onParseFile: async (file) => {
         console.info(`[demo] onParseFile: ${file.name} (${file.size} bytes)`);
         await delay(800);
