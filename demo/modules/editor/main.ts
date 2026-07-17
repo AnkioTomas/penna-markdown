@@ -6,11 +6,10 @@ import type { StorageAPI } from "@/core/StorageAPI.js";
 import type { PennaFileItem } from "@/editor/sidebar/SideBarOptions.js";
 import REGISTERED_THEMES from "@/theme/ThemeRegister.js";
 import { setupThemeAndAppearance } from "../../_common/theme.js";
-import {
-  fetchDocsList,
-  fetchDocContent,
-  fetchMarkdownFileItems,
-} from "../../_common/api.js";
+import { fetchDocContent, fetchMarkdownFileItems } from "../../_common/api.js";
+
+import simpleDoc from "../../../docs/simple.md?raw";
+import fullDoc from "../../../docs/test.md?raw";
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";
 import {
@@ -25,6 +24,8 @@ const DOCS_DIR = "/docs/";
 
 const VIRTUAL = {
   options: "virtual:options",
+  simple: "virtual:simple",
+  full: "virtual:full",
   ai: "virtual:ai",
   custom: "virtual:custom",
 } as const;
@@ -75,7 +76,7 @@ version: 0.1.0
 
 # [[title]]
 
-> [[subtitle]] — 本页说明当前 Demo **已经启用** 的构造选项；语法样例见侧栏 \`simple\` / \`test\`。
+> [[subtitle]] — 本页说明当前 Demo **已经启用** 的构造选项；语法样例见侧栏 \`simple\` / \`full\`。
 
 ## 已启用的 PennaOptions
 
@@ -100,7 +101,7 @@ version: 0.1.0
 ## 建议体验路径
 
 1. 侧栏打开 **simple** — GFM + Penna 扩展语法全集（精简）
-2. 侧栏打开 **test** — 边界 / 压力 / 回归活文档
+2. 侧栏打开 **full** — 边界 / 压力 / 回归活文档（\`docs/test.md\`）
 3. 侧栏打开 **AI Diff 演示** — 选区润色后逐块确认
 4. 侧栏打开 **自定义语法** — 预览区渲染 \`@@text@@\`
 5. 工具栏切换布局，确认 \`preview.maxWidth\` 只在预览模式生效
@@ -484,26 +485,26 @@ function virtualFile(
   };
 }
 
-function preferSimpleFirst(items: PennaFileItem[]): PennaFileItem[] {
-  const rank = (id: string) => {
-    if (id.endsWith("/simple.md")) return 0;
-    if (id.endsWith("/test.md")) return 1;
-    return 2;
-  };
-  return [...items].sort((a, b) => {
-    const d = rank(a.id) - rank(b.id);
-    return d !== 0 ? d : a.title.localeCompare(b.title, "zh");
-  });
+function isBundledDemoDoc(id: string): boolean {
+  return (
+    id.endsWith("/simple.md") ||
+    id.endsWith("/test.md") ||
+    id === "simple.md" ||
+    id === "test.md"
+  );
 }
 
 async function init() {
-  const docs = await fetchDocsList(DOCS_DIR);
   let editor: Penna;
 
   async function resolveContent(fileId: string): Promise<string> {
     switch (fileId) {
       case VIRTUAL.options:
         return OPTIONS_GUIDE;
+      case VIRTUAL.simple:
+        return simpleDoc;
+      case VIRTUAL.full:
+        return fullDoc;
       case VIRTUAL.ai:
         return AI_DEMO;
       case VIRTUAL.custom:
@@ -552,17 +553,19 @@ async function init() {
       maxWidth: 320,
       fetchFiles: async () => {
         const real = (await fetchMarkdownFileItems(DOCS_DIR)).filter(
-          (f) => !f.title.startsWith("_"),
+          (f) => !f.title.startsWith("_") && !isBundledDemoDoc(f.id),
         );
         return [
           virtualFile(VIRTUAL.options, "Options 导览", "PennaOptions 全量说明"),
+          virtualFile(VIRTUAL.simple, "simple", "GFM + 扩展语法速览"),
+          virtualFile(VIRTUAL.full, "full", "完整演示 / 回归活文档"),
           virtualFile(VIRTUAL.ai, "AI Diff 演示", "行级 diff / 逐块确认"),
           virtualFile(
             VIRTUAL.custom,
             "自定义语法 @@",
             "inlineParsers 预览渲染",
           ),
-          ...preferSimpleFirst(real),
+          ...real,
         ];
       },
       onFileClick: (fileId) => {
@@ -597,12 +600,7 @@ async function init() {
 
   setupThemeAndAppearance(editor);
 
-  const defaultId =
-    docs.find((d) => d.name === "simple.md")?.href ??
-    docs.find((d) => d.name === "test.md")?.href ??
-    VIRTUAL.options;
-
-  await loadDoc(defaultId);
+  await loadDoc(VIRTUAL.simple);
 }
 
 void init();
