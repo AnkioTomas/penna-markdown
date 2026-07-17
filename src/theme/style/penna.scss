@@ -2,6 +2,7 @@
 @use "editor/penna" as *;
 @use "common/tokens";
 @use "common/scrollbar" as *;
+@use "common/default-brand" as brand;
 
 .penna {
   @include tokens.theme-default;
@@ -11,4 +12,10 @@
 .penna-dark.penna,
 .penna-dark .penna {
   @include tokens.theme-dark;
+}
+
+// default 皮肤 chrome（其它主题有独立 editor.css 覆盖）
+.penna-theme-default.penna,
+.penna-theme-default .penna {
+  @include brand.chrome;
 }

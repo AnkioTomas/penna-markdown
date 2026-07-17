@@ -1,0 +1,21 @@
+/// default 主题：品牌色只做强调，不在编辑器 chrome 上堆粗描边 / 硬阴影。
+/// 编辑器是干活的地方，视觉噪音就是 bug。
+
+@mixin chrome {
+  // 干掉基础层 text-3 混灰，用干净浅底
+  background: var(--penna-c-bg);
+
+  .penna-preview {
+    background: var(--penna-c-bg-elevated);
+  }
+}
+
+@mixin render {
+  a {
+    color: var(--penna-c-brand-1);
+  }
+
+  a:hover {
+    color: var(--penna-c-brand-2);
+  }
+}

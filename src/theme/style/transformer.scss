@@ -2,6 +2,7 @@
 @use "common/tokens";
 @use "common/hljs-github" as hljs-github;
 @use "common/scrollbar" as scrollbar;
+@use "common/default-brand" as brand;
 
 @use "transformer/gfm/base";
 @use "transformer/gfm/heading";
@@ -85,6 +86,11 @@
 }
 
 @include image-preview.overlay;
+
+// default 皮肤渲染层（其它主题有独立 render.css）
+.penna-theme-default .penna-render {
+  @include brand.render;
+}
 
 .penna-dark {
   .penna-render {

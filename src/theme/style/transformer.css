@@ -1,58 +1,67 @@
 @charset "UTF-8";
 /** 渲染器基础样式（默认主题 + 结构） */
 .penna {
-  --penna-c-brand-1: #5086a1;
-  --penna-c-brand-2: #6aa1b7;
-  --penna-c-brand-3: #8cccd5;
-  --penna-c-brand-soft: rgba(131, 208, 218, 0.314);
-  --penna-c-brand-on-bg: #1a3d47;
-  --penna-c-text-1: rgb(60, 60, 67);
-  --penna-c-text-2: rgba(60, 60, 67, 0.78);
-  --penna-c-text-3: rgba(60, 60, 67, 0.56);
-  --penna-c-bg: #fff;
-  --penna-c-bg-elevated: #fafafa;
+  --penna-c-logo-paper: #edebe7;
+  --penna-c-logo-ink: #0c1c25;
+  --penna-c-logo-cyan: #0ac1e3;
+  --penna-c-logo-blue: #008dee;
+  --penna-c-logo-green: #16bf73;
+  --penna-c-logo-yellow: #fec933;
+  --penna-c-logo-orange: #fe9138;
+  --penna-c-logo-red: #f33a3c;
+  --penna-c-stroke: #0c1c25;
+  --penna-c-brand-1: #008dee;
+  --penna-c-brand-2: #0099e8;
+  --penna-c-brand-3: #0ac1e3;
+  --penna-c-brand-soft: rgba(0, 141, 238, 0.16);
+  --penna-c-brand-on-bg: #ffffff;
+  --penna-c-text-1: #0c1c25;
+  --penna-c-text-2: rgba(12, 28, 37, 0.78);
+  --penna-c-text-3: rgba(12, 28, 37, 0.56);
+  --penna-c-bg: #fafaf8;
+  --penna-c-bg-elevated: #ffffff;
   --penna-c-contrast-light: #fff;
   --penna-c-contrast-dark: #000;
-  --penna-c-brand-mark: #8cccd5;
-  --penna-c-code-fg: #d73a49;
-  --penna-c-note: #206aca;
-  --penna-c-note-mark: #ff0;
-  --penna-c-note-on-bg: color-mix(in srgb, #206aca 20%, #fff);
-  --penna-c-alert-note-text: #206aca;
-  --penna-c-alert-note-bg: color-mix(in srgb, #206aca 10%, transparent);
-  --penna-c-alert-note-border: color-mix(in srgb, #206aca 30%, transparent);
-  --penna-c-tip: #30a46c;
-  --penna-c-tip-mark: #39ff14;
-  --penna-c-tip-on-bg: color-mix(in srgb, #30a46c 20%, #fff);
-  --penna-c-alert-tip-text: #30a46c;
-  --penna-c-alert-tip-bg: color-mix(in srgb, #30a46c 10%, transparent);
-  --penna-c-alert-tip-border: color-mix(in srgb, #30a46c 30%, transparent);
-  --penna-c-warning: #b45309;
-  --penna-c-warning-mark: #fc0;
-  --penna-c-warning-on-bg: color-mix(in srgb, #b45309 20%, #fff);
-  --penna-c-alert-warning-text: #b45309;
-  --penna-c-alert-warning-bg: color-mix(in srgb, #b45309 10%, transparent);
-  --penna-c-alert-warning-border: color-mix(in srgb, #b45309 30%, transparent);
-  --penna-c-caution: #c53030;
-  --penna-c-caution-mark: #f99;
-  --penna-c-caution-on-bg: color-mix(in srgb, #c53030 20%, #fff);
-  --penna-c-alert-caution-text: #c53030;
-  --penna-c-alert-caution-bg: color-mix(in srgb, #c53030 10%, transparent);
-  --penna-c-alert-caution-border: color-mix(in srgb, #c53030 30%, transparent);
-  --penna-c-danger: #dc2626;
-  --penna-c-danger-mark: #f66;
-  --penna-c-danger-on-bg: color-mix(in srgb, #dc2626 20%, #fff);
-  --penna-c-alert-danger-text: #dc2626;
-  --penna-c-alert-danger-bg: color-mix(in srgb, #dc2626 10%, transparent);
-  --penna-c-alert-danger-border: color-mix(in srgb, #dc2626 30%, transparent);
-  --penna-c-important: #844bbc;
-  --penna-c-important-mark: #ccf;
-  --penna-c-important-on-bg: color-mix(in srgb, #844bbc 20%, #fff);
-  --penna-c-alert-important-text: #844bbc;
-  --penna-c-alert-important-bg: color-mix(in srgb, #844bbc 10%, transparent);
+  --penna-c-brand-mark: #0ac1e3;
+  --penna-c-code-fg: #f33a3c;
+  --penna-c-note: #008dee;
+  --penna-c-note-mark: #fec933;
+  --penna-c-note-on-bg: color-mix(in srgb, #008dee 20%, #fff);
+  --penna-c-alert-note-text: #008dee;
+  --penna-c-alert-note-bg: color-mix(in srgb, #008dee 10%, transparent);
+  --penna-c-alert-note-border: color-mix(in srgb, #008dee 30%, transparent);
+  --penna-c-tip: #16bf73;
+  --penna-c-tip-mark: #fec933;
+  --penna-c-tip-on-bg: color-mix(in srgb, #16bf73 20%, #fff);
+  --penna-c-alert-tip-text: #16bf73;
+  --penna-c-alert-tip-bg: color-mix(in srgb, #16bf73 10%, transparent);
+  --penna-c-alert-tip-border: color-mix(in srgb, #16bf73 30%, transparent);
+  --penna-c-warning: #fe9138;
+  --penna-c-warning-mark: #fec933;
+  --penna-c-warning-on-bg: color-mix(in srgb, #fe9138 20%, #fff);
+  --penna-c-alert-warning-text: #fe9138;
+  --penna-c-alert-warning-bg: color-mix(in srgb, #fe9138 10%, transparent);
+  --penna-c-alert-warning-border: color-mix(in srgb, #fe9138 30%, transparent);
+  --penna-c-caution: #f33a3c;
+  --penna-c-caution-mark: #fe9138;
+  --penna-c-caution-on-bg: color-mix(in srgb, #f33a3c 20%, #fff);
+  --penna-c-alert-caution-text: #f33a3c;
+  --penna-c-alert-caution-bg: color-mix(in srgb, #f33a3c 10%, transparent);
+  --penna-c-alert-caution-border: color-mix(in srgb, #f33a3c 30%, transparent);
+  --penna-c-danger: #f33a3c;
+  --penna-c-danger-mark: #fe9138;
+  --penna-c-danger-on-bg: color-mix(in srgb, #f33a3c 20%, #fff);
+  --penna-c-alert-danger-text: #f33a3c;
+  --penna-c-alert-danger-bg: color-mix(in srgb, #f33a3c 10%, transparent);
+  --penna-c-alert-danger-border: color-mix(in srgb, #f33a3c 30%, transparent);
+  --penna-c-important: #0ac1e3;
+  --penna-c-important-mark: #008dee;
+  --penna-c-important-on-bg: color-mix(in srgb, #0ac1e3 20%, #fff);
+  --penna-c-alert-important-text: #0ac1e3;
+  --penna-c-alert-important-bg: color-mix(in srgb, #0ac1e3 10%, transparent);
   --penna-c-alert-important-border: color-mix(
     in srgb,
-    #844bbc 30%,
+    #0ac1e3 30%,
     transparent
   );
   --penna-c-image-card-info-fg: var(--penna-c-contrast-light);
@@ -87,58 +96,67 @@
     0 8px 24px color-mix(in srgb, var(--penna-c-text-3) 6%, transparent);
 }
 .penna.penna-dark {
-  --penna-c-brand-1: #6aa1b7;
-  --penna-c-brand-2: #8cccd5;
-  --penna-c-brand-3: #a8dce3;
-  --penna-c-brand-soft: rgba(131, 208, 218, 0.2);
-  --penna-c-brand-on-bg: #e0f4f8;
-  --penna-c-text-1: rgba(255, 255, 255, 0.87);
-  --penna-c-text-2: rgba(255, 255, 255, 0.6);
-  --penna-c-text-3: rgba(255, 255, 255, 0.38);
-  --penna-c-bg: #141414;
-  --penna-c-bg-elevated: #1f1f1f;
+  --penna-c-logo-paper: #edebe7;
+  --penna-c-logo-ink: #0c1c25;
+  --penna-c-logo-cyan: #0ac1e3;
+  --penna-c-logo-blue: #008dee;
+  --penna-c-logo-green: #16bf73;
+  --penna-c-logo-yellow: #fec933;
+  --penna-c-logo-orange: #fe9138;
+  --penna-c-logo-red: #f33a3c;
+  --penna-c-stroke: #edebe7;
+  --penna-c-brand-1: #0ac1e3;
+  --penna-c-brand-2: #3dcee9;
+  --penna-c-brand-3: #6dd8ee;
+  --penna-c-brand-soft: rgba(10, 193, 227, 0.22);
+  --penna-c-brand-on-bg: #0c1c25;
+  --penna-c-text-1: rgba(237, 235, 231, 0.92);
+  --penna-c-text-2: rgba(237, 235, 231, 0.68);
+  --penna-c-text-3: rgba(237, 235, 231, 0.42);
+  --penna-c-bg: #0c1c25;
+  --penna-c-bg-elevated: #152836;
   --penna-c-contrast-light: #fff;
   --penna-c-contrast-dark: #000;
-  --penna-c-brand-mark: color-mix(in srgb, #a8dce3 48%, #141414);
-  --penna-c-code-fg: #ff7b72;
-  --penna-c-note: #93c5fd;
-  --penna-c-note-mark: color-mix(in srgb, #db0 50%, #141414);
-  --penna-c-note-on-bg: color-mix(in srgb, #93c5fd 20%, #000);
-  --penna-c-alert-note-text: #93c5fd;
-  --penna-c-alert-note-bg: color-mix(in srgb, #93c5fd 15%, transparent);
-  --penna-c-alert-note-border: color-mix(in srgb, #93c5fd 40%, transparent);
-  --penna-c-tip: #4ade80;
-  --penna-c-tip-mark: color-mix(in srgb, #4ade80 50%, #141414);
-  --penna-c-tip-on-bg: color-mix(in srgb, #4ade80 20%, #000);
-  --penna-c-alert-tip-text: #4ade80;
-  --penna-c-alert-tip-bg: color-mix(in srgb, #4ade80 15%, transparent);
-  --penna-c-alert-tip-border: color-mix(in srgb, #4ade80 40%, transparent);
-  --penna-c-warning: #fbbf24;
-  --penna-c-warning-mark: color-mix(in srgb, #fbbf24 50%, #141414);
-  --penna-c-warning-on-bg: color-mix(in srgb, #fbbf24 20%, #000);
-  --penna-c-alert-warning-text: #fbbf24;
-  --penna-c-alert-warning-bg: color-mix(in srgb, #fbbf24 15%, transparent);
-  --penna-c-alert-warning-border: color-mix(in srgb, #fbbf24 40%, transparent);
-  --penna-c-caution: #fca5a5;
-  --penna-c-caution-mark: color-mix(in srgb, #fca5a5 50%, #141414);
-  --penna-c-caution-on-bg: color-mix(in srgb, #fca5a5 20%, #000);
-  --penna-c-alert-caution-text: #fca5a5;
-  --penna-c-alert-caution-bg: color-mix(in srgb, #fca5a5 15%, transparent);
-  --penna-c-alert-caution-border: color-mix(in srgb, #fca5a5 40%, transparent);
-  --penna-c-danger: #f87171;
-  --penna-c-danger-mark: color-mix(in srgb, #f87171 50%, #141414);
-  --penna-c-danger-on-bg: color-mix(in srgb, #f87171 20%, #000);
-  --penna-c-alert-danger-text: #f87171;
-  --penna-c-alert-danger-bg: color-mix(in srgb, #f87171 15%, transparent);
-  --penna-c-alert-danger-border: color-mix(in srgb, #f87171 40%, transparent);
-  --penna-c-important: #c4b5fd;
-  --penna-c-important-mark: color-mix(in srgb, #a5b4fc 50%, #141414);
-  --penna-c-important-on-bg: color-mix(in srgb, #c4b5fd 20%, #000);
-  --penna-c-alert-important-text: #c4b5fd;
-  --penna-c-alert-important-bg: color-mix(in srgb, #c4b5fd 15%, transparent);
+  --penna-c-brand-mark: color-mix(in srgb, #6dd8ee 48%, #0c1c25);
+  --penna-c-code-fg: #ff7a72;
+  --penna-c-note: #4db4f5;
+  --penna-c-note-mark: color-mix(in srgb, #fec933 50%, #0c1c25);
+  --penna-c-note-on-bg: color-mix(in srgb, #4db4f5 20%, #000);
+  --penna-c-alert-note-text: #4db4f5;
+  --penna-c-alert-note-bg: color-mix(in srgb, #4db4f5 15%, transparent);
+  --penna-c-alert-note-border: color-mix(in srgb, #4db4f5 40%, transparent);
+  --penna-c-tip: #3dd48a;
+  --penna-c-tip-mark: color-mix(in srgb, #16bf73 50%, #0c1c25);
+  --penna-c-tip-on-bg: color-mix(in srgb, #3dd48a 20%, #000);
+  --penna-c-alert-tip-text: #3dd48a;
+  --penna-c-alert-tip-bg: color-mix(in srgb, #3dd48a 15%, transparent);
+  --penna-c-alert-tip-border: color-mix(in srgb, #3dd48a 40%, transparent);
+  --penna-c-warning: #ffb04a;
+  --penna-c-warning-mark: color-mix(in srgb, #fec933 50%, #0c1c25);
+  --penna-c-warning-on-bg: color-mix(in srgb, #ffb04a 20%, #000);
+  --penna-c-alert-warning-text: #ffb04a;
+  --penna-c-alert-warning-bg: color-mix(in srgb, #ffb04a 15%, transparent);
+  --penna-c-alert-warning-border: color-mix(in srgb, #ffb04a 40%, transparent);
+  --penna-c-caution: #ff7a72;
+  --penna-c-caution-mark: color-mix(in srgb, #fe9138 50%, #0c1c25);
+  --penna-c-caution-on-bg: color-mix(in srgb, #ff7a72 20%, #000);
+  --penna-c-alert-caution-text: #ff7a72;
+  --penna-c-alert-caution-bg: color-mix(in srgb, #ff7a72 15%, transparent);
+  --penna-c-alert-caution-border: color-mix(in srgb, #ff7a72 40%, transparent);
+  --penna-c-danger: #ff6b66;
+  --penna-c-danger-mark: color-mix(in srgb, #f33a3c 50%, #0c1c25);
+  --penna-c-danger-on-bg: color-mix(in srgb, #ff6b66 20%, #000);
+  --penna-c-alert-danger-text: #ff6b66;
+  --penna-c-alert-danger-bg: color-mix(in srgb, #ff6b66 15%, transparent);
+  --penna-c-alert-danger-border: color-mix(in srgb, #ff6b66 40%, transparent);
+  --penna-c-important: #3dcee9;
+  --penna-c-important-mark: color-mix(in srgb, #0ac1e3 50%, #0c1c25);
+  --penna-c-important-on-bg: color-mix(in srgb, #3dcee9 20%, #000);
+  --penna-c-alert-important-text: #3dcee9;
+  --penna-c-alert-important-bg: color-mix(in srgb, #3dcee9 15%, transparent);
   --penna-c-alert-important-border: color-mix(
     in srgb,
-    #c4b5fd 40%,
+    #3dcee9 40%,
     transparent
   );
   --penna-c-image-card-info-fg: var(--penna-c-contrast-light);
@@ -199,58 +217,67 @@
 }
 
 .penna-render {
-  --penna-c-brand-1: #5086a1;
-  --penna-c-brand-2: #6aa1b7;
-  --penna-c-brand-3: #8cccd5;
-  --penna-c-brand-soft: rgba(131, 208, 218, 0.314);
-  --penna-c-brand-on-bg: #1a3d47;
-  --penna-c-text-1: rgb(60, 60, 67);
-  --penna-c-text-2: rgba(60, 60, 67, 0.78);
-  --penna-c-text-3: rgba(60, 60, 67, 0.56);
-  --penna-c-bg: #fff;
-  --penna-c-bg-elevated: #fafafa;
+  --penna-c-logo-paper: #edebe7;
+  --penna-c-logo-ink: #0c1c25;
+  --penna-c-logo-cyan: #0ac1e3;
+  --penna-c-logo-blue: #008dee;
+  --penna-c-logo-green: #16bf73;
+  --penna-c-logo-yellow: #fec933;
+  --penna-c-logo-orange: #fe9138;
+  --penna-c-logo-red: #f33a3c;
+  --penna-c-stroke: #0c1c25;
+  --penna-c-brand-1: #008dee;
+  --penna-c-brand-2: #0099e8;
+  --penna-c-brand-3: #0ac1e3;
+  --penna-c-brand-soft: rgba(0, 141, 238, 0.16);
+  --penna-c-brand-on-bg: #ffffff;
+  --penna-c-text-1: #0c1c25;
+  --penna-c-text-2: rgba(12, 28, 37, 0.78);
+  --penna-c-text-3: rgba(12, 28, 37, 0.56);
+  --penna-c-bg: #fafaf8;
+  --penna-c-bg-elevated: #ffffff;
   --penna-c-contrast-light: #fff;
   --penna-c-contrast-dark: #000;
-  --penna-c-brand-mark: #8cccd5;
-  --penna-c-code-fg: #d73a49;
-  --penna-c-note: #206aca;
-  --penna-c-note-mark: #ff0;
-  --penna-c-note-on-bg: color-mix(in srgb, #206aca 20%, #fff);
-  --penna-c-alert-note-text: #206aca;
-  --penna-c-alert-note-bg: color-mix(in srgb, #206aca 10%, transparent);
-  --penna-c-alert-note-border: color-mix(in srgb, #206aca 30%, transparent);
-  --penna-c-tip: #30a46c;
-  --penna-c-tip-mark: #39ff14;
-  --penna-c-tip-on-bg: color-mix(in srgb, #30a46c 20%, #fff);
-  --penna-c-alert-tip-text: #30a46c;
-  --penna-c-alert-tip-bg: color-mix(in srgb, #30a46c 10%, transparent);
-  --penna-c-alert-tip-border: color-mix(in srgb, #30a46c 30%, transparent);
-  --penna-c-warning: #b45309;
-  --penna-c-warning-mark: #fc0;
-  --penna-c-warning-on-bg: color-mix(in srgb, #b45309 20%, #fff);
-  --penna-c-alert-warning-text: #b45309;
-  --penna-c-alert-warning-bg: color-mix(in srgb, #b45309 10%, transparent);
-  --penna-c-alert-warning-border: color-mix(in srgb, #b45309 30%, transparent);
-  --penna-c-caution: #c53030;
-  --penna-c-caution-mark: #f99;
-  --penna-c-caution-on-bg: color-mix(in srgb, #c53030 20%, #fff);
-  --penna-c-alert-caution-text: #c53030;
-  --penna-c-alert-caution-bg: color-mix(in srgb, #c53030 10%, transparent);
-  --penna-c-alert-caution-border: color-mix(in srgb, #c53030 30%, transparent);
-  --penna-c-danger: #dc2626;
-  --penna-c-danger-mark: #f66;
-  --penna-c-danger-on-bg: color-mix(in srgb, #dc2626 20%, #fff);
-  --penna-c-alert-danger-text: #dc2626;
-  --penna-c-alert-danger-bg: color-mix(in srgb, #dc2626 10%, transparent);
-  --penna-c-alert-danger-border: color-mix(in srgb, #dc2626 30%, transparent);
-  --penna-c-important: #844bbc;
-  --penna-c-important-mark: #ccf;
-  --penna-c-important-on-bg: color-mix(in srgb, #844bbc 20%, #fff);
-  --penna-c-alert-important-text: #844bbc;
-  --penna-c-alert-important-bg: color-mix(in srgb, #844bbc 10%, transparent);
+  --penna-c-brand-mark: #0ac1e3;
+  --penna-c-code-fg: #f33a3c;
+  --penna-c-note: #008dee;
+  --penna-c-note-mark: #fec933;
+  --penna-c-note-on-bg: color-mix(in srgb, #008dee 20%, #fff);
+  --penna-c-alert-note-text: #008dee;
+  --penna-c-alert-note-bg: color-mix(in srgb, #008dee 10%, transparent);
+  --penna-c-alert-note-border: color-mix(in srgb, #008dee 30%, transparent);
+  --penna-c-tip: #16bf73;
+  --penna-c-tip-mark: #fec933;
+  --penna-c-tip-on-bg: color-mix(in srgb, #16bf73 20%, #fff);
+  --penna-c-alert-tip-text: #16bf73;
+  --penna-c-alert-tip-bg: color-mix(in srgb, #16bf73 10%, transparent);
+  --penna-c-alert-tip-border: color-mix(in srgb, #16bf73 30%, transparent);
+  --penna-c-warning: #fe9138;
+  --penna-c-warning-mark: #fec933;
+  --penna-c-warning-on-bg: color-mix(in srgb, #fe9138 20%, #fff);
+  --penna-c-alert-warning-text: #fe9138;
+  --penna-c-alert-warning-bg: color-mix(in srgb, #fe9138 10%, transparent);
+  --penna-c-alert-warning-border: color-mix(in srgb, #fe9138 30%, transparent);
+  --penna-c-caution: #f33a3c;
+  --penna-c-caution-mark: #fe9138;
+  --penna-c-caution-on-bg: color-mix(in srgb, #f33a3c 20%, #fff);
+  --penna-c-alert-caution-text: #f33a3c;
+  --penna-c-alert-caution-bg: color-mix(in srgb, #f33a3c 10%, transparent);
+  --penna-c-alert-caution-border: color-mix(in srgb, #f33a3c 30%, transparent);
+  --penna-c-danger: #f33a3c;
+  --penna-c-danger-mark: #fe9138;
+  --penna-c-danger-on-bg: color-mix(in srgb, #f33a3c 20%, #fff);
+  --penna-c-alert-danger-text: #f33a3c;
+  --penna-c-alert-danger-bg: color-mix(in srgb, #f33a3c 10%, transparent);
+  --penna-c-alert-danger-border: color-mix(in srgb, #f33a3c 30%, transparent);
+  --penna-c-important: #0ac1e3;
+  --penna-c-important-mark: #008dee;
+  --penna-c-important-on-bg: color-mix(in srgb, #0ac1e3 20%, #fff);
+  --penna-c-alert-important-text: #0ac1e3;
+  --penna-c-alert-important-bg: color-mix(in srgb, #0ac1e3 10%, transparent);
   --penna-c-alert-important-border: color-mix(
     in srgb,
-    #844bbc 30%,
+    #0ac1e3 30%,
     transparent
   );
   --penna-c-image-card-info-fg: var(--penna-c-contrast-light);
@@ -402,6 +429,31 @@
   color: #b31d28;
   background-color: #ffeef0;
 }
+.penna-render ::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+.penna-render ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.penna-render ::-webkit-scrollbar-thumb {
+  background: var(--penna-c-text-4);
+  border-radius: 6px;
+  background-clip: padding-box;
+  border: 3px solid transparent;
+}
+.penna-render ::-webkit-scrollbar-thumb:hover {
+  background: var(--penna-c-text-3);
+  background-clip: padding-box;
+  border: 3px solid transparent;
+}
+.penna-render {
+  /* Firefox */
+}
+.penna-render * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--penna-c-text-4) transparent;
+}
 .penna-render {
   color: var(--penna-c-text-1);
   font-size: 1rem;
@@ -409,10 +461,10 @@
   word-wrap: break-word;
 }
 .penna-render :first-child {
-  margin-top: 0;
+  margin-top: 0 !important;
 }
 .penna-render :last-child {
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
 }
 .penna-render h1,
 .penna-render h2,
@@ -426,12 +478,14 @@
   color: var(--penna-c-text-1);
 }
 .penna-render h1 {
+  margin-top: 2rem;
   font-size: 2rem;
   padding-bottom: 0.6rem;
   border-bottom: 0.0625rem solid
     color-mix(in srgb, var(--penna-c-text-3) 35%, transparent);
 }
 .penna-render h2 {
+  margin-top: 1.75rem;
   font-size: 1.5rem;
   padding-bottom: 0.375rem;
   border-bottom: 0.0625rem solid
@@ -472,9 +526,14 @@
 }
 .penna-render blockquote {
   margin: 0 0 1rem;
-  padding: 0 1rem;
+  padding: 1rem;
   color: var(--penna-c-text-2);
+  background: color-mix(in srgb, var(--penna-c-text-3) 10%, transparent);
   border-left: 0.25rem solid var(--penna-c-brand-2);
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+.penna-render blockquote > * {
+  margin-bottom: 0 !important;
 }
 .penna-render hr {
   height: 0;
@@ -520,15 +579,12 @@
   border-radius: 0;
 }
 .penna-render :not(pre) > code {
-  padding: 0.2rem 0.4rem;
-  font-size: 0.9rem;
-  background: color-mix(
-    in srgb,
-    var(--penna-c-brand-soft) 65%,
-    var(--penna-c-bg-elevated)
-  );
+  padding: 0.2em 0.4em;
+  font-size: 0.9em;
+  color: var(--penna-c-code-fg);
+  background: color-mix(in srgb, var(--penna-c-text-3) 12%, transparent);
   border: 0.0625rem solid
-    color-mix(in srgb, var(--penna-c-brand-2) 25%, transparent);
+    color-mix(in srgb, var(--penna-c-text-3) 20%, transparent);
   border-radius: 0.25rem;
 }
 .penna-render table {
@@ -558,7 +614,7 @@
 }
 .penna-render th,
 .penna-render td {
-  padding: 0.375rem 0.8125rem;
+  padding: 0.5rem 1rem;
   border: 0.0625rem solid var(--penna-table-border);
   text-align: left;
   vertical-align: top;
@@ -569,20 +625,35 @@
 }
 .penna-render tbody tr {
   background: var(--penna-table-row-bg);
+  transition: background-color 0.2s ease;
 }
 .penna-render tbody tr:nth-child(even) {
   background: var(--penna-table-stripe-bg);
 }
+.penna-render tbody tr:hover {
+  background: color-mix(
+    in srgb,
+    var(--penna-c-text-3) 8%,
+    var(--penna-table-row-bg)
+  );
+}
 .penna-render tbody td {
   background: inherit;
 }
-.penna-render table > tr:nth-child(odd) td {
+.penna-render table tr:nth-child(odd) td {
   background: var(--penna-table-row-bg);
 }
-.penna-render table > tr:nth-child(even) td {
+.penna-render table tr:nth-child(even) td {
   background: var(--penna-table-stripe-bg);
 }
-.penna-render table > tr:first-child th {
+.penna-render table tr:hover td {
+  background: color-mix(
+    in srgb,
+    var(--penna-c-text-3) 8%,
+    var(--penna-table-row-bg)
+  );
+}
+.penna-render table tr:first-child th {
   background: var(--penna-table-head-bg);
 }
 .penna-render .penna-mark {
@@ -632,25 +703,37 @@
   --penna-mark-accent: var(--penna-c-important-mark);
 }
 .penna-render .penna-spoiler {
-  cursor: default;
-  transition: filter 0.2s ease;
-  filter: blur(0.25rem);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    text-shadow 0.2s ease;
+  color: transparent;
+  text-shadow: 0 0 0.375rem var(--penna-c-text-1);
+  background: color-mix(in srgb, var(--penna-c-text-3) 15%, transparent);
+  border-radius: 0.25rem;
+  padding: 0 0.25rem;
 }
 .penna-render .penna-spoiler:hover {
-  filter: none;
+  color: inherit;
+  text-shadow: none;
 }
 .penna-render .penna-spoiler.click {
   cursor: pointer;
-  filter: none;
+  color: inherit;
+  text-shadow: none;
 }
 .penna-render .penna-spoiler.click .penna-spoiler__text {
-  filter: blur(0.25rem);
-  transition: filter 0.2s ease;
+  color: transparent;
+  text-shadow: 0 0 0.375rem var(--penna-c-text-1);
+  transition:
+    color 0.2s ease,
+    text-shadow 0.2s ease;
 }
 .penna-render
   .penna-spoiler.click:has(.penna-spoiler__toggle:checked)
   .penna-spoiler__text {
-  filter: none;
+  color: inherit;
+  text-shadow: none;
 }
 .penna-render .penna-spoiler__toggle {
   position: absolute;
@@ -869,6 +952,7 @@
   border-color: var(--penna-c-alert-important-border);
 }
 .penna-render .penna-card {
+  margin: 0 0 1rem;
   border: 0.0625rem solid
     color-mix(in srgb, var(--penna-c-text-3) 24%, transparent);
   border-radius: 0.5rem;
@@ -974,7 +1058,7 @@
   position: absolute;
   inset: auto 0 0;
   padding: 0.75rem 1rem 0.875rem;
-  color: var(--penna-c-image-card-info-fg);
+  color: var(--penna-c-image-card-info-fg) !important;
   background: var(--penna-c-image-card-info-bg);
   transition:
     padding 0.25s ease,
@@ -985,10 +1069,10 @@
   font-size: 1.05rem;
   font-weight: 600;
   line-height: 1.4;
-  color: var(--penna-c-image-card-info-fg);
+  color: var(--penna-c-image-card-info-fg) !important;
 }
 .penna-render .penna-image-card__title a {
-  color: var(--penna-c-image-card-info-fg);
+  color: var(--penna-c-image-card-info-fg) !important;
   text-decoration: none;
 }
 .penna-render .penna-image-card__title a:hover {
@@ -1000,7 +1084,7 @@
   opacity: 0;
   margin: 0;
   overflow: hidden;
-  color: var(--penna-c-image-card-info-fg);
+  color: var(--penna-c-image-card-info-fg) !important;
   transition:
     max-height 0.3s ease,
     opacity 0.25s ease,
@@ -2483,60 +2567,151 @@
   max-width: 100%;
   height: auto;
 }
+.penna-render
+  img:not(.penna-math-latex):not(.penna-repo-card__shield-img):not(
+    .penna-link-card__icon
+  ):not(.penna-audio-player__cover-img) {
+  cursor: zoom-in;
+}
+.penna-render svg:not([aria-hidden="true"]) {
+  cursor: zoom-in;
+}
+
+.penna-image-preview {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.penna-image-preview__backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  margin: 0;
+  padding: 0;
+  background: color-mix(in srgb, var(--penna-c-text-1) 55%, transparent);
+  cursor: zoom-out;
+}
+
+.penna-image-preview__figure {
+  position: relative;
+  z-index: 1;
+  display: block;
+  max-width: min(96vw, 1200px);
+  max-height: 92vh;
+  margin: 0;
+  text-align: center;
+  width: 100%;
+  /* 透明区域点穿到 backdrop；媒体/说明自己接收点击 */
+  pointer-events: none;
+}
+
+.penna-image-preview__media,
+.penna-image-preview__caption {
+  pointer-events: auto;
+}
+
+.penna-image-preview__media {
+  display: inline-block;
+  vertical-align: middle;
+  max-width: min(96vw, 1200px);
+  max-height: 85vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  background: var(--penna-c-bg);
+  box-shadow: 0 0.75rem 2.5rem -0.5rem
+    color-mix(in srgb, var(--penna-c-text-1) 35%, transparent);
+}
+
+.penna-image-preview__caption {
+  display: block;
+  margin: 0.75rem 0 0;
+  max-width: 100%;
+  padding: 0.5rem 0.75rem;
+  color: var(--penna-c-bg);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: center;
+  text-shadow: 0 1px 2px
+    color-mix(in srgb, var(--penna-c-text-1) 60%, transparent);
+}
+
+.penna-theme-default .penna-render a {
+  color: var(--penna-c-brand-1);
+}
+.penna-theme-default .penna-render a:hover {
+  color: var(--penna-c-brand-2);
+}
 
 .penna-dark .penna-render {
-  --penna-c-brand-1: #6aa1b7;
-  --penna-c-brand-2: #8cccd5;
-  --penna-c-brand-3: #a8dce3;
-  --penna-c-brand-soft: rgba(131, 208, 218, 0.2);
-  --penna-c-brand-on-bg: #e0f4f8;
-  --penna-c-text-1: rgba(255, 255, 255, 0.87);
-  --penna-c-text-2: rgba(255, 255, 255, 0.6);
-  --penna-c-text-3: rgba(255, 255, 255, 0.38);
-  --penna-c-bg: #141414;
-  --penna-c-bg-elevated: #1f1f1f;
+  --penna-c-logo-paper: #edebe7;
+  --penna-c-logo-ink: #0c1c25;
+  --penna-c-logo-cyan: #0ac1e3;
+  --penna-c-logo-blue: #008dee;
+  --penna-c-logo-green: #16bf73;
+  --penna-c-logo-yellow: #fec933;
+  --penna-c-logo-orange: #fe9138;
+  --penna-c-logo-red: #f33a3c;
+  --penna-c-stroke: #edebe7;
+  --penna-c-brand-1: #0ac1e3;
+  --penna-c-brand-2: #3dcee9;
+  --penna-c-brand-3: #6dd8ee;
+  --penna-c-brand-soft: rgba(10, 193, 227, 0.22);
+  --penna-c-brand-on-bg: #0c1c25;
+  --penna-c-text-1: rgba(237, 235, 231, 0.92);
+  --penna-c-text-2: rgba(237, 235, 231, 0.68);
+  --penna-c-text-3: rgba(237, 235, 231, 0.42);
+  --penna-c-bg: #0c1c25;
+  --penna-c-bg-elevated: #152836;
   --penna-c-contrast-light: #fff;
   --penna-c-contrast-dark: #000;
-  --penna-c-brand-mark: color-mix(in srgb, #a8dce3 48%, #141414);
-  --penna-c-code-fg: #ff7b72;
-  --penna-c-note: #93c5fd;
-  --penna-c-note-mark: color-mix(in srgb, #db0 50%, #141414);
-  --penna-c-note-on-bg: color-mix(in srgb, #93c5fd 20%, #000);
-  --penna-c-alert-note-text: #93c5fd;
-  --penna-c-alert-note-bg: color-mix(in srgb, #93c5fd 15%, transparent);
-  --penna-c-alert-note-border: color-mix(in srgb, #93c5fd 40%, transparent);
-  --penna-c-tip: #4ade80;
-  --penna-c-tip-mark: color-mix(in srgb, #4ade80 50%, #141414);
-  --penna-c-tip-on-bg: color-mix(in srgb, #4ade80 20%, #000);
-  --penna-c-alert-tip-text: #4ade80;
-  --penna-c-alert-tip-bg: color-mix(in srgb, #4ade80 15%, transparent);
-  --penna-c-alert-tip-border: color-mix(in srgb, #4ade80 40%, transparent);
-  --penna-c-warning: #fbbf24;
-  --penna-c-warning-mark: color-mix(in srgb, #fbbf24 50%, #141414);
-  --penna-c-warning-on-bg: color-mix(in srgb, #fbbf24 20%, #000);
-  --penna-c-alert-warning-text: #fbbf24;
-  --penna-c-alert-warning-bg: color-mix(in srgb, #fbbf24 15%, transparent);
-  --penna-c-alert-warning-border: color-mix(in srgb, #fbbf24 40%, transparent);
-  --penna-c-caution: #fca5a5;
-  --penna-c-caution-mark: color-mix(in srgb, #fca5a5 50%, #141414);
-  --penna-c-caution-on-bg: color-mix(in srgb, #fca5a5 20%, #000);
-  --penna-c-alert-caution-text: #fca5a5;
-  --penna-c-alert-caution-bg: color-mix(in srgb, #fca5a5 15%, transparent);
-  --penna-c-alert-caution-border: color-mix(in srgb, #fca5a5 40%, transparent);
-  --penna-c-danger: #f87171;
-  --penna-c-danger-mark: color-mix(in srgb, #f87171 50%, #141414);
-  --penna-c-danger-on-bg: color-mix(in srgb, #f87171 20%, #000);
-  --penna-c-alert-danger-text: #f87171;
-  --penna-c-alert-danger-bg: color-mix(in srgb, #f87171 15%, transparent);
-  --penna-c-alert-danger-border: color-mix(in srgb, #f87171 40%, transparent);
-  --penna-c-important: #c4b5fd;
-  --penna-c-important-mark: color-mix(in srgb, #a5b4fc 50%, #141414);
-  --penna-c-important-on-bg: color-mix(in srgb, #c4b5fd 20%, #000);
-  --penna-c-alert-important-text: #c4b5fd;
-  --penna-c-alert-important-bg: color-mix(in srgb, #c4b5fd 15%, transparent);
+  --penna-c-brand-mark: color-mix(in srgb, #6dd8ee 48%, #0c1c25);
+  --penna-c-code-fg: #ff7a72;
+  --penna-c-note: #4db4f5;
+  --penna-c-note-mark: color-mix(in srgb, #fec933 50%, #0c1c25);
+  --penna-c-note-on-bg: color-mix(in srgb, #4db4f5 20%, #000);
+  --penna-c-alert-note-text: #4db4f5;
+  --penna-c-alert-note-bg: color-mix(in srgb, #4db4f5 15%, transparent);
+  --penna-c-alert-note-border: color-mix(in srgb, #4db4f5 40%, transparent);
+  --penna-c-tip: #3dd48a;
+  --penna-c-tip-mark: color-mix(in srgb, #16bf73 50%, #0c1c25);
+  --penna-c-tip-on-bg: color-mix(in srgb, #3dd48a 20%, #000);
+  --penna-c-alert-tip-text: #3dd48a;
+  --penna-c-alert-tip-bg: color-mix(in srgb, #3dd48a 15%, transparent);
+  --penna-c-alert-tip-border: color-mix(in srgb, #3dd48a 40%, transparent);
+  --penna-c-warning: #ffb04a;
+  --penna-c-warning-mark: color-mix(in srgb, #fec933 50%, #0c1c25);
+  --penna-c-warning-on-bg: color-mix(in srgb, #ffb04a 20%, #000);
+  --penna-c-alert-warning-text: #ffb04a;
+  --penna-c-alert-warning-bg: color-mix(in srgb, #ffb04a 15%, transparent);
+  --penna-c-alert-warning-border: color-mix(in srgb, #ffb04a 40%, transparent);
+  --penna-c-caution: #ff7a72;
+  --penna-c-caution-mark: color-mix(in srgb, #fe9138 50%, #0c1c25);
+  --penna-c-caution-on-bg: color-mix(in srgb, #ff7a72 20%, #000);
+  --penna-c-alert-caution-text: #ff7a72;
+  --penna-c-alert-caution-bg: color-mix(in srgb, #ff7a72 15%, transparent);
+  --penna-c-alert-caution-border: color-mix(in srgb, #ff7a72 40%, transparent);
+  --penna-c-danger: #ff6b66;
+  --penna-c-danger-mark: color-mix(in srgb, #f33a3c 50%, #0c1c25);
+  --penna-c-danger-on-bg: color-mix(in srgb, #ff6b66 20%, #000);
+  --penna-c-alert-danger-text: #ff6b66;
+  --penna-c-alert-danger-bg: color-mix(in srgb, #ff6b66 15%, transparent);
+  --penna-c-alert-danger-border: color-mix(in srgb, #ff6b66 40%, transparent);
+  --penna-c-important: #3dcee9;
+  --penna-c-important-mark: color-mix(in srgb, #0ac1e3 50%, #0c1c25);
+  --penna-c-important-on-bg: color-mix(in srgb, #3dcee9 20%, #000);
+  --penna-c-alert-important-text: #3dcee9;
+  --penna-c-alert-important-bg: color-mix(in srgb, #3dcee9 15%, transparent);
   --penna-c-alert-important-border: color-mix(
     in srgb,
-    #c4b5fd 40%,
+    #3dcee9 40%,
     transparent
   );
   --penna-c-image-card-info-fg: var(--penna-c-contrast-light);

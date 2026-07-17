@@ -13,15 +13,15 @@ tags: [guide, themes]
 
 ## 内置皮肤
 
-| id        | 说明                                                              |
-| --------- | ----------------------------------------------------------------- |
-| `default` | 默认（仅用 `penna-editor-base` + `penna-render`，无单独主题文件） |
-| `claude`  | Claude 风格                                                       |
-| `github`  | GitHub                                                            |
-| `morandi` | 莫兰迪                                                            |
-| `latex`   | 学术 / LaTeX                                                      |
-| `vue`     | Vue 绿                                                            |
-| `notion`  | Notion                                                            |
+| id        | 说明                                                                    |
+| --------- | ----------------------------------------------------------------------- |
+| `default` | **品牌默认**：羽毛 Logo 色板 + 粗描边 chrome（见 [品牌视觉](brand.md)） |
+| `claude`  | Claude 风格                                                             |
+| `github`  | GitHub                                                                  |
+| `morandi` | 莫兰迪                                                                  |
+| `latex`   | 学术 / LaTeX                                                            |
+| `vue`     | Vue 绿                                                                  |
+| `notion`  | Notion                                                                  |
 
 ---
 
@@ -59,6 +59,12 @@ tags: [guide, themes]
 import "penna-markdown/theme/github/editor.css";
 import "penna-markdown/theme/github/render.css";
 ```
+
+---
+
+## 品牌与 default
+
+`default` 皮肤的色板与造型语言见 **[品牌视觉](brand.md)**（Logo 采样色、描边规则、语义色映射）。改品牌色只改 `_tokens.scss` 一处。
 
 ---
 
@@ -110,4 +116,4 @@ Renderer 订阅明暗变化后会同步图表主题。
 
 ## 相关
 
-- [编辑器](editor.md) · [渲染器](renderer.md) · [快速开始](getting-started.md)
+- [编辑器](editor.md) · [渲染器](renderer.md) · [快速开始](getting-started.md) · [品牌视觉](brand.md)

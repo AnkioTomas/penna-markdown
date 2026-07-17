@@ -55,6 +55,11 @@ tags: [docs, index]
 皮肤 CSS、明暗、白名单。
 :::
 
+::: link-card 品牌视觉 link="brand.md"
+
+Logo 色板、default 主题造型语言。
+:::
+
 ::: link-card 扩展语法 link="extend.md"
 
 自定义 Parser 注册与注入。

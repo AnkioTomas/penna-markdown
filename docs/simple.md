@@ -312,7 +312,8 @@ pnpm install
 
 - [2024-12-31:important] 阶段三
   正式发布 1.0 版本。
-  :::
+
+:::
 
 ::: timeline line="dotted" placement="between"
 
@@ -321,7 +322,8 @@ pnpm install
 
 - [2025-06:success] 左侧
   默认左侧。
-  :::
+
+:::
 
 ---
 

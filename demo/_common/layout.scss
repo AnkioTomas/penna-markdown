@@ -90,6 +90,20 @@ body.demo-dark {
   color: var(--penna-c-text-1);
 }
 
+/** 耗时徽章：brand-on-bg 是实心按钮字色，不能拿来配 soft 底 */
+.timing,
+.ast-timing {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--penna-c-brand-1);
+  background: var(--penna-c-brand-soft);
+  border: 1px solid color-mix(in srgb, var(--penna-c-brand-1) 28%, transparent);
+  border-radius: 8px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
 .app-container {
   flex: 1;
   min-height: 0;

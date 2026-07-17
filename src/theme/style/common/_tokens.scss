@@ -2,93 +2,107 @@
 @use "sass:map";
 
 // ==========================================
+// Brand / Logo 色板（采样自 logo/android-chrome-512x512.png 填充区中位色）
+// Demo 与 default 主题共用；禁止另起一套「差不多就行」的近似色
+// ==========================================
+$penna-logo-paper: #edebe7;
+$penna-logo-ink: #0c1c25;
+$penna-logo-cyan: #0ac1e3;
+$penna-logo-blue: #008dee;
+$penna-logo-green: #16bf73;
+$penna-logo-yellow: #fec933;
+$penna-logo-orange: #fe9138;
+$penna-logo-red: #f33a3c;
+
+// ==========================================
 // Layer 1: 基础静态色板（仅在此文件定义字面量）
 // ==========================================
-$penna-brand-1: #5086a1;
-$penna-brand-2: #6aa1b7;
-$penna-brand-3: #8cccd5;
-$penna-brand-soft: rgba(131, 208, 218, 0.314);
-$penna-brand-on-bg: #1a3d47;
+$penna-brand-1: $penna-logo-blue;
+$penna-brand-2: #0099e8;
+$penna-brand-3: $penna-logo-cyan;
+$penna-brand-soft: rgba(0, 141, 238, 0.16);
+$penna-brand-on-bg: #ffffff;
 
-$penna-text-1: rgba(60, 60, 67, 1);
-$penna-text-2: rgba(60, 60, 67, 0.78);
-$penna-text-3: rgba(60, 60, 67, 0.56);
-$penna-code-fg: #d73a49; // GitHub-like inline code color
+$penna-text-1: $penna-logo-ink;
+$penna-text-2: rgba(12, 28, 37, 0.78);
+$penna-text-3: rgba(12, 28, 37, 0.56);
+$penna-code-fg: $penna-logo-red;
 
-$penna-bg: #fff;
-$penna-bg-elevated: #fafafa;
+// 编辑器底色：接近白的浅暖灰，纸色只留一点倾向，避免整屏发黄抢视线
+$penna-bg: #fafaf8;
+$penna-bg-elevated: #ffffff;
 
 $penna-contrast-light: #fff;
 $penna-contrast-dark: #000;
 
-$penna-dark-bg: #141414;
-$penna-dark-bg-elevated: #1f1f1f;
+$penna-dark-bg: #0c1c25;
+$penna-dark-bg-elevated: #152836;
 
-$penna-dark-text-1: rgba(255, 255, 255, 0.87);
-$penna-dark-text-2: rgba(255, 255, 255, 0.6);
-$penna-dark-text-3: rgba(255, 255, 255, 0.38);
-$penna-dark-code-fg: #ff7b72;
+$penna-dark-text-1: rgba(237, 235, 231, 0.92);
+$penna-dark-text-2: rgba(237, 235, 231, 0.68);
+$penna-dark-text-3: rgba(237, 235, 231, 0.42);
+$penna-dark-code-fg: #ff7a72;
 
-$penna-dark-brand-1: #6aa1b7;
-$penna-dark-brand-2: #8cccd5;
-$penna-dark-brand-3: #a8dce3;
-$penna-dark-brand-soft: rgba(131, 208, 218, 0.2);
-$penna-dark-brand-on-bg: #e0f4f8;
+$penna-dark-brand-1: $penna-logo-cyan;
+$penna-dark-brand-2: #3dcee9;
+$penna-dark-brand-3: #6dd8ee;
+$penna-dark-brand-soft: rgba(10, 193, 227, 0.22);
+$penna-dark-brand-on-bg: #0c1c25;
 
 // ==========================================
-// Layer 2: 语义色板
+// Layer 2: 语义色板（对齐羽毛光谱，禁止灰化）
 // ==========================================
 $penna-core-semantics: (
   note: (
-    #206aca,
-    #ff0,
+    $penna-logo-blue,
+    $penna-logo-yellow,
   ),
   tip: (
-    #30a46c,
-    #39ff14,
+    $penna-logo-green,
+    $penna-logo-yellow,
   ),
   warning: (
-    #b45309,
-    #fc0,
+    $penna-logo-orange,
+    $penna-logo-yellow,
   ),
   caution: (
-    #c53030,
-    #f99,
+    $penna-logo-red,
+    $penna-logo-orange,
   ),
   danger: (
-    #dc2626,
-    #f66,
+    $penna-logo-red,
+    $penna-logo-orange,
   ),
   important: (
-    #844bbc,
-    #ccf,
+    $penna-logo-cyan,
+    $penna-logo-blue,
   ),
 );
 
 $penna-dark-core-semantics: (
   note: (
-    #93c5fd,
-    #db0,
+    #4db4f5,
+    $penna-logo-yellow,
   ),
   tip: (
-    #4ade80,
-    #4ade80,
+    #3dd48a,
+    $penna-logo-green,
   ),
   warning: (
-    #fbbf24,
-    #fbbf24,
+    #ffb04a,
+    $penna-logo-yellow,
   ),
   caution: (
-    #fca5a5,
-    #fca5a5,
+    #ff7a72,
+    $penna-logo-orange,
   ),
   danger: (
-    #f87171,
-    #f87171,
+    #ff6b66,
+    $penna-logo-red,
   ),
   important: (
-    #c4b5fd,
-    #a5b4fc,
+    #3dcee9,
+    $penna-logo-cyan,
   ),
 );
 
@@ -240,6 +254,17 @@ $penna-dark-brand-mark-mix: 48%;
 // Layer 4: 主题注入
 // ==========================================
 @mixin theme-default {
+  --penna-c-logo-paper: #{$penna-logo-paper};
+  --penna-c-logo-ink: #{$penna-logo-ink};
+  --penna-c-logo-cyan: #{$penna-logo-cyan};
+  --penna-c-logo-blue: #{$penna-logo-blue};
+  --penna-c-logo-green: #{$penna-logo-green};
+  --penna-c-logo-yellow: #{$penna-logo-yellow};
+  --penna-c-logo-orange: #{$penna-logo-orange};
+  --penna-c-logo-red: #{$penna-logo-red};
+  // 描边：浅色用实心墨线（对齐 logo 粗描边，禁止再 color-mix 冲淡）
+  --penna-c-stroke: #{$penna-logo-ink};
+
   --penna-c-brand-1: #{$penna-brand-1};
   --penna-c-brand-2: #{$penna-brand-2};
   --penna-c-brand-3: #{$penna-brand-3};
@@ -264,6 +289,16 @@ $penna-dark-brand-mark-mix: 48%;
 }
 
 @mixin theme-dark {
+  --penna-c-logo-paper: #{$penna-logo-paper};
+  --penna-c-logo-ink: #{$penna-logo-ink};
+  --penna-c-logo-cyan: #{$penna-logo-cyan};
+  --penna-c-logo-blue: #{$penna-logo-blue};
+  --penna-c-logo-green: #{$penna-logo-green};
+  --penna-c-logo-yellow: #{$penna-logo-yellow};
+  --penna-c-logo-orange: #{$penna-logo-orange};
+  --penna-c-logo-red: #{$penna-logo-red};
+  --penna-c-stroke: #{$penna-logo-paper};
+
   --penna-c-brand-1: #{$penna-dark-brand-1};
   --penna-c-brand-2: #{$penna-dark-brand-2};
   --penna-c-brand-3: #{$penna-dark-brand-3};

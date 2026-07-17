@@ -23,20 +23,6 @@
   }
 }
 
-.timing {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--penna-c-brand-on-bg);
-  background: var(--penna-c-brand-soft);
-  border: 1px solid color-mix(in srgb, var(--penna-c-brand-2) 35%, transparent);
-  border-radius: 999px;
-  padding: 5px 14px;
-  white-space: nowrap;
-}
-
 .textarea {
   width: 100%;
   flex: 1;

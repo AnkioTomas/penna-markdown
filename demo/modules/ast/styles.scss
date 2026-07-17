@@ -1,17 +1,5 @@
 @import "../../_common/layout.scss";
 
-.ast-timing {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--penna-c-brand-on-bg);
-  background: var(--penna-c-brand-soft);
-  border: 1px solid color-mix(in srgb, var(--penna-c-brand-2) 35%, transparent);
-  border-radius: 999px;
-  padding: 4px 12px;
-  white-space: nowrap;
-}
-
 .ast-layout {
   flex: 1;
   min-height: 0;

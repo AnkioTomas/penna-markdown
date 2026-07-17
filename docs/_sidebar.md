@@ -6,6 +6,7 @@
 - [渲染器](renderer.md)
 - [转换器](transformer.md)
 - [主题](themes.md)
+- [品牌视觉](brand.md)
 - [扩展语法](extend.md)
 
 ## 参考

@@ -1,16 +1,5 @@
 @use "../src/theme/style/common/tokens" as tokens;
 
-// Logo 实测色板（android-chrome-512x512.png）
-$logo-bg: #edebe7;
-$logo-ink: #0c243c;
-$logo-cyan: #00c0e0;
-$logo-blue: #0080e0;
-$logo-green: #10b070;
-$logo-yellow: #f0c030;
-$logo-orange: #f09030;
-$logo-red: #f04030;
-$logo-surface: #f8f7f4;
-
 @keyframes home-logo-in {
   from {
     opacity: 0;
@@ -52,21 +41,21 @@ body.demo-home {
   background:
     radial-gradient(
       ellipse 80% 50% at 50% -10%,
-      color-mix(in srgb, $logo-cyan 14%, transparent),
+      color-mix(in srgb, tokens.$penna-logo-cyan 14%, transparent),
       transparent 55%
     ),
     radial-gradient(
       ellipse 60% 40% at 100% 20%,
-      color-mix(in srgb, $logo-yellow 10%, transparent),
+      color-mix(in srgb, tokens.$penna-logo-yellow 10%, transparent),
       transparent 50%
     ),
     radial-gradient(
       ellipse 50% 35% at 0% 40%,
-      color-mix(in srgb, $logo-green 8%, transparent),
+      color-mix(in srgb, tokens.$penna-logo-green 8%, transparent),
       transparent 45%
     ),
-    $logo-bg;
-  color: $logo-ink;
+    tokens.$penna-logo-paper;
+  color: tokens.$penna-logo-ink;
   font-family:
     "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
@@ -81,9 +70,9 @@ body.demo-home {
   margin-bottom: 2.75rem;
   padding: 2.75rem 1.5rem 2.25rem;
   text-align: center;
-  border: 2.5px solid $logo-ink;
+  border: 2.5px solid tokens.$penna-logo-ink;
   border-radius: 20px;
-  background: $logo-surface;
+  background: tokens.$penna-bg-elevated;
   animation: home-rise 0.55s ease-out both;
 }
 
@@ -101,8 +90,8 @@ body.demo-home {
   width: 112px;
   height: 112px;
   border-radius: 24px;
-  border: 2.5px solid $logo-ink;
-  background: $logo-bg;
+  border: 2.5px solid tokens.$penna-logo-ink;
+  background: tokens.$penna-logo-paper;
   animation: home-logo-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -110,15 +99,15 @@ body.demo-home {
   width: min(220px, 55vw);
   height: 6px;
   border-radius: 3px;
-  border: 1.5px solid $logo-ink;
+  border: 1.5px solid tokens.$penna-logo-ink;
   background: linear-gradient(
     90deg,
-    $logo-green 0%,
-    $logo-yellow 22%,
-    $logo-orange 40%,
-    $logo-red 55%,
-    $logo-blue 78%,
-    $logo-cyan 100%
+    tokens.$penna-logo-green 0%,
+    tokens.$penna-logo-yellow 22%,
+    tokens.$penna-logo-orange 40%,
+    tokens.$penna-logo-red 55%,
+    tokens.$penna-logo-blue 78%,
+    tokens.$penna-logo-cyan 100%
   );
   transform-origin: center;
   animation: home-spectrum 0.65s 0.2s ease-out both;
@@ -131,7 +120,7 @@ body.demo-home {
   font-size: clamp(1.75rem, 4.5vw, 2.35rem);
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: $logo-ink;
+  color: tokens.$penna-logo-ink;
   animation: home-rise 0.55s 0.08s ease-out both;
 }
 
@@ -142,7 +131,7 @@ body.demo-home {
   margin: 0 auto 1.5rem;
   font-size: 0.95rem;
   line-height: 1.65;
-  color: color-mix(in srgb, $logo-ink 68%, transparent);
+  color: color-mix(in srgb, tokens.$penna-logo-ink 68%, transparent);
   animation: home-rise 0.55s 0.14s ease-out both;
 }
 
@@ -161,10 +150,10 @@ body.demo-home {
   display: inline-flex;
   align-items: center;
   padding: 0.5rem 1rem;
-  border: 2px solid $logo-ink;
+  border: 2px solid tokens.$penna-logo-ink;
   border-radius: 10px;
-  background: $logo-surface;
-  color: $logo-ink;
+  background: tokens.$penna-bg-elevated;
+  color: tokens.$penna-logo-ink;
   font-size: 0.8125rem;
   font-weight: 600;
   text-decoration: none;
@@ -174,17 +163,25 @@ body.demo-home {
     transform 0.15s ease;
 
   &:hover {
-    background: color-mix(in srgb, $logo-cyan 18%, $logo-surface);
+    background: color-mix(
+      in srgb,
+      tokens.$penna-logo-cyan 18%,
+      tokens.$penna-bg-elevated
+    );
     transform: translateY(-1px);
   }
 
   &--primary {
-    background: $logo-blue;
+    background: tokens.$penna-logo-blue;
     color: #fff;
-    border-color: $logo-ink;
+    border-color: tokens.$penna-logo-ink;
 
     &:hover {
-      background: color-mix(in srgb, $logo-blue 82%, $logo-ink);
+      background: color-mix(
+        in srgb,
+        tokens.$penna-logo-blue 82%,
+        tokens.$penna-logo-ink
+      );
       color: #fff;
     }
   }
@@ -199,7 +196,8 @@ body.demo-home {
   gap: 0.4rem;
   margin: 0;
   padding-top: 1.15rem;
-  border-top: 2px dashed color-mix(in srgb, $logo-ink 18%, transparent);
+  border-top: 2px dashed
+    color-mix(in srgb, tokens.$penna-logo-ink 18%, transparent);
   animation: home-rise 0.55s 0.26s ease-out both;
 
   a {
@@ -234,10 +232,10 @@ body.demo-home {
   gap: 0.65rem;
   margin: 0 0 1rem;
   padding-bottom: 0.55rem;
-  border-bottom: 2.5px solid $logo-ink;
+  border-bottom: 2.5px solid tokens.$penna-logo-ink;
   font-size: 1.05rem;
   font-weight: 700;
-  color: $logo-ink;
+  color: tokens.$penna-logo-ink;
 }
 
 .section-dot {
@@ -245,22 +243,22 @@ body.demo-home {
   height: 10px;
   flex-shrink: 0;
   border-radius: 3px;
-  border: 1.5px solid $logo-ink;
+  border: 1.5px solid tokens.$penna-logo-ink;
 
   &--syntax {
-    background: $logo-green;
+    background: tokens.$penna-logo-green;
   }
 
   &--test {
-    background: $logo-yellow;
+    background: tokens.$penna-logo-yellow;
   }
 
   &--modules {
-    background: $logo-blue;
+    background: tokens.$penna-logo-blue;
   }
 
   &--frameworks {
-    background: $logo-orange;
+    background: tokens.$penna-logo-orange;
   }
 }
 
@@ -271,12 +269,12 @@ body.demo-home {
 }
 
 .card {
-  background: $logo-surface;
+  background: tokens.$penna-bg-elevated;
   padding: 1.25rem 1.35rem;
   border-radius: 14px;
   text-decoration: none;
   color: inherit;
-  border: 2px solid $logo-ink;
+  border: 2px solid tokens.$penna-logo-ink;
   transition:
     transform 0.18s ease,
     background 0.18s ease,
@@ -285,11 +283,11 @@ body.demo-home {
   &:hover {
     transform: translateY(-3px);
     background: #fff;
-    box-shadow: 3px 3px 0 $logo-ink;
+    box-shadow: 3px 3px 0 tokens.$penna-logo-ink;
   }
 
   &:focus-visible {
-    outline: 3px solid $logo-cyan;
+    outline: 3px solid tokens.$penna-logo-cyan;
     outline-offset: 2px;
   }
 }
@@ -298,13 +296,13 @@ body.demo-home {
   font-size: 1.05rem;
   font-weight: 700;
   margin-bottom: 0.4rem;
-  color: $logo-ink;
+  color: tokens.$penna-logo-ink;
 }
 
 .card-desc {
   font-size: 0.8125rem;
   line-height: 1.55;
-  color: color-mix(in srgb, $logo-ink 62%, transparent);
+  color: color-mix(in srgb, tokens.$penna-logo-ink 62%, transparent);
 }
 
 .card.disabled {
@@ -315,7 +313,7 @@ body.demo-home {
   &:hover {
     transform: none;
     box-shadow: none;
-    background: $logo-surface;
+    background: tokens.$penna-bg-elevated;
   }
 }
 
