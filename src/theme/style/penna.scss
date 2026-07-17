@@ -1,0 +1,14 @@
+/** 编辑器基础样式（默认主题 + 结构 + CM） */
+@use "editor/penna" as *;
+@use "common/tokens";
+@use "common/scrollbar" as *;
+
+.penna {
+  @include tokens.theme-default;
+  @include scrollbar-global;
+}
+
+.penna-dark.penna,
+.penna-dark .penna {
+  @include tokens.theme-dark;
+}
