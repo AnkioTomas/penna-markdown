@@ -3,24 +3,24 @@
   align-items: center;
   gap: 16px;
   padding: 16px 18px;
-  background: var(--cherry-c-bg-elevated);
+  background: var(--penna-c-bg-elevated);
   border-bottom: 1px solid
-    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+    color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
 }
 
 .back {
   text-decoration: none;
-  color: var(--cherry-c-brand-1);
+  color: var(--penna-c-brand-1);
   font-size: 13px;
 
   &:hover {
-    color: var(--cherry-c-brand-2);
+    color: var(--penna-c-brand-2);
   }
 }
 
 .title {
   font-weight: 650;
-  color: var(--cherry-c-text-1);
+  color: var(--penna-c-text-1);
 }
 
 .layout {
@@ -32,8 +32,8 @@
 }
 
 .panel {
-  background: var(--cherry-c-bg);
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  background: var(--penna-c-bg);
+  border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
   border-radius: 12px;
   overflow: hidden;
   display: flex;
@@ -44,9 +44,9 @@
 .panel-title {
   padding: 12px 14px;
   border-bottom: 1px solid
-    color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+    color-mix(in srgb, var(--penna-c-text-3) 14%, transparent);
   font-size: 13px;
-  color: var(--cherry-c-text-2);
+  color: var(--penna-c-text-2);
   font-weight: 600;
 }
 

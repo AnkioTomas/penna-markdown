@@ -1,8 +1,8 @@
 ---
 title: 文档中心
-subtitle: Cherry Markdown Next
+subtitle: Penna Markdown
 version: 0.1.0
-repo: https://github.com/AnkioTomas/cherry-markdown-next
+repo: https://github.com/AnkioTomas/penna-markdown
 tags: [docs, index]
 ---
 
@@ -37,7 +37,7 @@ tags: [docs, index]
 
 ::: link-card 编辑器 link="editor.md"
 
-`Cherry` 用法、Options、AI / 上传 / 侧栏。
+`Penna` 用法、Options、AI / 上传 / 侧栏。
 :::
 
 ::: link-card 渲染器 link="renderer.md"

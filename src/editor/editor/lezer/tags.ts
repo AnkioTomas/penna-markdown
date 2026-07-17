@@ -1,6 +1,6 @@
 import { Tag } from "@lezer/highlight";
 
-export const cherryTags = {
+export const pennaTags = {
   // Blocks
   alert: Tag.define(),
   mathBlock: Tag.define(),

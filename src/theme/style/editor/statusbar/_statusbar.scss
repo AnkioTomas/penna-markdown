@@ -1,24 +1,24 @@
-.cherry-statusbar {
+.penna-statusbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 16px 0 8px;
   height: 28px;
   font-size: 12px;
-  color: color-mix(in srgb, var(--cherry-c-text-3) 70%, var(--cherry-c-text-1));
-  background: color-mix(in srgb, var(--cherry-c-text-3) 8%, var(--cherry-c-bg));
-  border-top: 1px solid var(--cherry-c-border);
+  color: color-mix(in srgb, var(--penna-c-text-3) 70%, var(--penna-c-text-1));
+  background: color-mix(in srgb, var(--penna-c-text-3) 8%, var(--penna-c-bg));
+  border-top: 1px solid var(--penna-c-border);
   box-sizing: border-box;
 }
 
-.cherry-statusbar-left,
-.cherry-statusbar-right {
+.penna-statusbar-left,
+.penna-statusbar-right {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.cherry-statusbar-btn {
+.penna-statusbar-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -27,35 +27,35 @@
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--cherry-c-text-3);
+  color: var(--penna-c-text-3);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    color: var(--cherry-c-text-2);
-    background: color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
+    color: var(--penna-c-text-2);
+    background: color-mix(in srgb, var(--penna-c-text-3) 15%, transparent);
   }
 
   &.is-active {
-    color: var(--cherry-c-brand-1);
-    background: color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
+    color: var(--penna-c-brand-1);
+    background: color-mix(in srgb, var(--penna-c-brand-1) 15%, transparent);
   }
 
-  .cherry-icon {
+  .penna-icon {
     width: 14px;
     height: 14px;
   }
 }
 
-.cherry-statusbar-count {
+.penna-statusbar-count {
   font-variant-numeric: tabular-nums;
 }
 
-.cherry-statusbar-perf {
+.penna-statusbar-perf {
   margin-left: 8px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   font-size: 11px;
-  color: color-mix(in srgb, var(--cherry-c-text-3) 85%, var(--cherry-c-text-1));
+  color: color-mix(in srgb, var(--penna-c-text-3) 85%, var(--penna-c-text-1));
 }

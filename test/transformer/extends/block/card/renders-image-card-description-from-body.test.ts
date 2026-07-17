@@ -6,11 +6,11 @@ import {
 } from "../../../../helpers/engine.js";
 
 function cardHtml(title, body, { link = "" } = {}) {
-  const titleHtml = title ? `<p class="cherry-card__title">${title}</p>\n` : "";
+  const titleHtml = title ? `<p class="penna-card__title">${title}</p>\n` : "";
   if (link) {
-    return `<a class="cherry-card cherry-link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</a>\n`;
+    return `<a class="penna-card penna-link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="penna-card__body">${body}</div>\n</a>\n`;
   }
-  return `<div class="cherry-card">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</div>\n`;
+  return `<div class="penna-card">\n${titleHtml}<div class="penna-card__body">${body}</div>\n</div>\n`;
 }
 
 it("renders image-card description from body", () => {
@@ -20,7 +20,7 @@ it("renders image-card description from body", () => {
 :::`;
   const html = renderMarkdown(createEngine(), md);
   expect(html).toContain(
-    '<div class="cherry-image-card__description"><p>正文描述段落。</p></div>',
+    '<div class="penna-image-card__description"><p>正文描述段落。</p></div>',
   );
-  expect(html).not.toContain('class="cherry-card__body"');
+  expect(html).not.toContain('class="penna-card__body"');
 });

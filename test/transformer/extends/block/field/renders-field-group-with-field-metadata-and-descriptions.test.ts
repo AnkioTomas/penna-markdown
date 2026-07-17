@@ -79,25 +79,23 @@ it("renders field-group with field metadata and descriptions", () => {
 :::
 ::::`;
   const html = renderMarkdown(createEngine(), sample);
-  expect(html).toContain('<div class="cherry-field-group">');
-  expect(html).toContain('<div class="cherry-field cherry-field--required">');
-  expect(html).toContain('<div class="cherry-field__head">');
-  expect(html).toContain('<span class="cherry-field__name">theme</span>');
+  expect(html).toContain('<div class="penna-field-group">');
+  expect(html).toContain('<div class="penna-field penna-field--required">');
+  expect(html).toContain('<div class="penna-field__head">');
+  expect(html).toContain('<span class="penna-field__name">theme</span>');
   expect(html).toContain(
-    '<span class="cherry-field__tag cherry-field__tag--required">Required</span>',
+    '<span class="penna-field__tag penna-field__tag--required">Required</span>',
   );
   expect(html).toContain(
-    '<span class="cherry-field__type"><code>ThemeConfig</code></span>',
+    '<span class="penna-field__type"><code>ThemeConfig</code></span>',
   );
   expect(html).toContain(
-    "<p class=\"cherry-field__default\"><code>{ base: '/' }</code></p>",
+    "<p class=\"penna-field__default\"><code>{ base: '/' }</code></p>",
   );
   expect(html).toContain("<p>是否启用</p>");
   expect(html).toContain("<code>(...args: any[]) =&gt; void</code>");
-  expect(html).toContain('<span class="cherry-badge tip">v1.0.0 新增</span>');
-  expect(html).toContain(
-    '<span class="cherry-badge danger">v0.9.0 弃用</span>',
-  );
+  expect(html).toContain('<span class="penna-badge tip">v1.0.0 新增</span>');
+  expect(html).toContain('<span class="penna-badge danger">v0.9.0 弃用</span>');
   expect(html).toContain("<p>已弃用属性</p>");
   expect(html).not.toContain("<Badge");
 });

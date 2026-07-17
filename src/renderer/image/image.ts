@@ -7,10 +7,10 @@
  */
 
 const EXCLUDED_IMG_SELECTOR = [
-  ".cherry-math-latex",
-  ".cherry-repo-card__shield-img",
-  ".cherry-link-card__icon",
-  ".cherry-audio-player__cover-img",
+  ".penna-math-latex",
+  ".penna-repo-card__shield-img",
+  ".penna-link-card__icon",
+  ".penna-audio-player__cover-img",
 ].join(",");
 
 const EXCLUDED_ANCESTOR_SELECTOR = "button";
@@ -126,7 +126,7 @@ export class ImageListener {
     const caption = img.alt || img.title || "";
 
     const preview = doc.createElement("img");
-    preview.className = "cherry-image-preview__media";
+    preview.className = "penna-image-preview__media";
     preview.alt = img.alt;
     preview.src = img.currentSrc || img.src;
     applyPreviewImageSize(preview, img);
@@ -137,7 +137,7 @@ export class ImageListener {
   private openSvg(svg: SVGSVGElement) {
     const doc = svg.ownerDocument;
     const preview = svg.cloneNode(true) as SVGSVGElement;
-    preview.classList.add("cherry-image-preview__media");
+    preview.classList.add("penna-image-preview__media");
     applyPreviewSvgSize(preview, svg);
     const titleText = preview.querySelector("title")?.textContent?.trim();
     const caption = svg.getAttribute("aria-label") || titleText || "";
@@ -152,23 +152,23 @@ export class ImageListener {
     this.close();
 
     const overlay = doc.createElement("div");
-    overlay.className = "cherry-image-preview";
+    overlay.className = "penna-image-preview";
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-modal", "true");
 
     const backdrop = doc.createElement("button");
     backdrop.type = "button";
-    backdrop.className = "cherry-image-preview__backdrop";
+    backdrop.className = "penna-image-preview__backdrop";
     backdrop.setAttribute("aria-label", "关闭");
     backdrop.addEventListener("click", () => this.close());
 
     const figure = doc.createElement("figure");
-    figure.className = "cherry-image-preview__figure";
+    figure.className = "penna-image-preview__figure";
     figure.append(media);
 
     if (caption) {
       const figcaption = doc.createElement("figcaption");
-      figcaption.className = "cherry-image-preview__caption";
+      figcaption.className = "penna-image-preview__caption";
       figcaption.textContent = caption;
       figure.append(figcaption);
     }

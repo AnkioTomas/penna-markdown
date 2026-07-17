@@ -38,5 +38,5 @@ it("returns null for empty steps block", () => {
 
 :::`,
   );
-  expect(html).not.toContain("cherry-steps");
+  expect(html).not.toContain("penna-steps");
 });

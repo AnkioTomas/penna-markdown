@@ -2,7 +2,7 @@
 title: 快速开始
 subtitle: 安装 · 三入口 · 最小示例
 version: 0.1.0
-repo: https://github.com/AnkioTomas/cherry-markdown-next
+repo: https://github.com/AnkioTomas/penna-markdown
 tags: [guide, getting-started]
 ---
 
@@ -16,22 +16,22 @@ tags: [guide, getting-started]
 
 ## 项目是什么
 
-**Cherry Markdown Next** 是浏览器端 Markdown **编辑 + 渲染** 套件，拆成三个可独立引用的包入口：
+**Penna Markdown** 是浏览器端 Markdown **编辑 + 渲染** 套件，拆成三个可独立引用的包入口：
 
-| 入口                               | 职责                                        |
-| ---------------------------------- | ------------------------------------------- |
-| `cherry-markdown-next`             | 完整编辑器（工具栏 / 侧栏 / 编辑区 / 预览） |
-| `cherry-markdown-next/renderer`    | Markdown → DOM（增量更新）                  |
-| `cherry-markdown-next/transformer` | Markdown → AST → HTML 字符串                |
+| 入口                         | 职责                                        |
+| ---------------------------- | ------------------------------------------- |
+| `penna-markdown`             | 完整编辑器（工具栏 / 侧栏 / 编辑区 / 预览） |
+| `penna-markdown/renderer`    | Markdown → DOM（增量更新）                  |
+| `penna-markdown/transformer` | Markdown → AST → HTML 字符串                |
 
-语法：**GFM** + **Cherry 扩展**（Alert、容器、卡片、公式、Mermaid/ECharts 等）。
+语法：**GFM** + **Penna 扩展**（Alert、容器、卡片、公式、Mermaid/ECharts 等）。
 
 ---
 
 ## 安装
 
 ```bash
-pnpm add cherry-markdown-next
+pnpm add penna-markdown
 # 或 npm / yarn
 ```
 
@@ -72,21 +72,21 @@ pnpm test
 2. **样式**
 
 ```html
-<link rel="stylesheet" href="cherry-markdown-next/cherry-editor-base.min.css" />
-<link rel="stylesheet" href="cherry-markdown-next/cherry-render.min.css" />
-<!-- 可选皮肤：cherry-theme-github-editor/render.min.css 等（default 无单独主题文件） -->
+<link rel="stylesheet" href="penna-markdown/penna-editor-base.min.css" />
+<link rel="stylesheet" href="penna-markdown/penna-render.min.css" />
+<!-- 可选皮肤：penna-theme-github-editor/render.min.css 等（default 无单独主题文件） -->
 ```
 
 3. **初始化**
 
 ```typescript
-import { Cherry } from "cherry-markdown-next";
+import { Penna } from "penna-markdown";
 
-const cherry = new Cherry(document.getElementById("editor")!, {
+const penna = new Penna(document.getElementById("editor")!, {
   themeId: "default",
   layout: "split",
   editor: {
-    value: "# Hello\n\n**Cherry Markdown Next**",
+    value: "# Hello\n\n**Penna Markdown**",
   },
 });
 ```
@@ -110,12 +110,12 @@ const cherry = new Cherry(document.getElementById("editor")!, {
 
 ::: link-card 编辑器 guide link="editor.md"
 
-`CherryOptions`、侧栏、AI、上传回调。
+`PennaOptions`、侧栏、AI、上传回调。
 :::
 
 ::: link-card 语法索引 link="syntax.md"
 
-GFM + Cherry 扩展一览，链到活样例。
+GFM + Penna 扩展一览，链到活样例。
 :::
 
 ::: link-card 主题 link="themes.md"

@@ -9,14 +9,14 @@ export const EXTENDS_DATA: SyntaxDemoItem[] = [
     id: "frontmatter",
     name: "Frontmatter 与变量",
     markdown: `---
-title: Cherry Markdown Next
+title: Penna Markdown
 author:
   name: Demo User
 version: 1.0.0
 tags:
   - markdown
   - demo
-repo: https://github.com/Tencent/cherry-markdown
+repo: https://github.com/Tencent/penna-markdown
 ---
 
 ### YAML Frontmatter
@@ -227,7 +227,7 @@ $$`,
 
 ### 多个脚注
 
-Cherry Markdown[^cherry] 支持 GFM 风格脚注[^gfm]。
+Penna Markdown[^penna] 支持 GFM 风格脚注[^gfm]。
 
 ### 重复引用
 
@@ -238,7 +238,7 @@ Cherry Markdown[^cherry] 支持 GFM 风格脚注[^gfm]。
 详见 [官方文档](https://example.com)[^doc]。
 
 [^1]: 术语解释：关于该术语的详细说明。
-[^cherry]: Cherry Markdown Next 扩展语法演示项目。
+[^penna]: Penna Markdown 扩展语法演示项目。
 [^gfm]: GitHub Flavored Markdown 规范中的脚注扩展。
 [^vp]: VuePress 是 Vue 驱动的静态站点生成器。
 [^doc]: 支持 **加粗**、*斜体*、[链接](https://example.com) 等 Markdown。`,
@@ -463,11 +463,11 @@ Cherry Markdown[^cherry] 支持 GFM 风格脚注[^gfm]。
 
 ::: tabs
 @tab 概述
-Cherry Markdown Next 基于 **AST** 解析。
+Penna Markdown 基于 **AST** 解析。
 
 @tab:active API
 \`\`\`ts
-import { TransformerEngine } from "cherry-markdown-next/transformer";
+import { TransformerEngine } from "penna-markdown/transformer";
 const engine = new TransformerEngine();
 engine.render(engine.parse(markdown));
 \`\`\`
@@ -500,8 +500,8 @@ Tab 面板内可嵌套任意块级语法。
 1. 克隆仓库
 
 \`\`\`bash
-git clone https://github.com/Tencent/cherry-markdown
-cd cherry-markdown
+git clone https://github.com/Tencent/penna-markdown
+cd penna-markdown
 \`\`\`
 
 2. 安装依赖
@@ -609,7 +609,7 @@ pnpm dev
 
 \`\`\`json title="package.json"
 {
-  "name": "cherry-markdown-next",
+  "name": "penna-markdown",
   "version": "0.1.0",
   "type": "module"
 }
@@ -744,7 +744,7 @@ flowchart LR
     "radius": "55%",
     "data": [
       { "value": 40, "name": "GFM" },
-      { "value": 35, "name": "Cherry" },
+      { "value": 35, "name": "Penna" },
       { "value": 25, "name": "Custom" }
     ]
   }]
@@ -794,7 +794,7 @@ console.log('card')
     name: "链接卡片 (Link Card)",
     markdown: `### 带 icon
 
-::: link-card 官方文档 link="https://github.com/Tencent/cherry-markdown" icon="https://github.com/favicon.ico"
+::: link-card 官方文档 link="https://github.com/Tencent/penna-markdown" icon="https://github.com/favicon.ico"
 
 点击整卡跳转，左侧 icon。
 :::
@@ -834,13 +834,13 @@ console.log('card')
 Official plugins and themes for VuePress2
 :::
 
-::: repo-card Tencent/cherry-markdown
-Tencent 开源的 Cherry Markdown 编辑器。
+::: repo-card Tencent/penna-markdown
+Tencent 开源的 Penna Markdown 编辑器。
 :::
 
 ### 带 visibility
 
-::: repo-card tencent/cherry-markdown visibility="Public"
+::: repo-card tencent/penna-markdown visibility="Public"
 带 visibility 属性。
 :::`,
   },
@@ -965,7 +965,7 @@ Masonry 内可混排卡片块。
   {
     id: "inline-mix",
     name: "行内语法混搭",
-    markdown: `发布 **Cherry Markdown Next** [v0.1.0]{.tip .top} ：支持 ==高亮==、!! 剧透 !! {click}、:rocket:、$E=mc^2$、H~2~O、[^ref] 脚注、%% 内部备注 %% 以及 [文档](https://github.com){.important}。
+    markdown: `发布 **Penna Markdown** [v0.1.0]{.tip .top} ：支持 ==高亮==、!! 剧透 !! {click}、:rocket:、$E=mc^2$、H~2~O、[^ref] 脚注、%% 内部备注 %% 以及 [文档](https://github.com){.important}。
 
 [^ref]: 混搭段落中的脚注定义。
 

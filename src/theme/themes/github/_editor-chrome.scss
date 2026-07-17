@@ -4,33 +4,33 @@
 @mixin chrome {
   font-family: var(--github-font-sans);
   font-size: var(--github-text-size);
-  color: var(--cherry-c-text-1);
-  background: var(--cherry-c-bg);
+  color: var(--penna-c-text-1);
+  background: var(--penna-c-bg);
 
-  .cherry-toolbar {
-    border-bottom: rem(1) solid var(--cherry-c-border-soft);
-    background: var(--cherry-c-bg-elevated);
+  .penna-toolbar {
+    border-bottom: rem(1) solid var(--penna-c-border-soft);
+    background: var(--penna-c-bg-elevated);
     box-shadow: none;
   }
 
-  .cherry-toolbar-scroll {
+  .penna-toolbar-scroll {
     gap: rem(4);
     padding: rem(8) rem(12);
   }
 
-  .cherry-toolbar-group + .cherry-toolbar-group::before {
-    background: var(--cherry-c-border-soft);
+  .penna-toolbar-group + .penna-toolbar-group::before {
+    background: var(--penna-c-border-soft);
   }
 
-  .cherry-toolbar-btn,
-  .cherry-toolbar-menu-trigger {
+  .penna-toolbar-btn,
+  .penna-toolbar-menu-trigger {
     min-width: rem(32);
     height: rem(32);
     padding: rem(6) rem(8);
     border: 0;
     border-radius: var(--github-radius-interactive);
     background: transparent;
-    color: var(--cherry-c-text-1);
+    color: var(--penna-c-text-1);
     font-family: var(--github-font-sans);
     font-size: rem(14);
     font-weight: 400;
@@ -39,64 +39,64 @@
 
     &:hover,
     &[aria-expanded="true"] {
-      background: var(--cherry-c-code-inline-bg);
-      color: var(--cherry-c-text-1);
+      background: var(--penna-c-code-inline-bg);
+      color: var(--penna-c-text-1);
     }
   }
 
-  .cherry-toolbar-layout-btn.is-active {
-    background: var(--cherry-c-code-inline-bg);
-    color: var(--cherry-c-text-1);
+  .penna-toolbar-layout-btn.is-active {
+    background: var(--penna-c-code-inline-bg);
+    color: var(--penna-c-text-1);
   }
 
-  .cherry-toolbar-sep {
-    background: var(--cherry-c-border-soft);
+  .penna-toolbar-sep {
+    background: var(--penna-c-border-soft);
   }
 
-  .cherry-toolbar-menu-panel {
-    border: rem(1) solid var(--cherry-c-border-soft);
+  .penna-toolbar-menu-panel {
+    border: rem(1) solid var(--penna-c-border-soft);
     border-radius: var(--github-radius-interactive);
     padding: rem(8);
-    background: var(--cherry-c-bg);
+    background: var(--penna-c-bg);
     box-shadow: none;
   }
 
-  .cherry-toolbar-menu-item,
-  .cherry-toolbar-menu-trigger--nested {
+  .penna-toolbar-menu-item,
+  .penna-toolbar-menu-trigger--nested {
     min-height: rem(32);
     padding: rem(6) rem(8);
     border: 0;
     border-radius: var(--github-radius-interactive);
     background: transparent;
-    color: var(--cherry-c-text-1);
+    color: var(--penna-c-text-1);
     font-family: var(--github-font-sans);
     font-size: rem(14);
     font-weight: 400;
     box-shadow: none;
 
     &:hover {
-      background: var(--cherry-c-code-inline-bg);
-      color: var(--cherry-c-text-1);
+      background: var(--penna-c-code-inline-bg);
+      color: var(--penna-c-text-1);
     }
   }
 
-  .cherry-toolbar-menu-header {
+  .penna-toolbar-menu-header {
     font-family: var(--github-font-sans);
     font-size: rem(12);
     font-weight: 600;
     letter-spacing: 0;
     text-transform: none;
-    color: var(--cherry-c-text-2);
-    border-bottom: rem(1) solid var(--cherry-c-border-soft);
+    color: var(--penna-c-text-2);
+    border-bottom: rem(1) solid var(--penna-c-border-soft);
   }
 
-  .cherry-sidebar {
-    border-right: rem(1) solid var(--cherry-c-border-soft);
-    background: var(--cherry-c-bg-elevated);
+  .penna-sidebar {
+    border-right: rem(1) solid var(--penna-c-border-soft);
+    background: var(--penna-c-bg-elevated);
     font-family: var(--github-font-sans);
   }
 
-  .cherry-sidebar-tab {
+  .penna-sidebar-tab {
     border: 0;
     border-radius: var(--github-radius-interactive);
     font-family: var(--github-font-sans);
@@ -105,118 +105,118 @@
     box-shadow: none;
 
     &.is-active {
-      background: var(--cherry-c-code-inline-bg);
-      color: var(--cherry-c-text-1);
+      background: var(--penna-c-code-inline-bg);
+      color: var(--penna-c-text-1);
     }
   }
 
-  .cherry-toc-item,
-  .cherry-file-item {
+  .penna-toc-item,
+  .penna-file-item {
     border: 0;
     border-radius: var(--github-radius-interactive);
 
     &:hover {
-      background: var(--cherry-c-code-inline-bg);
+      background: var(--penna-c-code-inline-bg);
     }
 
     &.is-active {
-      background: var(--cherry-c-brand-soft);
-      color: var(--cherry-c-brand-1);
+      background: var(--penna-c-brand-soft);
+      color: var(--penna-c-brand-1);
     }
   }
 
-  .cherry-editor-cm .cm-scroller,
-  .cherry-editor-cm .cm-content {
+  .penna-editor-cm .cm-scroller,
+  .penna-editor-cm .cm-content {
     font-family: var(--github-font-mono);
     font-size: rem(14);
   }
 
-  .cherry-editor-cm .cm-gutters {
-    border-right: rem(1) solid var(--cherry-c-border-soft);
-    background: var(--cherry-c-bg-elevated);
+  .penna-editor-cm .cm-gutters {
+    border-right: rem(1) solid var(--penna-c-border-soft);
+    background: var(--penna-c-bg-elevated);
     font-family: var(--github-font-mono);
     font-size: rem(12);
   }
 
-  .cherry-editor-cm .cm-activeLineGutter,
-  .cherry-editor-cm .cm-activeLine {
-    background: var(--cherry-c-code-inline-bg);
+  .penna-editor-cm .cm-activeLineGutter,
+  .penna-editor-cm .cm-activeLine {
+    background: var(--penna-c-code-inline-bg);
   }
 
-  .cherry-preview {
-    border-left: rem(1) solid var(--cherry-c-border-soft);
-    background: var(--cherry-c-bg);
+  .penna-preview {
+    border-left: rem(1) solid var(--penna-c-border-soft);
+    background: var(--penna-c-bg);
   }
 
-  .cherry-divider {
+  .penna-divider {
     width: rem(4);
-    background: var(--cherry-c-border-soft);
+    background: var(--penna-c-border-soft);
     box-shadow: none;
   }
 
-  .cherry-statusbar {
-    border-top: rem(1) solid var(--cherry-c-border-soft);
-    background: var(--cherry-c-bg-elevated);
+  .penna-statusbar {
+    border-top: rem(1) solid var(--penna-c-border-soft);
+    background: var(--penna-c-bg-elevated);
     font-family: var(--github-font-sans);
     font-size: rem(12);
   }
 
-  .cherry-statusbar-btn {
+  .penna-statusbar-btn {
     border: 0;
     border-radius: var(--github-radius-interactive);
     background: transparent;
     box-shadow: none;
 
     &.is-active {
-      background: var(--cherry-c-code-inline-bg);
-      color: var(--cherry-c-text-1);
+      background: var(--penna-c-code-inline-bg);
+      color: var(--penna-c-text-1);
     }
   }
 
-  .cherry-dialog-panel {
-    border: rem(1) solid var(--cherry-c-border-soft);
+  .penna-dialog-panel {
+    border: rem(1) solid var(--penna-c-border-soft);
     border-radius: var(--github-radius-interactive);
     box-shadow: none;
     font-family: var(--github-font-sans);
   }
 
-  .cherry-dialog-panel input,
-  .cherry-dialog-panel textarea,
-  .cherry-dialog-panel select {
+  .penna-dialog-panel input,
+  .penna-dialog-panel textarea,
+  .penna-dialog-panel select {
     border: var(--github-border-inset);
     border-radius: var(--github-radius-interactive);
-    background: var(--cherry-c-bg);
-    color: var(--cherry-c-text-1);
+    background: var(--penna-c-bg);
+    color: var(--penna-c-text-1);
     font-family: var(--github-font-sans);
     font-size: rem(14);
     box-shadow: none;
   }
 
-  .cherry-dialog-panel button[type="submit"],
-  .cherry-dialog-actions .cherry-btn-primary {
+  .penna-dialog-panel button[type="submit"],
+  .penna-dialog-actions .penna-btn-primary {
     border: 0;
     border-radius: var(--github-radius-interactive);
-    background: var(--cherry-c-brand-1);
-    color: var(--cherry-c-brand-on-bg);
+    background: var(--penna-c-brand-1);
+    color: var(--penna-c-brand-on-bg);
     font-family: var(--github-font-sans);
     font-size: rem(14);
     font-weight: 500;
     box-shadow: none;
 
     &:hover {
-      background: var(--cherry-c-brand-2);
+      background: var(--penna-c-brand-2);
     }
   }
 }
 
 @mixin chrome-dark {
-  .cherry-toolbar-btn,
-  .cherry-toolbar-menu-trigger {
+  .penna-toolbar-btn,
+  .penna-toolbar-menu-trigger {
     &:hover,
     &[aria-expanded="true"] {
       background: color-mix(
         in srgb,
-        var(--cherry-c-border-soft) 40%,
+        var(--penna-c-border-soft) 40%,
         transparent
       );
     }

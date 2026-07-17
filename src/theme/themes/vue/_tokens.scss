@@ -165,30 +165,30 @@ $vue-dark-mark-mix: 50%;
     $bg-opacity: picks.pick-bg-opacity($is-dark);
     $border-opacity: picks.pick-border-opacity($is-dark);
 
-    --cherry-c-#{$name}: #{$base-color};
+    --penna-c-#{$name}: #{$base-color};
     @if $is-dark {
-      --cherry-c-#{$name}-mark: color-mix(
+      --penna-c-#{$name}-mark: color-mix(
         in srgb,
         #{$mark-color} #{$vue-dark-mark-mix},
         #{$surface}
       );
     } @else {
-      --cherry-c-#{$name}-mark: #{$mark-color};
+      --penna-c-#{$name}-mark: #{$mark-color};
     }
 
-    --cherry-c-#{$name}-on-bg: color-mix(
+    --penna-c-#{$name}-on-bg: color-mix(
       in srgb,
       #{$base-color} 16%,
       #{$contrast-color}
     );
 
-    --cherry-c-alert-#{$name}-text: #{$base-color};
-    --cherry-c-alert-#{$name}-bg: color-mix(
+    --penna-c-alert-#{$name}-text: #{$base-color};
+    --penna-c-alert-#{$name}-bg: color-mix(
       in srgb,
       #{$base-color} #{$bg-opacity},
       transparent
     );
-    --cherry-c-alert-#{$name}-border: color-mix(
+    --penna-c-alert-#{$name}-border: color-mix(
       in srgb,
       #{$base-color} #{$border-opacity},
       transparent
@@ -202,79 +202,75 @@ $vue-dark-mark-mix: 50%;
   $border-soft: vue-border-soft($is-dark);
   $border-faint: vue-border-faint($is-dark);
 
-  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
-  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
-  --cherry-c-image-card-info-bg: linear-gradient(
+  --penna-c-image-card-info-fg: var(--penna-c-contrast-light);
+  --penna-c-image-card-scrim: var(--penna-c-contrast-dark);
+  --penna-c-image-card-info-bg: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 58%, transparent) 100%
   );
-  --cherry-c-image-card-info-bg-hover: linear-gradient(
+  --penna-c-image-card-info-bg-hover: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 68%, transparent) 100%
   );
 
-  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
-  --cherry-c-media-shade: var(--cherry-c-bg);
-  --cherry-c-on-brand: #fff;
+  --penna-c-media-player-bg: var(--penna-c-bg-elevated);
+  --penna-c-media-shade: var(--penna-c-bg);
+  --penna-c-on-brand: #fff;
 
-  --cherry-c-code-inline-bg: #{$code-inline-bg};
-  --cherry-c-code-inline-fg: #{vue-code-inline-fg($is-dark)};
-  --cherry-c-code-inline-border: transparent;
+  --penna-c-code-inline-bg: #{$code-inline-bg};
+  --penna-c-code-inline-fg: #{vue-code-inline-fg($is-dark)};
+  --penna-c-code-inline-border: transparent;
 
-  --cherry-c-code-block-header-bg: #{$code-block-bg};
-  --cherry-c-code-block-code-bg: #{$code-block-bg};
-  --cherry-c-code-block-shadow: none;
+  --penna-c-code-block-header-bg: #{$code-block-bg};
+  --penna-c-code-block-code-bg: #{$code-block-bg};
+  --penna-c-code-block-shadow: none;
 
-  --cherry-c-table-th-border: #{$border-soft};
-  --cherry-c-table-td-border: #{$border-faint};
-  --cherry-c-hr-color: #{vue-hr-color($is-dark)};
-  --cherry-c-blockquote-border: #{$vue-green};
+  --penna-c-table-th-border: #{$border-soft};
+  --penna-c-table-td-border: #{$border-faint};
+  --penna-c-hr-color: #{vue-hr-color($is-dark)};
+  --penna-c-blockquote-border: #{$vue-green};
 }
 
 @mixin theme-light {
   @include typography-tokens;
 
-  --cherry-c-brand-1: #{$vue-green};
-  --cherry-c-brand-2: #{$vue-green-hover};
-  --cherry-c-brand-3: #{$vue-lang};
-  --cherry-c-brand-soft: #{$vue-green-soft};
-  --cherry-c-brand-on-bg: #fff;
+  --penna-c-brand-1: #{$vue-green};
+  --penna-c-brand-2: #{$vue-green-hover};
+  --penna-c-brand-3: #{$vue-lang};
+  --penna-c-brand-soft: #{$vue-green-soft};
+  --penna-c-brand-on-bg: #fff;
 
-  --cherry-c-text-1: #{$vue-text};
-  --cherry-c-text-2: #{$vue-text-muted};
-  --cherry-c-text-3: #{$vue-text-subtle};
+  --penna-c-text-1: #{$vue-text};
+  --penna-c-text-2: #{$vue-text-muted};
+  --penna-c-text-3: #{$vue-text-subtle};
 
-  --cherry-c-bg: #{$vue-bg};
-  --cherry-c-bg-elevated: #{$vue-bg-code};
+  --penna-c-bg: #{$vue-bg};
+  --penna-c-bg-elevated: #{$vue-bg-code};
 
-  --cherry-c-contrast-light: #fff;
-  --cherry-c-contrast-dark: #000;
+  --penna-c-contrast-light: #fff;
+  --penna-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #{$vue-green};
-  --cherry-c-code-fg: #{$vue-code-inline};
-  --cherry-c-border-soft: #{$vue-border};
-  --cherry-c-border-faint: #{color-mix(
-      in srgb,
-      #{$vue-border} 45%,
-      transparent
-    )};
+  --penna-c-brand-mark: #{$vue-green};
+  --penna-c-code-fg: #{$vue-code-inline};
+  --penna-c-border-soft: #{$vue-border};
+  --penna-c-border-faint: #{color-mix(in srgb, #{$vue-border} 45%, transparent)};
 
   --vue-h2-rule: #{$vue-h2-rule};
   --vue-code-block-border: #f4f4f4;
 
-  --cherry-c-table-head-bg: #f2f2f2;
-  --cherry-c-table-stripe-bg: #fafafa;
-  --cherry-c-hljs-keyword: #bb7fc3;
-  --cherry-c-hljs-string: #{$vue-link-code};
-  --cherry-c-hljs-number: #88b2a1;
-  --cherry-c-hljs-title: #7f7fff;
-  --cherry-c-hljs-attr: var(--cherry-c-text-1);
-  --cherry-c-hljs-comment: var(--cherry-c-text-3);
-  --cherry-c-hljs-bg: transparent;
+  --penna-c-table-head-bg: #f2f2f2;
+  --penna-c-table-stripe-bg: #fafafa;
+  --penna-c-hljs-keyword: #bb7fc3;
+  --penna-c-hljs-string: #{$vue-link-code};
+  --penna-c-hljs-number: #88b2a1;
+  --penna-c-hljs-title: #7f7fff;
+  --penna-c-hljs-attr: var(--penna-c-text-1);
+  --penna-c-hljs-comment: var(--penna-c-text-3);
+  --penna-c-hljs-bg: transparent;
 
   @include generate-semantic-suite($vue-light-semantics, false);
   @include component-tokens(false);
@@ -283,26 +279,26 @@ $vue-dark-mark-mix: 50%;
 @mixin theme-dark {
   @include typography-tokens;
 
-  --cherry-c-brand-1: #{$vue-green};
-  --cherry-c-brand-2: #{color-mix(in srgb, #{$vue-green} 85%, #fff)};
-  --cherry-c-brand-3: #{$vue-dark-code-inline};
-  --cherry-c-brand-soft: rgba(66, 185, 131, 0.16);
-  --cherry-c-brand-on-bg: #{$vue-dark-text};
+  --penna-c-brand-1: #{$vue-green};
+  --penna-c-brand-2: #{color-mix(in srgb, #{$vue-green} 85%, #fff)};
+  --penna-c-brand-3: #{$vue-dark-code-inline};
+  --penna-c-brand-soft: rgba(66, 185, 131, 0.16);
+  --penna-c-brand-on-bg: #{$vue-dark-text};
 
-  --cherry-c-text-1: #{$vue-dark-text};
-  --cherry-c-text-2: #{$vue-dark-text-muted};
-  --cherry-c-text-3: #aaaaaa;
+  --penna-c-text-1: #{$vue-dark-text};
+  --penna-c-text-2: #{$vue-dark-text-muted};
+  --penna-c-text-3: #aaaaaa;
 
-  --cherry-c-bg: #{$vue-dark-bg};
-  --cherry-c-bg-elevated: #{$vue-dark-elevated};
+  --penna-c-bg: #{$vue-dark-bg};
+  --penna-c-bg-elevated: #{$vue-dark-elevated};
 
-  --cherry-c-contrast-light: #fff;
-  --cherry-c-contrast-dark: #000;
+  --penna-c-contrast-light: #fff;
+  --penna-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: color-mix(in srgb, #{$vue-green} 60%, transparent);
-  --cherry-c-code-fg: #{$vue-dark-code-inline};
-  --cherry-c-border-soft: #{$vue-dark-border};
-  --cherry-c-border-faint: #{color-mix(
+  --penna-c-brand-mark: color-mix(in srgb, #{$vue-green} 60%, transparent);
+  --penna-c-code-fg: #{$vue-dark-code-inline};
+  --penna-c-border-soft: #{$vue-dark-border};
+  --penna-c-border-faint: #{color-mix(
       in srgb,
       #{$vue-dark-border} 45%,
       transparent
@@ -311,15 +307,15 @@ $vue-dark-mark-mix: 50%;
   --vue-h2-rule: #{$vue-dark-h2-rule};
   --vue-code-block-border: #{$vue-dark-border};
 
-  --cherry-c-table-head-bg: hsl(0, 0%, 9%);
-  --cherry-c-table-stripe-bg: hsl(0, 0%, 10%);
-  --cherry-c-hljs-keyword: #bb7fc3;
-  --cherry-c-hljs-string: #d48888;
-  --cherry-c-hljs-number: #88b2a1;
-  --cherry-c-hljs-title: #7f7fff;
-  --cherry-c-hljs-attr: #efefef;
-  --cherry-c-hljs-comment: hsl(0, 0%, 35%);
-  --cherry-c-hljs-bg: transparent;
+  --penna-c-table-head-bg: hsl(0, 0%, 9%);
+  --penna-c-table-stripe-bg: hsl(0, 0%, 10%);
+  --penna-c-hljs-keyword: #bb7fc3;
+  --penna-c-hljs-string: #d48888;
+  --penna-c-hljs-number: #88b2a1;
+  --penna-c-hljs-title: #7f7fff;
+  --penna-c-hljs-attr: #efefef;
+  --penna-c-hljs-comment: hsl(0, 0%, 35%);
+  --penna-c-hljs-bg: transparent;
 
   @include generate-semantic-suite($vue-dark-semantics, true);
   @include component-tokens(true);

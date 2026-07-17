@@ -24,7 +24,7 @@ export class DialogHost {
   constructor(mount: HTMLElement, eventBus: EventBus) {
     this.eventBus = eventBus;
     this.root = document.createElement("div");
-    this.root.className = "cherry-dialog-host";
+    this.root.className = "penna-dialog-host";
     this.root.hidden = true;
     mount.appendChild(this.root);
 
@@ -55,16 +55,16 @@ export class DialogHost {
 
     const backdrop = document.createElement("button");
     backdrop.type = "button";
-    backdrop.className = "cherry-dialog-backdrop";
+    backdrop.className = "penna-dialog-backdrop";
     backdrop.setAttribute("aria-label", "关闭");
     backdrop.addEventListener("click", () => this.dismiss(true));
 
     const panel = document.createElement("div");
-    panel.className = "cherry-dialog-panel";
+    panel.className = "penna-dialog-panel";
     panel.setAttribute("role", "dialog");
     panel.setAttribute("aria-modal", "true");
     const body = document.createElement("div");
-    body.className = "cherry-dialog-body";
+    body.className = "penna-dialog-body";
     panel.append(body);
     this.root.replaceChildren(backdrop, panel);
 

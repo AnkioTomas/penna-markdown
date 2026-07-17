@@ -2,17 +2,17 @@
  * @file 主题皮肤与明暗模式
  * @module theme/Theme
  *
- * 管理 `cherry-theme-*`（皮肤）与 `cherry-dark`（明暗）两类 class，
+ * 管理 `penna-theme-*`（皮肤）与 `penna-dark`（明暗）两类 class，
  * 并通过 {@link EventBus} 广播 {@link THEME_EVENT_SKIN} / {@link THEME_EVENT_LIGHT_DARK}。
  *
  * ## class 分工
  *
  * | 元素 | class | 作用 |
  * | ---- | ----- | ---- |
- * | `rootElement`（用户挂载点） | `cherry-theme-{id}`、`cherry-dark` | 皮肤变量与编辑器 chrome |
- * | 预览内容层（由 Cherry 创建） | `cherry-render` | 供 `.cherry-theme-* .cherry-render` 命中渲染样式；外层 `cherry-preview` 负责滚动 |
+ * | `rootElement`（用户挂载点） | `penna-theme-{id}`、`penna-dark` | 皮肤变量与编辑器 chrome |
+ * | 预览内容层（由 Penna 创建） | `penna-render` | 供 `.penna-theme-* .penna-render` 命中渲染样式；外层 `penna-preview` 负责滚动 |
  *
- * Theme 只写 root 上的皮肤 class；`cherry-render` 由 Cherry 挂在预览滚动壳内侧。
+ * Theme 只写 root 上的皮肤 class；`penna-render` 由 Penna 挂在预览滚动壳内侧。
  */
 
 import REGISTERED_THEMES from "@/theme/ThemeRegister";
@@ -30,7 +30,7 @@ import { THEME_EVENT_SKIN } from "@/theme/event/ThemeSkinEvent";
  * 不直接操作样式表，仅切换 DOM class 并发出事件，供 Renderer / 编辑器等订阅。
  */
 export class Theme {
-  /** 当前皮肤 id，对应 `cherry-theme-{id}` */
+  /** 当前皮肤 id，对应 `penna-theme-{id}` */
   private id = "default";
   /** 当前明暗模式 */
   private mode: LightDark = "light";
@@ -38,7 +38,7 @@ export class Theme {
   /**
    * @param bus          实例级事件总线
    * @param logger       日志门面
-   * @param rootElement  用户传入的挂载根，承载 `cherry-theme-*` / `cherry-dark`
+   * @param rootElement  用户传入的挂载根，承载 `penna-theme-*` / `penna-dark`
    * @param themes       可用主题白名单；省略时使用全部内置主题
    */
   constructor(
@@ -111,19 +111,19 @@ export class Theme {
     });
   }
 
-  /** 同步皮肤 class：仅 {@link rootElement}，不写 `cherry-render` */
+  /** 同步皮肤 class：仅 {@link rootElement}，不写 `penna-render` */
   private applyThemeClasses() {
     for (const name of [...this.rootElement.classList]) {
-      if (name.startsWith("cherry-theme-")) {
+      if (name.startsWith("penna-theme-")) {
         this.rootElement.classList.remove(name);
       }
     }
 
-    this.rootElement.classList.add(`cherry-theme-${this.id}`);
+    this.rootElement.classList.add(`penna-theme-${this.id}`);
   }
 
-  /** 同步明暗 class：`cherry-dark` 仅挂在 {@link rootElement} */
+  /** 同步明暗 class：`penna-dark` 仅挂在 {@link rootElement} */
   private applyAppearanceClass() {
-    this.rootElement.classList.toggle("cherry-dark", this.mode === "dark");
+    this.rootElement.classList.toggle("penna-dark", this.mode === "dark");
   }
 }

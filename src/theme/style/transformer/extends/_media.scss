@@ -3,14 +3,14 @@
 @mixin media-shell($radius: rem(10)) {
   margin: rem(16) 0;
   border: rem(1) solid
-    color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent);
+    color-mix(in srgb, var(--penna-c-text-3) 20%, transparent);
   border-radius: $radius;
-  background: var(--cherry-c-bg-elevated);
+  background: var(--penna-c-bg-elevated);
   overflow: hidden;
 }
 
 @mixin styles {
-  .cherry-media {
+  .penna-media {
     @include media-shell;
 
     &__player {
@@ -19,7 +19,7 @@
       max-width: 100%;
       margin: 0;
       border: 0;
-      background: var(--cherry-c-media-player-bg);
+      background: var(--penna-c-media-player-bg);
       outline: none;
 
       &--inline {
@@ -32,28 +32,28 @@
       margin: 0;
       padding: rem(10) rem(14) rem(12);
       border-top: rem(1) solid
-        color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
-      color: var(--cherry-c-text-2);
+        color-mix(in srgb, var(--penna-c-text-3) 14%, transparent);
+      color: var(--penna-c-text-2);
       font-size: rem(13);
       line-height: 1.5;
       text-align: center;
     }
   }
 
-  .cherry-video {
-    .cherry-media__player {
+  .penna-video {
+    .penna-media__player {
       aspect-ratio: 16 / 9;
       object-fit: contain;
-      background: var(--cherry-c-media-shade);
+      background: var(--penna-c-media-shade);
     }
   }
 
-  .cherry-audio {
+  .penna-audio {
     padding: 0;
-    background: var(--cherry-c-bg-elevated);
+    background: var(--penna-c-bg-elevated);
   }
 
-  .cherry-audio-player {
+  .penna-audio-player {
     display: flex;
     align-items: center;
     gap: rem(14);
@@ -64,7 +64,7 @@
       width: rem(56);
       height: rem(56);
       border-radius: rem(12);
-      background: var(--cherry-c-brand-2);
+      background: var(--penna-c-brand-2);
       position: relative;
       overflow: hidden;
 
@@ -76,7 +76,7 @@
         width: rem(18);
         height: rem(18);
         border: rem(2) solid
-          color-mix(in srgb, var(--cherry-c-on-brand) 88%, transparent);
+          color-mix(in srgb, var(--penna-c-on-brand) 88%, transparent);
         border-radius: 50%;
       }
 
@@ -89,7 +89,7 @@
         height: rem(14);
         background: color-mix(
           in srgb,
-          var(--cherry-c-on-brand) 92%,
+          var(--penna-c-on-brand) 92%,
           transparent
         );
         clip-path: polygon(0 0, 100% 50%, 0 100%);
@@ -99,8 +99,8 @@
       &--image {
         background: color-mix(
           in srgb,
-          var(--cherry-c-text-3) 12%,
-          var(--cherry-c-bg-elevated)
+          var(--penna-c-text-3) 12%,
+          var(--penna-c-bg-elevated)
         );
 
         &::before,
@@ -124,7 +124,7 @@
 
     &__title {
       margin: 0 0 rem(8);
-      color: var(--cherry-c-text-1);
+      color: var(--penna-c-text-1);
       font-size: rem(14);
       font-weight: 600;
       line-height: 1.4;
@@ -140,7 +140,7 @@
       margin: 0;
       border: 0;
       border-radius: rem(999);
-      background: color-mix(in srgb, var(--cherry-c-text-3) 10%, transparent);
+      background: color-mix(in srgb, var(--penna-c-text-3) 10%, transparent);
       outline: none;
 
       &::-webkit-media-controls-panel {
@@ -165,14 +165,14 @@
 
       &::-webkit-media-controls-current-time-display,
       &::-webkit-media-controls-time-remaining-display {
-        color: var(--cherry-c-text-2);
+        color: var(--penna-c-text-2);
         font-size: rem(11);
         font-variant-numeric: tabular-nums;
       }
     }
   }
 
-  .cherry-iframe {
+  .penna-iframe {
     padding: 0;
     overflow: hidden;
 
@@ -181,8 +181,8 @@
       aspect-ratio: 16 / 9;
       background: color-mix(
         in srgb,
-        var(--cherry-c-text-3) 8%,
-        var(--cherry-c-bg-elevated)
+        var(--penna-c-text-3) 8%,
+        var(--penna-c-bg-elevated)
       );
 
       iframe {

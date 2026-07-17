@@ -8,6 +8,6 @@ import {
 it("supports nested inline", () => {
   const t = createEngine();
   expect(renderMarkdown(createEngine(), "==**bold**==")).toBe(
-    '<p><mark class="cherry-mark"><strong>bold</strong></mark></p>\n',
+    '<p><mark class="penna-mark"><strong>bold</strong></mark></p>\n',
   );
 });

@@ -1,8 +1,8 @@
 @use "../../common/rem" as *;
 
-// Cherry 根容器排版
+// Penna 根容器排版
 @mixin styles {
-  color: var(--cherry-c-text-1);
+  color: var(--penna-c-text-1);
   font-size: rem(16);
   line-height: 1.6;
   word-wrap: break-word;

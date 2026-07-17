@@ -3,14 +3,14 @@ import { createEngine, renderMarkdown } from "../../../../helpers/engine.js";
 
 const MD = `\`\`\`yaml
 ---
-title: Cherry 语法速览
+title: Penna 语法速览
 subtitle: 完整演示 · 精简篇幅
 author:
   name: Demo
   url: https://github.com
 version: 0.1.0
-tags: [demo, simple, gfm, cherry]
-repo: https://github.com/AutoAccountingOrg/cherry-markdown-next
+tags: [demo, simple, gfm, penna]
+repo: https://github.com/AutoAccountingOrg/penna-markdown
 ---
 
 \`\`\`
@@ -26,7 +26,7 @@ it("yaml fence with frontmatter dashes is not setext", () => {
 
   const code = (ast.children ?? []).find((n) => n.type === "code");
   expect(code?.props?.lang).toBe("yaml");
-  expect(code?.value).toContain("title: Cherry 语法速览");
+  expect(code?.value).toContain("title: Penna 语法速览");
   expect(code?.value).toContain("---");
 
   const html = renderMarkdown(engine, MD);

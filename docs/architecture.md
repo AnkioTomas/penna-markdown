@@ -16,7 +16,7 @@ tags: [reference, architecture]
 ```mermaid
 flowchart TB
   subgraph editorPkg [editor]
-    Cherry[Cherry]
+    Penna[Penna]
     Preview[Preview]
     EditorCM[Editor CM6]
   end
@@ -28,8 +28,8 @@ flowchart TB
     Engine[TransformerEngine]
     Registry[Registry]
   end
-  Cherry --> Preview
-  Cherry --> EditorCM
+  Penna --> Preview
+  Penna --> EditorCM
   Preview --> Renderer
   Renderer --> Engine
   Engine --> Registry
@@ -81,16 +81,16 @@ sequenceDiagram
 
 ## 源码目录
 
-| 路径               | 说明                                   |
-| ------------------ | -------------------------------------- |
-| `src/editor/`      | Cherry、命令、工具栏、对话框、滚动同步 |
-| `src/renderer/`    | 渲染、增量、TOC、code/image listener   |
-| `src/transformer/` | GFM / extends、Engine、Registry        |
-| `src/theme/`       | Theme、样式、主题注册                  |
-| `src/core/`        | EventBus、Log、StorageAPI、debounce    |
-| `demo/`            | 演示站                                 |
-| `test/`            | Vitest                                 |
-| `docs/`            | 本文档（Cherry 语法编写）              |
+| 路径               | 说明                                  |
+| ------------------ | ------------------------------------- |
+| `src/editor/`      | Penna、命令、工具栏、对话框、滚动同步 |
+| `src/renderer/`    | 渲染、增量、TOC、code/image listener  |
+| `src/transformer/` | GFM / extends、Engine、Registry       |
+| `src/theme/`       | Theme、样式、主题注册                 |
+| `src/core/`        | EventBus、Log、StorageAPI、debounce   |
+| `demo/`            | 演示站                                |
+| `test/`            | Vitest                                |
+| `docs/`            | 本文档（Penna 语法编写）              |
 
 ---
 

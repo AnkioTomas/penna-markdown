@@ -61,8 +61,8 @@ function renderRepoShield(
   const alt = escapeHtml(config.label);
   const href = escapeHtml(config.link(repoBase));
   return [
-    `<a class="cherry-repo-card__shield cherry-repo-card__shield--${metric}" href="${href}" target="_blank" rel="noopener noreferrer" title="${alt}">`,
-    `<img class="cherry-repo-card__shield-img" src="${escapeHtml(src)}" alt="${alt}" loading="lazy">`,
+    `<a class="penna-repo-card__shield penna-repo-card__shield--${metric}" href="${href}" target="_blank" rel="noopener noreferrer" title="${alt}">`,
+    `<img class="penna-repo-card__shield-img" src="${escapeHtml(src)}" alt="${alt}" loading="lazy">`,
     `</a>`,
   ].join("");
 }
@@ -107,29 +107,29 @@ class RepoCardBlockParser extends BaseBlockParser {
     const bodyHtml = ctx.renderBlock(node.children ?? []);
 
     const descHtml = bodyHtml.trim()
-      ? `<div class="cherry-repo-card__desc">${bodyHtml}</div>`
+      ? `<div class="penna-repo-card__desc">${bodyHtml}</div>`
       : "";
 
     const parts = [
-      `<div class="cherry-repo-card"${this.sourceLineAttrs(node)}>`,
+      `<div class="penna-repo-card"${this.sourceLineAttrs(node)}>`,
     ];
 
-    parts.push(`<p class="cherry-repo-card__name">`);
+    parts.push(`<p class="penna-repo-card__name">`);
     parts.push(
-      `<span class="cherry-repo-card__icon" aria-hidden="true"></span>`,
+      `<span class="penna-repo-card__icon" aria-hidden="true"></span>`,
     );
     if (href && repo) {
       parts.push(
-        `<span class="cherry-repo-card__link"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(repo)}">${escapeHtml(repo)}</a></span>`,
+        `<span class="penna-repo-card__link"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(repo)}">${escapeHtml(repo)}</a></span>`,
       );
     } else if (repo) {
       parts.push(
-        `<span class="cherry-repo-card__link">${escapeHtml(repo)}</span>`,
+        `<span class="penna-repo-card__link">${escapeHtml(repo)}</span>`,
       );
     }
     if (visibility) {
       parts.push(
-        `<span class="cherry-repo-card__visibility">${escapeHtml(visibility)}</span>`,
+        `<span class="penna-repo-card__visibility">${escapeHtml(visibility)}</span>`,
       );
     }
     parts.push(`</p>`);
@@ -145,7 +145,7 @@ class RepoCardBlockParser extends BaseBlockParser {
         renderRepoShield(repo, "forks", repoBase),
         renderRepoShield(repo, "license", repoBase),
       ];
-      parts.push(`<div class="cherry-repo-card__info">${info.join("")}</div>`);
+      parts.push(`<div class="penna-repo-card__info">${info.join("")}</div>`);
     }
 
     parts.push(`</div>`);

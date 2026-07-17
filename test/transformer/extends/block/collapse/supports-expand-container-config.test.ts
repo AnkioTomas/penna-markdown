@@ -28,8 +28,6 @@ it("supports expand container config", () => {
   正文内容
 :::`;
   const html = renderMarkdown(createEngine(), md);
-  expect(html).toContain(
-    '<div class="cherry-collapse cherry-collapse--expand">',
-  );
+  expect(html).toContain('<div class="penna-collapse penna-collapse--expand">');
   expect(html.match(/<details open>/g)?.length).toBe(2);
 });

@@ -53,14 +53,14 @@ class CardBlockParser extends BaseBlockParser {
       (node.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
     const body = ctx.renderBlock(node.children ?? []);
 
-    const parts = [`<div class="cherry-card"${this.sourceLineAttrs(node)}>`];
+    const parts = [`<div class="penna-card"${this.sourceLineAttrs(node)}>`];
     if (title) {
       parts.push(
-        `<p class="cherry-card__title">${ctx.renderInline(titleNodes)}</p>`,
+        `<p class="penna-card__title">${ctx.renderInline(titleNodes)}</p>`,
       );
     }
     if (body) {
-      parts.push(`<div class="cherry-card__body">${body}</div>`);
+      parts.push(`<div class="penna-card__body">${body}</div>`);
     }
     parts.push(`</div>`);
     return parts.join("\n");

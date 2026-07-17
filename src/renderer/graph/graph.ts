@@ -6,18 +6,16 @@ import {
 export function replaceGraph(container: HTMLElement, dark: boolean): void {
   const chartTheme = dark ? ("dark" as const) : undefined;
 
-  container
-    .querySelectorAll(".cherry-math-latex[data-latex]")
-    .forEach((img) => {
-      if (!(img instanceof Image)) return;
-      img.src = img.src.replace(
-        dark ? "color=black" : "color=white",
-        dark ? "color=white" : "color=black",
-      );
-    });
+  container.querySelectorAll(".penna-math-latex[data-latex]").forEach((img) => {
+    if (!(img instanceof Image)) return;
+    img.src = img.src.replace(
+      dark ? "color=black" : "color=white",
+      dark ? "color=white" : "color=black",
+    );
+  });
 
   container
-    .querySelectorAll(".cherry-mermaid__img[data-mermaid]")
+    .querySelectorAll(".penna-mermaid__img[data-mermaid]")
     .forEach((img) => {
       if (!(img instanceof Image)) return;
       const code = base64UrlDecode(img.getAttribute("data-mermaid") ?? "");
@@ -27,7 +25,7 @@ export function replaceGraph(container: HTMLElement, dark: boolean): void {
     });
 
   container
-    .querySelectorAll(".cherry-echarts__img[data-echarts]")
+    .querySelectorAll(".penna-echarts__img[data-echarts]")
     .forEach((img) => {
       if (!(img instanceof Image)) return;
       if (dark) {

@@ -6,11 +6,11 @@ import {
 } from "../../../../helpers/engine.js";
 
 function cardHtml(title, body, { link = "" } = {}) {
-  const titleHtml = title ? `<p class="cherry-card__title">${title}</p>\n` : "";
+  const titleHtml = title ? `<p class="penna-card__title">${title}</p>\n` : "";
   if (link) {
-    return `<a class="cherry-card cherry-link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</a>\n`;
+    return `<a class="penna-card penna-link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="penna-card__body">${body}</div>\n</a>\n`;
   }
-  return `<div class="cherry-card">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</div>\n`;
+  return `<div class="penna-card">\n${titleHtml}<div class="penna-card__body">${body}</div>\n</div>\n`;
 }
 
 it("renders card masonry with cols and gap", () => {
@@ -32,12 +32,10 @@ it("renders card masonry with cols and gap", () => {
 ::::`;
   const html = renderMarkdown(createEngine(), md);
   expect(html).toContain(
-    'class="cherry-card-masonry cherry-card-masonry--cols-3" style="gap: 16px; --card-masonry-cols: 3;"',
+    'class="penna-card-masonry penna-card-masonry--cols-3" style="gap: 16px; --card-masonry-cols: 3;"',
   );
-  expect(html).toContain(
-    'class="cherry-card-masonry__item" style="gap: 16px;"',
-  );
-  expect(html).toContain('class="cherry-card-masonry__v-11-0"');
-  expect(html).toContain('class="cherry-card-masonry__v-11-3"');
-  expect(html).toContain('class="cherry-card-masonry__v-11-5"');
+  expect(html).toContain('class="penna-card-masonry__item" style="gap: 16px;"');
+  expect(html).toContain('class="penna-card-masonry__v-11-0"');
+  expect(html).toContain('class="penna-card-masonry__v-11-3"');
+  expect(html).toContain('class="penna-card-masonry__v-11-5"');
 });

@@ -1,12 +1,12 @@
 /** LaTeX 主题编辑器样式 */
 @use "tokens";
 
-.cherry-theme-latex.cherry,
-.cherry-theme-latex .cherry {
+.penna-theme-latex.penna,
+.penna-theme-latex .penna {
   @include tokens.theme-light;
 }
 
-.cherry-dark.cherry-theme-latex.cherry,
-.cherry-dark.cherry-theme-latex .cherry {
+.penna-dark.penna-theme-latex.penna,
+.penna-dark.penna-theme-latex .penna {
   @include tokens.theme-dark;
 }

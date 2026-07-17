@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cherry Markdown Next · Demo 入口</title>
+    <title>Penna Markdown · Demo 入口</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -29,55 +29,29 @@
   <body class="demo-home">
     <div class="wrap">
       <header class="hero">
-        <div class="hero-pattern" aria-hidden="true"></div>
-        <img
-          class="hero-logo"
-          src="../logo/android-chrome-192x192.png"
-          width="96"
-          height="96"
-          alt="Cherry Markdown Next"
-        />
-        <h1 class="hero-title">Cherry Markdown Next</h1>
+        <div class="hero-mark">
+          <img
+            class="hero-logo"
+            src="../logo/android-chrome-192x192.png"
+            width="112"
+            height="112"
+            alt="Penna Markdown"
+          />
+          <div class="hero-spectrum" aria-hidden="true"></div>
+        </div>
+        <h1 class="hero-title">Penna Markdown</h1>
         <p class="hero-desc">
-          浏览器端 Markdown 编辑 + 渲染套件：GFM 与 Cherry 扩展，增量预览。
-        </p>
-        <p class="hero-badges">
-          <a href="https://www.npmjs.com/package/cherry-markdown-next"
-            ><img
-              src="https://img.shields.io/npm/v/cherry-markdown-next.svg?style=flat-square"
-              alt="npm version"
-          /></a>
-          <a href="https://www.npmjs.com/package/cherry-markdown-next"
-            ><img
-              src="https://img.shields.io/npm/dm/cherry-markdown-next.svg?style=flat-square"
-              alt="npm downloads"
-          /></a>
-          <a href="https://www.npmjs.com/package/cherry-markdown-next"
-            ><img
-              src="https://img.shields.io/npm/l/cherry-markdown-next.svg?style=flat-square"
-              alt="license"
-          /></a>
-          <a
-            href="https://github.com/AnkioTomas/cherry-markdown-next/stargazers"
-            ><img
-              src="https://img.shields.io/github/stars/AnkioTomas/cherry-markdown-next.svg?style=flat-square"
-              alt="GitHub stars"
-          /></a>
-          <a href="https://github.com/AnkioTomas/cherry-markdown-next/issues"
-            ><img
-              src="https://img.shields.io/github/issues/AnkioTomas/cherry-markdown-next.svg?style=flat-square"
-              alt="GitHub issues"
-          /></a>
+          浏览器端 Markdown 编辑 + 渲染套件：GFM 与 Penna 扩展，增量预览。
         </p>
         <p class="hero-links">
           <a
             class="hero-link"
-            href="https://github.com/AnkioTomas/cherry-markdown-next"
+            href="https://github.com/AnkioTomas/penna-markdown"
             >GitHub</a
           >
           <a
             class="hero-link"
-            href="https://www.npmjs.com/package/cherry-markdown-next"
+            href="https://www.npmjs.com/package/penna-markdown"
             >npm</a
           >
           <a class="hero-link" href="./modules/docs/index.html">文档</a>
@@ -87,80 +61,141 @@
             >打开编辑器</a
           >
         </p>
+        <p class="hero-badges">
+          <a href="https://www.npmjs.com/package/penna-markdown"
+            ><img
+              src="https://img.shields.io/npm/v/penna-markdown.svg?style=flat-square"
+              alt="npm version"
+          /></a>
+          <a href="https://www.npmjs.com/package/penna-markdown"
+            ><img
+              src="https://img.shields.io/npm/dm/penna-markdown.svg?style=flat-square"
+              alt="npm downloads"
+          /></a>
+          <a href="https://www.npmjs.com/package/penna-markdown"
+            ><img
+              src="https://img.shields.io/npm/l/penna-markdown.svg?style=flat-square"
+              alt="license"
+          /></a>
+          <a href="https://github.com/AnkioTomas/penna-markdown/stargazers"
+            ><img
+              src="https://img.shields.io/github/stars/AnkioTomas/penna-markdown.svg?style=flat-square"
+              alt="GitHub stars"
+          /></a>
+          <a href="https://github.com/AnkioTomas/penna-markdown/issues"
+            ><img
+              src="https://img.shields.io/github/issues/AnkioTomas/penna-markdown.svg?style=flat-square"
+              alt="GitHub issues"
+          /></a>
+        </p>
       </header>
 
-      <h2 class="section-title">1. 语法演示 (Syntax)</h2>
-      <section class="cards">
-        <a class="card" href="./syntax/gfm/index.html">
-          <div class="card-title">GFM 语法</div>
-          <div class="card-desc">
-            展示标准的 GitHub Flavored Markdown 语法效果。
-          </div>
-        </a>
-        <a class="card" href="./syntax/extends/index.html">
-          <div class="card-title">拓展语法</div>
-          <div class="card-desc">
-            Cherry 的特有增强语法（如：高亮、行内属性、容器等）。
-          </div>
-        </a>
+      <section class="section">
+        <h2 class="section-title">
+          <span
+            class="section-dot section-dot--syntax"
+            aria-hidden="true"
+          ></span>
+          1. 语法演示
+        </h2>
+        <div class="cards">
+          <a class="card" href="./syntax/gfm/index.html">
+            <div class="card-title">GFM 语法</div>
+            <div class="card-desc">
+              展示标准的 GitHub Flavored Markdown 语法效果。
+            </div>
+          </a>
+          <a class="card" href="./syntax/extends/index.html">
+            <div class="card-title">拓展语法</div>
+            <div class="card-desc">
+              Penna 的特有增强语法（如：高亮、行内属性、容器等）。
+            </div>
+          </a>
+        </div>
       </section>
 
-      <h2 class="section-title">2. 测试 (Test)</h2>
-      <section class="cards">
-        <a class="card" href="./test/gfm/index.html">
-          <div class="card-title">GFM 全量测试</div>
-          <div class="card-desc">依据 GFM Spec 进行的大规模用例验证面板。</div>
-        </a>
+      <section class="section">
+        <h2 class="section-title">
+          <span class="section-dot section-dot--test" aria-hidden="true"></span>
+          2. 测试
+        </h2>
+        <div class="cards">
+          <a class="card" href="./test/gfm/index.html">
+            <div class="card-title">GFM 全量测试</div>
+            <div class="card-desc">
+              依据 GFM Spec 进行的大规模用例验证面板。
+            </div>
+          </a>
+        </div>
       </section>
 
-      <h2 class="section-title">3. 模块使用 (Modules)</h2>
-      <section class="cards">
-        <a class="card" href="./modules/editor/index.html">
-          <div class="card-title">全功能编辑器 (Editor)</div>
-          <div class="card-desc">
-            默认加载 simple.md 语法全集；侧栏含 Options / AI / 自定义语法演示。
-          </div>
-        </a>
-        <a class="card" href="./modules/renderer/index.html">
-          <div class="card-title">独立渲染器 (Renderer)</div>
-          <div class="card-desc">
-            接收 Markdown，渲染为带高亮、样式的 DOM，适合展示页。
-          </div>
-        </a>
-        <a class="card" href="./modules/transformer/index.html">
-          <div class="card-title">转换器核心 (Transformer)</div>
-          <div class="card-desc">
-            Markdown 实时预览，展示 TransformerEngine parse + render 输出。
-          </div>
-        </a>
-        <a class="card" href="./modules/ast/index.html">
-          <div class="card-title">AST 语法树 (AST)</div>
-          <div class="card-desc">
-            可视化查看 Markdown 解析出的内部节点结构。
-          </div>
-        </a>
-        <a class="card" href="./modules/docs/index.html">
-          <div class="card-title">文档预览 (Docs)</div>
-          <div class="card-desc">
-            浏览 docs/ 目录：左侧文件树、中间 Renderer 正文、右侧 TOC 目录。
-          </div>
-        </a>
+      <section class="section">
+        <h2 class="section-title">
+          <span
+            class="section-dot section-dot--modules"
+            aria-hidden="true"
+          ></span>
+          3. 模块使用
+        </h2>
+        <div class="cards">
+          <a class="card" href="./modules/editor/index.html">
+            <div class="card-title">全功能编辑器</div>
+            <div class="card-desc">
+              默认加载 simple.md 语法全集；侧栏含 Options / AI /
+              自定义语法演示。
+            </div>
+          </a>
+          <a class="card" href="./modules/renderer/index.html">
+            <div class="card-title">独立渲染器</div>
+            <div class="card-desc">
+              接收 Markdown，渲染为带高亮、样式的 DOM，适合展示页。
+            </div>
+          </a>
+          <a class="card" href="./modules/transformer/index.html">
+            <div class="card-title">转换器核心</div>
+            <div class="card-desc">
+              Markdown 实时预览，展示 TransformerEngine parse + render 输出。
+            </div>
+          </a>
+          <a class="card" href="./modules/ast/index.html">
+            <div class="card-title">AST 语法树</div>
+            <div class="card-desc">
+              可视化查看 Markdown 解析出的内部节点结构。
+            </div>
+          </a>
+          <a class="card" href="./modules/docs/index.html">
+            <div class="card-title">文档预览</div>
+            <div class="card-desc">
+              浏览 docs/ 目录：左侧文件树、中间 Renderer 正文、右侧 TOC 目录。
+            </div>
+          </a>
+        </div>
       </section>
 
-      <h2 class="section-title">4. 框架结合 (Frameworks)</h2>
-      <section class="cards">
-        <a class="card" href="./frameworks/vanilla/index.html">
-          <div class="card-title">Vanilla JS</div>
-          <div class="card-desc">在原生无框架环境下的极简集成示例。</div>
-        </a>
-        <a class="card" href="./frameworks/vue/index.html">
-          <div class="card-title">Vue</div>
-          <div class="card-desc">在 Vue 组件生命周期内挂载使用的最佳实践。</div>
-        </a>
-        <a class="card" href="./frameworks/react/index.html">
-          <div class="card-title">React</div>
-          <div class="card-desc">以 React Hook 方式封装与集成的演示。</div>
-        </a>
+      <section class="section">
+        <h2 class="section-title">
+          <span
+            class="section-dot section-dot--frameworks"
+            aria-hidden="true"
+          ></span>
+          4. 框架结合
+        </h2>
+        <div class="cards">
+          <a class="card" href="./frameworks/vanilla/index.html">
+            <div class="card-title">Vanilla JS</div>
+            <div class="card-desc">在原生无框架环境下的极简集成示例。</div>
+          </a>
+          <a class="card" href="./frameworks/vue/index.html">
+            <div class="card-title">Vue</div>
+            <div class="card-desc">
+              在 Vue 组件生命周期内挂载使用的最佳实践。
+            </div>
+          </a>
+          <a class="card" href="./frameworks/react/index.html">
+            <div class="card-title">React</div>
+            <div class="card-desc">以 React Hook 方式封装与集成的演示。</div>
+          </a>
+        </div>
       </section>
     </div>
     <script type="module" src="./home.ts"></script>

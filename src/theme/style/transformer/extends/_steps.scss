@@ -1,27 +1,27 @@
 @use "../../common/rem" as *;
 
 @mixin styles {
-  .cherry-steps {
+  .penna-steps {
     margin: rem(16) 0;
 
     > ol {
       list-style: none;
-      counter-reset: cherry-step;
+      counter-reset: penna-step;
       padding: 0;
       margin: 0;
     }
 
     > ol > li {
       position: relative;
-      counter-increment: cherry-step;
+      counter-increment: penna-step;
       list-style: none;
       margin: 0 0 0 rem(14);
       padding: 0 0 rem(24) rem(34);
       border-left: rem(1) solid
-        color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+        color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
 
       &::before {
-        content: counter(cherry-step);
+        content: counter(penna-step);
         position: absolute;
         left: 0;
         top: 0;
@@ -32,16 +32,16 @@
         width: rem(26);
         height: rem(26);
         border-radius: 50%;
-        background: var(--cherry-c-bg);
+        background: var(--penna-c-bg);
         border: rem(1.5) solid
-          color-mix(in srgb, var(--cherry-c-brand-2) 50%, transparent);
-        color: var(--cherry-c-brand-1);
+          color-mix(in srgb, var(--penna-c-brand-2) 50%, transparent);
+        color: var(--penna-c-brand-1);
         font-size: rem(12);
         font-weight: 600;
         font-variant-numeric: tabular-nums;
         line-height: 1;
         letter-spacing: rem(-0.32);
-        box-shadow: 0 0 0 rem(3) var(--cherry-c-bg);
+        box-shadow: 0 0 0 rem(3) var(--penna-c-bg);
         z-index: 1;
       }
 
@@ -54,7 +54,7 @@
         margin: 0 0 rem(8);
         padding-top: rem(2);
         font-weight: 600;
-        color: var(--cherry-c-text-1);
+        color: var(--penna-c-text-1);
         line-height: rem(22);
       }
 

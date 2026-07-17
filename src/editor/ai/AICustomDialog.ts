@@ -24,7 +24,7 @@ class AICustomFormDialog extends FormDialog<AICustomDialogResult> {
 
   /** 获取自定义 AI 表单的样式类名。 */
   override get className() {
-    return "cherry-dialog-form--ai-custom";
+    return "penna-dialog-form--ai-custom";
   }
 
   readonly fields = [

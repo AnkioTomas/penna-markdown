@@ -26,10 +26,10 @@ tab 3 内容
 it("activates @tab:active panel by default", () => {
   const html = renderMarkdown(createEngine(), sample);
   expect(html).toMatch(
-    /<label class="cherry-tabs__label">\s*<input type="radio" class="cherry-tabs__radio" name="cherry-tabs-\d+"[^>]*>\s*标题 1\s*<\/label>/,
+    /<label class="penna-tabs__label">\s*<input type="radio" class="penna-tabs__radio" name="penna-tabs-\d+"[^>]*>\s*标题 1\s*<\/label>/,
   );
   expect(html).toMatch(
-    /<label class="cherry-tabs__label">\s*<input type="radio" class="cherry-tabs__radio" name="cherry-tabs-\d+" checked>\s*标题 3\s*<\/label>/,
+    /<label class="penna-tabs__label">\s*<input type="radio" class="penna-tabs__radio" name="penna-tabs-\d+" checked>\s*标题 3\s*<\/label>/,
   );
   expect(html).not.toMatch(/<input[^>]+checked[^>]+>\s*标题 1\s*<\/label>/);
   expect(html).not.toMatch(/<input[^>]+checked[^>]+>\s*标题 2\s*<\/label>/);

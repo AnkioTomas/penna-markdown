@@ -6,11 +6,11 @@ import {
 } from "../../../../helpers/engine.js";
 
 function cardHtml(title, body, { link = "" } = {}) {
-  const titleHtml = title ? `<p class="cherry-card__title">${title}</p>\n` : "";
+  const titleHtml = title ? `<p class="penna-card__title">${title}</p>\n` : "";
   if (link) {
-    return `<a class="cherry-card cherry-link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</a>\n`;
+    return `<a class="penna-card penna-link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="penna-card__body">${body}</div>\n</a>\n`;
   }
-  return `<div class="cherry-card">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</div>\n`;
+  return `<div class="penna-card">\n${titleHtml}<div class="penna-card__body">${body}</div>\n</div>\n`;
 }
 
 it("renders link-card with left icon image", () => {
@@ -21,6 +21,6 @@ it("renders link-card with left icon image", () => {
 :::`;
   const html = renderMarkdown(createEngine(), md);
   expect(html).toBe(
-    `<a class="cherry-card cherry-link-card cherry-link-card--has-icon" href="https://example.com" target="_blank" rel="noopener noreferrer">\n<img class="cherry-link-card__icon" src="https://example.com/icon.png" alt="" loading="lazy">\n<div class="cherry-link-card__main">\n<p class="cherry-card__title">文档</p>\n<div class="cherry-card__body"><p>点击查看文档详情。</p></div>\n</div>\n</a>\n`,
+    `<a class="penna-card penna-link-card penna-link-card--has-icon" href="https://example.com" target="_blank" rel="noopener noreferrer">\n<img class="penna-link-card__icon" src="https://example.com/icon.png" alt="" loading="lazy">\n<div class="penna-link-card__main">\n<p class="penna-card__title">文档</p>\n<div class="penna-card__body"><p>点击查看文档详情。</p></div>\n</div>\n</a>\n`,
   );
 });

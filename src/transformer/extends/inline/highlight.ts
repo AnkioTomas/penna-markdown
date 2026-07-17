@@ -68,7 +68,7 @@ class HighlightInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node, ctx) {
-    return `<mark class="cherry-mark">${ctx.renderInline(node.children)}</mark>`;
+    return `<mark class="penna-mark">${ctx.renderInline(node.children)}</mark>`;
   }
 }
 

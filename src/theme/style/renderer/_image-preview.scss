@@ -1,9 +1,9 @@
 @use "../common/rem" as *;
 
 @mixin interactive-cursors {
-  img:not(.cherry-math-latex):not(.cherry-repo-card__shield-img):not(
-      .cherry-link-card__icon
-    ):not(.cherry-audio-player__cover-img) {
+  img:not(.penna-math-latex):not(.penna-repo-card__shield-img):not(
+      .penna-link-card__icon
+    ):not(.penna-audio-player__cover-img) {
     cursor: zoom-in;
   }
 
@@ -13,7 +13,7 @@
 }
 
 @mixin overlay {
-  .cherry-image-preview {
+  .penna-image-preview {
     position: fixed;
     inset: 0;
     z-index: 10000;
@@ -24,17 +24,17 @@
     box-sizing: border-box;
   }
 
-  .cherry-image-preview__backdrop {
+  .penna-image-preview__backdrop {
     position: absolute;
     inset: 0;
     border: none;
     margin: 0;
     padding: 0;
-    background: color-mix(in srgb, var(--cherry-c-text-1) 55%, transparent);
+    background: color-mix(in srgb, var(--penna-c-text-1) 55%, transparent);
     cursor: zoom-out;
   }
 
-  .cherry-image-preview__figure {
+  .penna-image-preview__figure {
     position: relative;
     z-index: 1;
     display: block;
@@ -47,12 +47,12 @@
     pointer-events: none;
   }
 
-  .cherry-image-preview__media,
-  .cherry-image-preview__caption {
+  .penna-image-preview__media,
+  .penna-image-preview__caption {
     pointer-events: auto;
   }
 
-  .cherry-image-preview__media {
+  .penna-image-preview__media {
     display: inline-block;
     vertical-align: middle;
     max-width: min(96vw, 1200px);
@@ -61,21 +61,21 @@
     height: auto;
     object-fit: contain;
     border-radius: rem(8);
-    background: var(--cherry-c-bg);
+    background: var(--penna-c-bg);
     box-shadow: 0 rem(12) rem(40) -#{rem(8)}
-      color-mix(in srgb, var(--cherry-c-text-1) 35%, transparent);
+      color-mix(in srgb, var(--penna-c-text-1) 35%, transparent);
   }
 
-  .cherry-image-preview__caption {
+  .penna-image-preview__caption {
     display: block;
     margin: rem(12) 0 0;
     max-width: 100%;
     padding: rem(8) rem(12);
-    color: var(--cherry-c-bg);
+    color: var(--penna-c-bg);
     font-size: rem(14);
     line-height: 1.5;
     text-align: center;
     text-shadow: 0 1px 2px
-      color-mix(in srgb, var(--cherry-c-text-1) 60%, transparent);
+      color-mix(in srgb, var(--penna-c-text-1) 60%, transparent);
   }
 }

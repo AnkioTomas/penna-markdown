@@ -2,7 +2,7 @@ import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import type { Extension } from "@codemirror/state";
 import { tags as t } from "@lezer/highlight";
 
-import { cherryTags } from "./lezer/tags";
+import { pennaTags } from "./lezer/tags";
 
 const GFM_HIGHLIGHT_STYLE = HighlightStyle.define([
   { tag: t.heading1, class: "cm-h1" },
@@ -29,36 +29,36 @@ const GFM_HIGHLIGHT_STYLE = HighlightStyle.define([
   { tag: t.escape, class: "cm-escape" },
 
   // Blocks
-  { tag: cherryTags.alert, class: "cm-ext-alert" },
-  { tag: cherryTags.container, class: "cm-ext-container" },
-  { tag: cherryTags.mathBlock, class: "cm-ext-math-block" },
-  { tag: cherryTags.footnotes, class: "cm-ext-footnotes" },
-  { tag: cherryTags.frontmatter, class: "cm-ext-frontmatter" },
-  { tag: cherryTags.commentBlock, class: "cm-ext-comment-block" },
+  { tag: pennaTags.alert, class: "cm-ext-alert" },
+  { tag: pennaTags.container, class: "cm-ext-container" },
+  { tag: pennaTags.mathBlock, class: "cm-ext-math-block" },
+  { tag: pennaTags.footnotes, class: "cm-ext-footnotes" },
+  { tag: pennaTags.frontmatter, class: "cm-ext-frontmatter" },
+  { tag: pennaTags.commentBlock, class: "cm-ext-comment-block" },
 
   // Inlines
-  { tag: cherryTags.highlight, class: "cm-ext-highlight" },
-  { tag: cherryTags.spoiler, class: "cm-ext-spoiler" },
-  { tag: cherryTags.mathInline, class: "cm-ext-math-inline" },
-  { tag: cherryTags.badge, class: "cm-ext-badge" },
-  { tag: cherryTags.inlineComment, class: "cm-ext-inline-comment" },
-  { tag: cherryTags.footnoteRef, class: "cm-ext-footnote-ref" },
-  { tag: cherryTags.frontmatterVar, class: "cm-ext-frontmatter-var" },
-  { tag: cherryTags.htmlAttrs, class: "cm-ext-html-attrs" },
-  { tag: cherryTags.media, class: "cm-ext-media" },
-  { tag: cherryTags.iframe, class: "cm-ext-iframe" },
-  { tag: cherryTags.fieldTag, class: "cm-ext-field-tag" },
-  { tag: cherryTags.containerMark, class: "cm-ext-container-mark" },
-  { tag: cherryTags.containerType, class: "cm-ext-container-type" },
-  { tag: cherryTags.pageLink, class: "cm-ext-page-link" },
-  { tag: cherryTags.atType, class: "cm-ext-at-type" },
-  { tag: cherryTags.frontmatterMark, class: "cm-ext-frontmatter-mark" },
-  { tag: cherryTags.containerKey, class: "cm-ext-container-key" },
-  { tag: cherryTags.containerValue, class: "cm-ext-container-value" },
-  { tag: cherryTags.containerParam, class: "cm-ext-container-param" },
-  { tag: cherryTags.codeInfoKey, class: "cm-ext-codeinfo-key" },
-  { tag: cherryTags.codeInfoValue, class: "cm-ext-codeinfo-value" },
-  { tag: cherryTags.codeInfoFlag, class: "cm-ext-codeinfo-flag" },
+  { tag: pennaTags.highlight, class: "cm-ext-highlight" },
+  { tag: pennaTags.spoiler, class: "cm-ext-spoiler" },
+  { tag: pennaTags.mathInline, class: "cm-ext-math-inline" },
+  { tag: pennaTags.badge, class: "cm-ext-badge" },
+  { tag: pennaTags.inlineComment, class: "cm-ext-inline-comment" },
+  { tag: pennaTags.footnoteRef, class: "cm-ext-footnote-ref" },
+  { tag: pennaTags.frontmatterVar, class: "cm-ext-frontmatter-var" },
+  { tag: pennaTags.htmlAttrs, class: "cm-ext-html-attrs" },
+  { tag: pennaTags.media, class: "cm-ext-media" },
+  { tag: pennaTags.iframe, class: "cm-ext-iframe" },
+  { tag: pennaTags.fieldTag, class: "cm-ext-field-tag" },
+  { tag: pennaTags.containerMark, class: "cm-ext-container-mark" },
+  { tag: pennaTags.containerType, class: "cm-ext-container-type" },
+  { tag: pennaTags.pageLink, class: "cm-ext-page-link" },
+  { tag: pennaTags.atType, class: "cm-ext-at-type" },
+  { tag: pennaTags.frontmatterMark, class: "cm-ext-frontmatter-mark" },
+  { tag: pennaTags.containerKey, class: "cm-ext-container-key" },
+  { tag: pennaTags.containerValue, class: "cm-ext-container-value" },
+  { tag: pennaTags.containerParam, class: "cm-ext-container-param" },
+  { tag: pennaTags.codeInfoKey, class: "cm-ext-codeinfo-key" },
+  { tag: pennaTags.codeInfoValue, class: "cm-ext-codeinfo-value" },
+  { tag: pennaTags.codeInfoFlag, class: "cm-ext-codeinfo-flag" },
 ]);
 
 /** GFM 基础语法高亮 */

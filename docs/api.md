@@ -9,17 +9,17 @@ tags: [reference, api]
 
 > [[subtitle]] — `0.x` 可能调整；集成请锁定版本。
 
-仓库与包名：`cherry-markdown-next`。
+仓库与包名：`penna-markdown`。
 
 ---
 
 ## 包入口
 
-| import                             | 主要符号            | IIFE 全局名             |
-| ---------------------------------- | ------------------- | ----------------------- |
-| `cherry-markdown-next`             | `Cherry`, `el`      | `CherryNextEditor`      |
-| `cherry-markdown-next/renderer`    | `Renderer`          | `CherryNextRenderer`    |
-| `cherry-markdown-next/transformer` | `TransformerEngine` | `CherryNextTransformer` |
+| import                       | 主要符号            | IIFE 全局名            |
+| ---------------------------- | ------------------- | ---------------------- |
+| `penna-markdown`             | `Penna`, `el`       | `PennaNextEditor`      |
+| `penna-markdown/renderer`    | `Renderer`          | `PennaNextRenderer`    |
+| `penna-markdown/transformer` | `TransformerEngine` | `PennaNextTransformer` |
 
 样式见 [`themes.md`](themes.md) 与 `package.json` `exports`。
 
@@ -28,12 +28,12 @@ tags: [reference, api]
 
 ---
 
-## Cherry
+## Penna
 
 ```typescript
-import { Cherry } from "cherry-markdown-next";
+import { Penna } from "penna-markdown";
 
-const cherry = new Cherry(rootEl, options?: CherryOptions);
+const penna = new Penna(rootEl, options?: PennaOptions);
 ```
 
 ### 属性
@@ -112,7 +112,7 @@ const cherry = new Cherry(rootEl, options?: CherryOptions);
 :::
 ::::
 
-### CherryOptions
+### PennaOptions
 
 见 [`editor.md`](editor.md)。关键字段：`layout`、`appearance`、`themeId`、`themes`、`debug`、`toolbar`、`sidebar`、`statusbar`、`storage`、`onAiRequest`、`onParseFile`、`editor`、`preview`。
 

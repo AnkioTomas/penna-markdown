@@ -2,14 +2,14 @@
 @use "tokens";
 @use "editor-chrome";
 
-.cherry-theme-notion.cherry,
-.cherry-theme-notion .cherry {
+.penna-theme-notion.penna,
+.penna-theme-notion .penna {
   @include tokens.theme-light;
   @include editor-chrome.chrome;
 }
 
-.cherry-dark.cherry-theme-notion.cherry,
-.cherry-dark.cherry-theme-notion .cherry {
+.penna-dark.penna-theme-notion.penna,
+.penna-dark.penna-theme-notion .penna {
   @include tokens.theme-dark;
   @include editor-chrome.chrome;
   @include editor-chrome.chrome-dark;

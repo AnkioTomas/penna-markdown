@@ -1,7 +1,7 @@
 import type { EditorView } from "@codemirror/view";
 import type { EventBus } from "@/core/event/EventBus";
 import type { Theme } from "@/theme/Theme";
-import type { OnAiRequest } from "@/editor/CherryOptions";
+import type { OnAiRequest } from "@/editor/PennaOptions";
 import { runCommand } from "@/editor/commands";
 import type { ParserStore } from "@/transformer/core/ParserStore";
 import type { EditorCommandPayload } from "@/editor/events";

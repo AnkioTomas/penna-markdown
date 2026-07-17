@@ -1,12 +1,12 @@
 ---
-title: Cherry 语法速览
+title: Penna 语法速览
 subtitle: 完整演示 · 精简篇幅
 author:
   name: Demo
   url: https://github.com
 version: 0.1.0
-tags: [demo, simple, gfm, cherry]
-repo: https://github.com/AnkioTomas/cherry-markdown-next
+tags: [demo, simple, gfm, penna]
+repo: https://github.com/AnkioTomas/penna-markdown
 ---
 
 # [[title]]
@@ -17,13 +17,13 @@ repo: https://github.com/AnkioTomas/cherry-markdown-next
 
 ## 语法清单
 
-| 类别            | 覆盖                                                                                                |
-| --------------- | --------------------------------------------------------------------------------------------------- |
-| **GFM**         | ATX/Setext 标题、强调、链接/图片、列表、引用、表格、分隔线、围栏/缩进代码、基础任务                 |
-| **Cherry 行内** | Frontmatter 变量 `[[key]]`、高亮、Emoji、HTML 属性、剧透、数学、徽章、上下标、注释、脚注引用        |
-| **Cherry 块级** | YAML Frontmatter、Alert×5、扩展任务列表、块级公式、脚注定义、媒体/iframe、增强代码、Mermaid/ECharts |
-| **布局**        | 容器（note/tip/warning/对齐/嵌套）、Tabs、Steps、Timeline、Collapse                                 |
-| **卡片/文档**   | card / link-card / image-card / repo-card / card-grid / card-masonry / field / field-group          |
+| 类别           | 覆盖                                                                                                |
+| -------------- | --------------------------------------------------------------------------------------------------- |
+| **GFM**        | ATX/Setext 标题、强调、链接/图片、列表、引用、表格、分隔线、围栏/缩进代码、基础任务                 |
+| **Penna 行内** | Frontmatter 变量 `[[key]]`、高亮、Emoji、HTML 属性、剧透、数学、徽章、上下标、注释、脚注引用        |
+| **Penna 块级** | YAML Frontmatter、Alert×5、扩展任务列表、块级公式、脚注定义、媒体/iframe、增强代码、Mermaid/ECharts |
+| **布局**       | 容器（note/tip/warning/对齐/嵌套）、Tabs、Steps、Timeline、Collapse                                 |
+| **卡片/文档**  | card / link-card / image-card / repo-card / card-grid / card-masonry / field / field-group          |
 
 ---
 
@@ -127,7 +127,7 @@ export const sum = (a, b) => a + b;
 
 ---
 
-## Cherry 行内扩展
+## Penna 行内扩展
 
 ### 高亮
 
@@ -171,7 +171,7 @@ H~~2~~O · E=mc^2^ · x^_n_^
 
 ---
 
-## Cherry 块级扩展
+## Penna 块级扩展
 
 ### Alert（GFM Admonition）
 
@@ -330,7 +330,7 @@ pnpm install
 ### 增强代码块
 
 ```json title="package.json"
-{ "name": "cherry-markdown-next", "version": "0.1.0" }
+{ "name": "penna-markdown", "version": "0.1.0" }
 ```
 
 ```bash title='run.sh'
@@ -403,7 +403,7 @@ sequenceDiagram
 ```mermaid
 pie title 占比
   "GFM" : 45
-  "Cherry" : 35
+  "Penna" : 35
   "Custom" : 20
 ```
 
@@ -484,7 +484,7 @@ flowchart TD
 VuePress 2 核心库
 :::
 
-::: repo-card tencent/cherry-markdown visibility="Public"
+::: repo-card tencent/penna-markdown visibility="Public"
 带 `visibility` 属性的仓库卡。
 :::
 

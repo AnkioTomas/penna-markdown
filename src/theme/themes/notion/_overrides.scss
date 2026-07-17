@@ -7,8 +7,8 @@
   max-width: rem(860);
   margin-inline: auto;
   padding: rem(24) rem(32) rem(80);
-  background-color: var(--cherry-c-bg);
-  color: var(--cherry-c-text-1);
+  background-color: var(--penna-c-bg);
+  color: var(--penna-c-text-1);
   font-family: var(--notion-font-sans);
   font-size: var(--notion-text-size);
   font-weight: 500;
@@ -62,13 +62,13 @@
   h5 {
     font-size: rem(14);
     font-weight: 600;
-    color: var(--cherry-c-text-2);
+    color: var(--penna-c-text-2);
   }
 
   h6 {
     font-size: rem(12);
     font-weight: 600;
-    color: var(--cherry-c-text-3);
+    color: var(--penna-c-text-3);
   }
 
   :first-child {
@@ -100,10 +100,10 @@
     margin: 0 0 rem(8);
     padding: rem(16) rem(16);
     border: 0;
-    border-left: rem(3) solid var(--cherry-c-text-3);
+    border-left: rem(3) solid var(--penna-c-text-3);
     border-radius: var(--notion-radius);
     background: var(--notion-quote-bg);
-    color: var(--cherry-c-text-2);
+    color: var(--penna-c-text-2);
     font-style: normal;
     font-weight: 400;
 
@@ -120,7 +120,7 @@
       padding-right: 0;
       background: color-mix(
         in srgb,
-        var(--cherry-c-text-1) 3%,
+        var(--penna-c-text-1) 3%,
         var(--notion-quote-bg)
       );
     }
@@ -131,7 +131,7 @@
     margin: rem(16) 0;
     padding: 0;
     border: 0;
-    background-color: var(--cherry-c-border-soft);
+    background-color: var(--penna-c-border-soft);
     overflow: hidden;
   }
 
@@ -150,31 +150,31 @@
     font-family: var(--notion-font-mono);
     font-size: 0.925em;
     font-weight: 500;
-    color: var(--cherry-c-code-inline-fg);
-    background: var(--cherry-c-code-inline-bg);
+    color: var(--penna-c-code-inline-fg);
+    background: var(--penna-c-code-inline-bg);
     border: 0;
     border-radius: var(--notion-radius-tag);
     box-decoration-break: clone;
   }
 
-  pre:not(.cherry-code-block__pre) {
+  pre:not(.penna-code-block__pre) {
     margin: rem(8) 0;
     padding: rem(8) rem(12);
     font-family: var(--notion-font-mono);
     font-size: 0.925em;
     font-weight: 500;
     color: var(--notion-code-fg);
-    background: var(--cherry-c-code-block-code-bg);
+    background: var(--penna-c-code-block-code-bg);
     border: 0;
     border-radius: var(--notion-radius);
     box-shadow: none;
   }
 
   table {
-    --cherry-table-border: var(--cherry-c-table-td-border);
-    --cherry-table-head-bg: var(--notion-table-a);
-    --cherry-table-row-bg: var(--notion-table-b);
-    --cherry-table-stripe-bg: var(--notion-table-a);
+    --penna-table-border: var(--penna-c-table-td-border);
+    --penna-table-head-bg: var(--notion-table-a);
+    --penna-table-row-bg: var(--notion-table-b);
+    --penna-table-stripe-bg: var(--notion-table-a);
     margin: 0 0 rem(8);
     padding: 0;
     font-size: inherit;
@@ -184,7 +184,7 @@
     th,
     td {
       padding: rem(6) rem(13);
-      border: rem(1) solid var(--cherry-c-border-soft);
+      border: rem(1) solid var(--penna-c-border-soft);
       text-align: left;
     }
 
@@ -195,7 +195,7 @@
     }
 
     tbody tr {
-      border-top: rem(1) solid var(--cherry-c-border-soft);
+      border-top: rem(1) solid var(--penna-c-border-soft);
     }
 
     tbody tr:nth-child(odd) {
@@ -211,7 +211,7 @@
     border-radius: var(--notion-radius);
   }
 
-  .cherry-alert {
+  .penna-alert {
     margin: 0 0 rem(8);
     padding: rem(8) rem(12);
     border: rem(1) solid var(--alert-border);
@@ -223,17 +223,17 @@
     font-weight: 400;
   }
 
-  .cherry-code-block {
+  .penna-code-block {
     --cb-radius: var(--notion-radius);
     --cb-border: transparent;
     --cb-shadow: none;
-    --cb-header-bg: var(--cherry-c-code-block-header-bg);
-    --cb-code-bg: var(--cherry-c-code-block-code-bg);
-    --cb-lang-fg: var(--cherry-c-text-2);
+    --cb-header-bg: var(--penna-c-code-block-header-bg);
+    --cb-code-bg: var(--penna-c-code-block-code-bg);
+    --cb-lang-fg: var(--penna-c-text-2);
     --cb-lang-bg: transparent;
     --cb-line-highlight: color-mix(
       in srgb,
-      var(--cherry-c-brand-1) 10%,
+      var(--penna-c-brand-1) 10%,
       transparent
     );
     margin: rem(8) 0;
@@ -267,76 +267,76 @@
     }
 
     .hljs-comment {
-      color: var(--cherry-c-hljs-comment);
+      color: var(--penna-c-hljs-comment);
     }
 
     .hljs-keyword,
     .hljs-attribute {
-      color: var(--cherry-c-hljs-keyword);
+      color: var(--penna-c-hljs-keyword);
     }
 
     .hljs-string,
     .hljs-regexp,
     .hljs-built_in,
     .hljs-variable-3 {
-      color: var(--cherry-c-hljs-string);
+      color: var(--penna-c-hljs-string);
     }
 
     .hljs-number,
     .hljs-literal {
-      color: var(--cherry-c-hljs-number);
+      color: var(--penna-c-hljs-number);
     }
 
     .hljs-title,
     .hljs-type,
     .hljs-def {
-      color: var(--cherry-c-hljs-title);
+      color: var(--penna-c-hljs-title);
     }
 
     .hljs-variable,
     .hljs-attr,
     .hljs-property,
     .hljs-meta {
-      color: var(--cherry-c-hljs-attr);
+      color: var(--penna-c-hljs-attr);
     }
 
     .hljs-tag,
     .hljs-name {
-      color: var(--cherry-c-hljs-name);
+      color: var(--penna-c-hljs-name);
     }
 
     .hljs-operator {
-      color: var(--cherry-c-hljs-operator);
+      color: var(--penna-c-hljs-operator);
     }
   }
 
-  .cherry-card,
-  .cherry-card.cherry-link-card,
-  .cherry-repo-card,
-  .cherry-tabs,
-  .cherry-collapse {
-    border: rem(1) solid var(--cherry-c-border-soft);
+  .penna-card,
+  .penna-card.penna-link-card,
+  .penna-repo-card,
+  .penna-tabs,
+  .penna-collapse {
+    border: rem(1) solid var(--penna-c-border-soft);
     border-radius: var(--notion-radius-tag);
-    background: var(--cherry-c-bg);
-    color: var(--cherry-c-text-2);
+    background: var(--penna-c-bg);
+    color: var(--penna-c-text-2);
     box-shadow: none;
   }
 
-  .cherry-card,
-  .cherry-card.cherry-link-card,
-  .cherry-repo-card {
+  .penna-card,
+  .penna-card.penna-link-card,
+  .penna-repo-card {
     padding: rem(16) rem(20);
 
-    .cherry-card__title {
+    .penna-card__title {
       margin: 0 0 rem(8);
-      color: var(--cherry-c-text-1);
+      color: var(--penna-c-text-1);
       font-weight: 600;
     }
   }
 
-  .cherry-card.cherry-link-card {
+  .penna-card.penna-link-card {
     padding-right: rem(44);
-    color: var(--cherry-c-text-2);
+    color: var(--penna-c-text-2);
     text-decoration: none;
 
     a {
@@ -346,9 +346,9 @@
 
     &:hover {
       background: var(--notion-hover-bg);
-      border-color: var(--cherry-c-border-soft);
+      border-color: var(--penna-c-border-soft);
       box-shadow: none;
-      color: var(--cherry-c-text-2);
+      color: var(--penna-c-text-2);
 
       &::after {
         background-color: var(--notion-link-fg);
@@ -356,9 +356,9 @@
     }
   }
 
-  .cherry-repo-card {
+  .penna-repo-card {
     a {
-      color: var(--cherry-c-text-1);
+      color: var(--penna-c-text-1);
       border-bottom: 0;
 
       &:hover {
@@ -369,10 +369,10 @@
   }
 
   .task-list .task-item.done .marker {
-    --marker-color: var(--cherry-c-brand-1);
+    --marker-color: var(--penna-c-brand-1);
   }
 
-  sup.cherry-footnote-ref {
+  sup.penna-footnote-ref {
     vertical-align: super;
     font-size: 0.75em;
     font-weight: 400;
@@ -383,7 +383,7 @@
       border: 0;
       border-radius: 0;
       background: transparent;
-      color: var(--cherry-c-text-2);
+      color: var(--penna-c-text-2);
       font-size: inherit;
       font-weight: inherit;
       text-decoration: none;

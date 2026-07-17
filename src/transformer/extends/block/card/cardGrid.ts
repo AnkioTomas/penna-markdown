@@ -101,7 +101,7 @@ class CardGridBlockParser extends BaseBlockParser {
       .map((child) => ctx.renderBlock([child]))
       .join("\n");
 
-    return `<div class="cherry-card-grid"${renderGridStyle(cols)}${this.sourceLineAttrs(node)}>\n${items}\n</div>`;
+    return `<div class="penna-card-grid"${renderGridStyle(cols)}${this.sourceLineAttrs(node)}>\n${items}\n</div>`;
   }
 }
 

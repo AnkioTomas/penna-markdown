@@ -12,8 +12,8 @@ it("renders grouped menus without layout controls", () => {
   const eventBus = createTestEventBus();
   const toolbar = new Toolbar(mount, eventBus, {});
 
-  expect(mount.querySelector(".cherry-toolbar-scroll")).toBeTruthy();
-  expect(mount.querySelector(".cherry-toolbar-layout")).toBeFalsy();
+  expect(mount.querySelector(".penna-toolbar-scroll")).toBeTruthy();
+  expect(mount.querySelector(".penna-toolbar-layout")).toBeFalsy();
   expect(mount.querySelector('[data-toolbar-id="themeMenu"]')).toBeTruthy();
 
   toolbar.destroy();

@@ -1,6 +1,6 @@
 /**
  * HTML 属性追加命令。
- * 直接在选区后插入 Cherry 扩展属性块 `{.className}`，并选中 className 以便直接输入。
+ * 直接在选区后插入 Penna 扩展属性块 `{.className}`，并选中 className 以便直接输入。
  */
 import type { EditorView } from "@codemirror/view";
 import { EditorSelection } from "@codemirror/state";

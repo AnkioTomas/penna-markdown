@@ -13,7 +13,7 @@ dist-demo
 dist-ssr
 *.local
 
-# Cherry directories and files
+# Penna directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea

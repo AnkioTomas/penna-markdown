@@ -16,9 +16,9 @@ it("applies split layout on construction with stored ratio", () => {
   const storage = createMemoryStorage({ [SPLIT_STORAGE_KEY]: "0.5" });
   const { body, divider } = createDividerTree(storage, 1000, 200);
 
-  expect(body.classList.contains("cherry-body--split")).toBe(true);
-  expect(body.style.getPropertyValue("--cherry-editor-ratio")).toBe("5000");
-  expect(body.style.getPropertyValue("--cherry-preview-ratio")).toBe("5000");
+  expect(body.classList.contains("penna-body--split")).toBe(true);
+  expect(body.style.getPropertyValue("--penna-editor-ratio")).toBe("5000");
+  expect(body.style.getPropertyValue("--penna-preview-ratio")).toBe("5000");
   expect(divider.getSplit()).toBe(0.5);
 
   divider.destroy();

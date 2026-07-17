@@ -3,7 +3,7 @@
  */
 
 import { expect, it, vi } from "vitest";
-import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet.js";
+import type { PennaChangeLineSet } from "@/renderer/incremental/PennaChangeSet.js";
 import { parseWithHashBoundary } from "@/renderer/incremental/HashBoundaryResolver.js";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
 import { createJsdomRenderer as createRenderer } from "../helpers";
@@ -13,7 +13,7 @@ function fullDocLineChange(
   toA: number,
   fromB: number,
   toB: number,
-): CherryChangeLineSet {
+): PennaChangeLineSet {
   return {
     fromA,
     toA,

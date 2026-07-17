@@ -658,7 +658,7 @@ export const emojiCategories: Record<string, string[]> = {
     "worm",
     "microbe",
     "bouquet",
-    "cherry_blossom",
+    "penna_blossom",
     "white_flower",
     "lotus",
     "rosette",

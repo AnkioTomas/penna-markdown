@@ -12,5 +12,5 @@ it("falls back to plain GFM code when lang is empty", () => {
   const engine = () => createEnhancedEngine();
   const html = renderMarkdown(createEngine(), "```\nplain\n```");
   expect(html).toBe("<pre><code>plain\n</code></pre>\n");
-  expect(html).not.toContain("cherry-code-block");
+  expect(html).not.toContain("penna-code-block");
 });

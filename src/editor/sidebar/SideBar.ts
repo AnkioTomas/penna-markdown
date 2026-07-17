@@ -1,5 +1,5 @@
 import type { EventBus } from "@/core/event/EventBus";
-import type { SideBarOptions, CherryFileItem } from "./SideBarOptions";
+import type { SideBarOptions, PennaFileItem } from "./SideBarOptions";
 import type { TocItem } from "@/renderer/toc/TocItem.js";
 import type {
   PreviewRenderedPayload,
@@ -30,15 +30,15 @@ export class SideBar {
 
     // Create Tabs
     this.tabsEl = document.createElement("div");
-    this.tabsEl.className = "cherry-sidebar-tabs";
+    this.tabsEl.className = "penna-sidebar-tabs";
 
     const btnFile = document.createElement("button");
-    btnFile.className = "cherry-sidebar-tab";
+    btnFile.className = "penna-sidebar-tab";
     btnFile.textContent = "文件";
     btnFile.onclick = () => this.switchTab("file");
 
     const btnToc = document.createElement("button");
-    btnToc.className = "cherry-sidebar-tab";
+    btnToc.className = "penna-sidebar-tab";
     btnToc.textContent = "大纲";
     btnToc.onclick = () => this.switchTab("toc");
 
@@ -47,13 +47,13 @@ export class SideBar {
 
     // Panels
     const panelsEl = document.createElement("div");
-    panelsEl.className = "cherry-sidebar-panels";
+    panelsEl.className = "penna-sidebar-panels";
 
     this.filePanelEl = document.createElement("div");
-    this.filePanelEl.className = "cherry-sidebar-panel cherry-sidebar-file";
+    this.filePanelEl.className = "penna-sidebar-panel penna-sidebar-file";
 
     this.tocPanelEl = document.createElement("div");
-    this.tocPanelEl.className = "cherry-sidebar-panel cherry-sidebar-toc";
+    this.tocPanelEl.className = "penna-sidebar-panel penna-sidebar-toc";
 
     panelsEl.appendChild(this.filePanelEl);
     panelsEl.appendChild(this.tocPanelEl);
@@ -85,7 +85,7 @@ export class SideBar {
    * @param tab 要显示的侧边栏标签。
    */
   private switchTab(tab: "file" | "toc") {
-    const btns = this.tabsEl.querySelectorAll(".cherry-sidebar-tab");
+    const btns = this.tabsEl.querySelectorAll(".penna-sidebar-tab");
     btns[0]?.classList.toggle("is-active", tab === "file");
     btns[1]?.classList.toggle("is-active", tab === "toc");
 
@@ -97,13 +97,13 @@ export class SideBar {
   private async loadFiles() {
     if (!this.options.fetchFiles) return;
     this.filePanelEl.innerHTML =
-      '<div class="cherry-sidebar-loading">加载中...</div>';
+      '<div class="penna-sidebar-loading">加载中...</div>';
     try {
       const files = await this.options.fetchFiles();
       this.renderFiles(files);
     } catch (e) {
       this.filePanelEl.innerHTML =
-        '<div class="cherry-sidebar-error">加载失败</div>';
+        '<div class="penna-sidebar-error">加载失败</div>';
     }
   }
 
@@ -112,11 +112,11 @@ export class SideBar {
    *
    * @param files 要显示的文件元数据列表。
    */
-  private renderFiles(files: CherryFileItem[]) {
+  private renderFiles(files: PennaFileItem[]) {
     this.filePanelEl.replaceChildren();
     for (const file of files) {
       const itemEl = document.createElement("div");
-      itemEl.className = "cherry-file-item";
+      itemEl.className = "penna-file-item";
       itemEl.dataset.fileId = file.id;
       if (file.id === this.activeFileId) {
         itemEl.classList.add("is-active");
@@ -127,21 +127,21 @@ export class SideBar {
       };
 
       const topEl = document.createElement("div");
-      topEl.className = "cherry-file-top";
+      topEl.className = "penna-file-top";
 
       const titleEl = document.createElement("div");
-      titleEl.className = "cherry-file-title";
+      titleEl.className = "penna-file-title";
       titleEl.textContent = file.title;
 
       const timeEl = document.createElement("div");
-      timeEl.className = "cherry-file-time";
+      timeEl.className = "penna-file-time";
       timeEl.textContent = file.updateTime;
 
       topEl.appendChild(titleEl);
       topEl.appendChild(timeEl);
 
       const summaryEl = document.createElement("div");
-      summaryEl.className = "cherry-file-summary";
+      summaryEl.className = "penna-file-summary";
       summaryEl.textContent = file.summary;
 
       itemEl.appendChild(topEl);
@@ -160,13 +160,13 @@ export class SideBar {
 
     if (toc.length === 0) {
       this.tocPanelEl.innerHTML =
-        '<div class="cherry-sidebar-empty">暂无大纲</div>';
+        '<div class="penna-sidebar-empty">暂无大纲</div>';
       return;
     }
 
     const renderNode = (item: TocItem, parentEl: HTMLElement) => {
       const el = document.createElement("div");
-      el.className = "cherry-toc-item";
+      el.className = "penna-toc-item";
       el.style.paddingLeft = `${(item.level - 1) * 12 + 16}px`;
       el.textContent = item.text;
 
@@ -195,7 +195,7 @@ export class SideBar {
   setActiveFile(fileId: string): void {
     this.activeFileId = fileId;
     for (const el of this.filePanelEl.querySelectorAll<HTMLElement>(
-      ".cherry-file-item",
+      ".penna-file-item",
     )) {
       el.classList.toggle("is-active", el.dataset.fileId === fileId);
     }

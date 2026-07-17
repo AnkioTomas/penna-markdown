@@ -139,30 +139,30 @@ $claude-dark-mark-mix: 100%;
     $bg-opacity: picks.pick-bg-opacity($is-dark, 10%, 8%);
     $border-opacity: picks.pick-border-opacity($is-dark, 22%, 18%);
 
-    --cherry-c-#{$name}: #{$base-color};
+    --penna-c-#{$name}: #{$base-color};
     @if $is-dark {
-      --cherry-c-#{$name}-mark: color-mix(
+      --penna-c-#{$name}-mark: color-mix(
         in srgb,
         #{$mark-color} #{$claude-dark-mark-mix},
         #{$surface}
       );
     } @else {
-      --cherry-c-#{$name}-mark: #{$mark-color};
+      --penna-c-#{$name}-mark: #{$mark-color};
     }
 
-    --cherry-c-#{$name}-on-bg: color-mix(
+    --penna-c-#{$name}-on-bg: color-mix(
       in srgb,
       #{$base-color} 16%,
       #{$contrast-color}
     );
 
-    --cherry-c-alert-#{$name}-text: #{$base-color};
-    --cherry-c-alert-#{$name}-bg: color-mix(
+    --penna-c-alert-#{$name}-text: #{$base-color};
+    --penna-c-alert-#{$name}-bg: color-mix(
       in srgb,
       #{$base-color} #{$bg-opacity},
       transparent
     );
-    --cherry-c-alert-#{$name}-border: color-mix(
+    --penna-c-alert-#{$name}-border: color-mix(
       in srgb,
       #{$base-color} #{$border-opacity},
       transparent
@@ -175,78 +175,78 @@ $claude-dark-mark-mix: 100%;
   $border-faint: claude-border-faint($is-dark);
   $code-inline-bg: claude-code-inline-bg($is-dark);
 
-  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
-  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
-  --cherry-c-image-card-info-bg: linear-gradient(
+  --penna-c-image-card-info-fg: var(--penna-c-contrast-light);
+  --penna-c-image-card-scrim: var(--penna-c-contrast-dark);
+  --penna-c-image-card-info-bg: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 40%, transparent) 55%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 65%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 40%, transparent) 55%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 65%, transparent) 100%
   );
-  --cherry-c-image-card-info-bg-hover: linear-gradient(
+  --penna-c-image-card-info-bg-hover: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 50%, transparent) 35%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 75%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 50%, transparent) 35%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 75%, transparent) 100%
   );
 
-  --cherry-c-media-player-bg: var(--cherry-c-bg);
-  --cherry-c-media-shade: var(--cherry-c-bg);
-  --cherry-c-on-brand: #fff;
+  --penna-c-media-player-bg: var(--penna-c-bg);
+  --penna-c-media-shade: var(--penna-c-bg);
+  --penna-c-on-brand: #fff;
 
-  --cherry-c-code-inline-bg: #{$code-inline-bg};
-  --cherry-c-code-inline-fg: var(--cherry-c-code-fg);
-  --cherry-c-code-inline-border: transparent;
+  --penna-c-code-inline-bg: #{$code-inline-bg};
+  --penna-c-code-inline-fg: var(--penna-c-code-fg);
+  --penna-c-code-inline-border: transparent;
 
-  --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
-  --cherry-c-code-block-code-bg: var(--cherry-c-bg);
-  --cherry-c-code-block-shadow: none;
+  --penna-c-code-block-header-bg: var(--penna-c-bg-elevated);
+  --penna-c-code-block-code-bg: var(--penna-c-bg);
+  --penna-c-code-block-shadow: none;
 
-  --cherry-c-table-th-border: #{$border-soft};
-  --cherry-c-table-td-border: #{$border-faint};
-  --cherry-c-hr-color: #{$border-faint};
-  --cherry-c-blockquote-border: #{$border-soft};
+  --penna-c-table-th-border: #{$border-soft};
+  --penna-c-table-td-border: #{$border-faint};
+  --penna-c-hr-color: #{$border-faint};
+  --penna-c-blockquote-border: #{$border-soft};
 }
 
 @mixin theme-light {
   @include typography-tokens;
 
-  --cherry-c-brand-1: #{$claude-clay};
-  --cherry-c-brand-2: #{$claude-clay-hover};
-  --cherry-c-brand-3: #{$claude-clay};
-  --cherry-c-brand-soft: #{$claude-clay-soft};
-  --cherry-c-brand-on-bg: #{$claude-ink};
+  --penna-c-brand-1: #{$claude-clay};
+  --penna-c-brand-2: #{$claude-clay-hover};
+  --penna-c-brand-3: #{$claude-clay};
+  --penna-c-brand-soft: #{$claude-clay-soft};
+  --penna-c-brand-on-bg: #{$claude-ink};
 
-  --cherry-c-text-1: #{$claude-ink};
-  --cherry-c-text-2: #{$claude-ink-soft};
-  --cherry-c-text-3: #{$claude-muted};
+  --penna-c-text-1: #{$claude-ink};
+  --penna-c-text-2: #{$claude-ink-soft};
+  --penna-c-text-3: #{$claude-muted};
 
-  --cherry-c-bg: #{$claude-ivory};
-  --cherry-c-bg-elevated: #{$claude-ivory-medium};
+  --penna-c-bg: #{$claude-ivory};
+  --penna-c-bg-elevated: #{$claude-ivory-medium};
 
-  --cherry-c-contrast-light: #fff;
-  --cherry-c-contrast-dark: #000;
+  --penna-c-contrast-light: #fff;
+  --penna-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #{$claude-mark};
-  --cherry-c-code-fg: #{$claude-code-light};
-  --cherry-c-border-soft: #{color-mix(
+  --penna-c-brand-mark: #{$claude-mark};
+  --penna-c-code-fg: #{$claude-code-light};
+  --penna-c-border-soft: #{color-mix(
       in srgb,
       #{$claude-linen} 85%,
       transparent
     )};
-  --cherry-c-border-faint: #{color-mix(
+  --penna-c-border-faint: #{color-mix(
       in srgb,
       #{$claude-linen} 55%,
       transparent
     )};
 
-  --cherry-c-hljs-keyword: #8a2424;
-  --cherry-c-hljs-string: #6b5a2d;
-  --cherry-c-hljs-number: #ad7837;
-  --cherry-c-hljs-title: #5d4e37;
-  --cherry-c-hljs-attr: #3d3d3a;
-  --cherry-c-hljs-comment: var(--cherry-c-text-3);
-  --cherry-c-hljs-bg: transparent;
+  --penna-c-hljs-keyword: #8a2424;
+  --penna-c-hljs-string: #6b5a2d;
+  --penna-c-hljs-number: #ad7837;
+  --penna-c-hljs-title: #5d4e37;
+  --penna-c-hljs-attr: #3d3d3a;
+  --penna-c-hljs-comment: var(--penna-c-text-3);
+  --penna-c-hljs-bg: transparent;
 
   @include generate-semantic-suite($claude-light-semantics, false);
   @include component-tokens(false);
@@ -255,42 +255,42 @@ $claude-dark-mark-mix: 100%;
 @mixin theme-dark {
   @include typography-tokens;
 
-  --cherry-c-brand-1: #{$claude-clay};
-  --cherry-c-brand-2: #e6987d;
-  --cherry-c-brand-3: #{$claude-clay};
-  --cherry-c-brand-soft: rgba(217, 119, 87, 0.16);
-  --cherry-c-brand-on-bg: #{$claude-dark-text};
+  --penna-c-brand-1: #{$claude-clay};
+  --penna-c-brand-2: #e6987d;
+  --penna-c-brand-3: #{$claude-clay};
+  --penna-c-brand-soft: rgba(217, 119, 87, 0.16);
+  --penna-c-brand-on-bg: #{$claude-dark-text};
 
-  --cherry-c-text-1: #{$claude-dark-text};
-  --cherry-c-text-2: #{$claude-dark-text-soft};
-  --cherry-c-text-3: #{$claude-dark-muted};
+  --penna-c-text-1: #{$claude-dark-text};
+  --penna-c-text-2: #{$claude-dark-text-soft};
+  --penna-c-text-3: #{$claude-dark-muted};
 
-  --cherry-c-bg: #{$claude-dark-canvas};
-  --cherry-c-bg-elevated: #{$claude-dark-surface};
+  --penna-c-bg: #{$claude-dark-canvas};
+  --penna-c-bg-elevated: #{$claude-dark-surface};
 
-  --cherry-c-contrast-light: #fff;
-  --cherry-c-contrast-dark: #000;
+  --penna-c-contrast-light: #fff;
+  --penna-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #{$claude-mark};
-  --cherry-c-code-fg: #{$claude-code-dark};
-  --cherry-c-border-soft: #{color-mix(
+  --penna-c-brand-mark: #{$claude-mark};
+  --penna-c-code-fg: #{$claude-code-dark};
+  --penna-c-border-soft: #{color-mix(
       in srgb,
       #{$claude-linen} 24%,
       transparent
     )};
-  --cherry-c-border-faint: #{color-mix(
+  --penna-c-border-faint: #{color-mix(
       in srgb,
       #{$claude-linen} 12%,
       transparent
     )};
 
-  --cherry-c-hljs-keyword: #fe8181;
-  --cherry-c-hljs-string: #d4b06d;
-  --cherry-c-hljs-number: #e6987d;
-  --cherry-c-hljs-title: #c2c0b6;
-  --cherry-c-hljs-attr: #faf9f5;
-  --cherry-c-hljs-comment: var(--cherry-c-text-3);
-  --cherry-c-hljs-bg: transparent;
+  --penna-c-hljs-keyword: #fe8181;
+  --penna-c-hljs-string: #d4b06d;
+  --penna-c-hljs-number: #e6987d;
+  --penna-c-hljs-title: #c2c0b6;
+  --penna-c-hljs-attr: #faf9f5;
+  --penna-c-hljs-comment: var(--penna-c-text-3);
+  --penna-c-hljs-bg: transparent;
 
   @include generate-semantic-suite($claude-dark-semantics, true);
   @include component-tokens(true);

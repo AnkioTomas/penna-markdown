@@ -6,8 +6,8 @@
  *
  * | 选择器 | 行为 |
  * | ------ | ---- |
- * | `button.cherry-copy-code-button` | 复制 `code[data-cherry-code]` 文本 |
- * | `button.cherry-code-block__expand` | 切换 `.cherry-code-block__panel--collapsed` |
+ * | `button.penna-copy-code-button` | 复制 `code[data-penna-code]` 文本 |
+ * | `button.penna-code-block__expand` | 切换 `.penna-code-block__panel--collapsed` |
  *
  * 委托绑定在 mount 上，增量 reconcile 替换子节点后无需重新挂载监听。
  *
@@ -35,14 +35,14 @@ export class CodeListener {
   private onClick(e: MouseEvent) {
     const target = e.target as HTMLElement;
 
-    const expand = target.closest("button.cherry-code-block__expand");
+    const expand = target.closest("button.penna-code-block__expand");
     if (expand) {
       e.preventDefault();
       this.handleExpand(expand as HTMLButtonElement);
       return;
     }
 
-    const copy = target.closest("button.cherry-copy-code-button");
+    const copy = target.closest("button.penna-copy-code-button");
     if (copy) {
       this.handleCopy(copy as HTMLButtonElement);
       return;
@@ -50,15 +50,15 @@ export class CodeListener {
   }
 
   /**
-   * 复制同 panel 内 `code[data-cherry-code]` 的 `textContent`。
+   * 复制同 panel 内 `code[data-penna-code]` 的 `textContent`。
    *
    * 成功后切换 `is-copied` 与 `aria-label`，2s 后恢复。
    */
   async handleCopy(btn: HTMLButtonElement) {
     const doc = btn.ownerDocument;
-    const panel = btn.closest(".cherry-code-block__panel");
+    const panel = btn.closest(".penna-code-block__panel");
     if (!panel) return;
-    const codeEl = panel.querySelector<HTMLElement>("code[data-cherry-code]");
+    const codeEl = panel.querySelector<HTMLElement>("code[data-penna-code]");
     if (!codeEl) return;
     const code = codeEl.textContent;
 
@@ -81,17 +81,17 @@ export class CodeListener {
   }
 
   /**
-   * 切换可折叠代码块 `.cherry-code-block__panel--collapsed`。
+   * 切换可折叠代码块 `.penna-code-block__panel--collapsed`。
    *
-   * 同步 `aria-expanded` 与 `.cherry-code-block__expand-label` 文案。
+   * 同步 `aria-expanded` 与 `.penna-code-block__expand-label` 文案。
    */
   handleExpand(btn: HTMLButtonElement) {
-    const panel = btn.closest(".cherry-code-block__panel--collapsible");
+    const panel = btn.closest(".penna-code-block__panel--collapsible");
     if (!panel) return;
 
-    const label = btn.querySelector(".cherry-code-block__expand-label");
+    const label = btn.querySelector(".penna-code-block__expand-label");
     const isCollapsed = panel.classList.toggle(
-      "cherry-code-block__panel--collapsed",
+      "penna-code-block__panel--collapsed",
     );
     btn.setAttribute("aria-expanded", isCollapsed ? "false" : "true");
     if (label) {

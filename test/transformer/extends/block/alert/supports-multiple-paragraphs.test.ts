@@ -38,13 +38,13 @@ function alertMarkdown(type: string, body: string) {
 }
 
 function alertHtml(type: string, title: string, body: string) {
-  return `<div class="cherry-alert cherry-alert--${type}">\n<p class="cherry-alert__title">${title}</p>\n<p>${body}</p>\n</div>\n`;
+  return `<div class="penna-alert penna-alert--${type}">\n<p class="penna-alert__title">${title}</p>\n<p>${body}</p>\n</div>\n`;
 }
 
 it("supports multiple paragraphs", () => {
   const engine = createEngine();
   const md = "> [!TIP]\n> First paragraph\n>\n> Second paragraph\n";
   expect(renderMarkdown(engine, md)).toBe(
-    `<div class="cherry-alert cherry-alert--tip">\n<p class="cherry-alert__title">Tip</p>\n<p>First paragraph</p>\n<p>Second paragraph</p>\n</div>\n`,
+    `<div class="penna-alert penna-alert--tip">\n<p class="penna-alert__title">Tip</p>\n<p>First paragraph</p>\n<p>Second paragraph</p>\n</div>\n`,
   );
 });

@@ -1,5 +1,5 @@
 /**
- * @file 块级语法拓展：Cherry 容器面板
+ * @file 块级语法拓展：Penna 容器面板
  * @module transformer/extends/block/container
  *
  * 语法示例：
@@ -156,11 +156,11 @@ class ContainerBlockParser extends BaseBlockParser {
 
     if (ALIGN_TYPES.has(containerType)) {
       const parts = [
-        `<div class="cherry-align cherry-align--${escapeHtml(containerType)}"${this.sourceLineAttrs(node)}>`,
+        `<div class="penna-align penna-align--${escapeHtml(containerType)}"${this.sourceLineAttrs(node)}>`,
       ];
       if (title) {
         parts.push(
-          `<p class="cherry-align__title">${ctx.renderInline(titleNodes)}</p>`,
+          `<p class="penna-align__title">${ctx.renderInline(titleNodes)}</p>`,
         );
       }
       if (body) parts.push(body);
@@ -170,11 +170,11 @@ class ContainerBlockParser extends BaseBlockParser {
 
     const themeType = THEME_TYPES.has(containerType) ? containerType : "note";
     const parts = [
-      `<div class="cherry-alert cherry-alert--${escapeHtml(themeType)}"${this.sourceLineAttrs(node)}>`,
+      `<div class="penna-alert penna-alert--${escapeHtml(themeType)}"${this.sourceLineAttrs(node)}>`,
     ];
     if (title) {
       parts.push(
-        `<p class="cherry-alert__title">${ctx.renderInline(titleNodes)}</p>`,
+        `<p class="penna-alert__title">${ctx.renderInline(titleNodes)}</p>`,
       );
     }
     if (body) parts.push(body);

@@ -53,7 +53,7 @@ class BadgeInlineParser extends BaseInlineParser {
 
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext) {
-    return `<span class="cherry-badge">${escapeHtml(node.value ?? "")}</span>`;
+    return `<span class="penna-badge">${escapeHtml(node.value ?? "")}</span>`;
   }
 }
 

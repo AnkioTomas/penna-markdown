@@ -1,28 +1,28 @@
 <p align="center">
-  <img src="https://socialify.git.ci/AnkioTomas/cherry-markdown-next/image?description=1&font=Source%20Code%20Pro&forks=1&issues=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2FAnkioTomas%2Fcherry-markdown-next%2Fmain%2Flogo%2Fandroid-chrome-512x512.png&name=1&pattern=Floating%20Cogs&pulls=1&stargazers=1&theme=Auto" alt="Cherry Markdown Next" width="640" height="320" />
+  <img src="https://socialify.git.ci/AnkioTomas/penna-markdown/image?description=1&font=Source%20Code%20Pro&forks=1&issues=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2FAnkioTomas%2Fpenna-markdown%2Fmain%2Flogo%2Fandroid-chrome-512x512.png&name=1&pattern=Floating%20Cogs&pulls=1&stargazers=1&theme=Auto" alt="Penna Markdown" width="640" height="320" />
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/cherry-markdown-next"><img src="https://img.shields.io/npm/v/cherry-markdown-next.svg?style=flat-square" alt="npm version" /></a>
-  <a href="https://www.npmjs.com/package/cherry-markdown-next"><img src="https://img.shields.io/npm/dm/cherry-markdown-next.svg?style=flat-square" alt="npm downloads" /></a>
-  <a href="https://www.npmjs.com/package/cherry-markdown-next"><img src="https://img.shields.io/npm/l/cherry-markdown-next.svg?style=flat-square" alt="license" /></a>
-  <a href="https://github.com/AnkioTomas/cherry-markdown-next/stargazers"><img src="https://img.shields.io/github/stars/AnkioTomas/cherry-markdown-next.svg?style=flat-square" alt="GitHub stars" /></a>
-  <a href="https://github.com/AnkioTomas/cherry-markdown-next/issues"><img src="https://img.shields.io/github/issues/AnkioTomas/cherry-markdown-next.svg?style=flat-square" alt="GitHub issues" /></a>
+  <a href="https://www.npmjs.com/package/penna-markdown"><img src="https://img.shields.io/npm/v/penna-markdown.svg?style=flat-square" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/penna-markdown"><img src="https://img.shields.io/npm/dm/penna-markdown.svg?style=flat-square" alt="npm downloads" /></a>
+  <a href="https://www.npmjs.com/package/penna-markdown"><img src="https://img.shields.io/npm/l/penna-markdown.svg?style=flat-square" alt="license" /></a>
+  <a href="https://github.com/AnkioTomas/penna-markdown/stargazers"><img src="https://img.shields.io/github/stars/AnkioTomas/penna-markdown.svg?style=flat-square" alt="GitHub stars" /></a>
+  <a href="https://github.com/AnkioTomas/penna-markdown/issues"><img src="https://img.shields.io/github/issues/AnkioTomas/penna-markdown.svg?style=flat-square" alt="GitHub issues" /></a>
 </p>
 
-浏览器端 Markdown **编辑 + 渲染** 套件：GFM 标准语法，加上 Alert、容器、卡片、公式、Mermaid/ECharts 等 Cherry 扩展；编辑时走增量预览。
+浏览器端 Markdown **编辑 + 渲染** 套件：GFM 标准语法，加上 Alert、容器、卡片、公式、Mermaid/ECharts 等 Penna 扩展；编辑时走增量预览。
 
-| 包入口                             | 职责                                        |
-| ---------------------------------- | ------------------------------------------- |
-| `cherry-markdown-next`             | 完整编辑器（工具栏 / 侧栏 / 编辑区 / 预览） |
-| `cherry-markdown-next/renderer`    | Markdown → DOM（增量更新）                  |
-| `cherry-markdown-next/transformer` | Markdown → AST → HTML 字符串                |
+| 包入口                       | 职责                                        |
+| ---------------------------- | ------------------------------------------- |
+| `penna-markdown`             | 完整编辑器（工具栏 / 侧栏 / 编辑区 / 预览） |
+| `penna-markdown/renderer`    | Markdown → DOM（增量更新）                  |
+| `penna-markdown/transformer` | Markdown → AST → HTML 字符串                |
 
-仓库：[AnkioTomas/cherry-markdown-next](https://github.com/AnkioTomas/cherry-markdown-next)
+仓库：[AnkioTomas/penna-markdown](https://github.com/AnkioTomas/penna-markdown)
 
 ## 特性
 
-- **GFM + Cherry 扩展**：高亮、剧透、徽章、Tabs/Steps/Timeline、卡片体系等
+- **GFM + Penna 扩展**：高亮、剧透、徽章、Tabs/Steps/Timeline、卡片体系等
 - **三入口分包**：编辑器 / 渲染器 / 转换器可单独引用
 - **增量预览**：脏块更新，失败自动全量兜底
 - **主题**：`default` / `claude` / `github` / `morandi` / `latex` / `vue` / `notion`
@@ -32,7 +32,7 @@
 ## 安装
 
 ```bash
-pnpm add cherry-markdown-next
+pnpm add penna-markdown
 ```
 
 ## 快速开始
@@ -43,23 +43,23 @@ pnpm add cherry-markdown-next
 <div id="editor" style="height: 100vh"></div>
 <link
   rel="stylesheet"
-  href="node_modules/cherry-markdown-next/dist/cherry-editor-base.min.css"
+  href="node_modules/penna-markdown/dist/penna-editor-base.min.css"
 />
 <link
   rel="stylesheet"
-  href="node_modules/cherry-markdown-next/dist/cherry-render.min.css"
+  href="node_modules/penna-markdown/dist/penna-render.min.css"
 />
-<!-- 可选皮肤（非 default）：再引入 cherry-theme-{id}-editor/render.min.css -->
+<!-- 可选皮肤（非 default）：再引入 penna-theme-{id}-editor/render.min.css -->
 ```
 
 ```typescript
-import { Cherry } from "cherry-markdown-next";
+import { Penna } from "penna-markdown";
 
-const cherry = new Cherry(document.getElementById("editor")!, {
+const penna = new Penna(document.getElementById("editor")!, {
   themeId: "default",
   layout: "split",
   editor: {
-    value: "# Hello\n\n**Cherry Markdown Next**",
+    value: "# Hello\n\n**Penna Markdown**",
   },
 });
 ```
@@ -67,7 +67,7 @@ const cherry = new Cherry(document.getElementById("editor")!, {
 ### 只要 AST / HTML
 
 ```typescript
-import { TransformerEngine } from "cherry-markdown-next/transformer";
+import { TransformerEngine } from "penna-markdown/transformer";
 
 const engine = new TransformerEngine();
 const ast = engine.parse("# Hello\n\n**world**");
@@ -78,7 +78,7 @@ const html = engine.render(ast);
 
 ## 文档与演示
 
-- 项目文档：[`docs/`](docs/)（用 Cherry 语法编写，可在 Demo「文档预览」中阅读）
+- 项目文档：[`docs/`](docs/)（用 Penna 语法编写，可在 Demo「文档预览」中阅读）
 - 语法活样例：[`docs/simple.md`](docs/simple.md)
 - 本地演示站：
 

@@ -1,9 +1,9 @@
-.cherry-toolbar {
+.penna-toolbar {
   display: flex;
   align-items: stretch;
-  background: var(--cherry-c-bg);
+  background: var(--penna-c-bg);
   border-bottom: 1px solid
-    color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
+    color-mix(in srgb, var(--penna-c-text-3) 15%, transparent);
   flex-shrink: 0;
   min-height: 0;
   position: relative;
@@ -11,7 +11,7 @@
   overflow: visible;
 }
 
-.cherry-toolbar-scroll {
+.penna-toolbar-scroll {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -22,14 +22,14 @@
   overflow: visible;
 }
 
-.cherry-toolbar-group {
+.penna-toolbar-group {
   display: flex;
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
 }
 
-.cherry-toolbar-group + .cherry-toolbar-group {
+.penna-toolbar-group + .penna-toolbar-group {
   margin-left: 6px;
   padding-left: 10px;
   position: relative;
@@ -41,11 +41,11 @@
     top: 15%;
     bottom: 15%;
     width: 1px;
-    background: color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
+    background: color-mix(in srgb, var(--penna-c-text-3) 15%, transparent);
   }
 }
 
-.cherry-toolbar-layout {
+.penna-toolbar-layout {
   margin-left: auto;
   position: sticky;
   right: 0;
@@ -54,7 +54,7 @@
   z-index: 1;
 }
 
-.cherry-toolbar-btn {
+.penna-toolbar-btn {
   min-width: 36px;
   height: 36px;
   padding: 0 10px;
@@ -64,7 +64,7 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  color: var(--cherry-c-text-2);
+  color: var(--penna-c-text-2);
   line-height: 1.2;
   white-space: nowrap;
   flex-shrink: 0;
@@ -74,60 +74,60 @@
   gap: 6px;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
-  .cherry-toolbar-icon,
+  .penna-toolbar-icon,
   svg {
     flex-shrink: 0;
     opacity: 0.88;
     transition: opacity 0.2s;
   }
 
-  .cherry-toolbar-btn-label {
+  .penna-toolbar-btn-label {
     line-height: 1.2;
   }
 }
 
-.cherry-toolbar-btn:hover,
-.cherry-toolbar-menu-trigger[aria-expanded="true"] {
-  background: color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
-  color: var(--cherry-c-text-1);
+.penna-toolbar-btn:hover,
+.penna-toolbar-menu-trigger[aria-expanded="true"] {
+  background: color-mix(in srgb, var(--penna-c-text-3) 12%, transparent);
+  color: var(--penna-c-text-1);
   transform: scale(1.03);
 
-  .cherry-toolbar-icon,
+  .penna-toolbar-icon,
   svg {
     opacity: 1;
   }
 }
 
-.cherry-toolbar-btn:active {
+.penna-toolbar-btn:active {
   transform: scale(0.95);
 }
 
-.cherry-toolbar-layout-btn.is-active {
-  background: color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
-  color: var(--cherry-c-brand-1);
+.penna-toolbar-layout-btn.is-active {
+  background: color-mix(in srgb, var(--penna-c-brand-1) 15%, transparent);
+  color: var(--penna-c-brand-1);
   box-shadow: inset 0 0 0 1px
-    color-mix(in srgb, var(--cherry-c-brand-1) 30%, transparent);
+    color-mix(in srgb, var(--penna-c-brand-1) 30%, transparent);
 
   &:hover {
-    background: color-mix(in srgb, var(--cherry-c-brand-1) 20%, transparent);
+    background: color-mix(in srgb, var(--penna-c-brand-1) 20%, transparent);
   }
 }
 
-.cherry-toolbar-sep {
+.penna-toolbar-sep {
   width: 1px;
   height: 16px;
   margin: 0 4px;
-  background: color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
+  background: color-mix(in srgb, var(--penna-c-text-3) 15%, transparent);
   flex-shrink: 0;
 }
 
-.cherry-toolbar-menu,
-.cherry-toolbar-submenu {
+.penna-toolbar-menu,
+.penna-toolbar-submenu {
   position: relative;
   flex-shrink: 0;
 }
 
-.cherry-toolbar-menu-caret {
+.penna-toolbar-menu-caret {
   font-size: 8px;
   opacity: 0.5;
   line-height: 1;
@@ -139,17 +139,17 @@
   }
 }
 
-.cherry-toolbar-menu.is-open
-  > .cherry-toolbar-menu-trigger
-  > .cherry-toolbar-menu-caret {
+.penna-toolbar-menu.is-open
+  > .penna-toolbar-menu-trigger
+  > .penna-toolbar-menu-caret {
   transform: rotate(180deg);
 }
 
-.cherry-toolbar-submenu .cherry-toolbar-menu-caret::after {
+.penna-toolbar-submenu .penna-toolbar-menu-caret::after {
   content: "▸";
 }
 
-.cherry-toolbar-menu-panel {
+.penna-toolbar-menu-panel {
   display: none;
   position: absolute;
   top: calc(100% + 6px);
@@ -160,10 +160,10 @@
   max-width: calc(100vw - 16px);
   padding: 8px;
   border-radius: 12px;
-  background: var(--cherry-c-bg-elevated);
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent);
+  background: var(--penna-c-bg-elevated);
+  border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 20%, transparent);
   box-shadow: 0 4px 16px -4px
-    color-mix(in srgb, var(--cherry-c-text-1) 12%, transparent);
+    color-mix(in srgb, var(--penna-c-text-1) 12%, transparent);
 
   /* Animation base */
   opacity: 0;
@@ -174,7 +174,7 @@
   pointer-events: none;
 }
 
-.cherry-toolbar-submenu .cherry-toolbar-menu-panel {
+.penna-toolbar-submenu .penna-toolbar-menu-panel {
   transform: translateX(-8px) scale(0.96);
   top: -6px;
   left: 100%;
@@ -182,12 +182,12 @@
 }
 
 /* Dynamic flipped state from JS */
-.cherry-toolbar-menu-panel.is-flipped {
+.penna-toolbar-menu-panel.is-flipped {
   left: auto;
   right: 0;
 }
 
-.cherry-toolbar-submenu > .cherry-toolbar-menu-panel.is-flipped {
+.penna-toolbar-submenu > .penna-toolbar-menu-panel.is-flipped {
   left: auto;
   right: 100%;
   margin-left: 0;
@@ -196,7 +196,7 @@
 }
 
 /* Click-to-open for top level menus */
-.cherry-toolbar-menu.is-open > .cherry-toolbar-menu-panel {
+.penna-toolbar-menu.is-open > .penna-toolbar-menu-panel {
   display: flex;
   opacity: 1;
   transform: translateY(0) scale(1);
@@ -204,31 +204,31 @@
 }
 
 /* JS state controlled opening for submenus */
-.cherry-toolbar-submenu.is-open > .cherry-toolbar-menu-panel {
+.penna-toolbar-submenu.is-open > .penna-toolbar-menu-panel {
   display: flex;
   opacity: 1;
   transform: translateX(0) scale(1);
   pointer-events: auto;
 }
 
-.cherry-toolbar-submenu.is-open > .cherry-toolbar-menu-panel.is-flipped {
+.penna-toolbar-submenu.is-open > .penna-toolbar-menu-panel.is-flipped {
   transform: translateX(0) scale(1);
 }
 
-.cherry-toolbar-menu-header {
+.penna-toolbar-menu-header {
   padding: 6px 10px;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: color-mix(in srgb, var(--cherry-c-text-3) 80%, transparent);
+  color: color-mix(in srgb, var(--penna-c-text-3) 80%, transparent);
   margin-bottom: 4px;
   border-bottom: 1px solid
-    color-mix(in srgb, var(--cherry-c-text-3) 10%, transparent);
+    color-mix(in srgb, var(--penna-c-text-3) 10%, transparent);
   user-select: none;
 }
 
-.cherry-toolbar-menu-item {
+.penna-toolbar-menu-item {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -241,30 +241,30 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  color: var(--cherry-c-text-2);
+  color: var(--penna-c-text-2);
   text-align: left;
   white-space: nowrap;
   transition: all 0.15s ease;
 
-  .cherry-toolbar-icon,
+  .penna-toolbar-icon,
   svg {
     flex-shrink: 0;
     opacity: 0.9;
   }
 
-  .cherry-toolbar-btn-label {
+  .penna-toolbar-btn-label {
     flex: 1;
     min-width: 0;
   }
 }
 
-.cherry-toolbar-menu-trigger {
+.penna-toolbar-menu-trigger {
   justify-content: flex-start;
   gap: 6px;
   padding: 0 12px;
 }
 
-.cherry-toolbar-menu-trigger--nested {
+.penna-toolbar-menu-trigger--nested {
   width: 100%;
   justify-content: flex-start;
   gap: 10px;
@@ -273,62 +273,62 @@
   height: auto;
   border-radius: 8px;
 
-  .cherry-toolbar-btn-label {
+  .penna-toolbar-btn-label {
     flex: 1;
     text-align: left;
   }
 }
 
-.cherry-toolbar-menu-item:hover {
-  background: color-mix(in srgb, var(--cherry-c-brand-1) 12%, transparent);
-  color: var(--cherry-c-brand-1);
+.penna-toolbar-menu-item:hover {
+  background: color-mix(in srgb, var(--penna-c-brand-1) 12%, transparent);
+  color: var(--penna-c-brand-1);
 
-  .cherry-toolbar-icon,
+  .penna-toolbar-icon,
   svg {
     opacity: 1;
   }
 }
 
-.cherry-toolbar-menu-sep {
+.penna-toolbar-menu-sep {
   display: block;
   height: 1px;
   margin: 6px;
-  background: color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
+  background: color-mix(in srgb, var(--penna-c-text-3) 12%, transparent);
 }
 
-.cherry-toolbar-overflow-menu {
+.penna-toolbar-overflow-menu {
   display: none;
 }
 
 @media (max-width: 640px) {
-  .cherry-toolbar-scroll {
+  .penna-toolbar-scroll {
     padding: 6px 8px;
     gap: 2px;
   }
 
-  .cherry-toolbar-btn {
+  .penna-toolbar-btn {
     min-width: 36px;
     height: 36px;
     font-size: 14px;
   }
 
-  .cherry-toolbar-menu-item {
+  .penna-toolbar-menu-item {
     min-height: 40px;
     padding: 10px 12px;
   }
 
-  .cherry-toolbar-menu-panel {
+  .penna-toolbar-menu-panel {
     max-height: calc(100vh - 80px);
     overflow-y: auto;
     overscroll-behavior: contain;
   }
 
-  .cherry-toolbar-submenu {
+  .penna-toolbar-submenu {
     display: flex;
     flex-direction: column;
   }
 
-  .cherry-toolbar-submenu .cherry-toolbar-menu-panel {
+  .penna-toolbar-submenu .penna-toolbar-menu-panel {
     position: static;
     transform: none !important;
     box-shadow: none;
@@ -342,11 +342,11 @@
     overflow-y: visible;
   }
 
-  .cherry-toolbar-desktop-only {
+  .penna-toolbar-desktop-only {
     display: none !important;
   }
 
-  .cherry-toolbar-overflow-menu {
+  .penna-toolbar-overflow-menu {
     display: block;
   }
 }

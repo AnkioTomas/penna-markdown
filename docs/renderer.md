@@ -34,7 +34,7 @@ import { createDemoTheme } from "../../_common/theme.js"; // demo 封装
 
 const mount = document.getElementById("preview")!;
 const kit = createDemoTheme(mount.parentElement!);
-mount.classList.add("cherry-render");
+mount.classList.add("penna-render");
 
 const renderer = new Renderer({
   mount,
@@ -50,7 +50,7 @@ renderer.render("# Hello\n\n**world**");
 npm 包入口为：
 
 ```typescript
-import { Renderer } from "cherry-markdown-next/renderer";
+import { Renderer } from "penna-markdown/renderer";
 ```
 
 `Theme` / `EventBus` / `Log` 在源码中位于 `src/theme`、`src/core`；发布包目前以编辑器入口内聚最完整，只读场景建议参考 demo 组装方式。
@@ -60,7 +60,7 @@ import { Renderer } from "cherry-markdown-next/renderer";
 ```html
 <link
   rel="stylesheet"
-  href="cherry-markdown-next/cherry-theme-github-render.min.css"
+  href="penna-markdown/penna-theme-github-render.min.css"
 />
 ```
 
@@ -76,7 +76,7 @@ import { Renderer } from "cherry-markdown-next/renderer";
 ::: field mount
 @type HTMLElement
 @required
-预览挂载点（建议带 `cherry-render` class）。
+预览挂载点（建议带 `penna-render` class）。
 :::
 
 ::: field theme

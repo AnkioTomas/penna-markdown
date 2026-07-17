@@ -1,52 +1,52 @@
 /** 分栏布局与拖拽条 */
-.cherry-body--split {
-  --cherry-editor-ratio: 5000;
-  --cherry-preview-ratio: 5000;
+.penna-body--split {
+  --penna-editor-ratio: 5000;
+  --penna-preview-ratio: 5000;
 
-  .cherry-editor {
-    flex: var(--cherry-editor-ratio) 1 0 !important;
+  .penna-editor {
+    flex: var(--penna-editor-ratio) 1 0 !important;
     max-width: none;
     min-width: 0;
   }
 
-  .cherry-preview {
-    flex: var(--cherry-preview-ratio) 1 0 !important;
+  .penna-preview {
+    flex: var(--penna-preview-ratio) 1 0 !important;
     max-width: none;
     min-width: 0;
   }
 }
 
-.cherry-body--edit .cherry-editor,
-.cherry-body--preview .cherry-preview {
+.penna-body--edit .penna-editor,
+.penna-body--preview .penna-preview {
   flex: 1;
 }
 
-.cherry-body--edit .cherry-preview,
-.cherry-body--edit .cherry-divider {
+.penna-body--edit .penna-preview,
+.penna-body--edit .penna-divider {
   display: none;
 }
 
-.cherry-body--preview .cherry-editor,
-.cherry-body--preview .cherry-divider {
+.penna-body--preview .penna-editor,
+.penna-body--preview .penna-divider {
   display: none;
 }
 
 /* toolbar 是 body 的兄弟节点；preview 下编辑命令无意义，直接藏 */
-.cherry:has(> .cherry-body--preview) > .cherry-toolbar {
+.penna:has(> .penna-body--preview) > .penna-toolbar {
   display: none;
 }
 
-.cherry-body--edit .cherry-editor {
+.penna-body--edit .penna-editor {
   border-right: none;
 }
 
-.cherry-divider {
+.penna-divider {
   position: relative;
   flex-shrink: 0;
   align-self: stretch;
   width: 4px;
   cursor: col-resize;
-  background: color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  background: color-mix(in srgb, var(--penna-c-text-3) 18%, transparent);
   transition: background 0.15s;
   touch-action: none;
   user-select: none;
@@ -62,11 +62,11 @@
   }
 }
 
-.cherry-divider:hover,
-.cherry-divider.is-dragging {
-  background: var(--cherry-c-brand-1);
+.penna-divider:hover,
+.penna-divider.is-dragging {
+  background: var(--penna-c-brand-1);
 }
 
-.cherry-divider.is-disabled {
+.penna-divider.is-disabled {
   display: none;
 }

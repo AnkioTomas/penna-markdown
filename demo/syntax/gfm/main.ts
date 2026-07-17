@@ -1,4 +1,4 @@
-import "../../_common/cherry-demo.scss";
+import "../../_common/penna-demo.scss";
 import "../../_common/layout.scss";
 import "../syntax-demo.scss";
 import { Renderer } from "@/renderer/Renderer.js";

@@ -1,7 +1,7 @@
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 
-export const SOURCE_LINE_ATTR = "data-cherry-source-line";
-export const SOURCE_END_LINE_ATTR = "data-cherry-source-end-line";
+export const SOURCE_LINE_ATTR = "data-penna-source-line";
+export const SOURCE_END_LINE_ATTR = "data-penna-source-end-line";
 
 export function countTopLevelDomRoots(html: string, doc?: Document): number {
   if (doc) {

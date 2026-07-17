@@ -6,7 +6,7 @@ import { Renderer } from "@/renderer/Renderer";
 
 export function createJsdomRenderer(
   debug = false,
-  html = `<div id="preview" class="cherry"></div>`,
+  html = `<div id="preview" class="penna"></div>`,
 ) {
   const dom = new JSDOM(html, { url: "http://localhost/" });
   const mount = dom.window.document.getElementById("preview") as HTMLElement;

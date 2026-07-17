@@ -1,4 +1,4 @@
-import "../../_common/cherry-demo.scss";
+import "../../_common/penna-demo.scss";
 import "./styles.scss";
 
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";

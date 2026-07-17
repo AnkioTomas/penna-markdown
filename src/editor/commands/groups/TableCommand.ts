@@ -36,24 +36,24 @@ function renderTableDialog(
   callbacks: DialogCallbacks<TableDialogResult>,
 ): () => void {
   const form = document.createElement("form");
-  form.className = "cherry-dialog-form cherry-dialog-form--table";
+  form.className = "penna-dialog-form penna-dialog-form--table";
   form.innerHTML = `
-    <div class="cherry-dialog-table-head">
-      <span class="cherry-dialog-table-title">插入表格</span>
-      <span class="cherry-dialog-table-size" aria-live="polite">1 × 1</span>
+    <div class="penna-dialog-table-head">
+      <span class="penna-dialog-table-title">插入表格</span>
+      <span class="penna-dialog-table-size" aria-live="polite">1 × 1</span>
     </div>
-    <div class="cherry-dialog-form-scroll-area">
-      <p class="cherry-dialog-table-hint">在网格上拖动或点击选择行列，松手后插入</p>
-      <div class="cherry-dialog-grid cherry-dialog-grid--10" role="grid" aria-label="表格尺寸"></div>
+    <div class="penna-dialog-form-scroll-area">
+      <p class="penna-dialog-table-hint">在网格上拖动或点击选择行列，松手后插入</p>
+      <div class="penna-dialog-grid penna-dialog-grid--10" role="grid" aria-label="表格尺寸"></div>
     </div>
-    <div class="cherry-dialog-actions">
+    <div class="penna-dialog-actions">
       <button type="button" data-action="cancel">取消</button>
     </div>
   `;
 
-  const grid = form.querySelector(".cherry-dialog-grid") as HTMLElement;
+  const grid = form.querySelector(".penna-dialog-grid") as HTMLElement;
   const sizeLabel = form.querySelector(
-    ".cherry-dialog-table-size",
+    ".penna-dialog-table-size",
   ) as HTMLElement;
   let selRows = 1;
   let selCols = 1;
@@ -61,14 +61,14 @@ function renderTableDialog(
   let buttonsHTML = "";
   for (let r = 1; r <= GRID_SIZE; r++) {
     for (let c = 1; c <= GRID_SIZE; c++) {
-      buttonsHTML += `<button type="button" class="cherry-dialog-grid-cell" data-rows="${r}" data-cols="${c}" role="gridcell" title="${r}×${c}"></button>`;
+      buttonsHTML += `<button type="button" class="penna-dialog-grid-cell" data-rows="${r}" data-cols="${c}" role="gridcell" title="${r}×${c}"></button>`;
     }
   }
   grid.innerHTML = buttonsHTML;
   grid.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 1fr)`;
 
   const cells = Array.from(
-    grid.querySelectorAll(".cherry-dialog-grid-cell"),
+    grid.querySelectorAll(".penna-dialog-grid-cell"),
   ) as HTMLButtonElement[];
 
   const sync = () => {
@@ -95,7 +95,7 @@ function renderTableDialog(
 
   grid.addEventListener("mousedown", (e) => {
     const t = (e.target as HTMLElement).closest(
-      ".cherry-dialog-grid-cell",
+      ".penna-dialog-grid-cell",
     ) as HTMLButtonElement | null;
     if (!t) return;
     dragging = true;
@@ -105,7 +105,7 @@ function renderTableDialog(
   grid.addEventListener("mouseover", (e) => {
     if (!dragging) return;
     const t = (e.target as HTMLElement).closest(
-      ".cherry-dialog-grid-cell",
+      ".penna-dialog-grid-cell",
     ) as HTMLButtonElement | null;
     if (!t) return;
     pickCell(t);
@@ -121,7 +121,7 @@ function renderTableDialog(
 
   grid.addEventListener("click", (e) => {
     const t = (e.target as HTMLElement).closest(
-      ".cherry-dialog-grid-cell",
+      ".penna-dialog-grid-cell",
     ) as HTMLButtonElement | null;
     if (!t) return;
     e.preventDefault();

@@ -29,10 +29,10 @@ it("renders collapsed panels by default", () => {
   正文内容
 :::`;
   const html = renderMarkdown(createEngine(), sample);
-  expect(html).toContain('<div class="cherry-collapse">');
+  expect(html).toContain('<div class="penna-collapse">');
   expect(html).toContain("<summary>标题 1</summary>");
   expect(html).toContain("<summary>标题 2</summary>");
   expect(html).toContain("<p>正文内容</p>");
   expect(html).not.toContain("<details open>");
-  expect(html).not.toContain("cherry-detail");
+  expect(html).not.toContain("penna-detail");
 });

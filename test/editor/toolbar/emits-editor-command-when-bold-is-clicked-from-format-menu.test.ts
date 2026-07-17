@@ -19,7 +19,7 @@ it("emits editor:command when bold is clicked from format menu", () => {
   const formatMenu = mount.querySelector('[data-toolbar-id="textFormat"]');
   (
     formatMenu?.querySelector(
-      ".cherry-toolbar-menu-trigger",
+      ".penna-toolbar-menu-trigger",
     ) as HTMLButtonElement
   )?.click();
   const boldBtn = formatMenu?.querySelector(

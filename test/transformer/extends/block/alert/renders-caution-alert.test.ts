@@ -6,6 +6,6 @@ it("renders caution alert", () => {
   const md =
     "> [!CAUTION]\n> Advises about risks or negative outcomes of certain actions.\n";
   expect(renderMarkdown(engine, md)).toBe(
-    `<div class="cherry-alert cherry-alert--caution">\n<p class="cherry-alert__title">Caution</p>\n<p>Advises about risks or negative outcomes of certain actions.</p>\n</div>\n`,
+    `<div class="penna-alert penna-alert--caution">\n<p class="penna-alert__title">Caution</p>\n<p>Advises about risks or negative outcomes of certain actions.</p>\n</div>\n`,
   );
 });

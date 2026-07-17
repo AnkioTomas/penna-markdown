@@ -3,18 +3,18 @@
 @use "tokens";
 @use "overrides";
 
-// 日间：.cherry-theme-claude .cherry-render
-.cherry-theme-claude {
-  .cherry-render {
+// 日间：.penna-theme-claude .penna-render
+.penna-theme-claude {
+  .penna-render {
     @include tokens.theme-light;
     @include highlight.wave;
     @include overrides.styles;
   }
 }
 
-// 夜间：.cherry-dark.cherry-theme-claude .cherry-render
-.cherry-dark.cherry-theme-claude {
-  .cherry-render {
+// 夜间：.penna-dark.penna-theme-claude .penna-render
+.penna-dark.penna-theme-claude {
+  .penna-render {
     @include tokens.theme-dark;
   }
 }

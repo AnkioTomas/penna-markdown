@@ -15,7 +15,7 @@ it("renders nested heading menu under structure", () => {
   const structureMenu = mount.querySelector('[data-toolbar-id="structure"]');
   expect(structureMenu).toBeTruthy();
   const trigger = structureMenu?.querySelector(
-    ".cherry-toolbar-menu-trigger",
+    ".penna-toolbar-menu-trigger",
   ) as HTMLButtonElement;
   trigger?.click();
   expect(structureMenu?.classList.contains("is-open")).toBe(true);
@@ -24,9 +24,9 @@ it("renders nested heading menu under structure", () => {
     '[data-toolbar-id="heading"]',
   );
   expect(headingMenu).toBeTruthy();
-  expect(
-    headingMenu?.querySelectorAll(".cherry-toolbar-menu-item").length,
-  ).toBe(6);
+  expect(headingMenu?.querySelectorAll(".penna-toolbar-menu-item").length).toBe(
+    6,
+  );
 
   toolbar.destroy();
 });

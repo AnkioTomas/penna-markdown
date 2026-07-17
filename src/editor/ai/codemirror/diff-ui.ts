@@ -27,7 +27,7 @@ import {
 const ICON_SIZE = 18;
 
 function svg(path: string): string {
-  return `<svg viewBox="0 0 24 24" width="${ICON_SIZE}" height="${ICON_SIZE}" class="cherry-ai-icon" aria-hidden="true"><path fill="currentColor" d="${path}"/></svg>`;
+  return `<svg viewBox="0 0 24 24" width="${ICON_SIZE}" height="${ICON_SIZE}" class="penna-ai-icon" aria-hidden="true"><path fill="currentColor" d="${path}"/></svg>`;
 }
 
 const ICON_AI_ACCEPT = svg(
@@ -53,10 +53,10 @@ class DeletedLinesWidget extends WidgetType {
 
   toDOM() {
     const block = document.createElement("div");
-    block.className = "cherry-ai-diff-del-block";
+    block.className = "penna-ai-diff-del-block";
     for (const line of this.lines) {
       const row = document.createElement("div");
-      row.className = "cherry-ai-diff-del-line";
+      row.className = "penna-ai-diff-del-line";
       row.textContent = line;
       block.appendChild(row);
     }
@@ -123,7 +123,7 @@ function buildHunkDecorations(
         pending.push({
           pos: line.from,
           kind: 1,
-          deco: Decoration.line({ class: "cherry-ai-diff-line" }),
+          deco: Decoration.line({ class: "penna-ai-diff-line" }),
         });
         pos = line.to + 1;
       }
@@ -133,7 +133,7 @@ function buildHunkDecorations(
         pos: line.from,
         kind: 1,
         deco: Decoration.line({
-          class: "cherry-ai-diff-line cherry-ai-diff-line--del-only",
+          class: "penna-ai-diff-line penna-ai-diff-line--del-only",
         }),
       });
     }
@@ -213,12 +213,12 @@ function buildHunkActionBtn(
 ): HTMLButtonElement {
   const btn = document.createElement("button");
   btn.type = "button";
-  btn.className = `cherry-ai-diff-btn ${className}`;
+  btn.className = `penna-ai-diff-btn ${className}`;
   btn.setAttribute("aria-label", label);
   btn.title = label;
   btn.innerHTML = icon;
   const text = document.createElement("span");
-  text.className = "cherry-ai-diff-btn-label";
+  text.className = "penna-ai-diff-btn-label";
   text.textContent = label;
   btn.appendChild(text);
   btn.addEventListener("click", (e) => {
@@ -231,17 +231,17 @@ function buildHunkActionBtn(
 
 function buildHunkPanel(view: EditorViewType, hunk: DiffHunk): HTMLElement {
   const dom = document.createElement("div");
-  dom.className = "cherry-ai-hunk-actions";
+  dom.className = "penna-ai-hunk-actions";
   dom.dataset.hunkId = hunk.id;
   dom.append(
     buildHunkActionBtn(
-      "cherry-ai-diff-btn--accept",
+      "penna-ai-diff-btn--accept",
       ICON_AI_ACCEPT,
       "接受",
       () => acceptHunk(view, hunk.id),
     ),
     buildHunkActionBtn(
-      "cherry-ai-diff-btn--reject",
+      "penna-ai-diff-btn--reject",
       ICON_AI_REJECT,
       "拒绝",
       () => rejectHunk(view, hunk.id),

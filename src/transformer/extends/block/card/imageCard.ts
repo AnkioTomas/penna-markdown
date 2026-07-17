@@ -29,7 +29,7 @@ function renderCopyright(author: string, date: string): string {
   if (author && date) parts.push("<span> | </span>");
   if (date) parts.push(`<span>${escapeHtml(date)}</span>`);
 
-  return `<p class="cherry-image-card__copyright">${parts.join("")}</p>`;
+  return `<p class="penna-image-card__copyright">${parts.join("")}</p>`;
 }
 
 function renderTitle(
@@ -40,18 +40,18 @@ function renderTitle(
   if (!titleNodes?.length) return "";
   const html = ctx.renderInline(titleNodes);
   if (href) {
-    return `<h3 class="cherry-image-card__title"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${html}</a></h3>`;
+    return `<h3 class="penna-image-card__title"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${html}</a></h3>`;
   }
-  return `<h3 class="cherry-image-card__title">${html}</h3>`;
+  return `<h3 class="penna-image-card__title">${html}</h3>`;
 }
 
 function renderDescription(descriptionAttr: string, bodyHtml: string): string {
   const body = bodyHtml.trim();
   if (body) {
-    return `<div class="cherry-image-card__description">${body}</div>`;
+    return `<div class="penna-image-card__description">${body}</div>`;
   }
   if (descriptionAttr) {
-    return `<p class="cherry-image-card__description">${escapeHtml(descriptionAttr)}</p>`;
+    return `<p class="penna-image-card__description">${escapeHtml(descriptionAttr)}</p>`;
   }
   return "";
 }
@@ -116,11 +116,11 @@ class ImageCardBlockParser extends BaseBlockParser {
     ].filter(Boolean);
 
     return [
-      `<div class="cherry-image-card"${this.sourceLineAttrs(node)}>`,
-      `<div class="cherry-image-card__media">`,
+      `<div class="penna-image-card"${this.sourceLineAttrs(node)}>`,
+      `<div class="penna-image-card__media">`,
       img,
       infoParts.length
-        ? `<div class="cherry-image-card__info">${infoParts.join("\n")}</div>`
+        ? `<div class="penna-image-card__info">${infoParts.join("\n")}</div>`
         : "",
       `</div>`,
       `</div>`,

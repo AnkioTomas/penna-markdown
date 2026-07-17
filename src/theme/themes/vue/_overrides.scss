@@ -7,8 +7,8 @@
   max-width: rem(860);
   margin-inline: auto;
   padding: rem(20) rem(30) rem(100);
-  background-color: var(--cherry-c-bg);
-  color: var(--cherry-c-text-1);
+  background-color: var(--penna-c-bg);
+  color: var(--penna-c-text-1);
   font-family: var(--vue-font-sans);
   font-size: var(--vue-text-size);
   line-height: var(--vue-text-leading);
@@ -28,7 +28,7 @@
     border: 0;
     font-weight: 700;
     line-height: var(--vue-heading-leading);
-    color: var(--cherry-c-text-1);
+    color: var(--penna-c-text-1);
   }
 
   h1 {
@@ -45,7 +45,7 @@
     border-bottom: rem(1) solid var(--vue-h2-rule);
 
     a {
-      color: var(--cherry-c-text-1);
+      color: var(--penna-c-text-1);
       font-weight: 700;
     }
   }
@@ -56,7 +56,7 @@
     line-height: 1.43;
 
     a {
-      color: var(--cherry-c-text-1);
+      color: var(--penna-c-text-1);
       font-weight: 700;
     }
   }
@@ -71,7 +71,7 @@
 
   h6 {
     font-size: rem(16);
-    color: var(--cherry-c-text-2);
+    color: var(--penna-c-text-2);
   }
 
   :first-child {
@@ -93,13 +93,13 @@
   }
 
   a {
-    color: var(--cherry-c-brand-1);
+    color: var(--penna-c-brand-1);
     font-weight: 600;
     padding: 0 rem(2);
     text-decoration: none;
 
     &:hover {
-      color: var(--cherry-c-brand-2);
+      color: var(--penna-c-brand-2);
       text-decoration: underline;
     }
   }
@@ -107,8 +107,8 @@
   blockquote {
     margin: 0 0 0.8em;
     padding: rem(16) rem(15);
-    border-left: rem(4) solid var(--cherry-c-blockquote-border);
-    color: var(--cherry-c-text-2);
+    border-left: rem(4) solid var(--penna-c-blockquote-border);
+    color: var(--penna-c-text-2);
     background: #{$vue-green-soft};
     font-style: normal;
   }
@@ -118,7 +118,7 @@
     margin: 0 0 rem(16);
     padding: 0;
     border: 0;
-    background-color: var(--cherry-c-hr-color);
+    background-color: var(--penna-c-hr-color);
     overflow: hidden;
   }
 
@@ -142,51 +142,51 @@
     padding: rem(2) rem(4);
     font-family: var(--vue-font-mono);
     font-size: 0.92em;
-    color: var(--cherry-c-code-inline-fg);
-    background: var(--cherry-c-code-inline-bg);
+    color: var(--penna-c-code-inline-fg);
+    background: var(--penna-c-code-inline-bg);
     border: 0;
     border-radius: rem(2);
   }
 
-  pre:not(.cherry-code-block__pre) {
+  pre:not(.penna-code-block__pre) {
     margin: 0 0 0.8em;
     padding: rem(12);
     font-family: var(--vue-font-mono);
     font-size: 0.85em;
-    color: var(--cherry-c-text-1);
-    background: var(--cherry-c-bg-elevated);
+    color: var(--penna-c-text-1);
+    background: var(--penna-c-bg-elevated);
     border: rem(1) solid var(--vue-code-block-border);
     border-radius: rem(2);
     box-shadow: none;
   }
 
   table {
-    --cherry-table-border: var(--cherry-c-table-td-border);
-    --cherry-table-head-bg: var(--cherry-c-table-head-bg);
-    --cherry-table-row-bg: transparent;
-    --cherry-table-stripe-bg: var(--cherry-c-table-stripe-bg);
+    --penna-table-border: var(--penna-c-table-td-border);
+    --penna-table-head-bg: var(--penna-c-table-head-bg);
+    --penna-table-row-bg: transparent;
+    --penna-table-stripe-bg: var(--penna-c-table-stripe-bg);
     margin: 0 0 0.8em;
     word-break: initial;
 
     th,
     td {
       padding: rem(6) rem(13);
-      border: rem(1) solid var(--cherry-c-table-td-border);
+      border: rem(1) solid var(--penna-c-table-td-border);
       text-align: left;
     }
 
     th {
       font-weight: 700;
       border-bottom: 0;
-      background: var(--cherry-table-head-bg);
+      background: var(--penna-table-head-bg);
     }
 
     tbody tr {
-      border-top: rem(1) solid var(--cherry-c-table-td-border);
+      border-top: rem(1) solid var(--penna-c-table-td-border);
     }
 
     tbody tr:nth-child(even) {
-      background: var(--cherry-table-stripe-bg);
+      background: var(--penna-table-stripe-bg);
     }
   }
 
@@ -194,7 +194,7 @@
     border-radius: rem(3);
   }
 
-  .cherry-alert {
+  .penna-alert {
     margin: 0 0 0.8em;
     padding: rem(10) rem(15);
     border: rem(1) solid var(--alert-border);
@@ -205,17 +205,17 @@
     font-size: rem(14);
   }
 
-  .cherry-code-block {
+  .penna-code-block {
     --cb-radius: #{rem(2)};
     --cb-border: var(--vue-code-block-border);
     --cb-shadow: none;
-    --cb-header-bg: var(--cherry-c-bg-elevated);
-    --cb-code-bg: var(--cherry-c-bg-elevated);
-    --cb-lang-fg: var(--cherry-c-brand-3);
+    --cb-header-bg: var(--penna-c-bg-elevated);
+    --cb-code-bg: var(--penna-c-bg-elevated);
+    --cb-lang-fg: var(--penna-c-brand-3);
     --cb-lang-bg: transparent;
     --cb-line-highlight: color-mix(
       in srgb,
-      var(--cherry-c-brand-1) 12%,
+      var(--penna-c-brand-1) 12%,
       transparent
     );
     margin: 0 0 0.8rem;
@@ -243,84 +243,84 @@
     }
 
     .hljs {
-      background: var(--cherry-c-hljs-bg);
-      color: var(--cherry-c-text-1);
+      background: var(--penna-c-hljs-bg);
+      color: var(--penna-c-text-1);
     }
 
     .hljs-comment,
     .hljs-quote {
-      color: var(--cherry-c-hljs-comment);
+      color: var(--penna-c-hljs-comment);
     }
 
     .hljs-keyword,
     .hljs-selector-tag,
     .hljs-built_in,
     .hljs-name {
-      color: var(--cherry-c-hljs-keyword);
+      color: var(--penna-c-hljs-keyword);
     }
 
     .hljs-string,
     .hljs-regexp,
     .hljs-addition {
-      color: var(--cherry-c-hljs-string);
+      color: var(--penna-c-hljs-string);
     }
 
     .hljs-number,
     .hljs-literal {
-      color: var(--cherry-c-hljs-number);
+      color: var(--penna-c-hljs-number);
     }
 
     .hljs-title,
     .hljs-title.class_,
     .hljs-type {
-      color: var(--cherry-c-hljs-title);
+      color: var(--penna-c-hljs-title);
     }
 
     .hljs-attr,
     .hljs-attribute,
     .hljs-variable,
     .hljs-template-variable {
-      color: var(--cherry-c-hljs-attr);
+      color: var(--penna-c-hljs-attr);
     }
 
     .hljs-meta,
     .hljs-meta .hljs-keyword {
-      color: var(--cherry-c-text-3);
+      color: var(--penna-c-text-3);
     }
 
     .hljs-function .hljs-title,
     .hljs-section {
-      color: var(--cherry-c-hljs-title);
+      color: var(--penna-c-hljs-title);
     }
   }
 
-  .cherry-card,
-  .cherry-link-card,
-  .cherry-repo-card,
-  .cherry-tabs,
-  .cherry-collapse {
-    border: rem(1) solid var(--cherry-c-border-faint);
+  .penna-card,
+  .penna-link-card,
+  .penna-repo-card,
+  .penna-tabs,
+  .penna-collapse {
+    border: rem(1) solid var(--penna-c-border-faint);
     border-radius: rem(2);
-    background: var(--cherry-c-bg);
+    background: var(--penna-c-bg);
     box-shadow: none;
   }
 
-  .cherry-link-card:hover {
-    border-color: var(--cherry-c-brand-1);
+  .penna-link-card:hover {
+    border-color: var(--penna-c-brand-1);
     box-shadow: none;
   }
 
   .task-list .task-item.done .marker {
-    --marker-color: var(--cherry-c-brand-1);
+    --marker-color: var(--penna-c-brand-1);
   }
 
-  sup.cherry-footnote-ref a {
-    color: var(--cherry-c-code-inline-fg);
+  sup.penna-footnote-ref a {
+    color: var(--penna-c-code-inline-fg);
     font-weight: 600;
     text-decoration: none;
 
     &:hover {
-      color: var(--cherry-c-brand-1);
+      color: var(--penna-c-brand-1);
     }
   }
 }

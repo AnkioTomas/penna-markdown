@@ -1,10 +1,10 @@
 @use "../../common/rem" as *;
 
-// 用户通过 {.variant .top} 注入的变体类名保持简短，不加 cherry 前缀
+// 用户通过 {.variant .top} 注入的变体类名保持简短，不加 penna 前缀
 $badge-variants: note, tip, warning, caution, danger, important;
 
 @mixin styles {
-  .cherry-badge {
+  .penna-badge {
     transition:
       color 0.25s,
       background-color 0.25s,
@@ -18,9 +18,9 @@ $badge-variants: note, tip, warning, caution, danger, important;
     line-height: rem(22);
     display: inline-block;
     vertical-align: middle;
-    color: var(--cherry-c-text-2);
-    background-color: var(--cherry-c-bg-elevated);
-    border-color: color-mix(in srgb, var(--cherry-c-text-3) 30%, transparent);
+    color: var(--penna-c-text-2);
+    background-color: var(--penna-c-bg-elevated);
+    border-color: color-mix(in srgb, var(--penna-c-text-3) 30%, transparent);
 
     &.top {
       vertical-align: top;
@@ -32,9 +32,9 @@ $badge-variants: note, tip, warning, caution, danger, important;
 
     @each $name in $badge-variants {
       &.#{$name} {
-        color: var(--cherry-c-alert-#{$name}-text);
-        background-color: var(--cherry-c-alert-#{$name}-bg);
-        border-color: var(--cherry-c-alert-#{$name}-border);
+        color: var(--penna-c-alert-#{$name}-text);
+        background-color: var(--penna-c-alert-#{$name}-bg);
+        border-color: var(--penna-c-alert-#{$name}-border);
       }
     }
   }

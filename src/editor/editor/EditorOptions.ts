@@ -1,4 +1,4 @@
-import type { OnAiRequest, OnParseFile } from "@/editor/CherryOptions";
+import type { OnAiRequest, OnParseFile } from "@/editor/PennaOptions";
 
 export interface EditorOptions {
   /** 初始 Markdown 正文 */

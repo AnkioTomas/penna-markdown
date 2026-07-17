@@ -46,7 +46,7 @@ const POSITION_LABELS: Record<BadgePosition, string> = {
 /**
  * 根据徽章选项生成尾随属性块。
  * @param result - 已校验的徽章表单数据
- * @returns 包含样式和可选位置的 Cherry 属性块
+ * @returns 包含样式和可选位置的 Penna 属性块
  */
 function badgeSuffix(result: BadgeDialogResult): string {
   const parts: string[] = [result.variant];

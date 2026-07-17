@@ -31,16 +31,16 @@ export function createDividerTree(
   sidebarWidth = 200,
 ) {
   document.body.innerHTML = `
-    <div class="cherry-body" style="width:${bodyWidth}px">
-      <div class="cherry-sidebar" style="width:${sidebarWidth}px"></div>
-      <div class="cherry-editor"></div>
-      <div class="cherry-divider" style="width:4px"></div>
-      <div class="cherry-preview"></div>
+    <div class="penna-body" style="width:${bodyWidth}px">
+      <div class="penna-sidebar" style="width:${sidebarWidth}px"></div>
+      <div class="penna-editor"></div>
+      <div class="penna-divider" style="width:4px"></div>
+      <div class="penna-preview"></div>
     </div>
   `;
-  const body = document.querySelector(".cherry-body")! as HTMLElement;
-  const sidebar = document.querySelector(".cherry-sidebar")! as HTMLElement;
-  const dividerEl = document.querySelector(".cherry-divider")! as HTMLElement;
+  const body = document.querySelector(".penna-body")! as HTMLElement;
+  const sidebar = document.querySelector(".penna-sidebar")! as HTMLElement;
+  const dividerEl = document.querySelector(".penna-divider")! as HTMLElement;
 
   vi.spyOn(body, "getBoundingClientRect").mockReturnValue({
     x: 0,

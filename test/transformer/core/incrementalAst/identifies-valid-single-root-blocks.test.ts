@@ -43,7 +43,7 @@ it("identifies valid single-root blocks", async () => {
     expect(BlockIndex.isMountedHtml("<div>A</div><div>B</div>")).toBe(false);
 
     const imgHtml =
-      '<figure class="cherry-image-card"><img src="https://example.com/a.jpg" alt="" /></figure>';
+      '<figure class="penna-image-card"><img src="https://example.com/a.jpg" alt="" /></figure>';
     expect(BlockIndex.isMountedHtml(imgHtml)).toBe(true);
     const parsed = BlockIndex.parseSingleRootHtml(globalThis.document, imgHtml);
     expect(parsed?.tagName).toBe("FIGURE");

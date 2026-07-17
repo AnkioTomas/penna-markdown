@@ -6,6 +6,6 @@ it("renders tip alert", () => {
   const md =
     "> [!TIP]\n> Helpful advice for doing things better or more easily.\n";
   expect(renderMarkdown(engine, md)).toBe(
-    `<div class="cherry-alert cherry-alert--tip">\n<p class="cherry-alert__title">Tip</p>\n<p>Helpful advice for doing things better or more easily.</p>\n</div>\n`,
+    `<div class="penna-alert penna-alert--tip">\n<p class="penna-alert__title">Tip</p>\n<p>Helpful advice for doing things better or more easily.</p>\n</div>\n`,
   );
 });

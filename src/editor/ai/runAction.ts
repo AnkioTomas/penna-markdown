@@ -1,5 +1,5 @@
 import type { EditorView } from "@codemirror/view";
-import type { OnAiRequest } from "@/editor/CherryOptions";
+import type { OnAiRequest } from "@/editor/PennaOptions";
 import { enterDiffPhase } from "./codemirror/diff-ui";
 import {
   allocGenId,
@@ -79,13 +79,13 @@ export function runAIAction(
     if (state.phase !== "generating" || state.genId !== genId) return;
 
     const mask = view.dom
-      .closest(".cherry")
-      ?.querySelector(".cherry-ai-mask-global");
+      .closest(".penna")
+      ?.querySelector(".penna-ai-mask-global");
     if (!mask) return;
 
-    const thinkingEl = mask.querySelector(".cherry-ai-mask-thinking");
-    const partialEl = mask.querySelector(".cherry-ai-mask-partial");
-    const bodyEl = mask.querySelector(".cherry-ai-mask-body");
+    const thinkingEl = mask.querySelector(".penna-ai-mask-thinking");
+    const partialEl = mask.querySelector(".penna-ai-mask-partial");
+    const bodyEl = mask.querySelector(".penna-ai-mask-body");
 
     let changed = false;
     if (thinkingEl && thinking) {

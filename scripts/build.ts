@@ -1,9 +1,9 @@
 /**
  * 构建脚本：仅输出 min 产物
- * - cherry.min.*            完整编辑器（ESM / CJS / IIFE）
- * - cherry-render.min.*     渲染器（内含 Theme）
- * - cherry-transformer.min.* Markdown 解析引擎
- * - 主题样式：Vite 编译 SCSS → dist/cherry-*.min.css
+ * - penna.min.*            完整编辑器（ESM / CJS / IIFE）
+ * - penna-render.min.*     渲染器（内含 Theme）
+ * - penna-transformer.min.* Markdown 解析引擎
+ * - 主题样式：Vite 编译 SCSS → dist/penna-*.min.css
  */
 import * as esbuild from "esbuild";
 import { mkdirSync, rmSync, statSync } from "node:fs";
@@ -35,19 +35,19 @@ type BundleEntry = {
 };
 const entries: BundleEntry[] = [
   {
-    in: "src/editor/Cherry.ts",
-    name: "cherry",
-    globalName: "CherryNextEditor",
+    in: "src/editor/Penna.ts",
+    name: "penna",
+    globalName: "PennaNextEditor",
   },
   {
     in: "src/renderer/Renderer.ts",
-    name: "cherry-render",
-    globalName: "CherryNextRenderer",
+    name: "penna-render",
+    globalName: "PennaNextRenderer",
   },
   {
     in: "src/transformer/TransformerEngine.ts",
-    name: "cherry-transformer",
-    globalName: "CherryNextTransformer",
+    name: "penna-transformer",
+    globalName: "PennaNextTransformer",
     modernTarget: ["es2015"],
     traditionalTarget: ["es2015"],
   },

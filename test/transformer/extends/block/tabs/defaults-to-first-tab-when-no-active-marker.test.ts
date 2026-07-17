@@ -32,7 +32,7 @@ it("defaults to first tab when no :active marker", () => {
 :::`;
   const html = renderMarkdown(createEngine(), md);
   expect(html).toMatch(
-    /<label class="cherry-tabs__label">\s*<input type="radio" class="cherry-tabs__radio" name="cherry-tabs-\d+" checked>\s*A\s*<\/label>/,
+    /<label class="penna-tabs__label">\s*<input type="radio" class="penna-tabs__radio" name="penna-tabs-\d+" checked>\s*A\s*<\/label>/,
   );
   expect(html).not.toMatch(/<input[^>]+checked[^>]+>\s*B\s*<\/label>/);
 });

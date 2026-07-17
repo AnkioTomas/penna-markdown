@@ -1,12 +1,12 @@
 /** Claude 主题编辑器样式 */
 @use "tokens";
 
-.cherry-theme-claude.cherry,
-.cherry-theme-claude .cherry {
+.penna-theme-claude.penna,
+.penna-theme-claude .penna {
   @include tokens.theme-light;
 }
 
-.cherry-dark.cherry-theme-claude.cherry,
-.cherry-dark.cherry-theme-claude .cherry {
+.penna-dark.penna-theme-claude.penna,
+.penna-dark.penna-theme-claude .penna {
   @include tokens.theme-dark;
 }

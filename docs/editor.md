@@ -1,6 +1,6 @@
 ---
 title: 编辑器
-subtitle: Cherry 完整编辑器用法
+subtitle: Penna 完整编辑器用法
 version: 0.1.0
 tags: [guide, editor]
 ---
@@ -14,9 +14,9 @@ tags: [guide, editor]
 ## 基本用法
 
 ```typescript
-import { Cherry } from "cherry-markdown-next";
+import { Penna } from "penna-markdown";
 
-const cherry = new Cherry(document.getElementById("editor")!, {
+const penna = new Penna(document.getElementById("editor")!, {
   layout: "split", // split | edit | preview
   appearance: "light", // light | dark
   themeId: "default",
@@ -32,10 +32,10 @@ const cherry = new Cherry(document.getElementById("editor")!, {
   },
 });
 
-cherry.setMarkdown("# 新内容");
-const md = cherry.getMarkdown();
-cherry.setLayout("preview");
-cherry.destroy();
+penna.setMarkdown("# 新内容");
+const md = penna.getMarkdown();
+penna.setLayout("preview");
+penna.destroy();
 ```
 
 ---
@@ -133,9 +133,9 @@ AI 请求；与 `editor.onAiRequest` 等价，**editor 内优先**。
 基于默认项增删/重排时，展开 `DEFAULT_TOOLBAR_ITEMS`：
 
 ```typescript
-import { Cherry, DEFAULT_TOOLBAR_ITEMS } from "cherry-markdown-next";
+import { Penna, DEFAULT_TOOLBAR_ITEMS } from "penna-markdown";
 
-new Cherry(el, {
+new Penna(el, {
   toolbar: {
     items: [
       // 去掉「格式」，其余默认保留，末尾追加自定义按钮
@@ -165,7 +165,7 @@ new Cherry(el, {
 ## 侧栏文件列表
 
 ```typescript
-new Cherry(el, {
+new Penna(el, {
   sidebar: {
     maxWidth: 320,
     fetchFiles: async () => [
@@ -177,8 +177,8 @@ new Cherry(el, {
       },
     ],
     onFileClick: (fileId) => {
-      cherry.setMarkdown(/* 按 fileId 加载 */);
-      cherry.setSidebarActiveFile(fileId);
+      penna.setMarkdown(/* 按 fileId 加载 */);
+      penna.setSidebarActiveFile(fileId);
     },
   },
 });
@@ -193,7 +193,7 @@ new Cherry(el, {
 自定义 parser 走 **预览引擎**，不是顶层不存在的 `transformer` 字段：
 
 ```typescript
-new Cherry(el, {
+new Penna(el, {
   preview: {
     transformerEngineOptions: {
       inlineParsers: {
@@ -214,7 +214,7 @@ new Cherry(el, {
 ## AI 与上传
 
 ```typescript
-new Cherry(el, {
+new Penna(el, {
   editor: {
     onAiRequest: async (action, text, prompts) => {
       // action: polish | proofread | translate | summarize | custom …

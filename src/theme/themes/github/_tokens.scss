@@ -132,7 +132,7 @@ $github-dark-mark-mix: 65%;
   --github-heading-leading: 1.25;
   --github-radius: 0;
   --github-radius-interactive: 6px;
-  --github-border-inset: inset 2px var(--cherry-c-border-soft);
+  --github-border-inset: inset 2px var(--penna-c-border-soft);
 }
 
 @mixin generate-semantic-suite($palette, $is-dark: false) {
@@ -144,30 +144,30 @@ $github-dark-mark-mix: 65%;
     $bg-opacity: picks.pick-bg-opacity($is-dark, 12%, 10%);
     $border-opacity: picks.pick-border-opacity($is-dark, 28%, 24%);
 
-    --cherry-c-#{$name}: #{$base-color};
+    --penna-c-#{$name}: #{$base-color};
     @if $is-dark {
-      --cherry-c-#{$name}-mark: color-mix(
+      --penna-c-#{$name}-mark: color-mix(
         in srgb,
         #{$mark-color} #{$github-dark-mark-mix},
         #{$surface}
       );
     } @else {
-      --cherry-c-#{$name}-mark: #{$mark-color};
+      --penna-c-#{$name}-mark: #{$mark-color};
     }
 
-    --cherry-c-#{$name}-on-bg: color-mix(
+    --penna-c-#{$name}-on-bg: color-mix(
       in srgb,
       #{$base-color} 16%,
       #{$contrast-color}
     );
 
-    --cherry-c-alert-#{$name}-text: #{$base-color};
-    --cherry-c-alert-#{$name}-bg: color-mix(
+    --penna-c-alert-#{$name}-text: #{$base-color};
+    --penna-c-alert-#{$name}-bg: color-mix(
       in srgb,
       #{$base-color} #{$bg-opacity},
       transparent
     );
-    --cherry-c-alert-#{$name}-border: color-mix(
+    --penna-c-alert-#{$name}-border: color-mix(
       in srgb,
       #{$base-color} #{$border-opacity},
       transparent
@@ -180,62 +180,62 @@ $github-dark-mark-mix: 65%;
   $border-faint: github-border-faint($is-dark);
   $code-inline-bg: github-code-inline-bg($is-dark);
 
-  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
-  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
-  --cherry-c-image-card-info-bg: linear-gradient(
+  --penna-c-image-card-info-fg: var(--penna-c-contrast-light);
+  --penna-c-image-card-scrim: var(--penna-c-contrast-dark);
+  --penna-c-image-card-info-bg: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 40%, transparent) 55%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 65%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 40%, transparent) 55%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 65%, transparent) 100%
   );
-  --cherry-c-image-card-info-bg-hover: linear-gradient(
+  --penna-c-image-card-info-bg-hover: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 50%, transparent) 35%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 75%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 50%, transparent) 35%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 75%, transparent) 100%
   );
 
-  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
-  --cherry-c-media-shade: var(--cherry-c-bg);
-  --cherry-c-on-brand: #fff;
+  --penna-c-media-player-bg: var(--penna-c-bg-elevated);
+  --penna-c-media-shade: var(--penna-c-bg);
+  --penna-c-on-brand: #fff;
 
-  --cherry-c-code-inline-bg: #{$code-inline-bg};
-  --cherry-c-code-inline-fg: var(--cherry-c-code-fg);
-  --cherry-c-code-inline-border: transparent;
+  --penna-c-code-inline-bg: #{$code-inline-bg};
+  --penna-c-code-inline-fg: var(--penna-c-code-fg);
+  --penna-c-code-inline-border: transparent;
 
-  --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
-  --cherry-c-code-block-code-bg: var(--cherry-c-bg-elevated);
-  --cherry-c-code-block-shadow: none;
+  --penna-c-code-block-header-bg: var(--penna-c-bg-elevated);
+  --penna-c-code-block-code-bg: var(--penna-c-bg-elevated);
+  --penna-c-code-block-shadow: none;
 
-  --cherry-c-table-th-border: #{$border-soft};
-  --cherry-c-table-td-border: #{$border-faint};
-  --cherry-c-hr-color: #{$border-soft};
-  --cherry-c-blockquote-border: #{$border-soft};
+  --penna-c-table-th-border: #{$border-soft};
+  --penna-c-table-td-border: #{$border-faint};
+  --penna-c-hr-color: #{$border-soft};
+  --penna-c-blockquote-border: #{$border-soft};
 }
 
 @mixin theme-light {
   @include typography-tokens;
 
-  --cherry-c-brand-1: #{$github-accent};
-  --cherry-c-brand-2: #{$github-accent-hover};
-  --cherry-c-brand-3: #{$github-accent};
-  --cherry-c-brand-soft: #{$github-accent-soft};
-  --cherry-c-brand-on-bg: #fff;
+  --penna-c-brand-1: #{$github-accent};
+  --penna-c-brand-2: #{$github-accent-hover};
+  --penna-c-brand-3: #{$github-accent};
+  --penna-c-brand-soft: #{$github-accent-soft};
+  --penna-c-brand-on-bg: #fff;
 
-  --cherry-c-text-1: #{$github-fg};
-  --cherry-c-text-2: #{$github-fg-muted};
-  --cherry-c-text-3: #{$github-fg-subtle};
+  --penna-c-text-1: #{$github-fg};
+  --penna-c-text-2: #{$github-fg-muted};
+  --penna-c-text-3: #{$github-fg-subtle};
 
-  --cherry-c-bg: #{$github-canvas};
-  --cherry-c-bg-elevated: #{$github-canvas-subtle};
+  --penna-c-bg: #{$github-canvas};
+  --penna-c-bg-elevated: #{$github-canvas-subtle};
 
-  --cherry-c-contrast-light: #fff;
-  --cherry-c-contrast-dark: #000;
+  --penna-c-contrast-light: #fff;
+  --penna-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #{$github-mark};
-  --cherry-c-code-fg: #{$github-code-fg};
-  --cherry-c-border-soft: #{$github-border};
-  --cherry-c-border-faint: #{color-mix(
+  --penna-c-brand-mark: #{$github-mark};
+  --penna-c-code-fg: #{$github-code-fg};
+  --penna-c-border-soft: #{$github-border};
+  --penna-c-border-faint: #{color-mix(
       in srgb,
       #{$github-border} 55%,
       transparent
@@ -248,30 +248,30 @@ $github-dark-mark-mix: 65%;
 @mixin theme-dark {
   @include typography-tokens;
 
-  --cherry-c-brand-1: #{$github-dark-accent};
-  --cherry-c-brand-2: #{$github-dark-accent-hover};
-  --cherry-c-brand-3: #{$github-dark-accent};
-  --cherry-c-brand-soft: rgba(68, 147, 248, 0.16);
-  --cherry-c-brand-on-bg: #{$github-dark-fg};
+  --penna-c-brand-1: #{$github-dark-accent};
+  --penna-c-brand-2: #{$github-dark-accent-hover};
+  --penna-c-brand-3: #{$github-dark-accent};
+  --penna-c-brand-soft: rgba(68, 147, 248, 0.16);
+  --penna-c-brand-on-bg: #{$github-dark-fg};
 
-  --cherry-c-text-1: #{$github-dark-fg};
-  --cherry-c-text-2: #{$github-dark-fg-muted};
-  --cherry-c-text-3: #{$github-dark-fg-subtle};
+  --penna-c-text-1: #{$github-dark-fg};
+  --penna-c-text-2: #{$github-dark-fg-muted};
+  --penna-c-text-3: #{$github-dark-fg-subtle};
 
-  --cherry-c-bg: #{$github-dark-canvas};
-  --cherry-c-bg-elevated: #{$github-dark-canvas-subtle};
+  --penna-c-bg: #{$github-dark-canvas};
+  --penna-c-bg-elevated: #{$github-dark-canvas-subtle};
 
-  --cherry-c-contrast-light: #fff;
-  --cherry-c-contrast-dark: #000;
+  --penna-c-contrast-light: #fff;
+  --penna-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: color-mix(
+  --penna-c-brand-mark: color-mix(
     in srgb,
     #{$github-mark} #{$github-dark-mark-mix},
     #{$github-dark-canvas}
   );
-  --cherry-c-code-fg: #{$github-dark-code-fg};
-  --cherry-c-border-soft: #{$github-dark-border};
-  --cherry-c-border-faint: #{color-mix(
+  --penna-c-code-fg: #{$github-dark-code-fg};
+  --penna-c-border-soft: #{$github-dark-border};
+  --penna-c-border-faint: #{color-mix(
       in srgb,
       #{$github-dark-border} 55%,
       transparent

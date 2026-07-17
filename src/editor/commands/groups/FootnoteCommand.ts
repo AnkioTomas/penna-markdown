@@ -85,7 +85,7 @@ function applyDatalist(
 ) {
   if (!existingDefs?.length) return;
   const datalist = document.createElement("datalist");
-  datalist.id = "cherry-footnote-ids";
+  datalist.id = "penna-footnote-ids";
   for (const def of existingDefs) {
     const option = document.createElement("option");
     option.value = def.id;
@@ -95,7 +95,7 @@ function applyDatalist(
   form.append(datalist);
   const idInput = form.elements.namedItem("id");
   if (idInput instanceof HTMLInputElement) {
-    idInput.setAttribute("list", "cherry-footnote-ids");
+    idInput.setAttribute("list", "penna-footnote-ids");
   }
 }
 
@@ -109,7 +109,7 @@ class FootnoteRefDialog extends FormDialog<FootnoteDialogResult> {
 
   /** 返回脚注引用表单的样式类名。 */
   override get className() {
-    return "cherry-dialog-form--footnote-ref";
+    return "penna-dialog-form--footnote-ref";
   }
 
   /** 返回本次渲染动态构建的字段列表。 */

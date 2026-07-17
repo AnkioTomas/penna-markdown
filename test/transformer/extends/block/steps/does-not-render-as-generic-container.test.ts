@@ -40,6 +40,6 @@ it("does not render as generic container", () => {
 
 :::`,
   );
-  expect(html).not.toContain("cherry-alert--note");
-  expect(html).toContain("cherry-steps");
+  expect(html).not.toContain("penna-alert--note");
+  expect(html).toContain("penna-steps");
 });

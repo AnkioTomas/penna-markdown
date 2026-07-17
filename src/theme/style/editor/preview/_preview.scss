@@ -1,19 +1,19 @@
-.cherry-preview {
+.penna-preview {
   flex: 1;
   min-width: 0;
   min-height: 0;
   overflow: auto;
-  background: var(--cherry-c-bg);
+  background: var(--penna-c-bg);
 }
 
-.cherry-preview > .cherry-render {
+.penna-preview > .penna-render {
   box-sizing: border-box;
   min-height: 100%;
   padding: 14px;
 }
 
 /* 纯预览限宽：外壳全宽滚动，内层版心居中 */
-.cherry-body--preview .cherry-preview--constrained > .cherry-render {
-  max-width: var(--cherry-preview-max-width);
+.penna-body--preview .penna-preview--constrained > .penna-render {
+  max-width: var(--penna-preview-max-width);
   margin-inline: auto;
 }

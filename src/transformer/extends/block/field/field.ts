@@ -81,26 +81,26 @@ class FieldBlockParser extends BaseBlockParser {
           : "Optional";
 
     const typeHtml = fieldType
-      ? `<span class="cherry-field__type"><code>${escapeHtml(fieldType)}</code></span>`
+      ? `<span class="penna-field__type"><code>${escapeHtml(fieldType)}</code></span>`
       : "";
 
     const defaultHtml = defaultValue
-      ? `<p class="cherry-field__default"><code>${escapeHtml(defaultValue)}</code></p>`
+      ? `<p class="penna-field__default"><code>${escapeHtml(defaultValue)}</code></p>`
       : "";
 
     const descriptionHtml = ctx.renderBlock(node.children ?? []);
 
     return [
-      `<div class="cherry-field cherry-field--${status}"${this.sourceLineAttrs(node)}>`,
-      `<div class="cherry-field__head">`,
-      `<div class="cherry-field__meta">`,
-      `<span class="cherry-field__name">${name}</span>`,
-      `<span class="cherry-field__tag cherry-field__tag--${status}">${statusLabel}</span>`,
+      `<div class="penna-field penna-field--${status}"${this.sourceLineAttrs(node)}>`,
+      `<div class="penna-field__head">`,
+      `<div class="penna-field__meta">`,
+      `<span class="penna-field__name">${name}</span>`,
+      `<span class="penna-field__tag penna-field__tag--${status}">${statusLabel}</span>`,
       `</div>`,
       typeHtml,
       `</div>`,
       defaultHtml,
-      `<div class="cherry-field__description">${descriptionHtml}</div>`,
+      `<div class="penna-field__description">${descriptionHtml}</div>`,
       `</div>`,
     ].join("");
   }

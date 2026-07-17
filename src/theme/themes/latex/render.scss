@@ -2,15 +2,15 @@
 @use "tokens";
 @use "overrides";
 
-.cherry-theme-latex {
-  .cherry-render {
+.penna-theme-latex {
+  .penna-render {
     @include tokens.theme-light;
     @include overrides.styles;
   }
 }
 
-.cherry-dark.cherry-theme-latex {
-  .cherry-render {
+.penna-dark.penna-theme-latex {
+  .penna-render {
     @include tokens.theme-dark;
   }
 }

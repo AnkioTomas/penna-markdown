@@ -184,7 +184,7 @@ class FrontmatterVarFormDialog extends FormDialog<FrontmatterVarDialogResult> {
 
   /** 返回变量引用表单的样式类名。 */
   override get className() {
-    return "cherry-dialog-form--frontmatter-var";
+    return "penna-dialog-form--frontmatter-var";
   }
 
   /** 返回本次渲染动态构建的字段列表。 */

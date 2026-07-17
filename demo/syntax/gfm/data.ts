@@ -185,14 +185,14 @@ function calculateTotal(items) {
 
 \`\`\`css
 /* CSS 示例 */
-.cherry-render {
+.penna-render {
   color: #333;
   background: #f9f9f9;
 }
 \`\`\`
 
 \`\`\`bash
-pnpm install cherry-markdown-next
+pnpm install penna-markdown
 pnpm dev
 \`\`\`
 
@@ -239,7 +239,7 @@ Line 2.
     name: "链接 (Link)",
     markdown: `### 内联链接
 
-[Cherry Markdown 官网](https://github.com/Tencent/cherry-markdown)
+[Penna Markdown 官网](https://github.com/Tencent/penna-markdown)
 
 带 title 的链接：[悬停查看标题](https://github.com "这是一个标题内容")
 
@@ -249,7 +249,7 @@ Line 2.
 
 邮箱：<test@example.com>
 
-网址：<https://github.com/Tencent/cherry-markdown>
+网址：<https://github.com/Tencent/penna-markdown>
 
 ### 引用式链接
 

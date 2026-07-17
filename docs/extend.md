@@ -88,7 +88,7 @@ class AtParser extends BaseInlineParser {
 @tab:active 编辑器
 
 ```typescript
-new Cherry(el, {
+new Penna(el, {
   preview: {
     transformerEngineOptions: {
       inlineParsers: { 1001: new AtParser() },
@@ -130,7 +130,7 @@ new TransformerEngine({
 
 ## 样式
 
-预览样式写在主题 / render SCSS 中，挂在 `.cherry-render` 下。编辑器 chrome 样式不要塞进 `transformer/` 内容样式目录。
+预览样式写在主题 / render SCSS 中，挂在 `.penna-render` 下。编辑器 chrome 样式不要塞进 `transformer/` 内容样式目录。
 
 ---
 

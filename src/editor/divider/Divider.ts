@@ -8,7 +8,7 @@ const MAX_SPLIT = 0.85;
 const DEFAULT_SPLIT = 0.5;
 
 /** 分栏比例在本地存储中使用的键名 */
-export const SPLIT_STORAGE_KEY = "cherry-editor-split";
+export const SPLIT_STORAGE_KEY = "penna-editor-split";
 
 /**
  * 将分栏比例约束在可拖拽的有效范围内。
@@ -67,7 +67,7 @@ export class Divider {
 
     this.split = readStoredSplit(this.storage);
     this.bodyEl = mount.parentElement;
-    this.sidebarEl = this.bodyEl.querySelector(".cherry-sidebar");
+    this.sidebarEl = this.bodyEl.querySelector(".penna-sidebar");
 
     mount.setAttribute("role", "separator");
     mount.setAttribute("aria-orientation", "vertical");
@@ -125,18 +125,18 @@ export class Divider {
   /** 将当前布局模式同步到容器 CSS 类和分栏样式。 */
   private applyLayout(): void {
     this.bodyEl.classList.remove(
-      "cherry-body--split",
-      "cherry-body--edit",
-      "cherry-body--preview",
+      "penna-body--split",
+      "penna-body--edit",
+      "penna-body--preview",
     );
-    this.bodyEl.classList.add(`cherry-body--${this.mode}`);
+    this.bodyEl.classList.add(`penna-body--${this.mode}`);
     this.mount.classList.toggle("is-disabled", this.mode !== "split");
 
     if (this.mode === "split") {
       this.applySplit();
     } else {
-      this.bodyEl.style.removeProperty("--cherry-editor-ratio");
-      this.bodyEl.style.removeProperty("--cherry-preview-ratio");
+      this.bodyEl.style.removeProperty("--penna-editor-ratio");
+      this.bodyEl.style.removeProperty("--penna-preview-ratio");
     }
   }
 
@@ -145,9 +145,9 @@ export class Divider {
     const editorRatio = Math.round(this.split * 10000);
     const previewRatio = Math.round((1 - this.split) * 10000);
 
-    this.bodyEl.style.setProperty("--cherry-editor-ratio", String(editorRatio));
+    this.bodyEl.style.setProperty("--penna-editor-ratio", String(editorRatio));
     this.bodyEl.style.setProperty(
-      "--cherry-preview-ratio",
+      "--penna-preview-ratio",
       String(previewRatio),
     );
     this.mount.setAttribute(

@@ -1,6 +1,6 @@
 import { StateEffect, StateField, type Extension } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import type { OnParseFile } from "@/editor/CherryOptions";
+import type { OnParseFile } from "@/editor/PennaOptions";
 import { setPasteState } from "./pasteTooltip";
 
 /**

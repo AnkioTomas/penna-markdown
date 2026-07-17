@@ -1,7 +1,7 @@
 @use "../../common/rem" as *;
 
 @mixin styles {
-  .cherry-card.cherry-link-card {
+  .penna-card.penna-link-card {
     position: relative;
     display: block;
     padding-right: rem(36);
@@ -20,7 +20,7 @@
       width: rem(16);
       height: rem(16);
       transform: translateY(-50%);
-      background-color: var(--cherry-c-text-3);
+      background-color: var(--penna-c-text-3);
       -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z'/%3E%3C/svg%3E")
         no-repeat center / contain;
       mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z'/%3E%3C/svg%3E")
@@ -31,22 +31,18 @@
     }
 
     &:hover {
-      border-color: color-mix(
-        in srgb,
-        var(--cherry-c-brand-2) 60%,
-        transparent
-      );
+      border-color: color-mix(in srgb, var(--penna-c-brand-2) 60%, transparent);
       box-shadow: 0 rem(4) rem(12)
-        color-mix(in srgb, var(--cherry-c-text-1) 8%, transparent);
+        color-mix(in srgb, var(--penna-c-text-1) 8%, transparent);
 
       &::after {
         transform: translateY(-50%) translateX(rem(2));
-        background-color: var(--cherry-c-brand-2);
+        background-color: var(--penna-c-brand-2);
       }
     }
 
     &:focus-visible {
-      outline: rem(2) solid var(--cherry-c-brand-2);
+      outline: rem(2) solid var(--penna-c-brand-2);
       outline-offset: rem(2);
     }
 
@@ -64,8 +60,8 @@
       object-fit: cover;
       background: color-mix(
         in srgb,
-        var(--cherry-c-text-3) 10%,
-        var(--cherry-c-bg-elevated)
+        var(--penna-c-text-3) 10%,
+        var(--penna-c-bg-elevated)
       );
     }
 

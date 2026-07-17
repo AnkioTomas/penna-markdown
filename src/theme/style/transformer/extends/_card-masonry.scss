@@ -1,7 +1,7 @@
 @use "../../common/rem" as *;
 
 @mixin styles {
-  .cherry-card-masonry {
+  .penna-card-masonry {
     display: flex;
     align-items: flex-start;
     width: 100%;
@@ -14,7 +14,7 @@
       min-width: 0;
     }
 
-    [class^="cherry-card-masonry__v-"] {
+    [class^="penna-card-masonry__v-"] {
       > :first-child {
         margin-top: 0;
       }

@@ -47,35 +47,35 @@ function renderEmojiDialog(
   callbacks: DialogCallbacks<EmojiDialogResult>,
 ): () => void {
   const wrap = document.createElement("div");
-  wrap.className = "cherry-dialog-form cherry-dialog-form--emoji";
+  wrap.className = "penna-dialog-form penna-dialog-form--emoji";
 
   const categories = Object.keys(emojiCategories);
 
   wrap.innerHTML = `
-    <div class="cherry-dialog-table-head" style="padding-bottom: 8px;">
-      <span class="cherry-dialog-table-title">插入 Emoji</span>
+    <div class="penna-dialog-table-head" style="padding-bottom: 8px;">
+      <span class="penna-dialog-table-title">插入 Emoji</span>
     </div>
-    <div class="cherry-emoji-tabs">
+    <div class="penna-emoji-tabs">
       ${categories
         .map(
           (cat) =>
-            `<button type="button" class="cherry-emoji-tab ${cat === categories[0] ? "active" : ""}" data-category="${cat}" title="${cat}">${CATEGORY_ICONS[cat] || "✨"}</button>`,
+            `<button type="button" class="penna-emoji-tab ${cat === categories[0] ? "active" : ""}" data-category="${cat}" title="${cat}">${CATEGORY_ICONS[cat] || "✨"}</button>`,
         )
         .join("")}
     </div>
-    <label class="cherry-dialog-field" style="padding: 12px 24px 0;">
-      <input type="search" class="cherry-emoji-search" placeholder="搜索表情名称" />
+    <label class="penna-dialog-field" style="padding: 12px 24px 0;">
+      <input type="search" class="penna-emoji-search" placeholder="搜索表情名称" />
     </label>
-    <div class="cherry-dialog-form-scroll-area">
-      <div class="cherry-emoji-grid" role="listbox"></div>
+    <div class="penna-dialog-form-scroll-area">
+      <div class="penna-emoji-grid" role="listbox"></div>
     </div>
   `;
 
   const tabs = Array.from(
-    wrap.querySelectorAll(".cherry-emoji-tab"),
+    wrap.querySelectorAll(".penna-emoji-tab"),
   ) as HTMLButtonElement[];
-  const search = wrap.querySelector(".cherry-emoji-search") as HTMLInputElement;
-  const grid = wrap.querySelector(".cherry-emoji-grid") as HTMLElement;
+  const search = wrap.querySelector(".penna-emoji-search") as HTMLInputElement;
+  const grid = wrap.querySelector(".penna-emoji-grid") as HTMLElement;
 
   let currentCategory = categories[0];
   let searchQuery = "";
@@ -85,9 +85,9 @@ function renderEmojiDialog(
     if (!emoji) return null;
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "cherry-emoji-item";
+    btn.className = "penna-emoji-item";
     btn.title = ":" + alias + ":";
-    btn.innerHTML = `<span class="cherry-emoji-char">${emoji}</span>`;
+    btn.innerHTML = `<span class="penna-emoji-char">${emoji}</span>`;
     btn.addEventListener("click", () =>
       callbacks.onSubmit({ code: `:${alias}:` }),
     );
@@ -113,7 +113,7 @@ function renderEmojiDialog(
         }
       }
       if (count === 0) {
-        grid.innerHTML = '<div class="cherry-emoji-empty">无结果</div>';
+        grid.innerHTML = '<div class="penna-emoji-empty">无结果</div>';
       }
     } else {
       // 分类模式

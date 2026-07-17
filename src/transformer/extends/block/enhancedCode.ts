@@ -189,13 +189,13 @@ export function buildCodeBodyStyle(
   collapse: CollapsedCodeAnalysis | null,
   lineCount: number,
 ): string {
-  const parts: string[] = [`--cherry-line-count:${lineCount}`];
+  const parts: string[] = [`--penna-line-count:${lineCount}`];
   const gradient = buildLineHighlightGradient(highlightLines);
   if (gradient) {
-    parts.push(`--cherry-line-highlight-bg:${gradient}`);
+    parts.push(`--penna-line-highlight-bg:${gradient}`);
   }
   if (collapse?.enabled && collapse.hasMore) {
-    parts.push(`--cherry-collapsed-visible:${collapse.visibleCount}`);
+    parts.push(`--penna-collapsed-visible:${collapse.visibleCount}`);
   }
   return parts.length > 0 ? ` style="${parts.join(";")}"` : "";
 }
@@ -228,9 +228,9 @@ export function renderCodeBlockBodyHtml(
     ? highlighter(content, langClass)
     : lines.map((line) => escapeHtml(line)).join("\n");
   const codeClass = highlighter
-    ? `language-${langClass} hljs cherry-code-block__highlighted`
+    ? `language-${langClass} hljs penna-code-block__highlighted`
     : `language-${langClass}`;
-  const highlightedAttr = highlighter ? ' data-cherry-highlighted="1"' : "";
+  const highlightedAttr = highlighter ? ' data-penna-highlighted="1"' : "";
   const bodyStyle = buildCodeBodyStyle(
     highlightLines,
     collapse?.enabled ? analysis : null,
@@ -238,9 +238,9 @@ export function renderCodeBlockBodyHtml(
   );
 
   const html =
-    `<div class="cherry-code-block__body"${bodyStyle}>` +
-    `<div class="cherry-code-block__gutter" aria-hidden="true">${gutter}</div>` +
-    `<pre class="cherry-code-block__pre"><code class="${codeClass}"${highlightedAttr} data-cherry-code>${codeText}</code></pre>` +
+    `<div class="penna-code-block__body"${bodyStyle}>` +
+    `<div class="penna-code-block__gutter" aria-hidden="true">${gutter}</div>` +
+    `<pre class="penna-code-block__pre"><code class="${codeClass}"${highlightedAttr} data-penna-code>${codeText}</code></pre>` +
     `</div>`;
 
   return { html, collapse: analysis, lineCount };
@@ -439,39 +439,39 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
       );
 
     const copyBtn =
-      '<button type="button" class="cherry-copy-code-button" aria-label="复制代码" data-copied="已复制"></button>';
-    const langLabel = `<span class="cherry-code-block__lang">${langClass}</span>`;
+      '<button type="button" class="penna-copy-code-button" aria-label="复制代码" data-copied="已复制"></button>';
+    const langLabel = `<span class="penna-code-block__lang">${langClass}</span>`;
     const titleLabel = title
-      ? `<span class="cherry-code-block__title">${escapeHtml(title)}</span>`
+      ? `<span class="penna-code-block__title">${escapeHtml(title)}</span>`
       : "";
-    const header = `<div class="cherry-code-block__header"><div class="cherry-code-block__meta">${langLabel}${titleLabel}</div>${copyBtn}</div>`;
+    const header = `<div class="penna-code-block__header"><div class="penna-code-block__meta">${langLabel}${titleLabel}</div>${copyBtn}</div>`;
 
     const hasCollapse = Boolean(collapseAnalysis?.hasMore);
     const collapsedPanelClass = hasCollapse
-      ? " cherry-code-block__panel--collapsible cherry-code-block__panel--collapsed"
+      ? " penna-code-block__panel--collapsible penna-code-block__panel--collapsed"
       : "";
     const expandBtn = hasCollapse
-      ? '<button type="button" class="cherry-code-block__expand" aria-expanded="false"><span class="cherry-code-block__expand-label">展开代码</span><span class="cherry-code-block__expand-icon" aria-hidden="true"></span></button>'
+      ? '<button type="button" class="penna-code-block__expand" aria-expanded="false"><span class="penna-code-block__expand-label">展开代码</span><span class="penna-code-block__expand-icon" aria-hidden="true"></span></button>'
       : "";
 
     const panelLangClass = ` language-${langClass}`;
     const extAttr = ` data-ext="${langClass}"`;
     const linesAttr =
       highlightLines.length > 0
-        ? ` data-cherry-highlight-lines="${escapeHtml(formatHighlightLinesAttr(highlightLines))}"`
+        ? ` data-penna-highlight-lines="${escapeHtml(formatHighlightLinesAttr(highlightLines))}"`
         : "";
     const collapseAttr = hasCollapse
-      ? ` data-cherry-collapsed="1" data-cherry-collapsed-visible="${collapseAnalysis.visibleCount}" data-cherry-collapsed-max="${collapseAnalysis.maxLines}"${
+      ? ` data-penna-collapsed="1" data-penna-collapsed-visible="${collapseAnalysis.visibleCount}" data-penna-collapsed-max="${collapseAnalysis.maxLines}"${
           collapseAnalysis.markerLine
-            ? ` data-cherry-collapsed-marker="${collapseAnalysis.markerLine}"`
+            ? ` data-penna-collapsed-marker="${collapseAnalysis.markerLine}"`
             : ""
         }`
       : "";
-    const panel = `<div class="cherry-code-block__panel${panelLangClass}${collapsedPanelClass}"${extAttr}${linesAttr}${collapseAttr}>${header}${codeBody}${expandBtn}</div>`;
+    const panel = `<div class="penna-code-block__panel${panelLangClass}${collapsedPanelClass}"${extAttr}${linesAttr}${collapseAttr}>${header}${codeBody}${expandBtn}</div>`;
     const titleAttr = title ? ` data-title="${escapeHtml(title)}"` : "";
     const langData = ` data-lang="${langClass}"`;
 
-    return `<div class="cherry-code-block"${titleAttr}${langData}${this.sourceLineAttrs(node)}>${panel}</div>`;
+    return `<div class="penna-code-block"${titleAttr}${langData}${this.sourceLineAttrs(node)}>${panel}</div>`;
   }
 
   private renderPlainGfmCode(node: MarkdownNode, ctx: RenderContext): string {

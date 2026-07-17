@@ -21,9 +21,9 @@ import {
 } from "@codemirror/view";
 import { createEditorSyntaxHighlighting } from "./cmSyntax";
 import {
-  CherryInlinesExtension,
-  CherryMathBlockExtension,
-  CherryCommentBlockExtension,
+  PennaInlinesExtension,
+  PennaMathBlockExtension,
+  PennaCommentBlockExtension,
   codeInfoPlugin,
 } from "@/editor/editor/lezer";
 import { clipboardExtension } from "./clipboard";
@@ -57,7 +57,7 @@ export class Editor {
    * @param options 编辑器初始内容、扩展功能及外部依赖配置。
    */
   constructor(mount: HTMLElement, eventBus: EventBus, options: EditorOptions) {
-    mount.classList.add("cherry-editor-cm");
+    mount.classList.add("penna-editor-cm");
 
     const lineNumbersEnabled = options.lineNumbers !== false;
 
@@ -83,9 +83,9 @@ export class Editor {
       markdown({
         base: markdownLanguage,
         extensions: [
-          CherryMathBlockExtension,
-          CherryCommentBlockExtension,
-          CherryInlinesExtension,
+          PennaMathBlockExtension,
+          PennaCommentBlockExtension,
+          PennaInlinesExtension,
         ],
       }),
       createEditorSyntaxHighlighting(),
@@ -114,7 +114,7 @@ export class Editor {
 
     this.view = new EditorView({ state, parent: mount });
 
-    // 初始 doc 不经过 updateListener。延后到 microtask：等 Cherry 把 SideBar
+    // 初始 doc 不经过 updateListener。延后到 microtask：等 Penna 把 SideBar
     // 等订阅者挂上，再驱动 Preview 首屏与 TOC。
     queueMicrotask(() => {
       if (this.disposed) return;

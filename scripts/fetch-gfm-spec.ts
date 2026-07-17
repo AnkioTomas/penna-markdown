@@ -68,7 +68,7 @@ async function downloadSpec(ref: string): Promise<string> {
   const url = SPEC_URL.replace("{ref}", ref);
   console.log(`下载: ${url}`);
   const res = await fetch(url, {
-    headers: { "User-Agent": "cherry-markdown-next/fetch-gfm-spec" },
+    headers: { "User-Agent": "penna-markdown/fetch-gfm-spec" },
   });
   if (!res.ok) {
     throw new Error(`下载失败 HTTP ${res.status}: ${url}`);

@@ -6,7 +6,7 @@ import { expect, it } from "vitest";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { EditorState } from "@codemirror/state";
 import { ensureSyntaxTree } from "@codemirror/language";
-import { CherryInlinesExtension } from "@/editor/editor/lezer/cherryInlines.js";
+import { PennaInlinesExtension } from "@/editor/editor/lezer/pennaInlines.js";
 
 function findAtType(doc: string) {
   const state = EditorState.create({
@@ -14,14 +14,14 @@ function findAtType(doc: string) {
     extensions: [
       markdown({
         base: markdownLanguage,
-        extensions: [CherryInlinesExtension],
+        extensions: [PennaInlinesExtension],
       }),
     ],
   });
   const found: Array<{ text: string; from: number; to: number }> = [];
   ensureSyntaxTree(state, doc.length, 1000)?.iterate({
     enter: (node) => {
-      if (node.name === "CherryAtType") {
+      if (node.name === "PennaAtType") {
         found.push({
           text: doc.slice(node.from, node.to),
           from: node.from,

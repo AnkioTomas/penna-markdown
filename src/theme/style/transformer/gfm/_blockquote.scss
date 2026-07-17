@@ -4,9 +4,9 @@
   blockquote {
     margin: 0 0 rem(16);
     padding: rem(16);
-    color: var(--cherry-c-text-2);
-    background: color-mix(in srgb, var(--cherry-c-text-3) 10%, transparent);
-    border-left: rem(4) solid var(--cherry-c-brand-2);
+    color: var(--penna-c-text-2);
+    background: color-mix(in srgb, var(--penna-c-text-3) 10%, transparent);
+    border-left: rem(4) solid var(--penna-c-brand-2);
     border-radius: 0 rem(4) rem(4) 0;
 
     > * {

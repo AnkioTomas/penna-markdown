@@ -11,9 +11,9 @@ import { Preview } from "@/editor/preview/Preview";
 it("preview maxWidth marks the scroll shell, not the render mount", () => {
   document.body.innerHTML = "";
   const shell = document.createElement("div");
-  shell.className = "cherry-preview";
+  shell.className = "penna-preview";
   const mount = document.createElement("div");
-  mount.className = "cherry-render";
+  mount.className = "penna-render";
   shell.append(mount);
   document.body.append(shell);
 
@@ -24,11 +24,11 @@ it("preview maxWidth marks the scroll shell, not the render mount", () => {
     maxWidth: "720px",
   });
 
-  expect(shell.style.getPropertyValue("--cherry-preview-max-width")).toBe(
+  expect(shell.style.getPropertyValue("--penna-preview-max-width")).toBe(
     "720px",
   );
-  expect(shell.classList.contains("cherry-preview--constrained")).toBe(true);
-  expect(mount.classList.contains("cherry-preview--constrained")).toBe(false);
+  expect(shell.classList.contains("penna-preview--constrained")).toBe(true);
+  expect(mount.classList.contains("penna-preview--constrained")).toBe(false);
   expect(mount.style.maxWidth).toBe("");
 
   preview.destroy();

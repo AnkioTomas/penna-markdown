@@ -24,7 +24,7 @@ it("still emits editor:command when options.onClick is set", () => {
   const formatMenu = mount.querySelector('[data-toolbar-id="textFormat"]');
   (
     formatMenu?.querySelector(
-      ".cherry-toolbar-menu-trigger",
+      ".penna-toolbar-menu-trigger",
     ) as HTMLButtonElement
   )?.click();
   (

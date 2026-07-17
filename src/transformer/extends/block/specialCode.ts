@@ -1,5 +1,5 @@
 /**
- * @file 块级语法拓展：Cherry 特殊代码块 + Web API 远程渲染
+ * @file 块级语法拓展：Penna 特殊代码块 + Web API 远程渲染
  * @module transformer/extends/block/specialCode
  *
  * 在 GFM 代码块基础上，对 echarts / mermaid 等语言使用专用渲染器。
@@ -155,7 +155,7 @@ class SpecialCodeBlockParser extends BaseBlockParser {
     const code = content.trim();
     const src = this.buildMermaidImageSrc(code, options);
     const payload = base64UrlEncode(code);
-    return `<figure data-type="mermaid" class="cherry-mermaid-block"${lineAttrs}><img class="cherry-mermaid__img" data-mermaid="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></figure>`;
+    return `<figure data-type="mermaid" class="penna-mermaid-block"${lineAttrs}><img class="penna-mermaid__img" data-mermaid="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></figure>`;
   }
 
   renderEchartsBlock(
@@ -165,7 +165,7 @@ class SpecialCodeBlockParser extends BaseBlockParser {
   ): string {
     const src = this.buildEchartsImageSrc(content, options);
     const payload = base64UrlEncode(content.trim());
-    return `<div data-type="echarts" class="cherry-echarts-block"${lineAttrs}><img class="cherry-echarts__img" data-echarts="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></div>`;
+    return `<div data-type="echarts" class="penna-echarts-block"${lineAttrs}><img class="penna-echarts__img" data-echarts="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></div>`;
   }
 
   /** @inheritdoc */

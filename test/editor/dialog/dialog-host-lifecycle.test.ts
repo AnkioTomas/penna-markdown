@@ -33,7 +33,7 @@ it("keeps a replacement dialog open after the previous close delay", async () =>
   await expect(first).resolves.toBeNull();
 
   await vi.advanceTimersByTimeAsync(200);
-  expect(mount.querySelector<HTMLElement>(".cherry-dialog-host")!.hidden).toBe(
+  expect(mount.querySelector<HTMLElement>(".penna-dialog-host")!.hidden).toBe(
     false,
   );
 

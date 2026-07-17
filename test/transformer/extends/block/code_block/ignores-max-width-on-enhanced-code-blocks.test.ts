@@ -14,6 +14,6 @@ it("ignores max-width on enhanced code blocks", () => {
     engine(),
     "```js max-width=720\nconst a = 1;\n```",
   );
-  expect(html).toContain('class="cherry-code-block"');
+  expect(html).toContain('class="penna-code-block"');
   expect(html).not.toContain('style="max-width:720px"');
 });

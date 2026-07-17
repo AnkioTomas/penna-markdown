@@ -1,9 +1,9 @@
-import "../../_common/cherry-demo.scss";
+import "../../_common/penna-demo.scss";
 import "../../_common/layout.scss";
 
-import { Cherry, DEFAULT_TOOLBAR_ITEMS } from "@/editor/Cherry.js";
+import { Penna, DEFAULT_TOOLBAR_ITEMS } from "@/editor/Penna.js";
 import type { StorageAPI } from "@/core/StorageAPI.js";
-import type { CherryFileItem } from "@/editor/sidebar/SideBarOptions.js";
+import type { PennaFileItem } from "@/editor/sidebar/SideBarOptions.js";
 import REGISTERED_THEMES from "@/theme/ThemeRegister.js";
 import { setupThemeAndAppearance } from "../../_common/theme.js";
 import {
@@ -69,7 +69,7 @@ class CustomAtParser extends BaseInlineParser {
 // ==========================================
 const OPTIONS_GUIDE = `---
 title: 编辑器 Options 导览
-subtitle: CherryOptions 全量演示
+subtitle: PennaOptions 全量演示
 version: 0.1.0
 ---
 
@@ -77,7 +77,7 @@ version: 0.1.0
 
 > [[subtitle]] — 本页说明当前 Demo **已经启用** 的构造选项；语法样例见侧栏 \`simple\` / \`test\`。
 
-## 已启用的 CherryOptions
+## 已启用的 PennaOptions
 
 | 选项 | 本 Demo 取值 | 作用 |
 | --- | --- | --- |
@@ -99,7 +99,7 @@ version: 0.1.0
 
 ## 建议体验路径
 
-1. 侧栏打开 **simple** — GFM + Cherry 扩展语法全集（精简）
+1. 侧栏打开 **simple** — GFM + Penna 扩展语法全集（精简）
 2. 侧栏打开 **test** — 边界 / 压力 / 回归活文档
 3. 侧栏打开 **AI Diff 演示** — 选区润色后逐块确认
 4. 侧栏打开 **自定义语法** — 预览区渲染 \`@@text@@\`
@@ -452,7 +452,7 @@ async function localAIRequest(
 
 /** Demo 专用存储：与其它页面隔离，仍持久化分栏比例 */
 function createDemoStorage(): StorageAPI {
-  const prefix = "cherry-editor-demo:";
+  const prefix = "penna-editor-demo:";
   return {
     getItem(key) {
       try {
@@ -475,7 +475,7 @@ function virtualFile(
   id: string,
   title: string,
   summary: string,
-): CherryFileItem {
+): PennaFileItem {
   return {
     id,
     title,
@@ -484,7 +484,7 @@ function virtualFile(
   };
 }
 
-function preferSimpleFirst(items: CherryFileItem[]): CherryFileItem[] {
+function preferSimpleFirst(items: PennaFileItem[]): PennaFileItem[] {
   const rank = (id: string) => {
     if (id.endsWith("/simple.md")) return 0;
     if (id.endsWith("/test.md")) return 1;
@@ -498,7 +498,7 @@ function preferSimpleFirst(items: CherryFileItem[]): CherryFileItem[] {
 
 async function init() {
   const docs = await fetchDocsList(DOCS_DIR);
-  let editor: Cherry;
+  let editor: Penna;
 
   async function resolveContent(fileId: string): Promise<string> {
     switch (fileId) {
@@ -518,7 +518,7 @@ async function init() {
     editor.setSidebarActiveFile(fileId);
   }
 
-  editor = new Cherry(document.querySelector("#cherry-editor")!, {
+  editor = new Penna(document.querySelector("#penna-editor")!, {
     layout: "split",
     appearance: "light",
     themeId: "default",
@@ -555,11 +555,7 @@ async function init() {
           (f) => !f.title.startsWith("_"),
         );
         return [
-          virtualFile(
-            VIRTUAL.options,
-            "Options 导览",
-            "CherryOptions 全量说明",
-          ),
+          virtualFile(VIRTUAL.options, "Options 导览", "PennaOptions 全量说明"),
           virtualFile(VIRTUAL.ai, "AI Diff 演示", "行级 diff / 逐块确认"),
           virtualFile(
             VIRTUAL.custom,

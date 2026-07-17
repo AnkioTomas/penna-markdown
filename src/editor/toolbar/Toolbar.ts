@@ -38,7 +38,7 @@ function filterThemeMenu(
  * - 传入 `options.items`（含空数组）：**整表替换**，不再与默认项合并
  *
  * @param options 工具栏配置及可选的自定义项目。
- * @param themes 可用主题白名单，来自 {@link CherryOptions.themes}。
+ * @param themes 可用主题白名单，来自 {@link PennaOptions.themes}。
  */
 export function resolveToolbarItems(
   options?: ToolbarOptions,
@@ -62,7 +62,7 @@ export class Toolbar {
    * @param mount 承载工具栏的 DOM 元素。
    * @param eventBus 用于发布编辑器命令的事件总线。
    * @param options 工具栏项目和点击行为配置。
-   * @param themes 可用主题白名单，来自 {@link CherryOptions.themes}。
+   * @param themes 可用主题白名单，来自 {@link PennaOptions.themes}。
    * @param focus 可选的编辑器聚焦函数，在执行命令后调用。
    */
   constructor(

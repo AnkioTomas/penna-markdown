@@ -1,12 +1,12 @@
 /** Morandi 主题编辑器样式 */
 @use "tokens";
 
-.cherry-theme-morandi.cherry,
-.cherry-theme-morandi .cherry {
+.penna-theme-morandi.penna,
+.penna-theme-morandi .penna {
   @include tokens.theme-light;
 }
 
-.cherry-dark.cherry-theme-morandi.cherry,
-.cherry-dark.cherry-theme-morandi .cherry {
+.penna-dark.penna-theme-morandi.penna,
+.penna-dark.penna-theme-morandi .penna {
   @include tokens.theme-dark;
 }

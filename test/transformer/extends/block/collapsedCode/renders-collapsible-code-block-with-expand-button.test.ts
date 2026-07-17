@@ -25,13 +25,13 @@ it("renders collapsible code block with expand button", () => {
     "```",
   ].join("\n");
   const html = renderMarkdown(createEnhancedEngine(), md);
-  expect(html).toContain("cherry-code-block__panel--collapsible");
-  expect(html).toContain("cherry-code-block__panel--collapsed");
-  expect(html).toContain('class="cherry-code-block__expand"');
-  expect(html).toContain('data-cherry-collapsed="1"');
-  expect(html).toContain('class="cherry-code-block__body"');
-  expect(html).toContain('class="cherry-code-block__gutter"');
-  expect(html).toContain("--cherry-collapsed-visible:4");
+  expect(html).toContain("penna-code-block__panel--collapsible");
+  expect(html).toContain("penna-code-block__panel--collapsed");
+  expect(html).toContain('class="penna-code-block__expand"');
+  expect(html).toContain('data-penna-collapsed="1"');
+  expect(html).toContain('class="penna-code-block__body"');
+  expect(html).toContain('class="penna-code-block__gutter"');
+  expect(html).toContain("--penna-collapsed-visible:4");
   expect(html).not.toContain("... more code");
   expect(html).toContain("body {");
 });

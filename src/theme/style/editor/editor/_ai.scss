@@ -1,24 +1,24 @@
-.cherry-ai-icon {
+.penna-ai-icon {
   display: block;
   flex-shrink: 0;
 }
 
-.cherry .cherry-ai-mask-global {
+.penna .penna-ai-mask-global {
   position: absolute;
   inset: 0;
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--cherry-c-bg) 60%, transparent);
+  background: color-mix(in srgb, var(--penna-c-bg) 60%, transparent);
   backdrop-filter: blur(8px) saturate(150%);
   pointer-events: all;
   cursor: wait;
   outline: none;
-  animation: cherry-ai-fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: penna-ai-fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes cherry-ai-fade-in {
+@keyframes penna-ai-fade-in {
   from {
     opacity: 0;
     transform: scale(0.98);
@@ -29,7 +29,7 @@
   }
 }
 
-.cherry .cherry-ai-mask-layout {
+.penna .penna-ai-mask-layout {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -41,40 +41,40 @@
   box-sizing: border-box;
 }
 
-.cherry .cherry-ai-mask-header {
+.penna .penna-ai-mask-header {
   display: flex;
   align-items: center;
   gap: 16px;
   padding-bottom: 24px;
   margin-bottom: 24px;
   border-bottom: 1px solid
-    color-mix(in srgb, var(--cherry-c-border) 20%, transparent);
+    color-mix(in srgb, var(--penna-c-border) 20%, transparent);
   flex-shrink: 0;
 }
 
-.cherry .cherry-ai-mask-title {
-  color: var(--cherry-c-text-1);
+.penna .penna-ai-mask-title {
+  color: var(--penna-c-text-1);
   font-size: 16px;
-  font-family: var(--cherry-font-family);
+  font-family: var(--penna-font-family);
   font-weight: bold;
   flex: 1;
 }
 
-.cherry .cherry-ai-mask-body {
+.penna .penna-ai-mask-body {
   flex: 1;
   overflow-y: auto;
   padding-right: 16px;
   scrollbar-width: thin;
 }
 
-.cherry .cherry-ai-mask-thinking {
-  color: color-mix(in srgb, var(--cherry-c-text-1) 70%, transparent);
+.penna .penna-ai-mask-thinking {
+  color: color-mix(in srgb, var(--penna-c-text-1) 70%, transparent);
   font-size: 14px;
-  font-family: var(--cherry-font-family);
+  font-family: var(--penna-font-family);
   white-space: pre-wrap;
   margin-bottom: 16px;
   border-left: 3px solid
-    color-mix(in srgb, var(--cherry-c-brand-1) 50%, transparent);
+    color-mix(in srgb, var(--penna-c-brand-1) 50%, transparent);
   padding-left: 12px;
 
   &:empty {
@@ -82,33 +82,33 @@
   }
 }
 
-.cherry .cherry-ai-mask-partial {
-  color: var(--cherry-c-text-1);
+.penna .penna-ai-mask-partial {
+  color: var(--penna-c-text-1);
   font-size: 16px;
   line-height: 1.8;
   white-space: pre-wrap;
-  font-family: var(--cherry-font-family);
+  font-family: var(--penna-font-family);
 }
 
-.cherry .cherry-ai-mask-spinner {
+.penna .penna-ai-mask-spinner {
   width: 32px;
   height: 32px;
   flex-shrink: 0;
   border-radius: 50%;
-  border: 3px solid color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
-  border-top-color: var(--cherry-c-brand-1);
-  animation: cherry-ai-spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  border: 3px solid color-mix(in srgb, var(--penna-c-brand-1) 15%, transparent);
+  border-top-color: var(--penna-c-brand-1);
+  animation: penna-ai-spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   margin: 0 auto;
 }
 
-@keyframes cherry-ai-spin {
+@keyframes penna-ai-spin {
   to {
     transform: rotate(360deg);
   }
 }
 
 /* 删除行：整行红条，显示在新增行上方 */
-.cherry-editor-cm .cherry-ai-diff-del-block {
+.penna-editor-cm .penna-ai-diff-del-block {
   margin: 0;
   padding: 0;
   font-family: inherit;
@@ -116,63 +116,63 @@
   line-height: inherit;
 }
 
-.cherry-editor-cm .cherry-ai-diff-del-line {
+.penna-editor-cm .penna-ai-diff-del-line {
   display: block;
   padding: 0 8px 0 12px;
   margin: 0;
   background: color-mix(
     in srgb,
-    var(--cherry-c-danger, #c62828) 18%,
+    var(--penna-c-danger, #c62828) 18%,
     transparent
   );
-  color: var(--cherry-c-danger, #b71c1c);
+  color: var(--penna-c-danger, #b71c1c);
   text-decoration: line-through;
   text-decoration-thickness: 2px;
-  box-shadow: inset 3px 0 0 var(--cherry-c-danger, #c62828);
+  box-shadow: inset 3px 0 0 var(--penna-c-danger, #c62828);
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-.cherry-editor-cm .cherry-ai-diff-line {
+.penna-editor-cm .penna-ai-diff-line {
   background: color-mix(in srgb, #2e7d32 12%, transparent);
   box-shadow: inset 3px 0 0 #2e7d32;
 }
 
-.cherry-editor-cm .cherry-ai-diff-line--del-only {
+.penna-editor-cm .penna-ai-diff-line--del-only {
   background: color-mix(
     in srgb,
-    var(--cherry-c-danger, #c62828) 10%,
+    var(--penna-c-danger, #c62828) 10%,
     transparent
   );
-  box-shadow: inset 3px 0 0 var(--cherry-c-danger, #c62828);
+  box-shadow: inset 3px 0 0 var(--penna-c-danger, #c62828);
 }
 
 /* 悬浮确认条：每个变更块一对按钮，锚定在块首行右侧 */
-.cherry-ai-hunk-actions {
+.penna-ai-hunk-actions {
   position: fixed;
   display: none;
   align-items: center;
   gap: 4px;
   padding: 3px 5px;
   border-radius: 8px;
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent);
-  background: var(--cherry-c-bg-elevated);
+  border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 20%, transparent);
+  background: var(--penna-c-bg-elevated);
   box-shadow:
-    0 2px 8px color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--cherry-c-bg) 80%, transparent);
-  font-family: var(--cherry-font-family);
+    0 2px 8px color-mix(in srgb, var(--penna-c-text-3) 14%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--penna-c-bg) 80%, transparent);
+  font-family: var(--penna-font-family);
   font-size: 12px;
   pointer-events: auto;
 }
 
-.cherry-ai-hunk-actions .cherry-ai-diff-btn {
+.penna-ai-hunk-actions .penna-ai-diff-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 4px 8px;
   border-radius: 6px;
   border: 1px solid transparent;
-  font-family: var(--cherry-font-family);
+  font-family: var(--penna-font-family);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -183,14 +183,14 @@
     filter 0.15s ease,
     border-color 0.15s ease;
 
-  .cherry-ai-icon {
+  .penna-ai-icon {
     flex-shrink: 0;
     width: 14px;
     height: 14px;
   }
 }
 
-.cherry-ai-hunk-actions .cherry-ai-diff-btn--accept {
+.penna-ai-hunk-actions .penna-ai-diff-btn--accept {
   background: #2e7d32;
   color: #fff;
   border-color: #2e7d32;
@@ -200,29 +200,29 @@
   }
 }
 
-.cherry-ai-hunk-actions .cherry-ai-diff-btn--reject {
+.penna-ai-hunk-actions .penna-ai-diff-btn--reject {
   background: color-mix(
     in srgb,
-    var(--cherry-c-danger, #c62828) 12%,
+    var(--penna-c-danger, #c62828) 12%,
     transparent
   );
-  color: var(--cherry-c-danger, #c62828);
+  color: var(--penna-c-danger, #c62828);
   border-color: color-mix(
     in srgb,
-    var(--cherry-c-danger, #c62828) 45%,
+    var(--penna-c-danger, #c62828) 45%,
     transparent
   );
 
   &:hover {
     background: color-mix(
       in srgb,
-      var(--cherry-c-danger, #c62828) 20%,
+      var(--penna-c-danger, #c62828) 20%,
       transparent
     );
-    border-color: var(--cherry-c-danger, #c62828);
+    border-color: var(--penna-c-danger, #c62828);
   }
 }
 
-.cherry-ai-hunk-actions .cherry-ai-diff-btn-label {
+.penna-ai-hunk-actions .penna-ai-diff-btn-label {
   line-height: 1;
 }

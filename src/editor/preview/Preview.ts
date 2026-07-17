@@ -7,7 +7,7 @@ import type { Theme } from "@/theme/Theme";
 import type { EventBus } from "@/core/event/EventBus";
 import { debounce } from "@/core/debounce";
 import type { Log } from "@/core/Log";
-import { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
+import { PennaChangeLineSet } from "@/renderer/incremental/PennaChangeSet";
 import type { RenderResult } from "@/renderer/RenderResult";
 import type { ParserStore } from "@/transformer/core/ParserStore";
 import type {
@@ -19,7 +19,7 @@ export class Preview {
   private readonly eventBus: EventBus;
   private readonly renderer: Renderer;
   private readonly debug: boolean;
-  /** 实际滚动容器：有外壳时是 `.cherry-preview`，否则退化为 mount */
+  /** 实际滚动容器：有外壳时是 `.penna-preview`，否则退化为 mount */
   private readonly scrollEl: HTMLElement;
   private lastMarkdown = "";
   private readonly scheduleRender = debounce(() => this.flushRender(), 50);
@@ -28,7 +28,7 @@ export class Preview {
   /**
    * 创建预览渲染器，并订阅编辑、主题和强制刷新事件。
    *
-   * @param mount 承载渲染结果的 DOM 元素（`.cherry-render`）。
+   * @param mount 承载渲染结果的 DOM 元素（`.penna-render`）。
    * @param theme 当前编辑器使用的主题实例。
    * @param eventBus 用于接收和发布预览相关事件的事件总线。
    * @param logger 渲染器使用的日志记录器。
@@ -43,7 +43,7 @@ export class Preview {
   ) {
     this.eventBus = eventBus;
     this.debug = eventBus.isDebug();
-    this.scrollEl = mount.parentElement?.classList.contains("cherry-preview")
+    this.scrollEl = mount.parentElement?.classList.contains("penna-preview")
       ? mount.parentElement
       : mount;
     this.renderer = new Renderer({
@@ -75,8 +75,8 @@ export class Preview {
         typeof options.maxWidth === "number"
           ? `${options.maxWidth}px`
           : String(options.maxWidth);
-      this.scrollEl.style.setProperty("--cherry-preview-max-width", value);
-      this.scrollEl.classList.add("cherry-preview--constrained");
+      this.scrollEl.style.setProperty("--penna-preview-max-width", value);
+      this.scrollEl.classList.add("penna-preview--constrained");
     }
     this.offs.add(
       eventBus.on("preview:force-refresh", () => {
@@ -135,7 +135,7 @@ export class Preview {
     const transactionsToProcess = this.pendingTransactions;
     this.pendingTransactions = [];
 
-    const changes = this.convert2CherryChanges(
+    const changes = this.convert2PennaChanges(
       transactionsToProcess.length > 0 ? transactionsToProcess : undefined,
     );
     const { result, durationMs } = this.measureRender(markdown, changes);
@@ -152,7 +152,7 @@ export class Preview {
    */
   private measureRender(
     markdown: string,
-    changes?: CherryChangeLineSet[],
+    changes?: PennaChangeLineSet[],
   ): { result: RenderResult; durationMs?: number } {
     if (!this.debug) {
       return { result: this.renderer.render(markdown, changes) };
@@ -222,9 +222,9 @@ export class Preview {
    * @param transactions 待合并的 CodeMirror 事务列表。
    * @returns 可用于增量渲染的变更集；没有文档变更时返回 `undefined`。
    */
-  private convert2CherryChanges(
+  private convert2PennaChanges(
     transactions?: readonly Transaction[],
-  ): CherryChangeLineSet[] | undefined {
+  ): PennaChangeLineSet[] | undefined {
     if (!transactions?.length) return undefined;
 
     const validTrs = transactions.filter((t) => t.docChanged);
@@ -235,7 +235,7 @@ export class Preview {
       mergedChanges = mergedChanges.compose(validTrs[i]!.changes);
     }
 
-    const list: CherryChangeLineSet[] = [];
+    const list: PennaChangeLineSet[] = [];
     const oldDoc = validTrs[0]!.startState.doc;
     const newDoc = validTrs[validTrs.length - 1]!.state.doc;
 

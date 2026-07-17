@@ -14,8 +14,8 @@ body {
   @include tokens.theme-default;
   display: flex;
   flex-direction: column;
-  background: var(--cherry-c-bg);
-  color: var(--cherry-c-text-1);
+  background: var(--penna-c-bg);
+  color: var(--penna-c-text-1);
   font-family:
     system-ui,
     -apple-system,
@@ -32,9 +32,9 @@ body.demo-dark {
   align-items: center;
   gap: 16px;
   padding: 12px 18px;
-  background: var(--cherry-c-bg-elevated);
+  background: var(--penna-c-bg-elevated);
   border-bottom: 1px solid
-    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+    color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
   flex-shrink: 0;
 }
 
@@ -43,12 +43,12 @@ body.demo-dark {
   align-items: center;
   gap: 8px;
   text-decoration: none;
-  color: var(--cherry-c-brand-1);
+  color: var(--penna-c-brand-1);
   font-size: 13px;
 
   &:hover {
     text-decoration: underline;
-    color: var(--cherry-c-brand-2);
+    color: var(--penna-c-brand-2);
   }
 }
 
@@ -62,7 +62,7 @@ body.demo-dark {
 .title {
   font-weight: 600;
   font-size: 14px;
-  color: var(--cherry-c-text-1);
+  color: var(--penna-c-text-1);
 }
 
 .header-controls {
@@ -78,16 +78,16 @@ body.demo-dark {
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: var(--cherry-c-text-2);
+  color: var(--penna-c-text-2);
 }
 
 .header-controls select {
   font: inherit;
   padding: 4px 8px;
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
+  border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 35%, transparent);
   border-radius: 6px;
-  background: var(--cherry-c-bg);
-  color: var(--cherry-c-text-1);
+  background: var(--penna-c-bg);
+  color: var(--penna-c-text-1);
 }
 
 .app-container {

@@ -15,7 +15,7 @@ it("parses single-quoted and unquoted title", () => {
     "```bash title='run.sh'\necho hi\n```",
   );
   expect(quoted).toContain('data-title="run.sh"');
-  expect(quoted).toContain('class="cherry-code-block__title">run.sh</span>');
+  expect(quoted).toContain('class="penna-code-block__title">run.sh</span>');
 
   const bare = renderMarkdown(
     createEnhancedEngine(),

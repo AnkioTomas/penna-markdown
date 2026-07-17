@@ -13,5 +13,5 @@ it("still renders mermaid via specialCode when enhanced code enabled", () => {
   const md = "```mermaid\nflowchart TD\n    A --> B\n```";
   const html = renderMarkdown(createEnhancedEngine(), md);
   expect(html).toContain('<figure data-type="mermaid"');
-  expect(html).not.toContain("cherry-code-block");
+  expect(html).not.toContain("penna-code-block");
 });

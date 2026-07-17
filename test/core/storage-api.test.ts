@@ -19,8 +19,8 @@ it("createMemoryStorage accepts seed values", () => {
 
 it("createDefaultStorage returns a working storage implementation", () => {
   const storage = createDefaultStorage();
-  storage.setItem("cherry-test", "ok");
-  expect(storage.getItem("cherry-test")).toBe("ok");
+  storage.setItem("penna-test", "ok");
+  expect(storage.getItem("penna-test")).toBe("ok");
 });
 
 it("createLocalStorageAdapter mirrors localStorage when available", () => {
@@ -33,8 +33,8 @@ it("createLocalStorageAdapter mirrors localStorage when available", () => {
   });
 
   const storage = createLocalStorageAdapter();
-  storage.setItem("cherry-test-local", "yes");
-  expect(storage.getItem("cherry-test-local")).toBe("yes");
+  storage.setItem("penna-test-local", "yes");
+  expect(storage.getItem("penna-test-local")).toBe("yes");
 
   vi.unstubAllGlobals();
 });

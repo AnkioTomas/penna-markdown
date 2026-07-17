@@ -1,4 +1,4 @@
-import { Cherry } from "@/editor/Cherry.js";
+import { Penna } from "@/editor/Penna.js";
 import { Theme } from "@/theme/Theme.js";
 import { EventBus } from "@/core/event/EventBus.js";
 import { Log } from "@/core/Log.js";
@@ -13,8 +13,8 @@ export interface DemoThemeKit {
   log: Log;
 }
 
-const THEME_STORAGE_KEY = "cherry-demo-theme";
-const APPEARANCE_STORAGE_KEY = "cherry-demo-appearance";
+const THEME_STORAGE_KEY = "penna-demo-theme";
+const APPEARANCE_STORAGE_KEY = "penna-demo-appearance";
 
 type AppearanceMode = "light" | "dark" | "auto";
 
@@ -42,13 +42,13 @@ function readThemeId(): string {
 
 /**
  * 创建独立预览 Demo 用的 Theme 套件。
- * @param rootElement 承载 `cherry-theme-*` 的根节点（通常为预览外层容器）
+ * @param rootElement 承载 `penna-theme-*` 的根节点（通常为预览外层容器）
  */
 export function createDemoTheme(
   rootElement: HTMLElement = document.body,
 ): DemoThemeKit {
   const log = new Log(true);
-  const eventBus = new EventBus(true, "[cherry-demo]", log);
+  const eventBus = new EventBus(true, "[penna-demo]", log);
   const theme = new Theme(eventBus, log, rootElement);
   return { theme, eventBus, log };
 }
@@ -60,7 +60,7 @@ export interface ThemeControlOptions {
 
 /** 编辑器 Demo：主题 + 明暗切换 */
 export function setupThemeAndAppearance(
-  editor: Cherry,
+  editor: Penna,
   options: ThemeControlOptions = {},
 ): void {
   bindThemeControls(
@@ -72,14 +72,14 @@ export function setupThemeAndAppearance(
 /**
  * 独立预览 Demo（语法演示 / 框架集成等）：绑定 Theme 到挂载点并接入顶栏控件。
  * @param kit `createDemoTheme(root)` 返回值
- * @param render 预览内容挂载点（调用方需保证其或其子节点带 `cherry-render`）
+ * @param render 预览内容挂载点（调用方需保证其或其子节点带 `penna-render`）
  */
 export function setupPreviewThemeAndAppearance(
   kit: DemoThemeKit,
   render: HTMLElement,
   options: ThemeControlOptions = {},
 ): void {
-  render.classList.add("cherry-render");
+  render.classList.add("penna-render");
   kit.theme.setTheme(readThemeId());
   bindThemeControls(kit, options);
 }

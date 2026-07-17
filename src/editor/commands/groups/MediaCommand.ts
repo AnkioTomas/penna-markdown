@@ -1,6 +1,6 @@
 /**
  * 媒体嵌入命令组。
- * 插入 Cherry 扩展语法 `!video[label](url)`、`!audio`、`!iframe`。
+ * 插入 Penna 扩展语法 `!video[label](url)`、`!audio`、`!iframe`。
  */
 import type { EditorView } from "@codemirror/view";
 import { requestDialog } from "@/editor/dialog/requestDialog.js";
@@ -30,7 +30,7 @@ const KIND_LABELS: Record<MediaDialogResult["kind"], string> = {
 };
 
 /**
- * 将媒体数据转为 Cherry 媒体 Markdown。
+ * 将媒体数据转为 Penna 媒体 Markdown。
  * @param data - 已校验的媒体表单数据
  * @returns 可插入编辑器的媒体语法
  */

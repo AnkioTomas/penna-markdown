@@ -200,11 +200,11 @@ class CollapseBlockParser extends BaseBlockParser {
 
     const accordion = Boolean(node.props?.accordion);
     const expand = Boolean(node.props?.expand);
-    const groupName = accordion ? `cherry-collapse-${++collapseGroupSeq}` : "";
+    const groupName = accordion ? `penna-collapse-${++collapseGroupSeq}` : "";
     const containerClasses = [
-      "cherry-collapse",
-      accordion ? "cherry-collapse--accordion" : "",
-      expand ? "cherry-collapse--expand" : "",
+      "penna-collapse",
+      accordion ? "penna-collapse--accordion" : "",
+      expand ? "penna-collapse--expand" : "",
     ]
       .filter(Boolean)
       .join(" ");
@@ -221,7 +221,7 @@ class CollapseBlockParser extends BaseBlockParser {
       return [
         `<details${openAttr}${nameAttr}>`,
         `<summary>${summary}</summary>`,
-        `<div class="cherry-collapse-body">${body}</div>`,
+        `<div class="penna-collapse-body">${body}</div>`,
         "</details>",
       ].join("\n");
     });

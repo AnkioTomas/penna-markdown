@@ -14,5 +14,5 @@ it("still renders echarts via specialCode when enhanced code enabled", () => {
   const html = renderMarkdown(createEnhancedEngine(), md);
   expect(html).toContain('<div data-type="echarts"');
   expect(html).toContain(buildEchartsImageSrc(ECHARTS_OPTIONS));
-  expect(html).not.toContain("cherry-code-block");
+  expect(html).not.toContain("penna-code-block");
 });

@@ -64,8 +64,8 @@ class MathInlineParser extends BaseInlineParser {
     });
     if (!src) return "";
     const alt = escapeHtml(latex);
-    const attrs = `class="cherry-math-latex" data-latex="${alt}" data-inline="true" alt="${alt}"`;
-    return `<span class="cherry-math cherry-math-inline" data-type="mathInline"><img ${attrs} src="${src}" loading="lazy" /></span>`;
+    const attrs = `class="penna-math-latex" data-latex="${alt}" data-inline="true" alt="${alt}"`;
+    return `<span class="penna-math penna-math-inline" data-type="mathInline"><img ${attrs} src="${src}" loading="lazy" /></span>`;
   }
 }
 

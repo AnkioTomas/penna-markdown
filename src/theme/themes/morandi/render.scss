@@ -2,17 +2,17 @@
 @use "tokens";
 @use "overrides";
 
-// 日间：.cherry-theme-morandi .cherry-render
-.cherry-theme-morandi {
-  .cherry-render {
+// 日间：.penna-theme-morandi .penna-render
+.penna-theme-morandi {
+  .penna-render {
     @include tokens.theme-light;
     @include overrides.styles;
   }
 }
 
-// 夜间：.cherry-dark.cherry-theme-morandi .cherry-render
-.cherry-dark.cherry-theme-morandi {
-  .cherry-render {
+// 夜间：.penna-dark.penna-theme-morandi .penna-render
+.penna-dark.penna-theme-morandi {
+  .penna-render {
     @include tokens.theme-dark;
   }
 }

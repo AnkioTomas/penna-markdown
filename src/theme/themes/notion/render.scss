@@ -2,15 +2,15 @@
 @use "tokens";
 @use "overrides";
 
-.cherry-theme-notion {
-  .cherry-render {
+.penna-theme-notion {
+  .penna-render {
     @include tokens.theme-light;
     @include overrides.styles;
   }
 }
 
-.cherry-dark.cherry-theme-notion {
-  .cherry-render {
+.penna-dark.penna-theme-notion {
+  .penna-render {
     @include tokens.theme-dark;
   }
 }

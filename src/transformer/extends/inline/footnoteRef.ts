@@ -66,7 +66,7 @@ class FootnoteRefInlineParser extends BaseInlineParser {
 
     if (!num) return `[^${id}]`;
 
-    return `<sup class="cherry-footnote-ref"><a href="#footnote-${num}" id="${footnoteRefId(num, refIndex)}">${num}</a></sup>`;
+    return `<sup class="penna-footnote-ref"><a href="#footnote-${num}" id="${footnoteRefId(num, refIndex)}">${num}</a></sup>`;
   }
 }
 

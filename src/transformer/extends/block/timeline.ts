@@ -153,7 +153,7 @@ function renderTimelineTitle(
   if (lines.length === 0) return "";
 
   const html = lines.map((nodes) => ctx.renderInline(nodes)).join("<br>");
-  return `<p class="cherry-timeline-title">${html}</p>`;
+  return `<p class="penna-timeline-title">${html}</p>`;
 }
 
 class TimelineBlockParser extends BaseBlockParser {
@@ -222,8 +222,8 @@ class TimelineBlockParser extends BaseBlockParser {
 
     const containerPlacement = String(node.props?.placement ?? "left");
     const containerClasses = [
-      "cherry-timeline",
-      `cherry-timeline--placement-${containerPlacement}`,
+      "penna-timeline",
+      `penna-timeline--placement-${containerPlacement}`,
     ].join(" ");
 
     const rendered = items.map((item) => {
@@ -235,23 +235,23 @@ class TimelineBlockParser extends BaseBlockParser {
         (item.props?.titleLineNodes as MarkdownNode[][] | undefined) ?? [];
 
       const classes = [
-        "cherry-timeline-item",
-        `cherry-timeline-item--${type}`,
-        `cherry-timeline-item--line-${line}`,
+        "penna-timeline-item",
+        `penna-timeline-item--${type}`,
+        `penna-timeline-item--line-${line}`,
         containerPlacement === "between"
-          ? `cherry-timeline-item--placement-${itemPlacement}`
-          : "cherry-timeline-item--placement-left",
+          ? `penna-timeline-item--placement-${itemPlacement}`
+          : "penna-timeline-item--placement-left",
       ].join(" ");
 
       const timeHtml = time
-        ? `<p class="cherry-timeline-time">${escapeHtml(time)}</p>`
+        ? `<p class="penna-timeline-time">${escapeHtml(time)}</p>`
         : "";
 
       return [
         `<div class="${classes}">`,
-        `<div class="cherry-timeline-line"><span class="cherry-timeline-point"></span></div>`,
-        `<div class="cherry-timeline-container">`,
-        `<div class="cherry-timeline-content">`,
+        `<div class="penna-timeline-line"><span class="penna-timeline-point"></span></div>`,
+        `<div class="penna-timeline-container">`,
+        `<div class="penna-timeline-content">`,
         renderTimelineTitle(titleLineNodes, ctx),
         ctx.renderBlock(item.children ?? []),
         `</div>`,
@@ -263,7 +263,7 @@ class TimelineBlockParser extends BaseBlockParser {
 
     return [
       `<div class="${containerClasses}"${this.sourceLineAttrs(node)}>`,
-      `<div class="cherry-timeline-box">${rendered.join("")}</div>`,
+      `<div class="penna-timeline-box">${rendered.join("")}</div>`,
       `</div>`,
     ].join("");
   }

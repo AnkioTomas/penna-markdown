@@ -11,7 +11,7 @@ it("does not create perf element when debug is false", () => {
   const eventBus = createTestEventBus();
   const statusBar = new StatusBar(mount, eventBus, false);
 
-  expect(mount.querySelector(".cherry-statusbar-perf")).toBeNull();
+  expect(mount.querySelector(".penna-statusbar-perf")).toBeNull();
 
   statusBar.destroy();
 });
@@ -21,8 +21,8 @@ it("shows latest render type and timing to the right of refresh in debug mode", 
   const eventBus = createTestEventBus();
   const statusBar = new StatusBar(mount, eventBus, true);
 
-  const right = mount.querySelector(".cherry-statusbar-right")!;
-  const perfEl = right.querySelector(".cherry-statusbar-perf") as HTMLElement;
+  const right = mount.querySelector(".penna-statusbar-right")!;
+  const perfEl = right.querySelector(".penna-statusbar-perf") as HTMLElement;
   const refreshBtn = right.querySelector("button")!;
 
   expect(perfEl).not.toBeNull();

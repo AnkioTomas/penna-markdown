@@ -182,30 +182,30 @@ $notion-dark-mark-mix: 50%;
     $bg-opacity: picks.pick-bg-opacity($is-dark);
     $border-opacity: picks.pick-border-opacity($is-dark);
 
-    --cherry-c-#{$name}: #{$base-color};
+    --penna-c-#{$name}: #{$base-color};
     @if $is-dark {
-      --cherry-c-#{$name}-mark: color-mix(
+      --penna-c-#{$name}-mark: color-mix(
         in srgb,
         #{$mark-color} #{$notion-dark-mark-mix},
         #{$surface}
       );
     } @else {
-      --cherry-c-#{$name}-mark: #{$mark-color};
+      --penna-c-#{$name}-mark: #{$mark-color};
     }
 
-    --cherry-c-#{$name}-on-bg: color-mix(
+    --penna-c-#{$name}-on-bg: color-mix(
       in srgb,
       #{$base-color} 16%,
       #{$contrast-color}
     );
 
-    --cherry-c-alert-#{$name}-text: #{$base-color};
-    --cherry-c-alert-#{$name}-bg: color-mix(
+    --penna-c-alert-#{$name}-text: #{$base-color};
+    --penna-c-alert-#{$name}-bg: color-mix(
       in srgb,
       #{$base-color} #{$bg-opacity},
       transparent
     );
-    --cherry-c-alert-#{$name}-border: color-mix(
+    --penna-c-alert-#{$name}-border: color-mix(
       in srgb,
       #{$base-color} #{$border-opacity},
       transparent
@@ -222,37 +222,37 @@ $notion-dark-mark-mix: 50%;
   $quote-bg: notion-quote-bg($is-dark);
   $hr-color: notion-hr-color($is-dark);
 
-  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
-  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
-  --cherry-c-image-card-info-bg: linear-gradient(
+  --penna-c-image-card-info-fg: var(--penna-c-contrast-light);
+  --penna-c-image-card-scrim: var(--penna-c-contrast-dark);
+  --penna-c-image-card-info-bg: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 58%, transparent) 100%
   );
-  --cherry-c-image-card-info-bg-hover: linear-gradient(
+  --penna-c-image-card-info-bg-hover: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 68%, transparent) 100%
   );
 
-  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
-  --cherry-c-media-shade: var(--cherry-c-bg);
-  --cherry-c-on-brand: #fff;
+  --penna-c-media-player-bg: var(--penna-c-bg-elevated);
+  --penna-c-media-shade: var(--penna-c-bg);
+  --penna-c-on-brand: #fff;
 
-  --cherry-c-code-inline-bg: #{$code-bg};
-  --cherry-c-code-inline-fg: #{$inline-fg};
-  --cherry-c-code-inline-border: transparent;
+  --penna-c-code-inline-bg: #{$code-bg};
+  --penna-c-code-inline-fg: #{$inline-fg};
+  --penna-c-code-inline-border: transparent;
 
-  --cherry-c-code-block-header-bg: #{$code-bg};
-  --cherry-c-code-block-code-bg: #{$code-bg};
-  --cherry-c-code-block-shadow: none;
+  --penna-c-code-block-header-bg: #{$code-bg};
+  --penna-c-code-block-code-bg: #{$code-bg};
+  --penna-c-code-block-shadow: none;
 
-  --cherry-c-table-th-border: #{$border-soft};
-  --cherry-c-table-td-border: #{$border-faint};
-  --cherry-c-hr-color: #{$hr-color};
-  --cherry-c-blockquote-border: var(--cherry-c-text-3);
+  --penna-c-table-th-border: #{$border-soft};
+  --penna-c-table-td-border: #{$border-faint};
+  --penna-c-hr-color: #{$hr-color};
+  --penna-c-blockquote-border: var(--penna-c-text-3);
 
   --notion-quote-bg: #{$quote-bg};
   --notion-code-fg: #{$code-fg};
@@ -261,26 +261,26 @@ $notion-dark-mark-mix: 50%;
 @mixin theme-light {
   @include typography-tokens;
 
-  --cherry-c-brand-1: #{$notion-accent};
-  --cherry-c-brand-2: #{color-mix(in srgb, #{$notion-accent} 85%, #000)};
-  --cherry-c-brand-3: #{$notion-light-inline-code};
-  --cherry-c-brand-soft: #{$notion-accent-soft};
-  --cherry-c-brand-on-bg: #fff;
+  --penna-c-brand-1: #{$notion-accent};
+  --penna-c-brand-2: #{color-mix(in srgb, #{$notion-accent} 85%, #000)};
+  --penna-c-brand-3: #{$notion-light-inline-code};
+  --penna-c-brand-soft: #{$notion-accent-soft};
+  --penna-c-brand-on-bg: #fff;
 
-  --cherry-c-text-1: #{$notion-light-text};
-  --cherry-c-text-2: #{$notion-light-muted};
-  --cherry-c-text-3: #{$notion-light-subtle};
+  --penna-c-text-1: #{$notion-light-text};
+  --penna-c-text-2: #{$notion-light-muted};
+  --penna-c-text-3: #{$notion-light-subtle};
 
-  --cherry-c-bg: #{$notion-light-bg};
-  --cherry-c-bg-elevated: #{$notion-light-surface};
+  --penna-c-bg: #{$notion-light-bg};
+  --penna-c-bg-elevated: #{$notion-light-surface};
 
-  --cherry-c-contrast-light: #fff;
-  --cherry-c-contrast-dark: #000;
+  --penna-c-contrast-light: #fff;
+  --penna-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #{$notion-light-mark-bg};
-  --cherry-c-code-fg: #{$notion-light-text};
-  --cherry-c-border-soft: #{$notion-light-border};
-  --cherry-c-border-faint: #{color-mix(
+  --penna-c-brand-mark: #{$notion-light-mark-bg};
+  --penna-c-code-fg: #{$notion-light-text};
+  --penna-c-border-soft: #{$notion-light-border};
+  --penna-c-border-faint: #{color-mix(
       in srgb,
       #{$notion-light-border} 45%,
       transparent
@@ -300,14 +300,14 @@ $notion-dark-mark-mix: 50%;
   --notion-footnote-bg: #{$notion-light-subtle};
   --notion-footnote-fg: #{$notion-light-bg};
 
-  --cherry-c-hljs-comment: #708090;
-  --cherry-c-hljs-keyword: #0277aa;
-  --cherry-c-hljs-string: #669900;
-  --cherry-c-hljs-number: #990055;
-  --cherry-c-hljs-title: #dc4a68;
-  --cherry-c-hljs-attr: #37352f;
-  --cherry-c-hljs-name: #ff5a5a;
-  --cherry-c-hljs-operator: #9a6e3b;
+  --penna-c-hljs-comment: #708090;
+  --penna-c-hljs-keyword: #0277aa;
+  --penna-c-hljs-string: #669900;
+  --penna-c-hljs-number: #990055;
+  --penna-c-hljs-title: #dc4a68;
+  --penna-c-hljs-attr: #37352f;
+  --penna-c-hljs-name: #ff5a5a;
+  --penna-c-hljs-operator: #9a6e3b;
 
   @include generate-semantic-suite($notion-light-semantics, false);
   @include component-tokens(false);
@@ -316,26 +316,26 @@ $notion-dark-mark-mix: 50%;
 @mixin theme-dark {
   @include typography-tokens;
 
-  --cherry-c-brand-1: #{$notion-accent};
-  --cherry-c-brand-2: #{color-mix(in srgb, #{$notion-accent} 85%, #fff)};
-  --cherry-c-brand-3: #{$notion-dark-inline-code};
-  --cherry-c-brand-soft: rgba(39, 131, 222, 0.16);
-  --cherry-c-brand-on-bg: #{$notion-dark-text};
+  --penna-c-brand-1: #{$notion-accent};
+  --penna-c-brand-2: #{color-mix(in srgb, #{$notion-accent} 85%, #fff)};
+  --penna-c-brand-3: #{$notion-dark-inline-code};
+  --penna-c-brand-soft: rgba(39, 131, 222, 0.16);
+  --penna-c-brand-on-bg: #{$notion-dark-text};
 
-  --cherry-c-text-1: #{$notion-dark-text};
-  --cherry-c-text-2: #{$notion-dark-muted};
-  --cherry-c-text-3: #{$notion-dark-subtle};
+  --penna-c-text-1: #{$notion-dark-text};
+  --penna-c-text-2: #{$notion-dark-muted};
+  --penna-c-text-3: #{$notion-dark-subtle};
 
-  --cherry-c-bg: #{$notion-dark-bg};
-  --cherry-c-bg-elevated: #{$notion-dark-surface};
+  --penna-c-bg: #{$notion-dark-bg};
+  --penna-c-bg-elevated: #{$notion-dark-surface};
 
-  --cherry-c-contrast-light: #fff;
-  --cherry-c-contrast-dark: #000;
+  --penna-c-contrast-light: #fff;
+  --penna-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #{$notion-dark-mark-bg};
-  --cherry-c-code-fg: #{$notion-dark-code-fg};
-  --cherry-c-border-soft: #{$notion-dark-border};
-  --cherry-c-border-faint: #{color-mix(
+  --penna-c-brand-mark: #{$notion-dark-mark-bg};
+  --penna-c-code-fg: #{$notion-dark-code-fg};
+  --penna-c-border-soft: #{$notion-dark-border};
+  --penna-c-border-faint: #{color-mix(
       in srgb,
       #{$notion-dark-border} 45%,
       transparent
@@ -356,14 +356,14 @@ $notion-dark-mark-mix: 50%;
   --notion-footnote-bg: #{$notion-dark-border};
   --notion-footnote-fg: #b1b3b4;
 
-  --cherry-c-hljs-comment: #998066;
-  --cherry-c-hljs-keyword: #d1949e;
-  --cherry-c-hljs-string: #bde052;
-  --cherry-c-hljs-number: #d1949e;
-  --cherry-c-hljs-title: #eceded;
-  --cherry-c-hljs-attr: #ebebeb;
-  --cherry-c-hljs-name: #d1949e;
-  --cherry-c-hljs-operator: #f5b83d;
+  --penna-c-hljs-comment: #998066;
+  --penna-c-hljs-keyword: #d1949e;
+  --penna-c-hljs-string: #bde052;
+  --penna-c-hljs-number: #d1949e;
+  --penna-c-hljs-title: #eceded;
+  --penna-c-hljs-attr: #ebebeb;
+  --penna-c-hljs-name: #d1949e;
+  --penna-c-hljs-operator: #f5b83d;
 
   @include generate-semantic-suite($notion-dark-semantics, true);
   @include component-tokens(true);

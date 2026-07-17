@@ -29,8 +29,8 @@ it("supports accordion mode with details name", () => {
 :::`;
   const html = renderMarkdown(createEngine(), md);
   expect(html).toContain(
-    '<div class="cherry-collapse cherry-collapse--accordion">',
+    '<div class="penna-collapse penna-collapse--accordion">',
   );
-  expect(html).toContain('name="cherry-collapse-1"');
+  expect(html).toContain('name="penna-collapse-1"');
   expect(html).not.toContain("<details open>");
 });

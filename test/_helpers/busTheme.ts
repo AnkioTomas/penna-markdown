@@ -4,7 +4,7 @@ import { Theme } from "@/theme/Theme";
 
 export function createTestBus(debug = false) {
   const log = new Log(debug);
-  const eventBus = new EventBus(debug, "[cherry]", log);
+  const eventBus = new EventBus(debug, "[penna]", log);
   return { eventBus, log };
 }
 

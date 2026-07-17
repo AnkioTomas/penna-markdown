@@ -38,7 +38,7 @@ function alertMarkdown(type: string, body: string) {
 }
 
 function alertHtml(type: string, title: string, body: string) {
-  return `<div class="cherry-alert cherry-alert--${type}">\n<p class="cherry-alert__title">${title}</p>\n<p>${body}</p>\n</div>\n`;
+  return `<div class="penna-alert penna-alert--${type}">\n<p class="penna-alert__title">${title}</p>\n<p>${body}</p>\n</div>\n`;
 }
 
 it("does not affect regular blockquotes", () => {

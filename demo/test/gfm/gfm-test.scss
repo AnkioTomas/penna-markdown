@@ -4,9 +4,9 @@
   align-items: center;
   gap: 12px 16px;
   padding: 10px 16px;
-  background: var(--cherry-c-bg-elevated);
+  background: var(--penna-c-bg-elevated);
   border-bottom: 1px solid
-    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+    color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
   flex-shrink: 0;
 }
 
@@ -18,11 +18,11 @@
   font-weight: 600;
 
   .pass {
-    color: var(--cherry-c-tip);
+    color: var(--penna-c-tip);
   }
 
   .fail {
-    color: var(--cherry-c-danger);
+    color: var(--penna-c-danger);
     cursor: pointer;
 
     &.summary-action:hover {
@@ -31,7 +31,7 @@
 
     &.is-active {
       outline: 2px solid
-        color-mix(in srgb, var(--cherry-c-danger) 45%, transparent);
+        color-mix(in srgb, var(--penna-c-danger) 45%, transparent);
       border-radius: 4px;
       padding: 0 4px;
     }
@@ -39,7 +39,7 @@
 
   .skip,
   .total {
-    color: var(--cherry-c-text-3);
+    color: var(--penna-c-text-3);
     font-weight: 500;
   }
 }
@@ -61,34 +61,31 @@
   input[type="search"] {
     width: 180px;
     padding: 6px 10px;
-    border: 1px solid
-      color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
+    border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 35%, transparent);
     border-radius: 6px;
-    background: var(--cherry-c-bg);
-    color: var(--cherry-c-text-1);
+    background: var(--penna-c-bg);
+    color: var(--penna-c-text-1);
   }
 
   select {
     padding: 6px 8px;
-    border: 1px solid
-      color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
+    border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 35%, transparent);
     border-radius: 6px;
-    background: var(--cherry-c-bg);
-    color: var(--cherry-c-text-1);
+    background: var(--penna-c-bg);
+    color: var(--penna-c-text-1);
     max-width: 220px;
   }
 
   button {
     padding: 6px 12px;
-    border: 1px solid
-      color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
+    border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 35%, transparent);
     border-radius: 6px;
-    background: var(--cherry-c-bg);
-    color: var(--cherry-c-text-1);
+    background: var(--penna-c-bg);
+    color: var(--penna-c-text-1);
     cursor: pointer;
 
     &:hover {
-      background: var(--cherry-c-bg-elevated);
+      background: var(--penna-c-bg-elevated);
     }
   }
 }
@@ -96,7 +93,7 @@
 .gfm-status {
   width: 100%;
   font-size: 12px;
-  color: var(--cherry-c-text-3);
+  color: var(--penna-c-text-3);
 }
 
 .gfm-main {
@@ -111,8 +108,8 @@
   flex-shrink: 0;
   overflow-y: auto;
   border-right: 1px solid
-    color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
-  background: var(--cherry-c-bg-elevated);
+    color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
+  background: var(--penna-c-bg-elevated);
   padding: 8px 0;
   font-size: 12px;
 
@@ -126,34 +123,34 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      color: var(--cherry-c-text-3);
+      color: var(--penna-c-text-3);
     }
 
     .nav-count {
       font-weight: 500;
-      color: var(--cherry-c-text-3);
+      color: var(--penna-c-text-3);
     }
 
     a {
       display: block;
       padding: 4px 12px;
-      color: var(--cherry-c-text-2);
+      color: var(--penna-c-text-2);
       text-decoration: none;
 
       &:hover {
         background: color-mix(
           in srgb,
-          var(--cherry-c-brand-soft) 40%,
-          var(--cherry-c-bg-elevated)
+          var(--penna-c-brand-soft) 40%,
+          var(--penna-c-bg-elevated)
         );
       }
 
       .status.pass {
-        color: var(--cherry-c-tip);
+        color: var(--penna-c-tip);
       }
 
       .status.fail {
-        color: var(--cherry-c-danger);
+        color: var(--penna-c-danger);
       }
     }
   }
@@ -164,12 +161,12 @@
   min-width: 0;
   overflow-y: auto;
   padding: 16px;
-  background: var(--cherry-c-bg);
+  background: var(--penna-c-bg);
 }
 
 .case {
   margin-bottom: 24px;
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+  border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
   border-radius: 8px;
   overflow: hidden;
 
@@ -179,19 +176,19 @@
     justify-content: space-between;
     gap: 12px;
     padding: 12px 16px;
-    background: var(--cherry-c-bg-elevated);
+    background: var(--penna-c-bg-elevated);
     border-bottom: 1px solid
-      color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+      color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
 
     h3 {
       margin: 0 0 4px;
       font-size: 15px;
-      color: var(--cherry-c-text-1);
+      color: var(--penna-c-text-1);
     }
 
     .meta {
       font-size: 12px;
-      color: var(--cherry-c-text-3);
+      color: var(--penna-c-text-3);
     }
 
     .badge {
@@ -202,13 +199,13 @@
       font-weight: 600;
 
       &.pass {
-        background: var(--cherry-c-alert-tip-bg);
-        color: var(--cherry-c-alert-tip-text);
+        background: var(--penna-c-alert-tip-bg);
+        color: var(--penna-c-alert-tip-text);
       }
 
       &.fail {
-        background: var(--cherry-c-alert-danger-bg);
-        color: var(--cherry-c-alert-danger-text);
+        background: var(--penna-c-alert-danger-bg);
+        color: var(--penna-c-alert-danger-text);
       }
     }
   }
@@ -221,9 +218,9 @@
 
   .panel {
     border-right: 1px solid
-      color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+      color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
     border-bottom: 1px solid
-      color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+      color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
     min-width: 0;
 
     &:nth-child(2n) {
@@ -239,10 +236,10 @@
       padding: 8px 12px;
       font-size: 12px;
       font-weight: 600;
-      color: var(--cherry-c-text-2);
-      background: var(--cherry-c-bg-elevated);
+      color: var(--penna-c-text-2);
+      background: var(--penna-c-bg-elevated);
       border-bottom: 1px solid
-        color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+        color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
     }
 
     pre {
@@ -255,8 +252,8 @@
       word-break: break-word;
       overflow: auto;
       max-height: 280px;
-      background: var(--cherry-c-bg-elevated);
-      color: var(--cherry-c-text-1);
+      background: var(--penna-c-bg-elevated);
+      color: var(--penna-c-text-1);
     }
 
     .preview {
@@ -269,10 +266,10 @@
     .fail-msg {
       padding: 8px 12px;
       font-size: 12px;
-      color: var(--cherry-c-alert-danger-text);
-      background: var(--cherry-c-alert-danger-bg);
+      color: var(--penna-c-alert-danger-text);
+      background: var(--penna-c-alert-danger-bg);
       border-top: 1px solid
-        color-mix(in srgb, var(--cherry-c-danger) 35%, transparent);
+        color-mix(in srgb, var(--penna-c-danger) 35%, transparent);
     }
   }
 }

@@ -6,11 +6,11 @@ import {
 } from "../../../../helpers/engine.js";
 
 function cardHtml(title, body, { link = "" } = {}) {
-  const titleHtml = title ? `<p class="cherry-card__title">${title}</p>\n` : "";
+  const titleHtml = title ? `<p class="penna-card__title">${title}</p>\n` : "";
   if (link) {
-    return `<a class="cherry-card cherry-link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</a>\n`;
+    return `<a class="penna-card penna-link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="penna-card__body">${body}</div>\n</a>\n`;
   }
-  return `<div class="cherry-card">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</div>\n`;
+  return `<div class="penna-card">\n${titleHtml}<div class="penna-card__body">${body}</div>\n</div>\n`;
 }
 
 it("renders image-card with metadata and description attribute", () => {
@@ -18,15 +18,15 @@ it("renders image-card with metadata and description attribute", () => {
   const md = `::: image-card image="https://example.com/photo.webp" title="阿尔凡齐纳灯塔" description="灯塔位于葡萄牙南部海岸。" href="/" author="Andreas Kunz" date="2024/08/16"
 :::`;
   const html = renderMarkdown(createEngine(), md);
-  expect(html).toContain('class="cherry-image-card"');
+  expect(html).toContain('class="penna-image-card"');
   expect(html).toContain('src="https://example.com/photo.webp"');
   expect(html).toContain('alt="阿尔凡齐纳灯塔"');
   expect(html).toContain(
-    '<h3 class="cherry-image-card__title"><a href="/" target="_blank" rel="noopener noreferrer">阿尔凡齐纳灯塔</a></h3>',
+    '<h3 class="penna-image-card__title"><a href="/" target="_blank" rel="noopener noreferrer">阿尔凡齐纳灯塔</a></h3>',
   );
   expect(html).toContain("<span>Andreas Kunz</span>");
   expect(html).toContain("<span>2024/08/16</span>");
   expect(html).toContain(
-    '<p class="cherry-image-card__description">灯塔位于葡萄牙南部海岸。</p>',
+    '<p class="penna-image-card__description">灯塔位于葡萄牙南部海岸。</p>',
   );
 });

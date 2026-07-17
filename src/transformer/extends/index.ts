@@ -1,5 +1,5 @@
 /**
- * @file Cherry 扩展语法注册
+ * @file Penna 扩展语法注册
  * @module transformer/extends
  *
  * 键为 priority（唯一，≥0，越大越先匹配），值为 parser。

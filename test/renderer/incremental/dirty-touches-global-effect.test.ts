@@ -5,14 +5,14 @@ import {
   dirtyTouchesGlobalEffect,
   dirtyLinesFromChanges,
 } from "@/renderer/incremental/HashBoundaryResolver.js";
-import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet.js";
+import type { PennaChangeLineSet } from "@/renderer/incremental/PennaChangeSet.js";
 
 function lineChange(
   fromA: number,
   toA: number,
   fromB: number,
   toB: number,
-): CherryChangeLineSet {
+): PennaChangeLineSet {
   return {
     fromA,
     toA,

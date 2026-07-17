@@ -12,7 +12,7 @@ import {
 
 it("opens lightbox when clicking previewable images", () => {
   const dom = new JSDOM(
-    `<div id="preview" class="cherry-render">
+    `<div id="preview" class="penna-render">
       <p><img src="https://example.com/photo.jpg" alt="示例图片"></p>
     </div>`,
     { url: "https://example.com" },
@@ -24,24 +24,24 @@ it("opens lightbox when clicking previewable images", () => {
   const img = preview.querySelector("img") as HTMLImageElement;
   img.click();
 
-  const overlay = document.querySelector(".cherry-image-preview");
+  const overlay = document.querySelector(".penna-image-preview");
   const media = document.querySelector(
-    ".cherry-image-preview__media",
+    ".penna-image-preview__media",
   ) as HTMLImageElement;
   expect(overlay).not.toBeNull();
   expect(media?.tagName).toBe("IMG");
   expect(media?.alt).toBe("示例图片");
   expect(
-    document.querySelector(".cherry-image-preview__caption")?.textContent,
+    document.querySelector(".penna-image-preview__caption")?.textContent,
   ).toBe("示例图片");
 
   listener.destroy();
-  expect(document.querySelector(".cherry-image-preview")).toBeNull();
+  expect(document.querySelector(".penna-image-preview")).toBeNull();
 });
 
 it("opens lightbox when clicking inline svg", () => {
   const dom = new JSDOM(
-    `<div id="preview" class="cherry-render">
+    `<div id="preview" class="penna-render">
       <svg viewBox="0 0 10 10" aria-label="矢量图"><title>标题</title><circle cx="5" cy="5" r="4"></circle></svg>
     </div>`,
     { url: "https://example.com" },
@@ -56,12 +56,12 @@ it("opens lightbox when clicking inline svg", () => {
   );
 
   const previewSvg = document.querySelector(
-    ".cherry-image-preview__media",
+    ".penna-image-preview__media",
   ) as SVGSVGElement;
   expect(previewSvg?.tagName.toLowerCase()).toBe("svg");
   expect(previewSvg?.querySelector("circle")).not.toBeNull();
   expect(
-    document.querySelector(".cherry-image-preview__caption")?.textContent,
+    document.querySelector(".penna-image-preview__caption")?.textContent,
   ).toBe("矢量图");
 
   listener.destroy();
@@ -69,7 +69,7 @@ it("opens lightbox when clicking inline svg", () => {
 
 it("applies source dimensions to preview image", () => {
   const dom = new JSDOM(
-    `<div id="preview" class="cherry-render"><img src="https://example.com/a.png" alt=""></div>`,
+    `<div id="preview" class="penna-render"><img src="https://example.com/a.png" alt=""></div>`,
     { url: "https://example.com" },
   );
   const { document } = dom.window;
@@ -97,9 +97,9 @@ it("applies source dimensions to preview image", () => {
 
 it("opens lightbox for mermaid diagram images", () => {
   const dom = new JSDOM(
-    `<div id="preview" class="cherry-render">
-      <figure data-type="mermaid" class="cherry-mermaid-block">
-        <img class="cherry-mermaid__img" src="https://mermaid.ink/svg/test" alt="" loading="lazy">
+    `<div id="preview" class="penna-render">
+      <figure data-type="mermaid" class="penna-mermaid-block">
+        <img class="penna-mermaid__img" src="https://mermaid.ink/svg/test" alt="" loading="lazy">
       </figure>
     </div>`,
     { url: "https://example.com" },
@@ -107,7 +107,7 @@ it("opens lightbox for mermaid diagram images", () => {
   const { document } = dom.window;
   const preview = document.getElementById("preview") as HTMLElement;
   const listener = new ImageListener(preview);
-  const img = preview.querySelector(".cherry-mermaid__img") as HTMLImageElement;
+  const img = preview.querySelector(".penna-mermaid__img") as HTMLImageElement;
   Object.defineProperty(img, "naturalWidth", {
     value: 800,
     configurable: true,
@@ -121,7 +121,7 @@ it("opens lightbox for mermaid diagram images", () => {
   expect(isPreviewableImage(img)).toBe(true);
   img.click();
   const media = document.querySelector(
-    ".cherry-image-preview__media",
+    ".penna-image-preview__media",
   ) as HTMLImageElement;
   expect(media).not.toBeNull();
   expect(media.width).toBe(800);
@@ -132,9 +132,9 @@ it("opens lightbox for mermaid diagram images", () => {
 
 it("skips math and badge images", () => {
   const dom = new JSDOM(
-    `<div id="preview" class="cherry-render">
-      <img class="cherry-math-latex" src="https://example.com/math.png" alt="math">
-      <img class="cherry-repo-card__shield-img" src="https://example.com/badge.svg" alt="badge">
+    `<div id="preview" class="penna-render">
+      <img class="penna-math-latex" src="https://example.com/math.png" alt="math">
+      <img class="penna-repo-card__shield-img" src="https://example.com/badge.svg" alt="badge">
     </div>`,
     { url: "https://example.com" },
   );
@@ -144,30 +144,28 @@ it("skips math and badge images", () => {
 
   expect(
     isPreviewableImage(
-      preview.querySelector(".cherry-math-latex") as HTMLImageElement,
+      preview.querySelector(".penna-math-latex") as HTMLImageElement,
     ),
   ).toBe(false);
   expect(
     isPreviewableImage(
-      preview.querySelector(
-        ".cherry-repo-card__shield-img",
-      ) as HTMLImageElement,
+      preview.querySelector(".penna-repo-card__shield-img") as HTMLImageElement,
     ),
   ).toBe(false);
 
   preview
-    .querySelector(".cherry-math-latex")
+    .querySelector(".penna-math-latex")
     ?.dispatchEvent(
       new dom.window.MouseEvent("click", { bubbles: true, cancelable: true }),
     );
-  expect(document.querySelector(".cherry-image-preview")).toBeNull();
+  expect(document.querySelector(".penna-image-preview")).toBeNull();
 
   listener.destroy();
 });
 
 it("closes lightbox on escape", () => {
   const dom = new JSDOM(
-    `<div id="preview" class="cherry-render"><img src="https://example.com/a.png" alt=""></div>`,
+    `<div id="preview" class="penna-render"><img src="https://example.com/a.png" alt=""></div>`,
     { url: "https://example.com" },
   );
   const { document } = dom.window;
@@ -175,19 +173,19 @@ it("closes lightbox on escape", () => {
   const listener = new ImageListener(preview);
 
   preview.querySelector("img")?.click();
-  expect(document.querySelector(".cherry-image-preview")).not.toBeNull();
+  expect(document.querySelector(".penna-image-preview")).not.toBeNull();
 
   document.dispatchEvent(
     new dom.window.KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
   );
-  expect(document.querySelector(".cherry-image-preview")).toBeNull();
+  expect(document.querySelector(".penna-image-preview")).toBeNull();
 
   listener.destroy();
 });
 
 it("closes lightbox when clicking backdrop", () => {
   const dom = new JSDOM(
-    `<div id="preview" class="cherry-render"><img src="https://example.com/a.png" alt=""></div>`,
+    `<div id="preview" class="penna-render"><img src="https://example.com/a.png" alt=""></div>`,
     { url: "https://example.com" },
   );
   const { document } = dom.window;
@@ -196,19 +194,19 @@ it("closes lightbox when clicking backdrop", () => {
   );
 
   document.querySelector("img")?.click();
-  expect(document.querySelector(".cherry-image-preview")).not.toBeNull();
+  expect(document.querySelector(".penna-image-preview")).not.toBeNull();
 
   (
-    document.querySelector(".cherry-image-preview__backdrop") as HTMLElement
+    document.querySelector(".penna-image-preview__backdrop") as HTMLElement
   ).click();
-  expect(document.querySelector(".cherry-image-preview")).toBeNull();
+  expect(document.querySelector(".penna-image-preview")).toBeNull();
 
   listener.destroy();
 });
 
 it("destroy without open does not clear body overflow", () => {
   const dom = new JSDOM(
-    `<div id="preview" class="cherry-render"><img src="https://example.com/a.png" alt=""></div>`,
+    `<div id="preview" class="penna-render"><img src="https://example.com/a.png" alt=""></div>`,
     { url: "https://example.com" },
   );
   const { document } = dom.window;
@@ -223,7 +221,7 @@ it("destroy without open does not clear body overflow", () => {
 
 it("skips decorative svg icons", () => {
   const dom = new JSDOM(
-    `<div id="preview" class="cherry-render">
+    `<div id="preview" class="penna-render">
       <svg viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="4"></circle></svg>
     </div>`,
     { url: "https://example.com" },

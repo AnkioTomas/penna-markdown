@@ -32,7 +32,7 @@ import { RenderOption } from "@/renderer/RenderOption";
 import { IncrementalSession } from "@/renderer/incremental/IncrementalSession.js";
 import { BlockIndex } from "@/renderer/incremental/BlockIndex.js";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
-import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
+import type { PennaChangeLineSet } from "@/renderer/incremental/PennaChangeSet";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { ParserStore } from "@/transformer/core/ParserStore";
 import { Theme } from "@/theme/Theme";
@@ -128,7 +128,7 @@ export class Renderer {
    * @param markdown 完整 markdown 源码
    * @param changes  CM 行变更集；增量路径必需
    */
-  render(markdown: string, changes?: CherryChangeLineSet[]): RenderResult {
+  render(markdown: string, changes?: PennaChangeLineSet[]): RenderResult {
     if (this.session.blocks.length === 0) {
       this.logger.logD("render:full", "no-cache");
       return this.renderFull(markdown);

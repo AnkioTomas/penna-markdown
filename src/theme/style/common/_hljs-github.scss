@@ -1,8 +1,8 @@
 // highlight.js github / github-dark 色板（供 default、github 等主题复用）
 
 @mixin _scopes {
-  .cherry-code-block,
-  pre:not(.cherry-code-block__pre) {
+  .penna-code-block,
+  pre:not(.penna-code-block__pre) {
     @content;
   }
 }

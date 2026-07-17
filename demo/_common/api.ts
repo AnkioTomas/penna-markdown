@@ -1,4 +1,4 @@
-import type { CherryFileItem } from "@/editor/sidebar/SideBarOptions.js";
+import type { PennaFileItem } from "@/editor/sidebar/SideBarOptions.js";
 
 export interface DocFile {
   name: string;
@@ -115,7 +115,7 @@ export function extractMarkdownSummary(markdown: string, maxLen = 80): string {
 /** 将目录中的 Markdown 文件转为侧栏文件项 */
 export async function fetchMarkdownFileItems(
   dir = "/docs/",
-): Promise<CherryFileItem[]> {
+): Promise<PennaFileItem[]> {
   const docs = await fetchDocsList(dir);
   const items = await Promise.all(
     docs.map(async (doc) => {
@@ -125,7 +125,7 @@ export async function fetchMarkdownFileItems(
         title: displayTitle(doc.name),
         updateTime: formatFileTime(doc.mtime),
         summary: extractMarkdownSummary(content) || displayTitle(doc.name),
-      } satisfies CherryFileItem;
+      } satisfies PennaFileItem;
     }),
   );
   return items.sort((a, b) => {

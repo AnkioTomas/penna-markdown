@@ -1,16 +1,16 @@
 {
-  "name": "cherry-markdown-next",
+  "name": "penna-markdown",
   "version": "0.1.6",
-  "description": "Next-generation Markdown editor and renderer with GFM and Cherry extensions",
+  "description": "Next-generation Markdown editor and renderer with GFM and Penna extensions",
   "license": "MIT",
   "author": "AnkioTomas",
-  "homepage": "https://github.com/AnkioTomas/cherry-markdown-next#readme",
+  "homepage": "https://github.com/AnkioTomas/penna-markdown#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AnkioTomas/cherry-markdown-next.git"
+    "url": "git+https://github.com/AnkioTomas/penna-markdown.git"
   },
   "bugs": {
-    "url": "https://github.com/AnkioTomas/cherry-markdown-next/issues"
+    "url": "https://github.com/AnkioTomas/penna-markdown/issues"
   },
   "keywords": [
     "markdown",
@@ -18,7 +18,7 @@
     "renderer",
     "gfm",
     "codemirror",
-    "cherry",
+    "penna",
     "wysiwyg",
     "ast"
   ],
@@ -27,62 +27,62 @@
   "sideEffects": [
     "**/*.css"
   ],
-  "main": "./dist/cherry.min.cjs",
-  "module": "./dist/cherry.min.mjs",
-  "types": "./dist/types/editor/Cherry.d.ts",
-  "unpkg": "./dist/cherry.min.js",
-  "jsdelivr": "./dist/cherry.min.js",
+  "main": "./dist/penna.min.cjs",
+  "module": "./dist/penna.min.mjs",
+  "types": "./dist/types/editor/Penna.d.ts",
+  "unpkg": "./dist/penna.min.js",
+  "jsdelivr": "./dist/penna.min.js",
   "exports": {
     ".": {
-      "types": "./dist/types/editor/Cherry.d.ts",
-      "import": "./dist/cherry.min.mjs",
-      "require": "./dist/cherry.min.cjs",
-      "default": "./dist/cherry.min.mjs"
+      "types": "./dist/types/editor/Penna.d.ts",
+      "import": "./dist/penna.min.mjs",
+      "require": "./dist/penna.min.cjs",
+      "default": "./dist/penna.min.mjs"
     },
     "./editor": {
-      "types": "./dist/types/editor/Cherry.d.ts",
-      "import": "./dist/cherry.min.mjs",
-      "require": "./dist/cherry.min.cjs",
-      "default": "./dist/cherry.min.mjs"
+      "types": "./dist/types/editor/Penna.d.ts",
+      "import": "./dist/penna.min.mjs",
+      "require": "./dist/penna.min.cjs",
+      "default": "./dist/penna.min.mjs"
     },
     "./renderer": {
       "types": "./dist/types/renderer/Renderer.d.ts",
-      "import": "./dist/cherry-render.min.mjs",
-      "require": "./dist/cherry-render.min.cjs",
-      "default": "./dist/cherry-render.min.mjs"
+      "import": "./dist/penna-render.min.mjs",
+      "require": "./dist/penna-render.min.cjs",
+      "default": "./dist/penna-render.min.mjs"
     },
     "./transformer": {
       "types": "./dist/types/transformer/TransformerEngine.d.ts",
-      "import": "./dist/cherry-transformer.min.mjs",
-      "require": "./dist/cherry-transformer.min.cjs",
-      "default": "./dist/cherry-transformer.min.mjs"
+      "import": "./dist/penna-transformer.min.mjs",
+      "require": "./dist/penna-transformer.min.cjs",
+      "default": "./dist/penna-transformer.min.mjs"
     },
     "./transformer.min": {
       "types": "./dist/types/transformer/TransformerEngine.d.ts",
-      "import": "./dist/cherry-transformer.min.mjs",
-      "require": "./dist/cherry-transformer.min.cjs",
-      "default": "./dist/cherry-transformer.min.mjs"
+      "import": "./dist/penna-transformer.min.mjs",
+      "require": "./dist/penna-transformer.min.cjs",
+      "default": "./dist/penna-transformer.min.mjs"
     },
     "./theme": {
       "types": "./dist/types/renderer/Renderer.d.ts",
-      "import": "./dist/cherry-render.min.mjs",
-      "require": "./dist/cherry-render.min.cjs",
-      "default": "./dist/cherry-render.min.mjs"
+      "import": "./dist/penna-render.min.mjs",
+      "require": "./dist/penna-render.min.cjs",
+      "default": "./dist/penna-render.min.mjs"
     },
-    "./cherry-theme-*-render.css": "./dist/cherry-theme-*-render.min.css",
-    "./cherry-theme-*-render.min.css": "./dist/cherry-theme-*-render.min.css",
-    "./cherry-theme-*-editor.css": "./dist/cherry-theme-*-editor.min.css",
-    "./cherry-theme-*-editor.min.css": "./dist/cherry-theme-*-editor.min.css",
-    "./theme/*/render.css": "./dist/cherry-theme-*-render.min.css",
-    "./theme/*/render.min.css": "./dist/cherry-theme-*-render.min.css",
-    "./theme/*/editor.css": "./dist/cherry-theme-*-editor.min.css",
-    "./theme/*/editor.min.css": "./dist/cherry-theme-*-editor.min.css",
-    "./cherry-editor-base.css": "./dist/cherry-editor-base.min.css",
-    "./cherry-editor-base.min.css": "./dist/cherry-editor-base.min.css",
-    "./transformer.css": "./dist/cherry-render.min.css",
-    "./transformer.min.css": "./dist/cherry-render.min.css",
-    "./editor.css": "./dist/cherry-editor-base.min.css",
-    "./editor.min.css": "./dist/cherry-editor-base.min.css",
+    "./penna-theme-*-render.css": "./dist/penna-theme-*-render.min.css",
+    "./penna-theme-*-render.min.css": "./dist/penna-theme-*-render.min.css",
+    "./penna-theme-*-editor.css": "./dist/penna-theme-*-editor.min.css",
+    "./penna-theme-*-editor.min.css": "./dist/penna-theme-*-editor.min.css",
+    "./theme/*/render.css": "./dist/penna-theme-*-render.min.css",
+    "./theme/*/render.min.css": "./dist/penna-theme-*-render.min.css",
+    "./theme/*/editor.css": "./dist/penna-theme-*-editor.min.css",
+    "./theme/*/editor.min.css": "./dist/penna-theme-*-editor.min.css",
+    "./penna-editor-base.css": "./dist/penna-editor-base.min.css",
+    "./penna-editor-base.min.css": "./dist/penna-editor-base.min.css",
+    "./transformer.css": "./dist/penna-render.min.css",
+    "./transformer.min.css": "./dist/penna-render.min.css",
+    "./editor.css": "./dist/penna-editor-base.min.css",
+    "./editor.min.css": "./dist/penna-editor-base.min.css",
     "./package.json": "./package.json"
   },
   "files": [

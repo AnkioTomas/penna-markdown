@@ -94,20 +94,20 @@ export const aiMaskPlugin = ViewPlugin.fromClass(
         this.view.state.field(aiStateField).phase === "generating";
 
       if (generating && !this.mask) {
-        const root = this.view.dom.closest(".cherry") || this.view.dom;
+        const root = this.view.dom.closest(".penna") || this.view.dom;
         const mask = document.createElement("div");
-        mask.className = "cherry-ai-mask-global";
+        mask.className = "penna-ai-mask-global";
         mask.setAttribute("aria-busy", "true");
         mask.tabIndex = 0;
         mask.innerHTML = `
-          <div class="cherry-ai-mask-layout">
-            <div class="cherry-ai-mask-header">
-              <div class="cherry-ai-mask-spinner"></div>
-              <div class="cherry-ai-mask-title">正在处理，请稍候... (按 Esc 取消)</div>
+          <div class="penna-ai-mask-layout">
+            <div class="penna-ai-mask-header">
+              <div class="penna-ai-mask-spinner"></div>
+              <div class="penna-ai-mask-title">正在处理，请稍候... (按 Esc 取消)</div>
             </div>
-            <div class="cherry-ai-mask-body">
-              <div class="cherry-ai-mask-thinking"></div>
-              <div class="cherry-ai-mask-partial"></div>
+            <div class="penna-ai-mask-body">
+              <div class="penna-ai-mask-thinking"></div>
+              <div class="penna-ai-mask-partial"></div>
             </div>
           </div>
         `;

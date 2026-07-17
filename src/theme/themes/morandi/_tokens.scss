@@ -187,30 +187,30 @@ $morandi-dark-mark-mix: 65%;
     $bg-opacity: picks.pick-bg-opacity($is-dark);
     $border-opacity: picks.pick-border-opacity($is-dark);
 
-    --cherry-c-#{$name}: #{$base-color};
+    --penna-c-#{$name}: #{$base-color};
     @if $is-dark {
-      --cherry-c-#{$name}-mark: color-mix(
+      --penna-c-#{$name}-mark: color-mix(
         in srgb,
         #{$mark-color} #{$morandi-dark-mark-mix},
         #{$surface}
       );
     } @else {
-      --cherry-c-#{$name}-mark: #{$mark-color};
+      --penna-c-#{$name}-mark: #{$mark-color};
     }
 
-    --cherry-c-#{$name}-on-bg: color-mix(
+    --penna-c-#{$name}-on-bg: color-mix(
       in srgb,
       #{$base-color} 16%,
       #{$contrast-color}
     );
 
-    --cherry-c-alert-#{$name}-text: #{$base-color};
-    --cherry-c-alert-#{$name}-bg: color-mix(
+    --penna-c-alert-#{$name}-text: #{$base-color};
+    --penna-c-alert-#{$name}-bg: color-mix(
       in srgb,
       #{$base-color} #{$bg-opacity},
       transparent
     );
-    --cherry-c-alert-#{$name}-border: color-mix(
+    --penna-c-alert-#{$name}-border: color-mix(
       in srgb,
       #{$base-color} #{$border-opacity},
       transparent
@@ -223,37 +223,37 @@ $morandi-dark-mark-mix: 65%;
   $border-faint: morandi-border-faint($is-dark);
   $code-inline-bg: morandi-code-inline-bg($is-dark);
 
-  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
-  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
-  --cherry-c-image-card-info-bg: linear-gradient(
+  --penna-c-image-card-info-fg: var(--penna-c-contrast-light);
+  --penna-c-image-card-scrim: var(--penna-c-contrast-dark);
+  --penna-c-image-card-info-bg: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 36%, transparent) 55%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 36%, transparent) 55%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 58%, transparent) 100%
   );
-  --cherry-c-image-card-info-bg-hover: linear-gradient(
+  --penna-c-image-card-info-bg-hover: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 46%, transparent) 35%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 46%, transparent) 35%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 68%, transparent) 100%
   );
 
-  --cherry-c-media-player-bg: var(--cherry-c-bg-elevated);
-  --cherry-c-media-shade: var(--cherry-c-bg);
-  --cherry-c-on-brand: #fff;
+  --penna-c-media-player-bg: var(--penna-c-bg-elevated);
+  --penna-c-media-shade: var(--penna-c-bg);
+  --penna-c-on-brand: #fff;
 
-  --cherry-c-code-inline-bg: #{$code-inline-bg};
-  --cherry-c-code-inline-fg: var(--morandi-h3-color);
-  --cherry-c-code-inline-border: transparent;
+  --penna-c-code-inline-bg: #{$code-inline-bg};
+  --penna-c-code-inline-fg: var(--morandi-h3-color);
+  --penna-c-code-inline-border: transparent;
 
-  --cherry-c-code-block-header-bg: var(--cherry-c-bg-elevated);
-  --cherry-c-code-block-code-bg: var(--cherry-c-bg-elevated);
-  --cherry-c-code-block-shadow: none;
+  --penna-c-code-block-header-bg: var(--penna-c-bg-elevated);
+  --penna-c-code-block-code-bg: var(--penna-c-bg-elevated);
+  --penna-c-code-block-shadow: none;
 
-  --cherry-c-table-th-border: #{$border-soft};
-  --cherry-c-table-td-border: #{$border-faint};
-  --cherry-c-hr-color: #{morandi-hr-color($is-dark)};
-  --cherry-c-blockquote-border: #{morandi-blockquote-border($is-dark)};
+  --penna-c-table-th-border: #{$border-soft};
+  --penna-c-table-td-border: #{$border-faint};
+  --penna-c-hr-color: #{morandi-hr-color($is-dark)};
+  --penna-c-blockquote-border: #{morandi-blockquote-border($is-dark)};
 
   --morandi-h1-rule: #{if($is-dark, $morandi-dark-h1-rule, $morandi-h1-rule)};
   --morandi-blockquote-bg: #{if(
@@ -262,44 +262,44 @@ $morandi-dark-mark-mix: 65%;
       $morandi-blockquote-bg
     )};
 
-  --cherry-c-hljs-bg: transparent;
-  --cherry-c-hljs-comment: #{if($is-dark, #8b9eb0, #93a1a1)};
-  --cherry-c-hljs-keyword: #{if($is-dark, #f56cbe, #d33682)};
-  --cherry-c-hljs-string: #{if($is-dark, #ff8c8a, #dc322f)};
-  --cherry-c-hljs-number: #{if($is-dark, #aeb5ff, #6c71c4)};
-  --cherry-c-hljs-title: #{if($is-dark, #2bdccf, #2aa198)};
-  --cherry-c-hljs-attr: #{if($is-dark, #93a1a1, #586e75)};
-  --cherry-c-hljs-meta: #{if($is-dark, #ff8552, #cb4b16)};
-  --cherry-c-hljs-section: #{if($is-dark, #a2bd00, #859900)};
+  --penna-c-hljs-bg: transparent;
+  --penna-c-hljs-comment: #{if($is-dark, #8b9eb0, #93a1a1)};
+  --penna-c-hljs-keyword: #{if($is-dark, #f56cbe, #d33682)};
+  --penna-c-hljs-string: #{if($is-dark, #ff8c8a, #dc322f)};
+  --penna-c-hljs-number: #{if($is-dark, #aeb5ff, #6c71c4)};
+  --penna-c-hljs-title: #{if($is-dark, #2bdccf, #2aa198)};
+  --penna-c-hljs-attr: #{if($is-dark, #93a1a1, #586e75)};
+  --penna-c-hljs-meta: #{if($is-dark, #ff8552, #cb4b16)};
+  --penna-c-hljs-section: #{if($is-dark, #a2bd00, #859900)};
 }
 
 @mixin theme-light {
   @include typography-tokens;
 
-  --cherry-c-brand-1: #{$morandi-link};
-  --cherry-c-brand-2: #{$morandi-link-hover};
-  --cherry-c-brand-3: #{$morandi-rose};
-  --cherry-c-brand-soft: rgba(80, 105, 86, 0.12);
-  --cherry-c-brand-on-bg: #fff;
+  --penna-c-brand-1: #{$morandi-link};
+  --penna-c-brand-2: #{$morandi-link-hover};
+  --penna-c-brand-3: #{$morandi-rose};
+  --penna-c-brand-soft: rgba(80, 105, 86, 0.12);
+  --penna-c-brand-on-bg: #fff;
 
-  --cherry-c-text-1: #{$morandi-text};
-  --cherry-c-text-2: #{color-mix(
+  --penna-c-text-1: #{$morandi-text};
+  --penna-c-text-2: #{color-mix(
       in srgb,
       #{$morandi-text} 72%,
       #{$morandi-muted}
     )};
-  --cherry-c-text-3: #{$morandi-muted};
+  --penna-c-text-3: #{$morandi-muted};
 
-  --cherry-c-bg: #{$morandi-bg};
-  --cherry-c-bg-elevated: #{$morandi-code-bg};
+  --penna-c-bg: #{$morandi-bg};
+  --penna-c-bg-elevated: #{$morandi-code-bg};
 
-  --cherry-c-contrast-light: #fff;
-  --cherry-c-contrast-dark: #000;
+  --penna-c-contrast-light: #fff;
+  --penna-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: #ffea7f;
-  --cherry-c-code-fg: #{$morandi-text};
-  --cherry-c-border-soft: #{$morandi-table-border};
-  --cherry-c-border-faint: #{color-mix(
+  --penna-c-brand-mark: #ffea7f;
+  --penna-c-code-fg: #{$morandi-text};
+  --penna-c-border-soft: #{$morandi-table-border};
+  --penna-c-border-faint: #{color-mix(
       in srgb,
       #{$morandi-table-border} 45%,
       transparent
@@ -313,30 +313,30 @@ $morandi-dark-mark-mix: 65%;
   @include typography-tokens;
   @include typography-tokens-dark;
 
-  --cherry-c-brand-1: #{$morandi-dark-link};
-  --cherry-c-brand-2: #{$morandi-dark-link-hover};
-  --cherry-c-brand-3: #{$morandi-rose};
-  --cherry-c-brand-soft: rgba(143, 168, 150, 0.16);
-  --cherry-c-brand-on-bg: #{$morandi-dark-text};
+  --penna-c-brand-1: #{$morandi-dark-link};
+  --penna-c-brand-2: #{$morandi-dark-link-hover};
+  --penna-c-brand-3: #{$morandi-rose};
+  --penna-c-brand-soft: rgba(143, 168, 150, 0.16);
+  --penna-c-brand-on-bg: #{$morandi-dark-text};
 
-  --cherry-c-text-1: #{$morandi-dark-text};
-  --cherry-c-text-2: #{$morandi-dark-text-muted};
-  --cherry-c-text-3: #{$morandi-dark-text-subtle};
+  --penna-c-text-1: #{$morandi-dark-text};
+  --penna-c-text-2: #{$morandi-dark-text-muted};
+  --penna-c-text-3: #{$morandi-dark-text-subtle};
 
-  --cherry-c-bg: #{$morandi-dark-bg};
-  --cherry-c-bg-elevated: #{$morandi-dark-elevated};
+  --penna-c-bg: #{$morandi-dark-bg};
+  --penna-c-bg-elevated: #{$morandi-dark-elevated};
 
-  --cherry-c-contrast-light: #fff;
-  --cherry-c-contrast-dark: #000;
+  --penna-c-contrast-light: #fff;
+  --penna-c-contrast-dark: #000;
 
-  --cherry-c-brand-mark: color-mix(
+  --penna-c-brand-mark: color-mix(
     in srgb,
     #ffea7f #{$morandi-dark-mark-mix},
     #{$morandi-dark-bg}
   );
-  --cherry-c-code-fg: #{$morandi-dark-text};
-  --cherry-c-border-soft: #{$morandi-dark-table-border};
-  --cherry-c-border-faint: #{color-mix(
+  --penna-c-code-fg: #{$morandi-dark-text};
+  --penna-c-border-soft: #{$morandi-dark-table-border};
+  --penna-c-border-faint: #{color-mix(
       in srgb,
       #{$morandi-dark-table-border} 45%,
       transparent

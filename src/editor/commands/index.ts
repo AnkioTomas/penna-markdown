@@ -1,7 +1,7 @@
 /**
  * 编辑命令注册表与统一入口。
  *
- * - {@link COMMANDS} — 命令名 → 实例映射，Toolbar / 快捷键 / `cherry.runCommand()` 均通过此表调度
+ * - {@link COMMANDS} — 命令名 → 实例映射，Toolbar / 快捷键 / `penna.runCommand()` 均通过此表调度
  * - {@link runCommand} — 执行命令的唯一入口
  * - {@link DIALOG_RENDERERS} — 从带弹窗命令收集的渲染器，供 DialogHost 使用
  */
@@ -150,7 +150,7 @@ const THEME_COMMANDS = Object.fromEntries(
 
 /**
  * 内置命令注册表。
- * 键名与工具栏项 `id` 一致，Toolbar / 快捷键 / `cherry.runCommand()` 均通过此表调度。
+ * 键名与工具栏项 `id` 一致，Toolbar / 快捷键 / `penna.runCommand()` 均通过此表调度。
  */
 export const COMMANDS: Record<string, Command> = {
   /* ---- 行内标记 (groups/InlineWrapCommand) ---- */

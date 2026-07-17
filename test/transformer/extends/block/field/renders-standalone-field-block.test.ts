@@ -49,7 +49,7 @@ it("renders standalone field block", () => {
 标题字段
 :::`;
   const html = renderMarkdown(createEngine(), md);
-  expect(html).toContain('<div class="cherry-field cherry-field--required">');
-  expect(html).toContain('<span class="cherry-field__name">title</span>');
-  expect(html).not.toContain("cherry-field-group");
+  expect(html).toContain('<div class="penna-field penna-field--required">');
+  expect(html).toContain('<span class="penna-field__name">title</span>');
+  expect(html).not.toContain("penna-field-group");
 });

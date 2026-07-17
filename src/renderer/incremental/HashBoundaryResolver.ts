@@ -10,7 +10,7 @@
  * ## 数据流
  *
  * ```
- * CherryChangeLineSet[]
+ * PennaChangeLineSet[]
  *       ↓ dirtyLinesFromChanges + expandDirtyToBlockBounds
  * astBlockSpans → prevHash / nextHash
  *       ↓ mapOldLineToNew + slice
@@ -27,7 +27,7 @@ import type {
   IncrementalParseRange,
   IncrementalParseResult,
 } from "@/transformer/core/Incremental/IncrementalParseRange.js";
-import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
+import type { PennaChangeLineSet } from "@/renderer/incremental/PennaChangeSet";
 import { iterateTopLevelLines } from "@/renderer/incremental/BlockIndex";
 
 /**
@@ -104,7 +104,7 @@ export interface HashBoundaryResolveResult {
  * @returns 新文档对应行（1-based）
  */
 export function mapOldLineToNew(
-  changes: CherryChangeLineSet[],
+  changes: PennaChangeLineSet[],
   oldLine1: number,
 ): number {
   let delta = 0;
@@ -127,7 +127,7 @@ export function mapOldLineToNew(
  * @returns 0-based 半开 `[startLine, endLine)`；无有效变更时 `undefined`
  */
 export function dirtyLinesFromChanges(
-  changes: CherryChangeLineSet[],
+  changes: PennaChangeLineSet[],
 ): { startLine: number; endLine: number } | undefined {
   if (!changes.length) return undefined;
 
@@ -179,7 +179,7 @@ export function expandDirtyToBlockBounds(
  */
 export function dirtyTouchesGlobalEffect(
   ast: MarkdownNode,
-  changes: CherryChangeLineSet[],
+  changes: PennaChangeLineSet[],
 ): boolean {
   const rawDirty = dirtyLinesFromChanges(changes);
   if (!rawDirty) return false;
@@ -250,7 +250,7 @@ function sliceBounds(
   spans: AstBlockSpan[],
   prevHash: string,
   nextHash: string,
-  changes: CherryChangeLineSet[],
+  changes: PennaChangeLineSet[],
   newLineCount: number,
 ): { sliceStart: number; sliceEnd: number } {
   const prevIdx = prevHash ? spans.findIndex((s) => s.hash === prevHash) : -1;
@@ -281,7 +281,7 @@ function resolveHashBoundaryInternal(
   prevAst: MarkdownNode,
   _prevLines: string[],
   newLines: string[],
-  changes: CherryChangeLineSet[],
+  changes: PennaChangeLineSet[],
 ): HashBoundaryResolveResult | undefined {
   const rawDirty = dirtyLinesFromChanges(changes);
   if (!rawDirty) return undefined;
@@ -338,7 +338,7 @@ export function parseWithHashBoundary(
   prevAst: MarkdownNode,
   prevLines: string[],
   newLines: string[],
-  changes: CherryChangeLineSet[],
+  changes: PennaChangeLineSet[],
   transformer: TransformerEngine,
 ):
   | { result: IncrementalParseResult; resolve: HashBoundaryResolveResult }

@@ -14,7 +14,7 @@ tags: [guide, transformer]
 ## 基本用法
 
 ```typescript
-import { TransformerEngine } from "cherry-markdown-next/transformer";
+import { TransformerEngine } from "penna-markdown/transformer";
 
 const engine = new TransformerEngine({
   isDark: false,

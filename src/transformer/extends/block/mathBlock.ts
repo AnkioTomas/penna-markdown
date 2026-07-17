@@ -33,7 +33,7 @@ const MATH_OPEN_RE = /^( {0,3})\$\$(?!\$)\s*(.*)$/;
 function mathImgAttrs(latex: string, inline: boolean): string {
   const alt = escapeHtml(latex);
   const inlineAttr = inline ? ' data-inline="true"' : ' data-inline="false"';
-  return `class="cherry-math-latex" data-latex="${alt}"${inlineAttr} alt="${alt}"`;
+  return `class="penna-math-latex" data-latex="${alt}"${inlineAttr} alt="${alt}"`;
 }
 
 function stripClosingMath(line: string): string | null {
@@ -117,7 +117,7 @@ class MathBlockParser extends BaseBlockParser {
     const color = ctx.isDark ? "white" : undefined;
     const src = this.buildMathImageSrc(latex, { color });
     if (!src) return "";
-    return `<div class="cherry-math cherry-math-block" data-type="mathBlock"${this.sourceLineAttrs(node)}><img ${mathImgAttrs(latex, false)} src="${src}" loading="lazy" /></div>`;
+    return `<div class="penna-math penna-math-block" data-type="mathBlock"${this.sourceLineAttrs(node)}><img ${mathImgAttrs(latex, false)} src="${src}" loading="lazy" /></div>`;
   }
 }
 

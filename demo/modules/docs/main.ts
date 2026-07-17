@@ -22,7 +22,7 @@ import {
 } from "../../_common/api.js";
 
 const DOCS_DIR = "/docs/";
-const ACTIVE_KEY = "cherry-docs-demo-href";
+const ACTIVE_KEY = "penna-docs-demo-href";
 const SCROLL_OFFSET = 72;
 
 const docTreeEl = requiredEl<HTMLElement>("#doc-tree");
@@ -311,14 +311,14 @@ void boot();
 
 declare global {
   interface Window {
-    cherryDocsDemo?: {
+    pennaDocsDemo?: {
       loadDoc: typeof loadDoc;
       getRenderer: () => Renderer;
     };
   }
 }
 
-window.cherryDocsDemo = {
+window.pennaDocsDemo = {
   loadDoc,
   getRenderer: () => renderer,
 };

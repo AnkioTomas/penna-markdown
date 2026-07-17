@@ -16,8 +16,8 @@ it("setSplit maps track ratio to body percentage", () => {
 
   divider.setSplit(0.7);
 
-  expect(body.style.getPropertyValue("--cherry-editor-ratio")).toBe("7000");
-  expect(body.style.getPropertyValue("--cherry-preview-ratio")).toBe("3000");
+  expect(body.style.getPropertyValue("--penna-editor-ratio")).toBe("7000");
+  expect(body.style.getPropertyValue("--penna-preview-ratio")).toBe("3000");
   expect(divider.getSplit()).toBe(0.7);
   divider.destroy();
   teardownDividerTest();

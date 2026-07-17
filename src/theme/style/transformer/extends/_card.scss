@@ -1,14 +1,14 @@
 @use "../../common/rem" as *;
 
 @mixin styles {
-  .cherry-card {
+  .penna-card {
     margin: 0 0 rem(16);
     border: rem(1) solid
-      color-mix(in srgb, var(--cherry-c-text-3) 24%, transparent);
+      color-mix(in srgb, var(--penna-c-text-3) 24%, transparent);
     border-radius: rem(8);
     padding: rem(16);
-    background-color: var(--cherry-c-bg-elevated);
-    color: var(--cherry-c-text-2);
+    background-color: var(--penna-c-bg-elevated);
+    color: var(--penna-c-text-2);
     font-size: rem(14);
     line-height: 1.6;
 
@@ -17,7 +17,7 @@
       font-weight: 600;
       font-size: rem(14);
       line-height: 1.4;
-      color: var(--cherry-c-text-1);
+      color: var(--penna-c-text-1);
     }
 
     &__body {

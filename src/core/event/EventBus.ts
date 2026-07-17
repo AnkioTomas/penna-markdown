@@ -7,7 +7,7 @@ export class EventBus {
 
   constructor(
     private readonly debug = false,
-    private readonly logPrefix = "[cherry]",
+    private readonly logPrefix = "[penna]",
     private readonly logger: Log,
   ) {}
 

@@ -682,7 +682,7 @@ export default {
   worm: "🪱",
   microbe: "🦠",
   bouquet: "💐",
-  cherry_blossom: "🌸",
+  penna_blossom: "🌸",
   white_flower: "💮",
   lotus: "🪷",
   rosette: "🏵️",

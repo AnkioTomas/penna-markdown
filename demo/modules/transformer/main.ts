@@ -1,5 +1,5 @@
 import "./styles.scss";
-import "../../_common/cherry-demo.scss";
+import "../../_common/penna-demo.scss";
 import "../../_common/layout.scss";
 
 import { createDemoTheme } from "../../_common/theme.js";
@@ -8,7 +8,7 @@ import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import { requiredEl } from "../../_common/dom.js";
 import example from "../../../docs/test.md?raw";
 
-const THEME_KEY = "cherry-converter-theme";
+const THEME_KEY = "penna-converter-theme";
 
 const markdownInput = requiredEl<HTMLTextAreaElement>("#markdown");
 const preview = requiredEl<HTMLElement>("#preview");
@@ -78,7 +78,7 @@ let scrollLock: ScrollLock = null;
 let suppressScrollSync = 0;
 
 function isInsideTabs(target: EventTarget | null): boolean {
-  return target instanceof Element && target.closest(".cherry-tabs") !== null;
+  return target instanceof Element && target.closest(".penna-tabs") !== null;
 }
 
 function pauseScrollSync(): void {
@@ -112,13 +112,13 @@ function syncInputFromPreview(): void {
 preview.addEventListener("mousedown", (e) => {
   if (!isInsideTabs(e.target)) return;
 
-  const label = (e.target as Element).closest(".cherry-tabs__label");
+  const label = (e.target as Element).closest(".penna-tabs__label");
   if (!label) return;
 
   e.preventDefault();
   pauseScrollSync();
 
-  const radio = label.querySelector<HTMLInputElement>(".cherry-tabs__radio");
+  const radio = label.querySelector<HTMLInputElement>(".penna-tabs__radio");
   if (radio) radio.checked = true;
 });
 
@@ -145,11 +145,11 @@ if (modeBeforeBoot === theme.getTheme().mode) {
 
 declare global {
   interface Window {
-    cherryConverterDemo?: {
+    pennaConverterDemo?: {
       transformer: TransformerEngine;
       renderNow: typeof renderNow;
     };
   }
 }
 
-window.cherryConverterDemo = { transformer, renderNow };
+window.pennaConverterDemo = { transformer, renderNow };

@@ -25,9 +25,9 @@ it("supports line style config on container", () => {
 :::`;
   const html = renderMarkdown(createEngine(), md);
   expect(html).toContain(
-    'class="cherry-timeline cherry-timeline--placement-left"',
+    'class="penna-timeline penna-timeline--placement-left"',
   );
   expect(html).toContain(
-    '<div class="cherry-timeline-item cherry-timeline-item--info cherry-timeline-item--line-dotted cherry-timeline-item--placement-left">',
+    '<div class="penna-timeline-item penna-timeline-item--info penna-timeline-item--line-dotted penna-timeline-item--placement-left">',
   );
 });

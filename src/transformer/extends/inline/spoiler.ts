@@ -89,10 +89,10 @@ class SpoilerInlineParser extends BaseInlineParser {
     const click = isClickMode(node.props?.htmlAttrs as string | undefined);
 
     if (click) {
-      return `<label class="cherry-spoiler click"><input type="checkbox" class="cherry-spoiler__toggle" hidden><span class="cherry-spoiler__text">${inner}</span></label>`;
+      return `<label class="penna-spoiler click"><input type="checkbox" class="penna-spoiler__toggle" hidden><span class="penna-spoiler__text">${inner}</span></label>`;
     }
 
-    return `<span class="cherry-spoiler">${inner}</span>`;
+    return `<span class="penna-spoiler">${inner}</span>`;
   }
 }
 

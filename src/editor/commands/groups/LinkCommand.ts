@@ -111,7 +111,7 @@ function applyRefIdDatalist(
 ) {
   if (!existingRefs?.length) return;
   const datalist = document.createElement("datalist");
-  datalist.id = "cherry-link-ref-ids";
+  datalist.id = "penna-link-ref-ids";
   for (const ref of existingRefs) {
     const option = document.createElement("option");
     option.value = ref.id;
@@ -121,7 +121,7 @@ function applyRefIdDatalist(
   form.append(datalist);
   const input = form.elements.namedItem(fieldName);
   if (input instanceof HTMLInputElement) {
-    input.setAttribute("list", "cherry-link-ref-ids");
+    input.setAttribute("list", "penna-link-ref-ids");
   }
 }
 
@@ -233,7 +233,7 @@ class LinkReferenceFormDialog extends FormDialog<LinkReferenceDialogResult> {
 
   /** 返回引用式链接表单的样式类名。 */
   override get className() {
-    return "cherry-dialog-form--link-reference";
+    return "penna-dialog-form--link-reference";
   }
 
   /** 返回本次渲染动态构建的字段列表。 */

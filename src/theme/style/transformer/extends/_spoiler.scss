@@ -3,7 +3,7 @@
 // 剧透语法 !! text !! / !! text !! {click}
 // 用户通过 {click} 注入的 .click 修饰类保持简短
 @mixin styles {
-  .cherry-spoiler {
+  .penna-spoiler {
     // 修复 Safari 悬浮 Bug：如果不设置 pointer，Safari 会因为元素“不可点击”而拒绝触发 :hover 状态
     cursor: pointer;
     transition:
@@ -12,8 +12,8 @@
 
     // 默认：悬浮显示
     color: transparent;
-    text-shadow: 0 0 rem(6) var(--cherry-c-text-1);
-    background: color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
+    text-shadow: 0 0 rem(6) var(--penna-c-text-1);
+    background: color-mix(in srgb, var(--penna-c-text-3) 15%, transparent);
     border-radius: rem(4);
     padding: 0 rem(4);
 
@@ -28,22 +28,22 @@
       color: inherit;
       text-shadow: none;
 
-      .cherry-spoiler__text {
+      .penna-spoiler__text {
         color: transparent;
-        text-shadow: 0 0 rem(6) var(--cherry-c-text-1);
+        text-shadow: 0 0 rem(6) var(--penna-c-text-1);
         transition:
           color 0.2s ease,
           text-shadow 0.2s ease;
       }
 
-      &:has(.cherry-spoiler__toggle:checked) .cherry-spoiler__text {
+      &:has(.penna-spoiler__toggle:checked) .penna-spoiler__text {
         color: inherit;
         text-shadow: none;
       }
     }
   }
 
-  .cherry-spoiler__toggle {
+  .penna-spoiler__toggle {
     position: absolute;
     opacity: 0;
     pointer-events: none;

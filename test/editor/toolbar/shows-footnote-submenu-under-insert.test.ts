@@ -15,7 +15,7 @@ it("shows footnote submenu under insert", () => {
   const insertMenu = mount.querySelector('[data-toolbar-id="insert"]');
   (
     insertMenu?.querySelector(
-      ".cherry-toolbar-menu-trigger",
+      ".penna-toolbar-menu-trigger",
     ) as HTMLButtonElement
   )?.click();
   expect(

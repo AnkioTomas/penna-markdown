@@ -1,9 +1,9 @@
 ---
 title: 语法索引
-subtitle: GFM + Cherry 扩展一览
+subtitle: GFM + Penna 扩展一览
 version: 0.1.0
 tags: [reference, syntax]
-repo: https://github.com/AnkioTomas/cherry-markdown-next
+repo: https://github.com/AnkioTomas/penna-markdown
 ---
 
 # [[title]]
@@ -42,7 +42,7 @@ repo: https://github.com/AnkioTomas/cherry-markdown-next
 
 ---
 
-## Cherry 行内
+## Penna 行内
 
 | 语法             | 写法                            |
 | ---------------- | ------------------------------- |
@@ -59,7 +59,7 @@ repo: https://github.com/AnkioTomas/cherry-markdown-next
 
 ---
 
-## Cherry 块级
+## Penna 块级
 
 | 语法                    | 写法                                                  |
 | ----------------------- | ----------------------------------------------------- |

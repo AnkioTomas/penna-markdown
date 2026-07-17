@@ -2,26 +2,26 @@
 @use "../../common/tokens" as tokens;
 
 @mixin styles {
-  .cherry-code-block {
+  .penna-code-block {
     --cb-radius: #{rem(10)};
-    --cb-border: color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
-    --cb-header-bg: var(--cherry-c-code-block-header-bg);
-    --cb-code-bg: var(--cherry-c-code-block-code-bg);
-    --cb-lang-bg: color-mix(in srgb, var(--cherry-c-brand-1) 12%, transparent);
-    --cb-lang-fg: var(--cherry-c-brand-1);
-    --cb-title-fg: var(--cherry-c-text-2);
-    --cb-shadow: var(--cherry-c-code-block-shadow);
+    --cb-border: color-mix(in srgb, var(--penna-c-text-3) 18%, transparent);
+    --cb-header-bg: var(--penna-c-code-block-header-bg);
+    --cb-code-bg: var(--penna-c-code-block-code-bg);
+    --cb-lang-bg: color-mix(in srgb, var(--penna-c-brand-1) 12%, transparent);
+    --cb-lang-fg: var(--penna-c-brand-1);
+    --cb-title-fg: var(--penna-c-text-2);
+    --cb-shadow: var(--penna-c-code-block-shadow);
     --cb-line-highlight: color-mix(
       in srgb,
-      var(--cherry-c-brand-1) 14%,
+      var(--penna-c-brand-1) 14%,
       transparent
     );
 
     @include tokens.when-dark {
-      --cb-border: color-mix(in srgb, var(--cherry-c-text-3) 28%, transparent);
+      --cb-border: color-mix(in srgb, var(--penna-c-text-3) 28%, transparent);
       --cb-line-highlight: color-mix(
         in srgb,
-        var(--cherry-c-brand-1) 22%,
+        var(--penna-c-brand-1) 22%,
         transparent
       );
     }
@@ -94,12 +94,12 @@
     }
 
     &__meta
-      > .cherry-code-block__lang:first-child
-      + .cherry-code-block__title::before {
+      > .penna-code-block__lang:first-child
+      + .penna-code-block__title::before {
       display: inline-block;
     }
 
-    &__meta > .cherry-code-block__title:first-child::before {
+    &__meta > .penna-code-block__title:first-child::before {
       display: none;
     }
 
@@ -118,26 +118,26 @@
         "Liberation Mono", monospace;
       font-size: rem(13);
       line-height: var(--cb-line-height);
-      color: var(--cherry-c-text-1);
-      background-image: var(--cherry-line-highlight-bg, none);
+      color: var(--penna-c-text-1);
+      background-image: var(--penna-line-highlight-bg, none);
       background-repeat: no-repeat;
       background-size: 100%
         calc(
-          var(--cb-body-pad-y) * 2 + var(--cherry-line-count, 1) *
+          var(--cb-body-pad-y) * 2 + var(--penna-line-count, 1) *
             var(--cb-line-step)
         );
     }
 
-    &__panel--collapsed .cherry-code-block__body {
+    &__panel--collapsed .penna-code-block__body {
       max-height: calc(
-        var(--cb-body-pad-y) * 2 + var(--cherry-collapsed-visible, 10) *
+        var(--cb-body-pad-y) * 2 + var(--penna-collapsed-visible, 10) *
           var(--cb-line-step)
       );
       overflow: hidden;
     }
 
-    &__panel--collapsible:not(.cherry-code-block__panel--collapsed)
-      .cherry-code-block__body {
+    &__panel--collapsible:not(.penna-code-block__panel--collapsed)
+      .penna-code-block__body {
       max-height: none;
       overflow: auto;
     }
@@ -149,7 +149,7 @@
       font: inherit;
       font-variant-numeric: tabular-nums;
       line-height: var(--cb-line-height);
-      color: var(--cherry-c-text-3);
+      color: var(--penna-c-text-3);
       text-align: right;
       white-space: pre;
       user-select: none;
@@ -207,7 +207,7 @@
       padding: rem(10) rem(16);
       font-size: rem(13);
       font-weight: 500;
-      color: var(--cherry-c-text-2);
+      color: var(--penna-c-text-2);
       cursor: pointer;
       background: var(--cb-header-bg);
       border: 0;
@@ -217,10 +217,10 @@
         background-color 0.15s ease;
 
       &:hover {
-        color: var(--cherry-c-brand-1);
+        color: var(--penna-c-brand-1);
         background: color-mix(
           in srgb,
-          var(--cherry-c-brand-1) 8%,
+          var(--penna-c-brand-1) 8%,
           var(--cb-header-bg)
         );
       }
@@ -237,13 +237,13 @@
       transition: transform 0.2s ease;
     }
 
-    &__panel--collapsible:not(.cherry-code-block__panel--collapsed)
-      .cherry-code-block__expand-icon {
+    &__panel--collapsible:not(.penna-code-block__panel--collapsed)
+      .penna-code-block__expand-icon {
       transform: rotate(180deg);
     }
   }
 
-  .cherry-copy-code-button {
+  .penna-copy-code-button {
     flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
@@ -252,7 +252,7 @@
     height: rem(32);
     margin-left: auto;
     padding: 0;
-    color: var(--cherry-c-text-3);
+    color: var(--penna-c-text-3);
     cursor: pointer;
     background: transparent;
     border: rem(1) solid transparent;
@@ -274,21 +274,17 @@
     }
 
     &:hover {
-      color: var(--cherry-c-text-1);
-      background: color-mix(in srgb, var(--cherry-c-text-3) 10%, transparent);
+      color: var(--penna-c-text-1);
+      background: color-mix(in srgb, var(--penna-c-text-3) 10%, transparent);
       border-color: var(
         --cb-border,
-        color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent)
+        color-mix(in srgb, var(--penna-c-text-3) 18%, transparent)
       );
     }
 
     &.is-copied {
-      color: var(--cherry-c-brand-1);
-      border-color: color-mix(
-        in srgb,
-        var(--cherry-c-brand-1) 35%,
-        transparent
-      );
+      color: var(--penna-c-brand-1);
+      border-color: color-mix(in srgb, var(--penna-c-brand-1) 35%, transparent);
 
       &::before {
         mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
@@ -296,8 +292,8 @@
     }
   }
 
-  .cherry-mermaid-block,
-  .cherry-echarts-block {
+  .penna-mermaid-block,
+  .penna-echarts-block {
     margin: rem(16) 0;
 
     img {

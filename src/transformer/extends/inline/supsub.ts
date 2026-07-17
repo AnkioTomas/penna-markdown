@@ -2,7 +2,7 @@
  * @file 行内上标 / 下标语法
  * @module transformer/extends/inline/supsub
  *
- * 语法：`~下标~` / `^上标^`（Cherry 扩展语法）
+ * 语法：`~下标~` / `^上标^`（Penna 扩展语法）
  */
 
 import { BaseInlineParser } from "@/transformer/core/ParserBase.js";

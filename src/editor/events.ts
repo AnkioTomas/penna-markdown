@@ -39,8 +39,8 @@ export interface EditorCommandPayload {
   payload?: unknown;
 }
 
-/** 布局模式切换（工具栏 / 状态栏 / Cherry）。 */
-export interface CherryLayoutPayload {
+/** 布局模式切换（工具栏 / 状态栏 / Penna）。 */
+export interface PennaLayoutPayload {
   mode: EditorLayoutMode;
 }
 
@@ -51,7 +51,7 @@ export interface EditorLayoutPayload {
 }
 
 /** 侧边栏显隐。 */
-export interface CherrySidebarPayload {
+export interface PennaSidebarPayload {
   show: boolean;
 }
 

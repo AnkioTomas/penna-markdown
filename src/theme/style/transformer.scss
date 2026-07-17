@@ -37,14 +37,14 @@
 @use "transformer/extends/code-block";
 @use "renderer/image-preview";
 
-.cherry {
+.penna {
   @include tokens.theme-default;
-  &.cherry-dark {
+  &.penna-dark {
     @include tokens.theme-dark;
   }
 }
 
-.cherry-render {
+.penna-render {
   @include tokens.theme-default;
   @include hljs-github.light;
   @include scrollbar.scrollbar-global;
@@ -86,8 +86,8 @@
 
 @include image-preview.overlay;
 
-.cherry-dark {
-  .cherry-render {
+.penna-dark {
+  .penna-render {
     @include tokens.theme-dark;
     @include hljs-github.dark;
   }

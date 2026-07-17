@@ -9,8 +9,8 @@ it("logD uses console.info", () => {
   const infoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
 
   const log = new Log(true);
-  log.logD("[cherry]", "browser debug");
+  log.logD("[penna]", "browser debug");
 
-  expect(infoSpy).toHaveBeenCalledWith("[cherry]", "browser debug");
+  expect(infoSpy).toHaveBeenCalledWith("[penna]", "browser debug");
   infoSpy.mockRestore();
 });

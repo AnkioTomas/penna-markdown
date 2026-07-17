@@ -10,13 +10,13 @@ it("prints colorful welcome with GitHub link in browser", async () => {
   vi.resetModules();
   const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
-  const { printCherryLogo } = await import("@/editor/Logo");
-  printCherryLogo();
+  const { printPennaLogo } = await import("@/editor/Logo");
+  printPennaLogo();
 
   expect(logSpy).toHaveBeenCalledTimes(LOG_CALLS);
   const flat = logSpy.mock.calls.flat(2).join(" ");
-  expect(flat).toContain("Cherry Markdown Next");
-  expect(flat).toContain("cherry-markdown-next");
+  expect(flat).toContain("Penna Markdown");
+  expect(flat).toContain("penna-markdown");
   expect(flat).toContain("ankio.net");
   expect(flat).toContain("github.com");
   expect(flat).not.toContain("cursor:pointer");

@@ -1,5 +1,5 @@
 import "./styles.scss";
-import "../../_common/cherry-demo.scss";
+import "../../_common/penna-demo.scss";
 import "../../_common/layout.scss";
 
 import { createDemoTheme } from "../../_common/theme.js";
@@ -10,8 +10,8 @@ import { Renderer } from "@/renderer/Renderer.js";
 import { requiredEl } from "../../_common/dom.js";
 import example from "../../../docs/test.md?raw";
 
-const APPEARANCE_KEY = "cherry-renderer-demo-appearance";
-const THEME_KEY = "cherry-renderer-demo-theme";
+const APPEARANCE_KEY = "penna-renderer-demo-appearance";
+const THEME_KEY = "penna-renderer-demo-theme";
 type AppearanceMode = "light" | "dark" | "auto";
 
 function readAppearance(): AppearanceMode {
@@ -226,7 +226,7 @@ boot();
 
 declare global {
   interface Window {
-    cherryRendererDemo?: {
+    pennaRendererDemo?: {
       get theme(): Theme;
       get renderer(): Renderer;
       renderNow: typeof renderNow;
@@ -234,7 +234,7 @@ declare global {
   }
 }
 
-window.cherryRendererDemo = {
+window.pennaRendererDemo = {
   get theme() {
     return theme;
   },

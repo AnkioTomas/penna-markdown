@@ -2,42 +2,42 @@
 @use "ai";
 
 /** CodeMirror 6 容器、结构与换行 */
-.cherry-editor {
-  &.cherry-editor-cm,
-  .cherry-editor-cm {
+.penna-editor {
+  &.penna-editor-cm,
+  .penna-editor-cm {
     height: 100%;
     min-height: 0;
     overflow: hidden;
-    background: var(--cherry-c-bg);
+    background: var(--penna-c-bg);
     border-right: 1px solid
-      color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+      color-mix(in srgb, var(--penna-c-text-3) 18%, transparent);
   }
 
-  &.cherry-editor-cm .cm-editor,
-  .cherry-editor-cm .cm-editor {
+  &.penna-editor-cm .cm-editor,
+  .penna-editor-cm .cm-editor {
     height: 100%;
   }
 }
 
-.cherry-editor-cm {
+.penna-editor-cm {
   @include syntax.editor;
 }
 
-.cherry-editor-cm .cm-editor {
+.penna-editor-cm .cm-editor {
   position: relative;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--cherry-c-bg);
-  color: var(--cherry-c-text-1);
+  background: var(--penna-c-bg);
+  color: var(--penna-c-text-1);
 }
 
-.cherry-editor-cm .cm-editor.cm-focused {
+.penna-editor-cm .cm-editor.cm-focused {
   outline: none;
 }
 
-.cherry-editor-cm .cm-scroller {
+.penna-editor-cm .cm-scroller {
   display: flex;
   align-items: flex-start;
   line-height: 1.5;
@@ -50,7 +50,7 @@
     monospace;
 }
 
-.cherry-editor-cm .cm-content {
+.penna-editor-cm .cm-content {
   margin: 0;
   flex-grow: 2;
   flex-shrink: 1;
@@ -65,31 +65,31 @@
   caret-color: transparent;
 }
 
-.cherry-editor-cm .cm-content.cm-lineWrapping {
+.penna-editor-cm .cm-content.cm-lineWrapping {
   white-space: break-spaces;
   word-break: break-word;
   overflow-wrap: anywhere;
 }
 
-.cherry-editor-cm .cm-line {
+.penna-editor-cm .cm-line {
   display: block;
   padding: 0 2px 0 6px;
   max-width: 100%;
 }
 
-.cherry-editor-cm .cm-gutters {
+.penna-editor-cm .cm-gutters {
   flex-shrink: 0;
   display: flex;
   height: 100%;
   box-sizing: border-box;
   flex-direction: column;
-  background: var(--cherry-c-bg);
+  background: var(--penna-c-bg);
   border-right: 1px solid
-    color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
-  color: var(--cherry-c-text-3);
+    color-mix(in srgb, var(--penna-c-text-3) 18%, transparent);
+  color: var(--penna-c-text-3);
 }
 
-.cherry-editor-cm .cm-gutter {
+.penna-editor-cm .cm-gutter {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -97,117 +97,113 @@
   min-height: 100%;
 }
 
-.cherry-editor-cm .cm-lineNumbers .cm-gutterElement {
+.penna-editor-cm .cm-lineNumbers .cm-gutterElement {
   padding: 0 8px 0 12px;
   min-width: 2.5em;
   text-align: right;
 }
 
-.cherry-editor-cm .cm-cursor,
-.cherry-editor-cm .cm-dropCursor {
-  border-left: 3px solid var(--cherry-c-brand-1) !important;
+.penna-editor-cm .cm-cursor,
+.penna-editor-cm .cm-dropCursor {
+  border-left: 3px solid var(--penna-c-brand-1) !important;
   margin-left: -1px;
 }
 
-.cherry-editor-cm .cm-selectionBackground {
+.penna-editor-cm .cm-selectionBackground {
   background: color-mix(
     in srgb,
-    var(--cherry-c-brand-1) 20%,
+    var(--penna-c-brand-1) 20%,
     transparent
   ) !important;
 }
 
-.cherry-editor-cm .cm-focused .cm-selectionBackground {
+.penna-editor-cm .cm-focused .cm-selectionBackground {
   background: color-mix(
     in srgb,
-    var(--cherry-c-brand-1) 30%,
+    var(--penna-c-brand-1) 30%,
     transparent
   ) !important;
 }
 
-.cherry-editor-cm .cm-activeLine {
-  background: color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
+.penna-editor-cm .cm-activeLine {
+  background: color-mix(in srgb, var(--penna-c-brand-1) 15%, transparent);
 }
 
-.cherry-editor-cm .cm-activeLineGutter {
-  background: color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
-  color: var(--cherry-c-brand-1);
+.penna-editor-cm .cm-activeLineGutter {
+  background: color-mix(in srgb, var(--penna-c-brand-1) 15%, transparent);
+  color: var(--penna-c-brand-1);
 }
 
 /* --- Search & Replace Panel --- */
-.cherry-editor-cm .cm-panels {
-  background-color: var(--cherry-c-bg-elevated);
-  color: var(--cherry-c-text-1);
+.penna-editor-cm .cm-panels {
+  background-color: var(--penna-c-bg-elevated);
+  color: var(--penna-c-text-1);
   box-shadow: 0 2px 12px
-    color-mix(in srgb, var(--cherry-c-text-1) 8%, transparent);
+    color-mix(in srgb, var(--penna-c-text-1) 8%, transparent);
   z-index: 10;
 }
 
-.cherry-editor-cm .cm-panels-top {
+.penna-editor-cm .cm-panels-top {
   border-bottom: 1px solid
-    color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
+    color-mix(in srgb, var(--penna-c-text-3) 15%, transparent);
 }
 
-.cherry-editor-cm .cm-panels-bottom {
+.penna-editor-cm .cm-panels-bottom {
   border-top: 1px solid
-    color-mix(in srgb, var(--cherry-c-text-3) 15%, transparent);
+    color-mix(in srgb, var(--penna-c-text-3) 15%, transparent);
 }
 
-.cherry-editor-cm .cm-searchMatch {
-  background-color: color-mix(
-    in srgb,
-    var(--cherry-c-brand-1) 30%,
-    transparent
-  );
+.penna-editor-cm .cm-searchMatch {
+  background-color: color-mix(in srgb, var(--penna-c-brand-1) 30%, transparent);
 }
 
-.cherry-editor-cm .cm-searchMatch-selected {
+.penna-editor-cm .cm-searchMatch-selected {
   background-color: color-mix(
     in srgb,
-    var(--cherry-c-brand-1) 60%,
+    var(--penna-c-brand-1) 60%,
     transparent
   ) !important;
 }
 
-.cherry-editor-cm .cm-search.cherry-search-panel {
+.penna-editor-cm .cm-search.penna-search-panel {
   padding: 10px 14px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  font-family: var(--cherry-font-family);
+  font-family: var(--penna-font-family);
   font-size: 13px;
 }
 
-.cherry-editor-cm .cherry-search-row {
+.penna-editor-cm .penna-search-row {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 10px;
 }
 
-.cherry-editor-cm .cherry-search-label {
+.penna-editor-cm .penna-search-label {
   width: 2.5em;
   flex-shrink: 0;
   font-size: 12px;
   font-weight: 500;
-  color: var(--cherry-c-text-3);
+  color: var(--penna-c-text-3);
   user-select: none;
 }
 
-.cherry-editor-cm .cherry-search-field {
+.penna-editor-cm .penna-search-field {
   position: relative;
   min-width: 0;
 }
 
-.cherry-editor-cm .cherry-search-input {
+.penna-editor-cm .penna-search-input {
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
   padding: 7px 12px;
   border-radius: 8px;
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 25%, transparent);
-  background: var(--cherry-c-bg);
-  color: var(--cherry-c-text-1);
+  border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 25%, transparent);
+  background: var(--penna-c-bg);
+  color: var(--penna-c-text-1);
   font-size: 13px;
   line-height: 1.4;
   transition:
@@ -216,46 +212,46 @@
   outline: none;
 
   &:focus {
-    border-color: var(--cherry-c-brand-1);
+    border-color: var(--penna-c-brand-1);
     box-shadow: 0 0 0 3px
-      color-mix(in srgb, var(--cherry-c-brand-1) 15%, transparent);
+      color-mix(in srgb, var(--penna-c-brand-1) 15%, transparent);
   }
 
   &::placeholder {
-    color: color-mix(in srgb, var(--cherry-c-text-3) 50%, transparent);
+    color: color-mix(in srgb, var(--penna-c-text-3) 50%, transparent);
   }
 }
 
-.cherry-editor-cm
-  .cherry-search-field:has(.cherry-search-count)
-  .cherry-search-input {
+.penna-editor-cm
+  .penna-search-field:has(.penna-search-count)
+  .penna-search-input {
   padding-right: 72px;
 }
 
-.cherry-editor-cm .cherry-search-count {
+.penna-editor-cm .penna-search-count {
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
-  color: var(--cherry-c-text-3);
+  color: var(--penna-c-text-3);
   pointer-events: none;
   user-select: none;
 
   &.is-empty {
-    color: var(--cherry-c-danger, #c62828);
+    color: var(--penna-c-danger, #c62828);
   }
 }
 
-.cherry-editor-cm .cherry-search-actions {
+.penna-editor-cm .penna-search-actions {
   display: flex;
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
 }
 
-.cherry-editor-cm .cherry-search-btn {
+.penna-editor-cm .penna-search-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -265,19 +261,19 @@
   border: none;
   border-radius: 6px;
   background: transparent;
-  color: var(--cherry-c-text-2);
+  color: var(--penna-c-text-2);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   outline: none;
 
-  .cherry-icon {
+  .penna-icon {
     width: 15px;
     height: 15px;
   }
 
   &:hover {
-    background: color-mix(in srgb, var(--cherry-c-text-3) 12%, transparent);
-    color: var(--cherry-c-text-1);
+    background: color-mix(in srgb, var(--penna-c-text-3) 12%, transparent);
+    color: var(--penna-c-text-1);
   }
 
   &:active {
@@ -286,26 +282,26 @@
 
   &.cm-search-close-btn {
     margin-left: 2px;
-    color: var(--cherry-c-text-3);
+    color: var(--penna-c-text-3);
 
     &:hover {
       background: color-mix(
         in srgb,
-        var(--cherry-c-danger, #c62828) 10%,
+        var(--penna-c-danger, #c62828) 10%,
         transparent
       );
-      color: var(--cherry-c-danger, #c62828);
+      color: var(--penna-c-danger, #c62828);
     }
   }
 }
 
-.cherry-editor-cm .cherry-search-btn-text {
+.penna-editor-cm .penna-search-btn-text {
   padding: 6px 12px;
   border-radius: 6px;
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent);
-  background: var(--cherry-c-bg);
+  border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 20%, transparent);
+  background: var(--penna-c-bg);
   cursor: pointer;
-  color: var(--cherry-c-text-2);
+  color: var(--penna-c-text-2);
   font-size: 12px;
   font-weight: 500;
   line-height: 1.2;
@@ -314,12 +310,8 @@
   outline: none;
 
   &:hover {
-    background: color-mix(
-      in srgb,
-      var(--cherry-c-text-1) 5%,
-      var(--cherry-c-bg)
-    );
-    color: var(--cherry-c-text-1);
+    background: color-mix(in srgb, var(--penna-c-text-1) 5%, var(--penna-c-bg));
+    color: var(--penna-c-text-1);
   }
 
   &:active {
@@ -327,19 +319,19 @@
   }
 }
 
-.cherry-editor-cm .cherry-search-options {
+.penna-editor-cm .penna-search-options {
   display: flex;
   align-items: center;
   gap: 6px;
   padding-left: calc(2.5em + 10px);
 }
 
-.cherry-editor-cm .cherry-search-option {
+.penna-editor-cm .penna-search-option {
   padding: 4px 10px;
   border-radius: 6px;
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 18%, transparent);
   background: transparent;
-  color: var(--cherry-c-text-3);
+  color: var(--penna-c-text-3);
   font-size: 12px;
   font-weight: 600;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -349,13 +341,13 @@
   outline: none;
 
   &:hover {
-    color: var(--cherry-c-text-2);
-    border-color: color-mix(in srgb, var(--cherry-c-text-3) 30%, transparent);
+    color: var(--penna-c-text-2);
+    border-color: color-mix(in srgb, var(--penna-c-text-3) 30%, transparent);
   }
 
   &.is-active {
-    color: var(--cherry-c-brand-1);
-    background: color-mix(in srgb, var(--cherry-c-brand-1) 12%, transparent);
-    border-color: color-mix(in srgb, var(--cherry-c-brand-1) 35%, transparent);
+    color: var(--penna-c-brand-1);
+    background: color-mix(in srgb, var(--penna-c-brand-1) 12%, transparent);
+    border-color: color-mix(in srgb, var(--penna-c-brand-1) 35%, transparent);
   }
 }

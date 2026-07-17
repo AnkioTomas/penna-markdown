@@ -63,9 +63,9 @@ class LinkCardBlockParser extends BaseBlockParser {
       : "";
 
     const cardClasses = [
-      "cherry-card",
-      "cherry-link-card",
-      icon ? "cherry-link-card--has-icon" : "",
+      "penna-card",
+      "penna-link-card",
+      icon ? "penna-link-card--has-icon" : "",
     ]
       .filter(Boolean)
       .join(" ");
@@ -76,18 +76,18 @@ class LinkCardBlockParser extends BaseBlockParser {
 
     if (icon) {
       parts.push(
-        `<img class="cherry-link-card__icon" src="${escapeHtml(icon)}" alt="" loading="lazy">`,
-        `<div class="cherry-link-card__main">`,
+        `<img class="penna-link-card__icon" src="${escapeHtml(icon)}" alt="" loading="lazy">`,
+        `<div class="penna-link-card__main">`,
       );
     }
 
     if (title) {
       parts.push(
-        `<p class="cherry-card__title">${ctx.renderInline(titleNodes)}</p>`,
+        `<p class="penna-card__title">${ctx.renderInline(titleNodes)}</p>`,
       );
     }
     if (body) {
-      parts.push(`<div class="cherry-card__body">${body}</div>`);
+      parts.push(`<div class="penna-card__body">${body}</div>`);
     }
 
     if (icon) {

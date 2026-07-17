@@ -44,5 +44,5 @@ const sample = `:::: field-group
 
 it("does not render as generic container", () => {
   const html = renderMarkdown(createEngine(), sample);
-  expect(html).not.toContain("cherry-alert--note");
+  expect(html).not.toContain("penna-alert--note");
 });

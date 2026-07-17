@@ -9,17 +9,17 @@
 .theme-btn {
   margin-left: auto;
   padding: 6px 12px;
-  border: 1px solid color-mix(in srgb, var(--cherry-c-text-3) 35%, transparent);
+  border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 35%, transparent);
   border-radius: 999px;
-  background: var(--cherry-c-bg);
-  color: var(--cherry-c-text-1);
+  background: var(--penna-c-bg);
+  color: var(--penna-c-text-1);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
 
   &:hover {
-    border-color: var(--cherry-c-brand-2);
-    background: var(--cherry-c-bg-elevated);
+    border-color: var(--penna-c-brand-2);
+    background: var(--penna-c-bg-elevated);
   }
 }
 
@@ -29,9 +29,9 @@
     "Courier New", monospace;
   font-size: 12px;
   font-weight: 500;
-  color: var(--cherry-c-brand-on-bg);
-  background: var(--cherry-c-brand-soft);
-  border: 1px solid color-mix(in srgb, var(--cherry-c-brand-2) 35%, transparent);
+  color: var(--penna-c-brand-on-bg);
+  background: var(--penna-c-brand-soft);
+  border: 1px solid color-mix(in srgb, var(--penna-c-brand-2) 35%, transparent);
   border-radius: 999px;
   padding: 5px 14px;
   white-space: nowrap;
@@ -46,8 +46,8 @@
   outline: none;
   font-size: 13px;
   resize: none;
-  background: var(--cherry-c-bg);
-  color: var(--cherry-c-text-1);
+  background: var(--penna-c-bg);
+  color: var(--penna-c-text-1);
 }
 
 .btn {
@@ -55,18 +55,18 @@
   padding: 10px 14px;
   border: none;
   border-radius: 8px;
-  background: var(--cherry-c-brand-1);
-  color: var(--cherry-c-contrast-light);
+  background: var(--penna-c-brand-1);
+  color: var(--penna-c-contrast-light);
   cursor: pointer;
 
   &:hover {
-    background: var(--cherry-c-brand-2);
+    background: var(--penna-c-brand-2);
   }
 }
 
 .converter-error {
   margin: 0;
-  color: var(--cherry-c-danger);
+  color: var(--penna-c-danger);
   font-size: 13px;
 }
 

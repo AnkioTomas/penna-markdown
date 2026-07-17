@@ -147,39 +147,39 @@ function renderMediaHtml(
 
   if (mediaType === "video") {
     const posterAttr = poster ? ` poster="${escapeHtml(poster)}"` : "";
-    const player = `<video class="cherry-media__player" src="${src}"${titleAttr}${posterAttr} controls playsinline preload="metadata"></video>`;
+    const player = `<video class="penna-media__player" src="${src}"${titleAttr}${posterAttr} controls playsinline preload="metadata"></video>`;
 
     if (!block) {
-      return `<video class="cherry-media__player cherry-media__player--inline" src="${src}"${titleAttr}${posterAttr} controls playsinline preload="metadata"></video>`;
+      return `<video class="penna-media__player penna-media__player--inline" src="${src}"${titleAttr}${posterAttr} controls playsinline preload="metadata"></video>`;
     }
 
     const caption = alt.trim()
-      ? `<figcaption class="cherry-media__caption">${escapeHtml(alt)}</figcaption>`
+      ? `<figcaption class="penna-media__caption">${escapeHtml(alt)}</figcaption>`
       : "";
 
-    return `<figure class="cherry-media cherry-video"${lineAttrs}>${player}${caption}</figure>`;
+    return `<figure class="penna-media penna-video"${lineAttrs}>${player}${caption}</figure>`;
   }
 
-  const audio = `<audio class="cherry-audio-player__track" src="${src}"${titleAttr} controls preload="metadata"></audio>`;
+  const audio = `<audio class="penna-audio-player__track" src="${src}"${titleAttr} controls preload="metadata"></audio>`;
 
   if (!block) {
-    return `<audio class="cherry-media__player cherry-media__player--inline" src="${src}"${titleAttr} controls preload="metadata"></audio>`;
+    return `<audio class="penna-media__player penna-media__player--inline" src="${src}"${titleAttr} controls preload="metadata"></audio>`;
   }
 
   const label = alt.trim() ? escapeHtml(alt) : "音频";
   const coverClass = poster
-    ? "cherry-audio-player__cover cherry-audio-player__cover--image"
-    : "cherry-audio-player__cover";
+    ? "penna-audio-player__cover penna-audio-player__cover--image"
+    : "penna-audio-player__cover";
   const coverHtml = poster
-    ? `<img class="cherry-audio-player__cover-img" src="${escapeHtml(poster)}" alt="" loading="lazy" />`
+    ? `<img class="penna-audio-player__cover-img" src="${escapeHtml(poster)}" alt="" loading="lazy" />`
     : "";
 
   return [
-    `<figure class="cherry-media cherry-audio"${lineAttrs}>`,
-    `<div class="cherry-audio-player">`,
+    `<figure class="penna-media penna-audio"${lineAttrs}>`,
+    `<div class="penna-audio-player">`,
     `<div class="${coverClass}" aria-hidden="true">${coverHtml}</div>`,
-    `<div class="cherry-audio-player__main">`,
-    `<p class="cherry-audio-player__title">${label}</p>`,
+    `<div class="penna-audio-player__main">`,
+    `<p class="penna-audio-player__title">${label}</p>`,
     audio,
     `</div>`,
     `</div>`,
@@ -199,16 +199,16 @@ function renderIframeHtml(node: MarkdownNode, sourceLineAttrs: string): string {
   const titleAttr = iframeTitle ? ` title="${iframeTitle}"` : "";
 
   const frame = [
-    `<div class="cherry-iframe__frame">`,
+    `<div class="penna-iframe__frame">`,
     `<iframe src="${src}"${titleAttr} loading="lazy" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>`,
     `</div>`,
   ].join("");
 
   const caption = alt.trim()
-    ? `<figcaption class="cherry-media__caption">${escapeHtml(alt)}</figcaption>`
+    ? `<figcaption class="penna-media__caption">${escapeHtml(alt)}</figcaption>`
     : "";
 
-  return `<figure class="cherry-media cherry-iframe"${sourceLineAttrs}>${frame}${caption}</figure>`;
+  return `<figure class="penna-media penna-iframe"${sourceLineAttrs}>${frame}${caption}</figure>`;
 }
 
 /** 行内 video / audio 解析器 */

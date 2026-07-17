@@ -1,29 +1,29 @@
 @use "../../common/rem" as *;
 
 @mixin styles {
-  .cherry-footnotes {
+  .penna-footnotes {
     margin-top: rem(32);
   }
 
-  .cherry-footnotes__sep {
+  .penna-footnotes__sep {
     margin: 0 0 rem(16);
     border: 0;
     border-top: rem(1) solid
-      color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+      color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
   }
 
-  .cherry-footnotes__section {
-    color: var(--cherry-c-text-2);
+  .penna-footnotes__section {
+    color: var(--penna-c-text-2);
     font-size: rem(14);
     line-height: 1.6;
   }
 
-  .cherry-footnotes__list {
+  .penna-footnotes__list {
     margin: 0;
     padding-left: rem(17.5);
   }
 
-  .cherry-footnote-item {
+  .penna-footnote-item {
     margin: 0 0 rem(10);
 
     &:last-child {
@@ -39,25 +39,25 @@
     }
   }
 
-  .cherry-footnote-backref {
+  .penna-footnote-backref {
     margin-left: rem(4);
-    color: var(--cherry-c-text-3);
+    color: var(--penna-c-text-3);
     text-decoration: none;
     white-space: nowrap;
 
     &:hover {
-      color: var(--cherry-c-brand-1);
+      color: var(--penna-c-brand-1);
       text-decoration: none;
     }
   }
 
-  sup.cherry-footnote-ref {
+  sup.penna-footnote-ref {
     font-size: rem(12.48);
     line-height: 0;
     vertical-align: super;
 
     a {
-      color: var(--cherry-c-brand-1);
+      color: var(--penna-c-brand-1);
       text-decoration: none;
       padding: 0 rem(1);
 

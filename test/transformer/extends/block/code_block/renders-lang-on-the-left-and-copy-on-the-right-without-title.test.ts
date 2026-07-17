@@ -14,8 +14,8 @@ it("renders lang on the left and copy on the right without title", () => {
     createEnhancedEngine(),
     "```js\nconst a = 1;\n```",
   );
-  expect(html).toContain('class="cherry-code-block__lang">js</span>');
-  expect(html).not.toContain("cherry-code-block__title");
-  expect(html).toContain('class="cherry-copy-code-button"');
+  expect(html).toContain('class="penna-code-block__lang">js</span>');
+  expect(html).not.toContain("penna-code-block__title");
+  expect(html).toContain('class="penna-copy-code-button"');
   expect(html).toContain("const a = 1;");
 });

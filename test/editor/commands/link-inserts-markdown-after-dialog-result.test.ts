@@ -14,11 +14,11 @@ it("link inserts markdown after dialog result", async () => {
     queueMicrotask(() => {
       eventBus.emit("editor:dialog:result", {
         id,
-        data: { text: "Cherry", url: "https://example.com" },
+        data: { text: "Penna", url: "https://example.com" },
       });
     });
   });
   await runCommand(view, "link", undefined, ctx);
-  expect(view.state.doc.toString()).toBe("[Cherry](https://example.com)");
+  expect(view.state.doc.toString()).toBe("[Penna](https://example.com)");
   view.destroy();
 });

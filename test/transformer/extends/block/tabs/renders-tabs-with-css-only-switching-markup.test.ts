@@ -41,10 +41,10 @@ tab 3 内容
 
 :::`;
   const html = renderMarkdown(createEngine(), sample);
-  expect(html).toContain('class="cherry-tabs"');
+  expect(html).toContain('class="penna-tabs"');
   expect(html).toContain('type="radio"');
-  expect(html).toContain('class="cherry-tabs__nav"');
-  expect(html).toContain('class="cherry-tabs__panels"');
+  expect(html).toContain('class="penna-tabs__nav"');
+  expect(html).toContain('class="penna-tabs__panels"');
   expect(html).not.toContain("<script");
   expect(html).not.toContain("<style");
 });

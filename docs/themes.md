@@ -13,15 +13,15 @@ tags: [guide, themes]
 
 ## 内置皮肤
 
-| id        | 说明                                                                |
-| --------- | ------------------------------------------------------------------- |
-| `default` | 默认（仅用 `cherry-editor-base` + `cherry-render`，无单独主题文件） |
-| `claude`  | Claude 风格                                                         |
-| `github`  | GitHub                                                              |
-| `morandi` | 莫兰迪                                                              |
-| `latex`   | 学术 / LaTeX                                                        |
-| `vue`     | Vue 绿                                                              |
-| `notion`  | Notion                                                              |
+| id        | 说明                                                              |
+| --------- | ----------------------------------------------------------------- |
+| `default` | 默认（仅用 `penna-editor-base` + `penna-render`，无单独主题文件） |
+| `claude`  | Claude 风格                                                       |
+| `github`  | GitHub                                                            |
+| `morandi` | 莫兰迪                                                            |
+| `latex`   | 学术 / LaTeX                                                      |
+| `vue`     | Vue 绿                                                            |
+| `notion`  | Notion                                                            |
 
 ---
 
@@ -31,30 +31,24 @@ tags: [guide, themes]
 @tab:active 完整编辑器（default）
 
 ```html
-<link rel="stylesheet" href="cherry-markdown-next/cherry-editor-base.min.css" />
-<link rel="stylesheet" href="cherry-markdown-next/cherry-render.min.css" />
+<link rel="stylesheet" href="penna-markdown/penna-editor-base.min.css" />
+<link rel="stylesheet" href="penna-markdown/penna-render.min.css" />
 ```
 
 @tab 完整编辑器（其它皮肤）
 
 ```html
-<link rel="stylesheet" href="cherry-markdown-next/cherry-editor-base.min.css" />
-<link rel="stylesheet" href="cherry-markdown-next/cherry-render.min.css" />
-<link
-  rel="stylesheet"
-  href="cherry-markdown-next/cherry-theme-{id}-editor.min.css"
-/>
-<link
-  rel="stylesheet"
-  href="cherry-markdown-next/cherry-theme-{id}-render.min.css"
-/>
+<link rel="stylesheet" href="penna-markdown/penna-editor-base.min.css" />
+<link rel="stylesheet" href="penna-markdown/penna-render.min.css" />
+<link rel="stylesheet" href="penna-markdown/penna-theme-{id}-editor.min.css" />
+<link rel="stylesheet" href="penna-markdown/penna-theme-{id}-render.min.css" />
 ```
 
 @tab 仅渲染
 
 ```html
-<link rel="stylesheet" href="cherry-markdown-next/cherry-render.min.css" />
-<!-- 非 default 时再加 cherry-theme-{id}-render.min.css -->
+<link rel="stylesheet" href="penna-markdown/penna-render.min.css" />
+<!-- 非 default 时再加 penna-theme-{id}-render.min.css -->
 ```
 
 :::
@@ -62,8 +56,8 @@ tags: [guide, themes]
 把 `{id}` 换成上表中的皮肤 id（`default` 除外）。也可用：
 
 ```typescript
-import "cherry-markdown-next/theme/github/editor.css";
-import "cherry-markdown-next/theme/github/render.css";
+import "penna-markdown/theme/github/editor.css";
+import "penna-markdown/theme/github/render.css";
 ```
 
 ---
@@ -72,10 +66,10 @@ import "cherry-markdown-next/theme/github/render.css";
 
 `Theme` 只切换 DOM class，不直接改样式表：
 
-| 元素               | class                              | 作用                                  |
-| ------------------ | ---------------------------------- | ------------------------------------- |
-| 挂载根（用户传入） | `cherry-theme-{id}`、`cherry-dark` | 皮肤变量与 chrome                     |
-| 预览节点           | `cherry-render`（由调用方添加）    | 命中 `.cherry-theme-* .cherry-render` |
+| 元素               | class                            | 作用                                |
+| ------------------ | -------------------------------- | ----------------------------------- |
+| 挂载根（用户传入） | `penna-theme-{id}`、`penna-dark` | 皮肤变量与 chrome                   |
+| 预览节点           | `penna-render`（由调用方添加）   | 命中 `.penna-theme-* .penna-render` |
 
 ```typescript
 theme.setTheme("github"); // 未知 id 会打错误日志并跳过
@@ -87,7 +81,7 @@ theme.getTheme(); // { id, mode, isDark, root }
 编辑器里通过构造选项设置：
 
 ```typescript
-new Cherry(el, {
+new Penna(el, {
   themeId: "github",
   appearance: "dark",
   themes: ["github", "notion"], // 工具栏主题菜单白名单
@@ -97,8 +91,8 @@ new Cherry(el, {
 运行时仍可：
 
 ```typescript
-cherry.theme.setTheme("notion");
-cherry.theme.setLightDark("light");
+penna.theme.setTheme("notion");
+penna.theme.setLightDark("light");
 ```
 
 ---

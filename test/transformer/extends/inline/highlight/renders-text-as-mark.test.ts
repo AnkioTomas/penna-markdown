@@ -8,6 +8,6 @@ import {
 it("renders ==text== as mark", () => {
   const t = createEngine();
   expect(renderMarkdown(createEngine(), "==hello==")).toBe(
-    '<p><mark class="cherry-mark">hello</mark></p>\n',
+    '<p><mark class="penna-mark">hello</mark></p>\n',
   );
 });

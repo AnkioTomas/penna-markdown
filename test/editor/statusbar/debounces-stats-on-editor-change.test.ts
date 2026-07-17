@@ -11,7 +11,7 @@ it("debounces word and character stats updates on editor:change", () => {
   const mount = document.createElement("div");
   const eventBus = createTestEventBus();
   const statusBar = new StatusBar(mount, eventBus);
-  const countEl = mount.querySelector(".cherry-statusbar-count")!;
+  const countEl = mount.querySelector(".penna-statusbar-count")!;
 
   eventBus.emit("editor:change", { markdown: "a" });
   eventBus.emit("editor:change", { markdown: "ab" });

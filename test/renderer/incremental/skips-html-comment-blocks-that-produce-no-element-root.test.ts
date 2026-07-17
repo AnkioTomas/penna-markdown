@@ -6,7 +6,7 @@ import { expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { Preview } from "@/editor/preview/Preview";
-import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet.js";
+import type { PennaChangeLineSet } from "@/renderer/incremental/PennaChangeSet.js";
 import { createJsdomRenderer as createRenderer } from "../helpers";
 import {
   dirtyLinesFromChanges,
@@ -25,7 +25,7 @@ function lineChange(
   toB: number,
   deletedLines?: number,
   insertedLines?: number,
-): CherryChangeLineSet {
+): PennaChangeLineSet {
   return {
     fromA,
     toA,

@@ -9,7 +9,7 @@ import type { EditorView } from "@codemirror/view";
 import type { EventBus } from "@/core/event/EventBus";
 import type { Theme } from "@/theme/Theme";
 import { ParserStore } from "@/transformer/core/ParserStore";
-import type { OnAiRequest } from "@/editor/CherryOptions";
+import type { OnAiRequest } from "@/editor/PennaOptions";
 
 /** 命令注册表中的命令名字符串，如 `"bold"`、`"link"`。 */
 export type EditorCommand = string;
@@ -318,7 +318,7 @@ export function toggleInlinePerLine(
 }
 
 /**
- * 在选区末尾（或光标处）追加 Cherry HTML 属性块，如 `{.highlight}`。
+ * 在选区末尾（或光标处）追加 Penna HTML 属性块，如 `{.highlight}`。
  * @param view - 要修改的 CodeMirror 编辑器实例
  * @param rawAttr - 用户输入的类名、id 或属性表达式
  */
@@ -336,7 +336,7 @@ export function appendHtmlAttr(view: EditorView, rawAttr: string): void {
 }
 
 /**
- * 将用户输入规范化为 Cherry HTML 属性语法。
+ * 将用户输入规范化为 Penna HTML 属性语法。
  * 如 `.highlight` → `{.highlight}`，`#id` → `{#id}`。
  * @param raw - 未包裹的属性输入或完整属性块
  * @returns 可直接插入的属性块；空白输入返回空字符串

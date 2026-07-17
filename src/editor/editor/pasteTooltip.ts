@@ -47,21 +47,21 @@ export const pasteTooltipPlugin = ViewPlugin.fromClass(
     constructor(view: EditorView) {
       this.view = view;
       this.dom = document.createElement("div");
-      this.dom.className = "cherry-paste-switcher";
+      this.dom.className = "penna-paste-switcher";
       this.dom.style.position = "absolute";
       this.dom.style.bottom = "16px";
       this.dom.style.right = "16px";
       this.dom.style.display = "none";
       this.dom.style.gap = "6px";
       this.dom.style.padding = "6px";
-      this.dom.style.backgroundColor = "var(--cherry-c-bg-elevated)";
-      this.dom.style.border = "1px solid var(--cherry-c-border-soft)";
+      this.dom.style.backgroundColor = "var(--penna-c-bg-elevated)";
+      this.dom.style.border = "1px solid var(--penna-c-border-soft)";
       this.dom.style.borderRadius = "6px";
       // Use standard CSS variables for shadow if they exist, or a computed shadow from standard text variables
       this.dom.style.boxShadow =
-        "0 4px 16px color-mix(in srgb, var(--cherry-c-text-3) 20%, transparent)";
+        "0 4px 16px color-mix(in srgb, var(--penna-c-text-3) 20%, transparent)";
       this.dom.style.zIndex = "100";
-      this.dom.style.fontFamily = "var(--cherry-font-family)";
+      this.dom.style.fontFamily = "var(--penna-font-family)";
       this.dom.style.fontSize = "12px";
 
       const createBtn = (text: string) => {
@@ -73,7 +73,7 @@ export const pasteTooltipPlugin = ViewPlugin.fromClass(
         btn.style.borderRadius = "4px";
         btn.style.outline = "none";
         btn.style.transition = "all 0.2s ease";
-        btn.style.fontFamily = "var(--cherry-font-family)";
+        btn.style.fontFamily = "var(--penna-font-family)";
         return btn;
       };
 
@@ -143,14 +143,14 @@ export const pasteTooltipPlugin = ViewPlugin.fromClass(
 
       const updateBtnStyle = (btn: HTMLButtonElement, isActive: boolean) => {
         btn.style.backgroundColor = isActive
-          ? "var(--cherry-c-brand-1)"
+          ? "var(--penna-c-brand-1)"
           : "transparent";
         btn.style.color = isActive
-          ? "var(--cherry-c-bg)"
-          : "var(--cherry-c-text-2)";
+          ? "var(--penna-c-bg)"
+          : "var(--penna-c-text-2)";
         btn.style.borderColor = isActive
-          ? "var(--cherry-c-brand-1)"
-          : "var(--cherry-c-border-soft)";
+          ? "var(--penna-c-brand-1)"
+          : "var(--penna-c-border-soft)";
       };
 
       updateBtnStyle(this.btnPlain, state.active === "plain");

@@ -1,6 +1,6 @@
 import "../../_common/layout.scss";
 import "./gfm-test.scss";
-import "../../_common/cherry-demo.scss";
+import "../../_common/penna-demo.scss";
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import {
   createDemoTheme,
@@ -67,7 +67,7 @@ function renderCase(item: GfmCase, result: GfmCaseResult): HTMLElement {
       </div>
       <div class="panel">
         <h4>预览</h4>
-        <div class="preview cherry-render"></div>
+        <div class="preview penna-render"></div>
         ${result.ok ? "" : `<div class="fail-msg"></div>`}
       </div>
       <div class="panel case-expected">
@@ -262,7 +262,7 @@ init();
 
 declare global {
   interface Window {
-    cherryGfmDemo?: {
+    pennaGfmDemo?: {
       transformer: TransformerEngine;
       runTests: typeof runTests;
       applyFilter: typeof applyFilter;
@@ -270,4 +270,4 @@ declare global {
   }
 }
 
-window.cherryGfmDemo = { transformer, runTests, applyFilter };
+window.pennaGfmDemo = { transformer, runTests, applyFilter };

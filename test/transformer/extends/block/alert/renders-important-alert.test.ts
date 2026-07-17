@@ -6,6 +6,6 @@ it("renders important alert", () => {
   const md =
     "> [!IMPORTANT]\n> Key information users need to know to achieve their goal.\n";
   expect(renderMarkdown(engine, md)).toBe(
-    `<div class="cherry-alert cherry-alert--important">\n<p class="cherry-alert__title">Important</p>\n<p>Key information users need to know to achieve their goal.</p>\n</div>\n`,
+    `<div class="penna-alert penna-alert--important">\n<p class="penna-alert__title">Important</p>\n<p>Key information users need to know to achieve their goal.</p>\n</div>\n`,
   );
 });

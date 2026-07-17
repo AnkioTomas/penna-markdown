@@ -3,12 +3,12 @@
 @mixin styles {
   $max-tabs: 16;
 
-  .cherry-tabs {
+  .penna-tabs {
     margin: rem(16) 0;
     border: rem(1) solid
-      color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+      color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
     border-radius: rem(8);
-    background: var(--cherry-c-bg-elevated);
+    background: var(--penna-c-bg-elevated);
     overflow: hidden;
     overflow-anchor: none;
 
@@ -30,7 +30,7 @@
       gap: rem(2);
       padding: 0 rem(8);
       border-bottom: rem(1) solid
-        color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+        color-mix(in srgb, var(--penna-c-text-3) 18%, transparent);
       overflow-x: auto;
       scrollbar-width: thin;
     }
@@ -41,7 +41,7 @@
       margin: 0;
       padding: rem(11) rem(14);
       border-bottom: rem(2) solid transparent;
-      color: var(--cherry-c-text-2);
+      color: var(--penna-c-text-2);
       font-size: rem(14);
       font-weight: 500;
       line-height: 1.4;
@@ -53,13 +53,13 @@
         border-color 0.15s ease;
 
       &:hover {
-        color: var(--cherry-c-text-1);
+        color: var(--penna-c-text-1);
       }
     }
 
     &__panels {
       padding: rem(16);
-      color: var(--cherry-c-text-2);
+      color: var(--penna-c-text-2);
       font-size: rem(14);
       line-height: 1.6;
     }
@@ -78,17 +78,17 @@
 
     @for $i from 1 through $max-tabs {
       &:has(
-        > .cherry-tabs__nav
-          > .cherry-tabs__label:nth-child(#{$i})
-          > .cherry-tabs__radio:checked
+        > .penna-tabs__nav
+          > .penna-tabs__label:nth-child(#{$i})
+          > .penna-tabs__radio:checked
       ) {
-        .cherry-tabs__panels > .cherry-tabs__panel:nth-child(#{$i}) {
+        .penna-tabs__panels > .penna-tabs__panel:nth-child(#{$i}) {
           display: block;
         }
 
-        .cherry-tabs__nav > .cherry-tabs__label:nth-child(#{$i}) {
-          color: var(--cherry-c-brand-1);
-          border-bottom-color: var(--cherry-c-brand-2);
+        .penna-tabs__nav > .penna-tabs__label:nth-child(#{$i}) {
+          color: var(--penna-c-brand-1);
+          border-bottom-color: var(--penna-c-brand-2);
           font-weight: 600;
         }
       }

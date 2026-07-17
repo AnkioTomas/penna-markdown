@@ -25,6 +25,6 @@ it("supports container placement config", () => {
 :::`;
   const html = renderMarkdown(createEngine(), md);
   expect(html).toContain(
-    'class="cherry-timeline cherry-timeline--placement-right"',
+    'class="penna-timeline penna-timeline--placement-right"',
   );
 });

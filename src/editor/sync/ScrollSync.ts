@@ -21,7 +21,7 @@ export class ScrollSync {
   private isSyncingRight = false;
   private readonly editorScroll: HTMLElement;
   private readonly previewScroll: HTMLElement;
-  /** 块 DOM 挂载点（`.cherry-render`）；无内层时等于 `previewScroll` */
+  /** 块 DOM 挂载点（`.penna-render`）；无内层时等于 `previewScroll` */
   private readonly previewContent: HTMLElement;
   private readonly offs: (() => void)[] = [];
   private destroyed = false;
@@ -108,7 +108,7 @@ export class ScrollSync {
     this.editorScroll = editor.getView().scrollDOM;
     this.previewScroll = previewEl;
     this.previewContent =
-      (previewEl.querySelector(":scope > .cherry-render") as HTMLElement) ??
+      (previewEl.querySelector(":scope > .penna-render") as HTMLElement) ??
       previewEl;
 
     if (!this.editorScroll || !this.previewScroll) return;

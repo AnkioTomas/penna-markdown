@@ -109,7 +109,7 @@ function resolveActiveIndex(tabs: Array<{ active: boolean }>): number {
 
 function nextGroupId(): string {
   tabGroupSeq += 1;
-  return `cherry-tabs-${tabGroupSeq}`;
+  return `penna-tabs-${tabGroupSeq}`;
 }
 
 class TabsBlockParser extends BaseBlockParser {
@@ -169,20 +169,20 @@ class TabsBlockParser extends BaseBlockParser {
         (tab.props?.titleNodes as MarkdownNode[] | undefined) ?? [];
       const checked = active ? " checked" : "";
       labels.push(
-        `<label class="cherry-tabs__label">` +
-          `<input type="radio" class="cherry-tabs__radio" name="${groupId}"${checked}>` +
+        `<label class="penna-tabs__label">` +
+          `<input type="radio" class="penna-tabs__radio" name="${groupId}"${checked}>` +
           `${ctx.renderInline(titleNodes)}` +
           `</label>`,
       );
       panels.push(
-        `<div class="cherry-tabs__panel">${ctx.renderBlock(tab.children ?? [])}</div>`,
+        `<div class="penna-tabs__panel">${ctx.renderBlock(tab.children ?? [])}</div>`,
       );
     });
 
     return [
-      `<div class="cherry-tabs"${this.sourceLineAttrs(node)}>`,
-      `<div class="cherry-tabs__nav">${labels.join("")}</div>`,
-      `<div class="cherry-tabs__panels">${panels.join("")}</div>`,
+      `<div class="penna-tabs"${this.sourceLineAttrs(node)}>`,
+      `<div class="penna-tabs__nav">${labels.join("")}</div>`,
+      `<div class="penna-tabs__panels">${panels.join("")}</div>`,
       "</div>",
     ].join("\n");
   }

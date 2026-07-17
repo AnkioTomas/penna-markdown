@@ -8,6 +8,6 @@ import {
 it("renders !! text !! as spoiler", () => {
   const html = renderMarkdown(createEngine(), "这是 !! 剧透内容 !! 正常文字\n");
   expect(html).toBe(
-    '<p>这是 <span class="cherry-spoiler"> 剧透内容 </span> 正常文字</p>\n',
+    '<p>这是 <span class="penna-spoiler"> 剧透内容 </span> 正常文字</p>\n',
   );
 });

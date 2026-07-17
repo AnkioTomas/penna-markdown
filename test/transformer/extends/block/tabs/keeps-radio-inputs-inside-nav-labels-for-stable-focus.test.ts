@@ -26,8 +26,8 @@ tab 3 内容
 it("keeps radio inputs inside nav labels for stable focus", () => {
   const html = renderMarkdown(createEngine(), sample);
   expect(html).toContain(
-    '<div class="cherry-tabs__nav"><label class="cherry-tabs__label">',
+    '<div class="penna-tabs__nav"><label class="penna-tabs__label">',
   );
-  expect(html).toContain('<input type="radio" class="cherry-tabs__radio"');
-  expect(html).not.toContain('for="cherry-tabs-');
+  expect(html).toContain('<input type="radio" class="penna-tabs__radio"');
+  expect(html).not.toContain('for="penna-tabs-');
 });

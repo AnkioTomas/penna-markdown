@@ -22,19 +22,17 @@ it("renders task lists inside timeline item content", () => {
   const md = `::: timeline
 - [2026-01-15:success] v0.1.0 首次发布
   - [x] GFM 完整支持
-  - [x] Cherry 扩展语法
+  - [x] Penna 扩展语法
   - [ ] 编辑器完善
 
 - [2026-06-01:tip] v0.2.0 计划中
   性能优化。
 :::`;
   const html = renderMarkdown(createEngine(), md);
-  expect(html).toContain(
-    '<p class="cherry-timeline-title">v0.1.0 首次发布</p>',
-  );
-  expect(html).toContain('<p class="cherry-timeline-title">v0.2.0 计划中</p>');
+  expect(html).toContain('<p class="penna-timeline-title">v0.1.0 首次发布</p>');
+  expect(html).toContain('<p class="penna-timeline-title">v0.2.0 计划中</p>');
   expect(html).not.toContain(
-    '<p class="cherry-timeline-title">[x] GFM 完整支持</p>',
+    '<p class="penna-timeline-title">[x] GFM 完整支持</p>',
   );
   expect(html).toContain('<ul class="task-list">');
   expect(html).toContain('class="task-item done"');

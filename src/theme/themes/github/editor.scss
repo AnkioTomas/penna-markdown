@@ -2,14 +2,14 @@
 @use "tokens";
 @use "editor-chrome";
 
-.cherry-theme-github.cherry,
-.cherry-theme-github .cherry {
+.penna-theme-github.penna,
+.penna-theme-github .penna {
   @include tokens.theme-light;
   @include editor-chrome.chrome;
 }
 
-.cherry-dark.cherry-theme-github.cherry,
-.cherry-dark.cherry-theme-github .cherry {
+.penna-dark.penna-theme-github.penna,
+.penna-dark.penna-theme-github .penna {
   @include tokens.theme-dark;
   @include editor-chrome.chrome;
   @include editor-chrome.chrome-dark;

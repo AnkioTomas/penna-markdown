@@ -16,7 +16,7 @@ async function createRenderTree() {
 it("on / emit / off", async () => {
   const { root } = await createRenderTree();
   const log = new Log(false);
-  const eventBus = new EventBus(false, "[cherry]", log);
+  const eventBus = new EventBus(false, "[penna]", log);
   const theme = new Theme(eventBus, log, root);
   const handler = vi.fn();
 

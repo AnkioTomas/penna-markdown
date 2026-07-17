@@ -4,41 +4,41 @@
 // ==========================================
 // Layer 1: 基础静态色板（仅在此文件定义字面量）
 // ==========================================
-$cherry-brand-1: #5086a1;
-$cherry-brand-2: #6aa1b7;
-$cherry-brand-3: #8cccd5;
-$cherry-brand-soft: rgba(131, 208, 218, 0.314);
-$cherry-brand-on-bg: #1a3d47;
+$penna-brand-1: #5086a1;
+$penna-brand-2: #6aa1b7;
+$penna-brand-3: #8cccd5;
+$penna-brand-soft: rgba(131, 208, 218, 0.314);
+$penna-brand-on-bg: #1a3d47;
 
-$cherry-text-1: rgba(60, 60, 67, 1);
-$cherry-text-2: rgba(60, 60, 67, 0.78);
-$cherry-text-3: rgba(60, 60, 67, 0.56);
-$cherry-code-fg: #d73a49; // GitHub-like inline code color
+$penna-text-1: rgba(60, 60, 67, 1);
+$penna-text-2: rgba(60, 60, 67, 0.78);
+$penna-text-3: rgba(60, 60, 67, 0.56);
+$penna-code-fg: #d73a49; // GitHub-like inline code color
 
-$cherry-bg: #fff;
-$cherry-bg-elevated: #fafafa;
+$penna-bg: #fff;
+$penna-bg-elevated: #fafafa;
 
-$cherry-contrast-light: #fff;
-$cherry-contrast-dark: #000;
+$penna-contrast-light: #fff;
+$penna-contrast-dark: #000;
 
-$cherry-dark-bg: #141414;
-$cherry-dark-bg-elevated: #1f1f1f;
+$penna-dark-bg: #141414;
+$penna-dark-bg-elevated: #1f1f1f;
 
-$cherry-dark-text-1: rgba(255, 255, 255, 0.87);
-$cherry-dark-text-2: rgba(255, 255, 255, 0.6);
-$cherry-dark-text-3: rgba(255, 255, 255, 0.38);
-$cherry-dark-code-fg: #ff7b72;
+$penna-dark-text-1: rgba(255, 255, 255, 0.87);
+$penna-dark-text-2: rgba(255, 255, 255, 0.6);
+$penna-dark-text-3: rgba(255, 255, 255, 0.38);
+$penna-dark-code-fg: #ff7b72;
 
-$cherry-dark-brand-1: #6aa1b7;
-$cherry-dark-brand-2: #8cccd5;
-$cherry-dark-brand-3: #a8dce3;
-$cherry-dark-brand-soft: rgba(131, 208, 218, 0.2);
-$cherry-dark-brand-on-bg: #e0f4f8;
+$penna-dark-brand-1: #6aa1b7;
+$penna-dark-brand-2: #8cccd5;
+$penna-dark-brand-3: #a8dce3;
+$penna-dark-brand-soft: rgba(131, 208, 218, 0.2);
+$penna-dark-brand-on-bg: #e0f4f8;
 
 // ==========================================
 // Layer 2: 语义色板
 // ==========================================
-$cherry-core-semantics: (
+$penna-core-semantics: (
   note: (
     #206aca,
     #ff0,
@@ -65,7 +65,7 @@ $cherry-core-semantics: (
   ),
 );
 
-$cherry-dark-core-semantics: (
+$penna-dark-core-semantics: (
   note: (
     #93c5fd,
     #db0,
@@ -92,26 +92,26 @@ $cherry-dark-core-semantics: (
   ),
 );
 
-$cherry-dark-mark-mix: 50%;
-$cherry-dark-brand-mark-mix: 48%;
+$penna-dark-mark-mix: 50%;
+$penna-dark-brand-mark-mix: 48%;
 
-@function cherry-surface($is-dark) {
+@function penna-surface($is-dark) {
   @if $is-dark {
-    @return $cherry-dark-bg;
+    @return $penna-dark-bg;
   }
 
-  @return $cherry-bg;
+  @return $penna-bg;
 }
 
-@function cherry-contrast-color($is-dark) {
+@function penna-contrast-color($is-dark) {
   @if $is-dark {
-    @return $cherry-contrast-dark;
+    @return $penna-contrast-dark;
   }
 
-  @return $cherry-contrast-light;
+  @return $penna-contrast-light;
 }
 
-@function cherry-bg-opacity($is-dark) {
+@function penna-bg-opacity($is-dark) {
   @if $is-dark {
     @return 15%;
   }
@@ -119,7 +119,7 @@ $cherry-dark-brand-mark-mix: 48%;
   @return 10%;
 }
 
-@function cherry-border-opacity($is-dark) {
+@function penna-border-opacity($is-dark) {
   @if $is-dark {
     @return 40%;
   }
@@ -134,37 +134,37 @@ $cherry-dark-brand-mark-mix: 48%;
   @each $name, $pair in $palette {
     $base-color: list.nth($pair, 1);
     $mark-color: list.nth($pair, 2);
-    $surface: cherry-surface($is-dark);
+    $surface: penna-surface($is-dark);
 
-    --cherry-c-#{$name}: #{$base-color};
+    --penna-c-#{$name}: #{$base-color};
     @if $is-dark {
       // 暗色：用 mark 色相与底色混合，保留高亮感但不铺纯荧光
-      --cherry-c-#{$name}-mark: color-mix(
+      --penna-c-#{$name}-mark: color-mix(
         in srgb,
-        #{$mark-color} #{$cherry-dark-mark-mix},
+        #{$mark-color} #{$penna-dark-mark-mix},
         #{$surface}
       );
     } @else {
-      --cherry-c-#{$name}-mark: #{$mark-color};
+      --penna-c-#{$name}-mark: #{$mark-color};
     }
 
-    $contrast-color: cherry-contrast-color($is-dark);
-    --cherry-c-#{$name}-on-bg: color-mix(
+    $contrast-color: penna-contrast-color($is-dark);
+    --penna-c-#{$name}-on-bg: color-mix(
       in srgb,
       #{$base-color} 20%,
       #{$contrast-color}
     );
 
-    $bg-opacity: cherry-bg-opacity($is-dark);
-    $border-opacity: cherry-border-opacity($is-dark);
+    $bg-opacity: penna-bg-opacity($is-dark);
+    $border-opacity: penna-border-opacity($is-dark);
 
-    --cherry-c-alert-#{$name}-text: #{$base-color};
-    --cherry-c-alert-#{$name}-bg: color-mix(
+    --penna-c-alert-#{$name}-text: #{$base-color};
+    --penna-c-alert-#{$name}-bg: color-mix(
       in srgb,
       #{$base-color} #{$bg-opacity},
       transparent
     );
-    --cherry-c-alert-#{$name}-border: color-mix(
+    --penna-c-alert-#{$name}-border: color-mix(
       in srgb,
       #{$base-color} #{$border-opacity},
       transparent
@@ -173,127 +173,127 @@ $cherry-dark-brand-mark-mix: 48%;
 }
 
 @mixin component-tokens {
-  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
-  --cherry-c-image-card-scrim: var(--cherry-c-contrast-dark);
-  --cherry-c-image-card-info-bg: linear-gradient(
+  --penna-c-image-card-info-fg: var(--penna-c-contrast-light);
+  --penna-c-image-card-scrim: var(--penna-c-contrast-dark);
+  --penna-c-image-card-info-bg: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 45%, transparent) 55%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 72%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 45%, transparent) 55%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 72%, transparent) 100%
   );
-  --cherry-c-image-card-info-bg-hover: linear-gradient(
+  --penna-c-image-card-info-bg-hover: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 55%, transparent) 35%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 82%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 55%, transparent) 35%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 82%, transparent) 100%
   );
 
-  --cherry-c-media-player-bg: var(--cherry-c-bg);
-  --cherry-c-media-shade: var(--cherry-c-bg);
-  --cherry-c-on-brand: var(--cherry-c-contrast-light);
+  --penna-c-media-player-bg: var(--penna-c-bg);
+  --penna-c-media-shade: var(--penna-c-bg);
+  --penna-c-on-brand: var(--penna-c-contrast-light);
 
-  --cherry-c-code-block-header-bg: color-mix(
+  --penna-c-code-block-header-bg: color-mix(
     in srgb,
-    var(--cherry-c-text-3) 6%,
-    var(--cherry-c-bg-elevated)
+    var(--penna-c-text-3) 6%,
+    var(--penna-c-bg-elevated)
   );
-  --cherry-c-code-block-code-bg: color-mix(
+  --penna-c-code-block-code-bg: color-mix(
     in srgb,
-    var(--cherry-c-text-3) 4%,
-    var(--cherry-c-bg)
+    var(--penna-c-text-3) 4%,
+    var(--penna-c-bg)
   );
-  --cherry-c-code-block-shadow:
-    0 1px 2px color-mix(in srgb, var(--cherry-c-text-3) 8%, transparent),
-    0 8px 24px color-mix(in srgb, var(--cherry-c-text-3) 6%, transparent);
+  --penna-c-code-block-shadow:
+    0 1px 2px color-mix(in srgb, var(--penna-c-text-3) 8%, transparent),
+    0 8px 24px color-mix(in srgb, var(--penna-c-text-3) 6%, transparent);
 }
 
 @mixin component-tokens-dark {
-  --cherry-c-image-card-info-fg: var(--cherry-c-contrast-light);
-  --cherry-c-image-card-info-bg: linear-gradient(
+  --penna-c-image-card-info-fg: var(--penna-c-contrast-light);
+  --penna-c-image-card-info-bg: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 58%, transparent) 55%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 88%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 58%, transparent) 55%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 88%, transparent) 100%
   );
-  --cherry-c-image-card-info-bg-hover: linear-gradient(
+  --penna-c-image-card-info-bg-hover: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 68%, transparent) 35%,
-    color-mix(in srgb, var(--cherry-c-image-card-scrim) 92%, transparent) 100%
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 68%, transparent) 35%,
+    color-mix(in srgb, var(--penna-c-image-card-scrim) 92%, transparent) 100%
   );
 
-  --cherry-c-code-block-header-bg: color-mix(
+  --penna-c-code-block-header-bg: color-mix(
     in srgb,
-    var(--cherry-c-contrast-light) 4%,
-    var(--cherry-c-bg-elevated)
+    var(--penna-c-contrast-light) 4%,
+    var(--penna-c-bg-elevated)
   );
-  --cherry-c-code-block-code-bg: color-mix(
+  --penna-c-code-block-code-bg: color-mix(
     in srgb,
-    var(--cherry-c-contrast-dark) 22%,
-    var(--cherry-c-bg-elevated)
+    var(--penna-c-contrast-dark) 22%,
+    var(--penna-c-bg-elevated)
   );
-  --cherry-c-code-block-shadow: 0 1px 2px
-    color-mix(in srgb, var(--cherry-c-contrast-dark) 35%, transparent);
+  --penna-c-code-block-shadow: 0 1px 2px
+    color-mix(in srgb, var(--penna-c-contrast-dark) 35%, transparent);
 }
 
 // ==========================================
 // Layer 4: 主题注入
 // ==========================================
 @mixin theme-default {
-  --cherry-c-brand-1: #{$cherry-brand-1};
-  --cherry-c-brand-2: #{$cherry-brand-2};
-  --cherry-c-brand-3: #{$cherry-brand-3};
-  --cherry-c-brand-soft: #{$cherry-brand-soft};
-  --cherry-c-brand-on-bg: #{$cherry-brand-on-bg};
+  --penna-c-brand-1: #{$penna-brand-1};
+  --penna-c-brand-2: #{$penna-brand-2};
+  --penna-c-brand-3: #{$penna-brand-3};
+  --penna-c-brand-soft: #{$penna-brand-soft};
+  --penna-c-brand-on-bg: #{$penna-brand-on-bg};
 
-  --cherry-c-text-1: #{$cherry-text-1};
-  --cherry-c-text-2: #{$cherry-text-2};
-  --cherry-c-text-3: #{$cherry-text-3};
+  --penna-c-text-1: #{$penna-text-1};
+  --penna-c-text-2: #{$penna-text-2};
+  --penna-c-text-3: #{$penna-text-3};
 
-  --cherry-c-bg: #{$cherry-bg};
-  --cherry-c-bg-elevated: #{$cherry-bg-elevated};
+  --penna-c-bg: #{$penna-bg};
+  --penna-c-bg-elevated: #{$penna-bg-elevated};
 
-  --cherry-c-contrast-light: #{$cherry-contrast-light};
-  --cherry-c-contrast-dark: #{$cherry-contrast-dark};
+  --penna-c-contrast-light: #{$penna-contrast-light};
+  --penna-c-contrast-dark: #{$penna-contrast-dark};
 
-  --cherry-c-brand-mark: #{$cherry-brand-3};
-  --cherry-c-code-fg: #{$cherry-code-fg};
+  --penna-c-brand-mark: #{$penna-brand-3};
+  --penna-c-code-fg: #{$penna-code-fg};
 
-  @include generate-semantic-suite($cherry-core-semantics, false);
+  @include generate-semantic-suite($penna-core-semantics, false);
   @include component-tokens;
 }
 
 @mixin theme-dark {
-  --cherry-c-brand-1: #{$cherry-dark-brand-1};
-  --cherry-c-brand-2: #{$cherry-dark-brand-2};
-  --cherry-c-brand-3: #{$cherry-dark-brand-3};
-  --cherry-c-brand-soft: #{$cherry-dark-brand-soft};
-  --cherry-c-brand-on-bg: #{$cherry-dark-brand-on-bg};
+  --penna-c-brand-1: #{$penna-dark-brand-1};
+  --penna-c-brand-2: #{$penna-dark-brand-2};
+  --penna-c-brand-3: #{$penna-dark-brand-3};
+  --penna-c-brand-soft: #{$penna-dark-brand-soft};
+  --penna-c-brand-on-bg: #{$penna-dark-brand-on-bg};
 
-  --cherry-c-text-1: #{$cherry-dark-text-1};
-  --cherry-c-text-2: #{$cherry-dark-text-2};
-  --cherry-c-text-3: #{$cherry-dark-text-3};
+  --penna-c-text-1: #{$penna-dark-text-1};
+  --penna-c-text-2: #{$penna-dark-text-2};
+  --penna-c-text-3: #{$penna-dark-text-3};
 
-  --cherry-c-bg: #{$cherry-dark-bg};
-  --cherry-c-bg-elevated: #{$cherry-dark-bg-elevated};
+  --penna-c-bg: #{$penna-dark-bg};
+  --penna-c-bg-elevated: #{$penna-dark-bg-elevated};
 
-  --cherry-c-contrast-light: #{$cherry-contrast-light};
-  --cherry-c-contrast-dark: #{$cherry-contrast-dark};
+  --penna-c-contrast-light: #{$penna-contrast-light};
+  --penna-c-contrast-dark: #{$penna-contrast-dark};
 
-  --cherry-c-brand-mark: color-mix(
+  --penna-c-brand-mark: color-mix(
     in srgb,
-    #{$cherry-dark-brand-3} #{$cherry-dark-brand-mark-mix},
-    #{$cherry-dark-bg}
+    #{$penna-dark-brand-3} #{$penna-dark-brand-mark-mix},
+    #{$penna-dark-bg}
   );
-  --cherry-c-code-fg: #{$cherry-dark-code-fg};
+  --penna-c-code-fg: #{$penna-dark-code-fg};
 
-  @include generate-semantic-suite($cherry-dark-core-semantics, true);
+  @include generate-semantic-suite($penna-dark-core-semantics, true);
   @include component-tokens;
   @include component-tokens-dark;
 }
 
 @mixin when-dark {
-  .cherry-dark & {
+  .penna-dark & {
     @content;
   }
 }

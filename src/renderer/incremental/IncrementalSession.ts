@@ -8,7 +8,7 @@
  * ## 模块协作
  *
  * ```
- * CherryChangeLineSet (CM)
+ * PennaChangeLineSet (CM)
  *        ↓
  * HashBoundaryResolver.parseWithHashBoundary  →  局部更新 AST
  *        ↓
@@ -22,7 +22,7 @@
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import type { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
-import type { CherryChangeLineSet } from "@/renderer/incremental/CherryChangeSet";
+import type { PennaChangeLineSet } from "@/renderer/incremental/PennaChangeSet";
 import { BlockIndex } from "@/renderer/incremental/BlockIndex";
 import {
   parseWithHashBoundary,
@@ -116,7 +116,7 @@ export class IncrementalSession {
     markdown: string,
     transformer: TransformerEngine,
     log: Log,
-    changes?: CherryChangeLineSet[],
+    changes?: PennaChangeLineSet[],
   ): IncrementalUpdateResult {
     const prevDomCount = mount.childElementCount;
     const prevBlocks = this.blocks;

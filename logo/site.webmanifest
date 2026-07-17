@@ -1,6 +1,6 @@
 {
-  "name": "Cherry Markdown Next",
-  "short_name": "Cherry",
+  "name": "Penna Markdown",
+  "short_name": "Penna",
   "icons": [
     {
       "src": "./android-chrome-192x192.png",
@@ -13,7 +13,7 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#fff7eb",
-  "background_color": "#fff7eb",
+  "theme_color": "#edebe7",
+  "background_color": "#edebe7",
   "display": "standalone"
 }

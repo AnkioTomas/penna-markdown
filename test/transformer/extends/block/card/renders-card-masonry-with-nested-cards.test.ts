@@ -6,11 +6,11 @@ import {
 } from "../../../../helpers/engine.js";
 
 function cardHtml(title, body, { link = "" } = {}) {
-  const titleHtml = title ? `<p class="cherry-card__title">${title}</p>\n` : "";
+  const titleHtml = title ? `<p class="penna-card__title">${title}</p>\n` : "";
   if (link) {
-    return `<a class="cherry-card cherry-link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</a>\n`;
+    return `<a class="penna-card penna-link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="penna-card__body">${body}</div>\n</a>\n`;
   }
-  return `<div class="cherry-card">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</div>\n`;
+  return `<div class="penna-card">\n${titleHtml}<div class="penna-card__body">${body}</div>\n</div>\n`;
 }
 
 it("renders card masonry with nested cards", () => {
@@ -32,9 +32,9 @@ it("renders card masonry with nested cards", () => {
 ::::`;
   const html = renderMarkdown(createEngine(), md);
   expect(html).toContain(
-    'class="cherry-card-masonry cherry-card-masonry--cols-2"',
+    'class="penna-card-masonry penna-card-masonry--cols-2"',
   );
-  expect(html).toContain('class="cherry-card-masonry__v-5-0"');
-  expect(html).toContain('<p class="cherry-card__title">卡片1</p>');
-  expect(html).toContain('<p class="cherry-card__title">卡片3</p>');
+  expect(html).toContain('class="penna-card-masonry__v-5-0"');
+  expect(html).toContain('<p class="penna-card__title">卡片1</p>');
+  expect(html).toContain('<p class="penna-card__title">卡片3</p>');
 });

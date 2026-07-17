@@ -2,7 +2,7 @@ const ICON_SIZE = 18;
 
 /** 将 SVG path 包装为统一尺寸的工具栏图标。 */
 export function svg(path: string): string {
-  return `<svg viewBox="0 0 24 24" width="${ICON_SIZE}" height="${ICON_SIZE}" class="cherry-toolbar-icon" aria-hidden="true"><path fill="currentColor" d="${path}"/></svg>`;
+  return `<svg viewBox="0 0 24 24" width="${ICON_SIZE}" height="${ICON_SIZE}" class="penna-toolbar-icon" aria-hidden="true"><path fill="currentColor" d="${path}"/></svg>`;
 }
 
 export const ICON_BOLD = svg(

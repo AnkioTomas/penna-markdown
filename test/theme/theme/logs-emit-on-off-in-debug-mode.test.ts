@@ -16,7 +16,7 @@ it("logs emit/on/off in debug mode", async () => {
   const infoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
   const { root } = await createRenderTree();
   const log = new Log(true);
-  const eventBus = new EventBus(true, "[cherry]", log);
+  const eventBus = new EventBus(true, "[penna]", log);
   const theme = new Theme(eventBus, log, root);
   const handler = vi.fn();
 
@@ -24,17 +24,13 @@ it("logs emit/on/off in debug mode", async () => {
   theme.setTheme("claude");
   eventBus.off(THEME_EVENT_SKIN, handler);
 
-  expect(infoSpy).toHaveBeenCalledWith(
-    "[cherry]",
-    "event:on",
-    THEME_EVENT_SKIN,
-  );
+  expect(infoSpy).toHaveBeenCalledWith("[penna]", "event:on", THEME_EVENT_SKIN);
   expect(infoSpy).toHaveBeenCalledWith("setTheme", {
     prev: "default",
     id: "claude",
   });
   expect(infoSpy).toHaveBeenCalledWith(
-    "[cherry]",
+    "[penna]",
     "event:emit",
     THEME_EVENT_SKIN,
     {
@@ -44,7 +40,7 @@ it("logs emit/on/off in debug mode", async () => {
     },
   );
   expect(infoSpy).toHaveBeenCalledWith(
-    "[cherry]",
+    "[penna]",
     "event:off",
     THEME_EVENT_SKIN,
   );

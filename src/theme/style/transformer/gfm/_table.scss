@@ -2,17 +2,17 @@
 
 @mixin styles {
   table {
-    --cherry-table-border: color-mix(
+    --penna-table-border: color-mix(
       in srgb,
-      var(--cherry-c-text-3) 32%,
+      var(--penna-c-text-3) 32%,
       transparent
     );
-    --cherry-table-head-bg: var(--cherry-c-bg-elevated);
-    --cherry-table-row-bg: var(--cherry-c-bg);
-    --cherry-table-stripe-bg: color-mix(
+    --penna-table-head-bg: var(--penna-c-bg-elevated);
+    --penna-table-row-bg: var(--penna-c-bg);
+    --penna-table-stripe-bg: color-mix(
       in srgb,
-      var(--cherry-c-text-3) 5.5%,
-      var(--cherry-c-bg-elevated)
+      var(--penna-c-text-3) 5.5%,
+      var(--penna-c-bg-elevated)
     );
 
     width: max-content;
@@ -22,42 +22,42 @@
     border-spacing: 0;
     display: block;
     overflow-x: auto;
-    background: var(--cherry-table-row-bg);
+    background: var(--penna-table-row-bg);
   }
 
   thead {
     tr {
-      background: var(--cherry-table-head-bg);
+      background: var(--penna-table-head-bg);
     }
   }
 
   th,
   td {
     padding: rem(8) rem(16);
-    border: rem(1) solid var(--cherry-table-border);
+    border: rem(1) solid var(--penna-table-border);
     text-align: left;
     vertical-align: top;
   }
 
   th {
     font-weight: 600;
-    background: var(--cherry-table-head-bg);
+    background: var(--penna-table-head-bg);
   }
 
   tbody {
     tr {
-      background: var(--cherry-table-row-bg);
+      background: var(--penna-table-row-bg);
       transition: background-color 0.2s ease;
 
       &:nth-child(even) {
-        background: var(--cherry-table-stripe-bg);
+        background: var(--penna-table-stripe-bg);
       }
 
       &:hover {
         background: color-mix(
           in srgb,
-          var(--cherry-c-text-3) 8%,
-          var(--cherry-table-row-bg)
+          var(--penna-c-text-3) 8%,
+          var(--penna-table-row-bg)
         );
       }
     }
@@ -69,22 +69,22 @@
 
   // 无 thead/tbody 包裹的简易表格
   table tr:nth-child(odd) td {
-    background: var(--cherry-table-row-bg);
+    background: var(--penna-table-row-bg);
   }
 
   table tr:nth-child(even) td {
-    background: var(--cherry-table-stripe-bg);
+    background: var(--penna-table-stripe-bg);
   }
 
   table tr:hover td {
     background: color-mix(
       in srgb,
-      var(--cherry-c-text-3) 8%,
-      var(--cherry-table-row-bg)
+      var(--penna-c-text-3) 8%,
+      var(--penna-table-row-bg)
     );
   }
 
   table tr:first-child th {
-    background: var(--cherry-table-head-bg);
+    background: var(--penna-table-head-bg);
   }
 }

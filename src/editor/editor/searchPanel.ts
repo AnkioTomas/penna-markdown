@@ -10,9 +10,9 @@ import {
 } from "@codemirror/search";
 import type { EditorView, Panel, ViewUpdate } from "@codemirror/view";
 
-const ICON_PREV = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cherry-icon" aria-hidden="true"><polyline points="18 15 12 9 6 15"></polyline></svg>`;
-const ICON_NEXT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cherry-icon" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
-const ICON_CLOSE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cherry-icon" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+const ICON_PREV = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="penna-icon" aria-hidden="true"><polyline points="18 15 12 9 6 15"></polyline></svg>`;
+const ICON_NEXT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="penna-icon" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+const ICON_CLOSE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="penna-icon" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
 
 type Attrs = Record<string, string | boolean | ((e: Event) => void)>;
 
@@ -67,7 +67,7 @@ function iconBtn(
   const btn = el("button", {
     type: "button",
     name,
-    class: `cherry-search-btn ${extraClass}`.trim(),
+    class: `penna-search-btn ${extraClass}`.trim(),
     "aria-label": label,
     title: label,
     onclick: () => onclick(),
@@ -94,7 +94,7 @@ function textBtn(
     {
       type: "button",
       name,
-      class: "cherry-search-btn-text",
+      class: "penna-search-btn-text",
       onclick: () => onclick(),
     },
     [label],
@@ -121,7 +121,7 @@ function optionBtn(
     {
       type: "button",
       name,
-      class: "cherry-search-option",
+      class: "penna-search-option",
       "aria-label": title,
       title,
       onclick: () => onclick(),
@@ -171,7 +171,7 @@ function formatMatchCount(index: number, total: number): string {
 }
 
 /** 提供查找、替换及搜索选项控制的 CodeMirror 搜索面板。 */
-class CherrySearchPanel implements Panel {
+class PennaSearchPanel implements Panel {
   private readonly view: EditorView;
   private query: SearchQuery;
   private readonly searchField: HTMLInputElement;
@@ -196,7 +196,7 @@ class CherrySearchPanel implements Panel {
       value: this.query.search,
       placeholder: "查找内容…",
       "aria-label": "查找",
-      class: "cm-textfield cherry-search-input",
+      class: "cm-textfield penna-search-input",
       name: "search",
       form: "",
       "main-field": "true",
@@ -208,7 +208,7 @@ class CherrySearchPanel implements Panel {
       value: this.query.replace,
       placeholder: "替换为…",
       "aria-label": "替换",
-      class: "cm-textfield cherry-search-input",
+      class: "cm-textfield penna-search-input",
       name: "replace",
       form: "",
       oninput: this.commit,
@@ -216,7 +216,7 @@ class CherrySearchPanel implements Panel {
     });
 
     this.matchCount = el("span", {
-      class: "cherry-search-count",
+      class: "penna-search-count",
       "aria-live": "polite",
     });
 
@@ -230,13 +230,13 @@ class CherrySearchPanel implements Panel {
       this.toggleOption("wholeWord"),
     );
 
-    const searchRow = el("div", { class: "cherry-search-row" }, [
-      el("span", { class: "cherry-search-label" }, ["查找"]),
-      el("div", { class: "cherry-search-field" }, [
+    const searchRow = el("div", { class: "penna-search-row" }, [
+      el("span", { class: "penna-search-label" }, ["查找"]),
+      el("div", { class: "penna-search-field" }, [
         this.searchField,
         this.matchCount,
       ]),
-      el("div", { class: "cherry-search-actions" }, [
+      el("div", { class: "penna-search-actions" }, [
         iconBtn("prev", "上一个", ICON_PREV, () => this.run(findPrevious)),
         iconBtn("next", "下一个", ICON_NEXT, () => this.run(findNext)),
         iconBtn(
@@ -249,18 +249,18 @@ class CherrySearchPanel implements Panel {
       ]),
     ]);
 
-    const replaceActions = el("div", { class: "cherry-search-actions" }, [
+    const replaceActions = el("div", { class: "penna-search-actions" }, [
       textBtn("replace", "替换", () => this.run(replaceNext)),
       textBtn("replaceAll", "全部替换", () => this.run(replaceAll)),
     ]);
 
-    const replaceRow = el("div", { class: "cherry-search-row" }, [
-      el("span", { class: "cherry-search-label" }, ["替换"]),
-      el("div", { class: "cherry-search-field" }, [this.replaceField]),
+    const replaceRow = el("div", { class: "penna-search-row" }, [
+      el("span", { class: "penna-search-label" }, ["替换"]),
+      el("div", { class: "penna-search-field" }, [this.replaceField]),
       replaceActions,
     ]);
 
-    const optionsRow = el("div", { class: "cherry-search-options" }, [
+    const optionsRow = el("div", { class: "penna-search-options" }, [
       this.caseBtn,
       this.regexpBtn,
       this.wordBtn,
@@ -274,7 +274,7 @@ class CherrySearchPanel implements Panel {
     this.dom = el(
       "div",
       {
-        class: "cm-search cherry-search-panel",
+        class: "cm-search penna-search-panel",
         onkeydown: (e) => this.keydown(e as KeyboardEvent),
       },
       rows,
@@ -404,11 +404,11 @@ class CherrySearchPanel implements Panel {
 }
 
 /**
- * 创建 Cherry 定制的 CodeMirror 搜索面板。
+ * 创建 Penna 定制的 CodeMirror 搜索面板。
  *
  * @param view 要关联的编辑器视图。
  * @returns 新建的搜索面板。
  */
 export function createCustomSearchPanel(view: EditorView): Panel {
-  return new CherrySearchPanel(view);
+  return new PennaSearchPanel(view);
 }

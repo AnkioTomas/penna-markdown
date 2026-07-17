@@ -106,29 +106,29 @@ export abstract class FormDialog<TResult> {
   ): () => void {
     const merged = this.prepareProps(props);
     const form = document.createElement("form");
-    form.className = ["cherry-dialog-form", this.className]
+    form.className = ["penna-dialog-form", this.className]
       .filter(Boolean)
       .join(" ");
 
     const title = this.title;
     if (title) {
       const head = document.createElement("div");
-      head.className = "cherry-dialog-table-head";
+      head.className = "penna-dialog-table-head";
       const titleEl = document.createElement("span");
-      titleEl.className = "cherry-dialog-table-title";
+      titleEl.className = "penna-dialog-table-title";
       titleEl.textContent = title;
       head.append(titleEl);
       form.append(head);
     }
 
     const scrollArea = document.createElement("div");
-    scrollArea.className = "cherry-dialog-form-scroll-area";
+    scrollArea.className = "penna-dialog-form-scroll-area";
     form.append(scrollArea);
 
     const hint = this.hint;
     if (hint) {
       const hintEl = document.createElement("p");
-      hintEl.className = "cherry-dialog-table-hint";
+      hintEl.className = "penna-dialog-table-hint";
       hintEl.textContent = hint;
       scrollArea.append(hintEl);
     }
@@ -136,7 +136,7 @@ export abstract class FormDialog<TResult> {
     const linkDef = this.link;
     if (linkDef) {
       const linkEl = document.createElement("a");
-      linkEl.className = "cherry-dialog-link";
+      linkEl.className = "penna-dialog-link";
       linkEl.href = linkDef.href;
       linkEl.target = "_blank";
       linkEl.rel = "noopener noreferrer";
@@ -145,7 +145,7 @@ export abstract class FormDialog<TResult> {
     }
 
     const errEl = document.createElement("p");
-    errEl.className = "cherry-dialog-yaml-error";
+    errEl.className = "penna-dialog-yaml-error";
     errEl.hidden = true;
     scrollArea.append(errEl);
 
@@ -154,7 +154,7 @@ export abstract class FormDialog<TResult> {
     }
 
     const actions = document.createElement("div");
-    actions.className = "cherry-dialog-actions";
+    actions.className = "penna-dialog-actions";
     const cancelBtn = document.createElement("button");
     cancelBtn.type = "button";
     cancelBtn.dataset.action = "cancel";
@@ -267,7 +267,7 @@ export abstract class FormDialog<TResult> {
   ): void {
     const type = field.type ?? "text";
     const label = document.createElement("label");
-    label.className = ["cherry-dialog-field", field.className]
+    label.className = ["penna-dialog-field", field.className]
       .filter(Boolean)
       .join(" ");
     if (field.hidden) label.hidden = true;

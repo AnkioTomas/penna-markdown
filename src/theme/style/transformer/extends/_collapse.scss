@@ -1,17 +1,17 @@
 @use "../../common/rem" as *;
 
 @mixin styles {
-  .cherry-collapse {
+  .penna-collapse {
     margin: rem(16) 0;
     border: rem(1) solid
-      color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+      color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
     border-radius: rem(8);
-    background: var(--cherry-c-bg-elevated);
+    background: var(--penna-c-bg-elevated);
     overflow: hidden;
 
     details {
       border-bottom: rem(1) solid
-        color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+        color-mix(in srgb, var(--penna-c-text-3) 14%, transparent);
 
       &:last-child {
         border-bottom: none;
@@ -23,11 +23,11 @@
       cursor: pointer;
       font-size: rem(14);
       font-weight: 600;
-      color: var(--cherry-c-text-1);
+      color: var(--penna-c-text-1);
       background: color-mix(
         in srgb,
-        var(--cherry-c-bg-elevated) 88%,
-        var(--cherry-c-text-3)
+        var(--penna-c-bg-elevated) 88%,
+        var(--penna-c-text-3)
       );
       list-style: none;
       line-height: 1.5;
@@ -41,7 +41,7 @@
         content: "▸";
         display: inline-block;
         margin-right: rem(8);
-        color: var(--cherry-c-text-3);
+        color: var(--penna-c-text-3);
         transition: transform 0.15s ease;
       }
     }
@@ -51,9 +51,9 @@
     }
   }
 
-  .cherry-collapse-body {
+  .penna-collapse-body {
     padding: rem(12) rem(14);
-    color: var(--cherry-c-text-2);
+    color: var(--penna-c-text-2);
     font-size: rem(14);
     line-height: 1.6;
 

@@ -1,10 +1,10 @@
 @use "../../common/rem" as *;
 
 @mixin styles {
-  .cherry-field {
+  .penna-field {
     padding: rem(16);
     border-bottom: rem(1) solid
-      color-mix(in srgb, var(--cherry-c-text-3) 14%, transparent);
+      color-mix(in srgb, var(--penna-c-text-3) 14%, transparent);
 
     &:last-child {
       border-bottom: none;
@@ -30,7 +30,7 @@
 
     &__name {
       font-weight: 600;
-      color: var(--cherry-c-text-1);
+      color: var(--penna-c-text-1);
     }
 
     &__tag {
@@ -40,21 +40,21 @@
       font-weight: 500;
 
       &--required {
-        color: var(--cherry-c-alert-danger-text);
-        background: var(--cherry-c-alert-danger-bg);
-        border: rem(1) solid var(--cherry-c-alert-danger-border);
+        color: var(--penna-c-alert-danger-text);
+        background: var(--penna-c-alert-danger-bg);
+        border: rem(1) solid var(--penna-c-alert-danger-border);
       }
 
       &--optional {
-        color: var(--cherry-c-alert-note-text);
-        background: var(--cherry-c-alert-note-bg);
-        border: rem(1) solid var(--cherry-c-alert-note-border);
+        color: var(--penna-c-alert-note-text);
+        background: var(--penna-c-alert-note-bg);
+        border: rem(1) solid var(--penna-c-alert-note-border);
       }
 
       &--deprecated {
-        color: var(--cherry-c-alert-warning-text);
-        background: var(--cherry-c-alert-warning-bg);
-        border: rem(1) solid var(--cherry-c-alert-warning-border);
+        color: var(--penna-c-alert-warning-text);
+        background: var(--penna-c-alert-warning-bg);
+        border: rem(1) solid var(--penna-c-alert-warning-border);
       }
     }
 
@@ -70,10 +70,10 @@
         font-family:
           ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
           "Liberation Mono", "Courier New", monospace;
-        color: var(--cherry-c-brand-1);
+        color: var(--penna-c-brand-1);
         background: color-mix(
           in srgb,
-          var(--cherry-c-brand-soft) 65%,
+          var(--penna-c-brand-soft) 65%,
           transparent
         );
       }
@@ -83,7 +83,7 @@
       margin: 0 0 rem(10);
       font-size: rem(13);
       text-align: right;
-      color: var(--cherry-c-text-2);
+      color: var(--penna-c-text-2);
 
       code {
         padding: rem(2) rem(6);
@@ -91,15 +91,15 @@
         font-family:
           ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
           "Liberation Mono", "Courier New", monospace;
-        color: var(--cherry-c-text-1);
-        background: color-mix(in srgb, var(--cherry-c-bg) 70%, transparent);
+        color: var(--penna-c-text-1);
+        background: color-mix(in srgb, var(--penna-c-bg) 70%, transparent);
         border: rem(1) solid
-          color-mix(in srgb, var(--cherry-c-text-3) 18%, transparent);
+          color-mix(in srgb, var(--penna-c-text-3) 18%, transparent);
       }
     }
 
     &__description {
-      color: var(--cherry-c-text-2);
+      color: var(--penna-c-text-2);
       font-size: rem(14);
       line-height: 1.6;
 
@@ -111,18 +111,18 @@
         margin-bottom: 0;
       }
 
-      .cherry-badge {
+      .penna-badge {
         margin-right: rem(8);
       }
     }
   }
 
-  .cherry-field-group {
+  .penna-field-group {
     margin: rem(16) 0;
     border: rem(1) solid
-      color-mix(in srgb, var(--cherry-c-text-3) 22%, transparent);
+      color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
     border-radius: rem(8);
-    background: var(--cherry-c-bg-elevated);
+    background: var(--penna-c-bg-elevated);
     overflow: hidden;
   }
 }

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vue 3 · Cherry Markdown Next</title>
+    <title>Vue 3 · Penna Markdown</title>
     <link rel="icon" href="../../../logo/favicon.ico" sizes="any" />
     <link
       rel="icon"
@@ -44,8 +44,8 @@
     <div id="app" class="app-container"></div>
     <script type="module">
       import "../../_common/layout.scss";
-      import "../../_common/cherry-demo.scss";
-      import { Cherry } from "@/editor/Cherry.js";
+      import "../../_common/penna-demo.scss";
+      import { Penna } from "@/editor/Penna.js";
       import { setupThemeAndAppearance } from "../../_common/theme.js";
       import { fetchDocContent } from "../../_common/api.js";
       import {
@@ -59,13 +59,13 @@
       createApp({
         setup() {
           const editorRef = ref(null);
-          /** @type {import('@/editor/Cherry.js').Cherry | null} */
+          /** @type {import('@/editor/Penna.js').Penna | null} */
           let editor = null;
 
           onMounted(async () => {
             const el = editorRef.value;
             if (!el) return;
-            editor = new Cherry(el, {
+            editor = new Penna(el, {
               editor: { value: await fetchDocContent("/docs/simple.md") },
             });
             setupThemeAndAppearance(editor);

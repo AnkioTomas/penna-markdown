@@ -6,11 +6,11 @@ import {
 } from "../../../../helpers/engine.js";
 
 function cardHtml(title, body, { link = "" } = {}) {
-  const titleHtml = title ? `<p class="cherry-card__title">${title}</p>\n` : "";
+  const titleHtml = title ? `<p class="penna-card__title">${title}</p>\n` : "";
   if (link) {
-    return `<a class="cherry-card cherry-link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</a>\n`;
+    return `<a class="penna-card penna-link-card" href="${link}" target="_blank" rel="noopener noreferrer">\n${titleHtml}<div class="penna-card__body">${body}</div>\n</a>\n`;
   }
-  return `<div class="cherry-card">\n${titleHtml}<div class="cherry-card__body">${body}</div>\n</div>\n`;
+  return `<div class="penna-card">\n${titleHtml}<div class="penna-card__body">${body}</div>\n</div>\n`;
 }
 
 it("renders card grid with default responsive cols", () => {
@@ -25,6 +25,6 @@ it("renders card grid with default responsive cols", () => {
 ::::`;
   const html = renderMarkdown(createEngine(), md);
   expect(html).toContain(
-    'class="cherry-card-grid" style="--card-grid-cols-sm: 1; --card-grid-cols-md: 2; --card-grid-cols-lg: 2;"',
+    'class="penna-card-grid" style="--card-grid-cols-sm: 1; --card-grid-cols-md: 2; --card-grid-cols-lg: 2;"',
   );
 });

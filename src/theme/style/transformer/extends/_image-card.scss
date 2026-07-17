@@ -1,7 +1,7 @@
 @use "../../common/rem" as *;
 
 @mixin styles {
-  .cherry-image-card {
+  .penna-image-card {
     margin: rem(16) 0;
     border-radius: rem(8);
     overflow: hidden;
@@ -10,7 +10,7 @@
       position: relative;
       overflow: hidden;
       border-radius: rem(8);
-      background-color: var(--cherry-c-bg-elevated);
+      background-color: var(--penna-c-bg-elevated);
     }
 
     img {
@@ -24,8 +24,8 @@
       position: absolute;
       inset: auto 0 0;
       padding: rem(12) rem(16) rem(14);
-      color: var(--cherry-c-image-card-info-fg) !important;
-      background: var(--cherry-c-image-card-info-bg);
+      color: var(--penna-c-image-card-info-fg) !important;
+      background: var(--penna-c-image-card-info-bg);
       transition:
         padding 0.25s ease,
         background 0.25s ease;
@@ -36,10 +36,10 @@
       font-size: rem(16.8);
       font-weight: 600;
       line-height: 1.4;
-      color: var(--cherry-c-image-card-info-fg) !important;
+      color: var(--penna-c-image-card-info-fg) !important;
 
       a {
-        color: var(--cherry-c-image-card-info-fg) !important;
+        color: var(--penna-c-image-card-info-fg) !important;
         text-decoration: none;
 
         &:hover {
@@ -54,7 +54,7 @@
       opacity: 0;
       margin: 0;
       overflow: hidden;
-      color: var(--cherry-c-image-card-info-fg) !important;
+      color: var(--penna-c-image-card-info-fg) !important;
       transition:
         max-height 0.3s ease,
         opacity 0.25s ease,
@@ -81,22 +81,22 @@
 
     &:hover,
     &:focus-within {
-      .cherry-image-card__info {
+      .penna-image-card__info {
         padding: rem(20) rem(16) rem(16);
-        background: var(--cherry-c-image-card-info-bg-hover);
+        background: var(--penna-c-image-card-info-bg-hover);
       }
 
-      .cherry-image-card__title {
+      .penna-image-card__title {
         margin: 0 0 rem(8);
       }
 
-      .cherry-image-card__copyright {
+      .penna-image-card__copyright {
         max-height: rem(30);
         opacity: 0.88;
         margin: 0 0 rem(8);
       }
 
-      .cherry-image-card__description {
+      .penna-image-card__description {
         max-height: rem(156);
         opacity: 0.95;
         overflow-y: auto;

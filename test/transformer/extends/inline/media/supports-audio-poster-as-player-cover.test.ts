@@ -7,9 +7,9 @@ it("supports audio poster as player cover", () => {
     "!audio[背景音乐](https://example.com/a.mp3){poster=https://example.com/cover.png}\n",
   );
   expect(html).toContain(
-    'class="cherry-audio-player__cover cherry-audio-player__cover--image"',
+    'class="penna-audio-player__cover penna-audio-player__cover--image"',
   );
   expect(html).toContain(
-    '<img class="cherry-audio-player__cover-img" src="https://example.com/cover.png" alt="" loading="lazy" />',
+    '<img class="penna-audio-player__cover-img" src="https://example.com/cover.png" alt="" loading="lazy" />',
   );
 });

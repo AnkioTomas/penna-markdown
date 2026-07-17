@@ -26,7 +26,7 @@ it("supports multi-line content", () => {
   这是第二行正文
 :::`;
   const html = renderMarkdown(createEngine(), md);
-  expect(html).toContain('<p class="cherry-timeline-title">标题</p>');
+  expect(html).toContain('<p class="penna-timeline-title">标题</p>');
   expect(html).toContain("<p>这是第一行正文</p>");
   expect(html).toContain("<p>这是第二行正文</p>");
 });

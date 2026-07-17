@@ -1,4 +1,4 @@
-import { el } from "@/editor/Cherry";
+import { el } from "@/editor/Penna";
 import { ICON_MORE, resolveToolbarIcon } from "@/editor/toolbar/commandIcons";
 import type {
   ToolbarButtonItem,
@@ -36,7 +36,7 @@ function setBtnContent(
   btn.classList.add("has-icon");
 
   if (inMenu || item.label) {
-    const span = el("span", "cherry-toolbar-btn-label");
+    const span = el("span", "penna-toolbar-btn-label");
     span.textContent = item.label;
     btn.append(span);
   }
@@ -59,14 +59,14 @@ function setMenuTriggerContent(
   trigger.insertAdjacentHTML("afterbegin", resolveToolbarIcon(item));
   trigger.classList.add("has-icon");
 
-  const span = el("span", "cherry-toolbar-btn-label");
+  const span = el("span", "penna-toolbar-btn-label");
   span.textContent = item.label;
   trigger.append(span);
   trigger.append(
-    el("span", "cherry-toolbar-menu-caret", { "aria-hidden": "true" }),
+    el("span", "penna-toolbar-menu-caret", { "aria-hidden": "true" }),
   );
 
-  trigger.classList.toggle("cherry-toolbar-menu-trigger--nested", nested);
+  trigger.classList.toggle("penna-toolbar-menu-trigger--nested", nested);
 }
 
 /**
@@ -80,7 +80,7 @@ function setMenuTriggerContent(
 export function renderButton(item: ToolbarButtonItem, inMenu: boolean) {
   const btn = el(
     "button",
-    inMenu ? "cherry-toolbar-menu-item" : "cherry-toolbar-btn",
+    inMenu ? "penna-toolbar-menu-item" : "penna-toolbar-btn",
     {
       type: "button",
       "data-toolbar-id": item.id,
@@ -102,26 +102,22 @@ export function renderButton(item: ToolbarButtonItem, inMenu: boolean) {
 export function renderMenu(item: ToolbarMenuItem, nested: boolean) {
   const wrap = el(
     "div",
-    nested ? "cherry-toolbar-submenu" : "cherry-toolbar-menu",
+    nested ? "penna-toolbar-submenu" : "penna-toolbar-menu",
   );
   wrap.dataset.toolbarId = item.id;
 
-  const trigger = el(
-    "button",
-    "cherry-toolbar-btn cherry-toolbar-menu-trigger",
-    {
-      type: "button",
-      "aria-haspopup": "true",
-      "aria-expanded": "false",
-    },
-  ) as HTMLButtonElement;
+  const trigger = el("button", "penna-toolbar-btn penna-toolbar-menu-trigger", {
+    type: "button",
+    "aria-haspopup": "true",
+    "aria-expanded": "false",
+  }) as HTMLButtonElement;
   if (item.title) trigger.title = item.title;
   setMenuTriggerContent(trigger, item, nested);
 
-  const panel = el("div", "cherry-toolbar-menu-panel", { role: "menu" });
+  const panel = el("div", "penna-toolbar-menu-panel", { role: "menu" });
 
   if (item.title) {
-    const header = el("div", "cherry-toolbar-menu-header");
+    const header = el("div", "penna-toolbar-menu-header");
     header.textContent = item.title;
     panel.append(header);
   }
@@ -146,7 +142,7 @@ export function appendToolbarItem(
 ) {
   if (item.type === "separator") {
     parent.append(
-      el("span", inMenu ? "cherry-toolbar-menu-sep" : "cherry-toolbar-sep"),
+      el("span", inMenu ? "penna-toolbar-menu-sep" : "penna-toolbar-sep"),
     );
     return;
   }
@@ -173,7 +169,7 @@ export function renderOverflowMenu(items: ToolbarItem[]) {
     children: items,
   };
   const menuEl = renderMenu(menu, false);
-  menuEl.classList.add("cherry-toolbar-overflow-menu");
+  menuEl.classList.add("penna-toolbar-overflow-menu");
   return menuEl;
 }
 
@@ -198,7 +194,7 @@ export function renderToolbar(
   ctx: ToolbarContext,
   onClick?: (id: string, ctx: ToolbarContext) => void,
 ): () => void {
-  mount.classList.add("cherry-toolbar");
+  mount.classList.add("penna-toolbar");
   mount.replaceChildren();
 
   let openPanel: HTMLElement | null = null;
@@ -210,7 +206,7 @@ export function renderToolbar(
       .querySelectorAll(".is-open")
       .forEach((el) => el.classList.remove("is-open"));
     mount
-      .querySelectorAll('.cherry-toolbar-menu-trigger[aria-expanded="true"]')
+      .querySelectorAll('.penna-toolbar-menu-trigger[aria-expanded="true"]')
       .forEach((el) => el.setAttribute("aria-expanded", "false"));
     openPanel = null;
   };
@@ -244,7 +240,7 @@ export function renderToolbar(
   const onDocClick = (e: MouseEvent) => {
     if (!openPanel) return;
     const target = e.target as Node;
-    const wrapper = openPanel.closest(".cherry-toolbar-menu");
+    const wrapper = openPanel.closest(".penna-toolbar-menu");
     if (wrapper?.contains(target)) return;
     closeOpenPanel();
   };
@@ -266,14 +262,14 @@ export function renderToolbar(
 
     // 拦截菜单展开/折叠动作
     const trigger = target.closest(
-      ".cherry-toolbar-menu-trigger",
+      ".penna-toolbar-menu-trigger",
     ) as HTMLButtonElement;
     if (trigger) {
       const wrap = trigger.closest(
-        ".cherry-toolbar-menu, .cherry-toolbar-submenu",
+        ".penna-toolbar-menu, .penna-toolbar-submenu",
       );
       if (wrap) {
-        const isNested = wrap.classList.contains("cherry-toolbar-submenu");
+        const isNested = wrap.classList.contains("penna-toolbar-submenu");
         if (!isNested) {
           // 顶层菜单切换：关闭其他已打开的菜单，并打开当前菜单
           const open = wrap.classList.contains("is-open");
@@ -281,7 +277,7 @@ export function renderToolbar(
           if (!open) {
             wrap.classList.add("is-open");
             trigger.setAttribute("aria-expanded", "true");
-            openPanel = wrap.querySelector(".cherry-toolbar-menu-panel");
+            openPanel = wrap.querySelector(".penna-toolbar-menu-panel");
 
             if (openPanel) {
               applyCollisionDetection(openPanel, false);
@@ -295,14 +291,14 @@ export function renderToolbar(
             trigger.setAttribute("aria-expanded", "false");
           } else {
             // 关闭同级的其他二级子菜单
-            const parentPanel = wrap.closest(".cherry-toolbar-menu-panel");
+            const parentPanel = wrap.closest(".penna-toolbar-menu-panel");
             if (parentPanel) {
               parentPanel
-                .querySelectorAll(".cherry-toolbar-submenu.is-open")
+                .querySelectorAll(".penna-toolbar-submenu.is-open")
                 .forEach((sib) => {
                   sib.classList.remove("is-open");
                   sib
-                    .querySelector(".cherry-toolbar-menu-trigger")
+                    .querySelector(".penna-toolbar-menu-trigger")
                     ?.setAttribute("aria-expanded", "false");
                 });
             }
@@ -310,7 +306,7 @@ export function renderToolbar(
             trigger.setAttribute("aria-expanded", "true");
 
             const panel = wrap.querySelector(
-              ".cherry-toolbar-menu-panel",
+              ".penna-toolbar-menu-panel",
             ) as HTMLElement;
             if (panel) applyCollisionDetection(panel, true);
           }
@@ -345,7 +341,7 @@ export function renderToolbar(
   const onPointerOver = (e: PointerEvent) => {
     if (e.pointerType === "touch") return; // 防止移动端触控触发 hover 干扰 click 闭合
     const wrap = (e.target as HTMLElement).closest(
-      ".cherry-toolbar-submenu",
+      ".penna-toolbar-submenu",
     ) as HTMLElement;
     if (!wrap) return;
 
@@ -356,15 +352,15 @@ export function renderToolbar(
     }
 
     if (!wrap.classList.contains("is-open")) {
-      const parentPanel = wrap.closest(".cherry-toolbar-menu-panel");
+      const parentPanel = wrap.closest(".penna-toolbar-menu-panel");
       if (parentPanel) {
         parentPanel
-          .querySelectorAll(".cherry-toolbar-submenu.is-open")
+          .querySelectorAll(".penna-toolbar-submenu.is-open")
           .forEach((sib) => {
             if (sib !== wrap) {
               sib.classList.remove("is-open");
               sib
-                .querySelector(".cherry-toolbar-menu-trigger")
+                .querySelector(".penna-toolbar-menu-trigger")
                 ?.setAttribute("aria-expanded", "false");
               const t = hoverTimers.get(sib as HTMLElement);
               if (t) {
@@ -377,11 +373,11 @@ export function renderToolbar(
 
       wrap.classList.add("is-open");
       wrap
-        .querySelector(".cherry-toolbar-menu-trigger")
+        .querySelector(".penna-toolbar-menu-trigger")
         ?.setAttribute("aria-expanded", "true");
 
       const panel = wrap.querySelector(
-        ".cherry-toolbar-menu-panel",
+        ".penna-toolbar-menu-panel",
       ) as HTMLElement;
       if (panel) applyCollisionDetection(panel, true);
     }
@@ -390,7 +386,7 @@ export function renderToolbar(
   const onPointerOut = (e: PointerEvent) => {
     if (e.pointerType === "touch") return;
     const wrap = (e.target as HTMLElement).closest(
-      ".cherry-toolbar-submenu",
+      ".penna-toolbar-submenu",
     ) as HTMLElement;
     if (!wrap) return;
     const related = e.relatedTarget as HTMLElement | null;
@@ -399,7 +395,7 @@ export function renderToolbar(
     const timer = setTimeout(() => {
       wrap.classList.remove("is-open");
       wrap
-        .querySelector(".cherry-toolbar-menu-trigger")
+        .querySelector(".penna-toolbar-menu-trigger")
         ?.setAttribute("aria-expanded", "false");
       hoverTimers.delete(wrap);
     }, 150);
@@ -410,7 +406,7 @@ export function renderToolbar(
   mount.addEventListener("pointerover", onPointerOver);
   mount.addEventListener("pointerout", onPointerOut);
 
-  const scroll = el("div", "cherry-toolbar-scroll");
+  const scroll = el("div", "penna-toolbar-scroll");
 
   const overflow: ToolbarItem[] = [];
 
@@ -421,7 +417,7 @@ export function renderToolbar(
 
     if (item.mobileOverflow) {
       const lastEl = scroll.lastElementChild;
-      if (lastEl) lastEl.classList.add("cherry-toolbar-desktop-only");
+      if (lastEl) lastEl.classList.add("penna-toolbar-desktop-only");
     }
   }
 
@@ -440,6 +436,6 @@ export function renderToolbar(
     mount.removeEventListener("pointerout", onPointerOut);
     closeOpenPanel();
     mount.replaceChildren();
-    mount.classList.remove("cherry-toolbar");
+    mount.classList.remove("penna-toolbar");
   };
 }
