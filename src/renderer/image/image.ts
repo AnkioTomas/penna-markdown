@@ -4,7 +4,12 @@
  *
  * 在预览挂载点做**事件委托**，点击内容区 `img` 或内联 `svg` 时打开全屏 lightbox。
  * 委托绑定在 mount 上，增量 reconcile 替换子节点后无需重新挂载监听。
+ *
+ * overlay 挂在 `document.body`（避免预览区 overflow 裁切），通过
+ * {@link applyHostedThemeClasses} 补齐主题 class，复用已有 CSS 变量选择器。
  */
+
+import { applyHostedThemeClasses } from "@/theme/applyHostedThemeClasses";
 
 const EXCLUDED_IMG_SELECTOR = [
   ".penna-math-latex",
@@ -153,6 +158,7 @@ export class ImageListener {
 
     const overlay = doc.createElement("div");
     overlay.className = "penna-image-preview";
+    applyHostedThemeClasses(overlay, this.mount);
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-modal", "true");
 
