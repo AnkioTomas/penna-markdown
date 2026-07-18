@@ -29,9 +29,18 @@ it("dirtyTouchesGlobalEffect is true when frontmatter line is edited", () => {
   expect(dirtyTouchesGlobalEffect(ast, changes)).toBe(true);
 });
 
-it("dirtyTouchesGlobalEffect is false when only body is edited", () => {
+it("dirtyTouchesGlobalEffect is true when body is adjacent to frontmatter", () => {
+  // 闭区间邻接：Body 与 frontmatter 仅隔一行 blank 时，脏区会咬到 globalEffect。
   const ast = createEngine().parse("---\ntitle: Hi\n---\n\nBody");
   const changes = [lineChange(5, 5, 5, 5)];
+  expect(dirtyTouchesGlobalEffect(ast, changes)).toBe(true);
+});
+
+it("dirtyTouchesGlobalEffect is false when body is far from frontmatter", () => {
+  const ast = createEngine().parse(
+    "---\ntitle: Hi\n---\n\nPad1\n\nPad2\n\nBody",
+  );
+  const changes = [lineChange(9, 9, 9, 9)];
   expect(dirtyTouchesGlobalEffect(ast, changes)).toBe(false);
 });
 

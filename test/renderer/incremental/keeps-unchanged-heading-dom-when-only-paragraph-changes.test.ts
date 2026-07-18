@@ -53,10 +53,12 @@ it("keeps unchanged heading DOM when only paragraph changes", () => {
     length: 0,
   });
   const { renderer, mount } = createRenderer();
-  renderer.render("# Title\n\nHello");
+  renderer.render("Intro\n\n# Title\n\nPad\n\nHello\n\nFooter");
 
   const h1 = mount.querySelector("h1")!;
-  renderer.render("# Title\n\nHello world", [lineChange(3, 3, 3, 3)]);
+  renderer.render("Intro\n\n# Title\n\nPad\n\nHello world\n\nFooter", [
+    lineChange(7, 7, 7, 7),
+  ]);
   expect(mount.querySelector("h1")).toBe(h1);
 
   renderer.destroy();

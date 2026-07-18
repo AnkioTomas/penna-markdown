@@ -49,7 +49,12 @@ export function astBlockSpans(ast: MarkdownNode): AstBlockSpan[] {
   return iterateTopLevelLines(ast);
 }
 
-/** 判断块行区间是否与脏区相交。 */
+/**
+ * 判断块行区间是否与脏区相交。
+ *
+ * 对半开区间 `[start, end)` 使用闭区间相交（`<=` / `>=`），
+ * 从而吞掉与脏区边界相接的邻块（table 等场景需要，避免漏更新）。
+ */
 export function spanOverlapsDirty(
   span: AstBlockSpan,
   startLine: number,

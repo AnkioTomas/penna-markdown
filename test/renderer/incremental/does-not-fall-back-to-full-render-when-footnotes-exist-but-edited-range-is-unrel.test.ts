@@ -53,11 +53,13 @@ it("does not fall back to full render when footnotes exist but edited range is u
     length: 0,
   });
   const { renderer, mount } = createRenderer();
-  renderer.renderFull("Before\n\n[^a]: note\n\nAfter");
+  // 两侧加锚点块，避免闭区间邻接把整篇吞进脏区后降级全量。
+  renderer.renderFull("Keep\n\nBefore\n\nMid\n\n[^a]: note\n\nAfter\n\nTail");
 
-  const result = renderer.render("Before edited\n\n[^a]: note\n\nAfter", [
-    lineChange(1, 1, 1, 1),
-  ]);
+  const result = renderer.render(
+    "Keep\n\nBefore edited\n\nMid\n\n[^a]: note\n\nAfter\n\nTail",
+    [lineChange(3, 3, 3, 3)],
+  );
   expect(result.partial).toBe(true); // 优化后，无关区域的修改不再退化为全量渲染！
   expect(mount.textContent).toContain("Before edited");
   renderer.destroy();

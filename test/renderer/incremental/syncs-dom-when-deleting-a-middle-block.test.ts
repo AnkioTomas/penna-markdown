@@ -53,15 +53,19 @@ it("syncs DOM when deleting a middle block", () => {
     length: 0,
   });
   const { renderer, mount } = createRenderer();
-  renderer.render("A\n\nB\n\nC\n\nD");
+  renderer.render("W\n\nA\n\nB\n\nC\n\nD\n\nX");
 
-  const result = renderer.render("A\n\nC\n\nD", [lineChange(3, 4, 3, 2)]);
+  const result = renderer.render("W\n\nA\n\nC\n\nD\n\nX", [
+    lineChange(5, 6, 5, 4),
+  ]);
   expect(result.partial).toBe(true);
-  expect(mount.children.length).toBe(3);
+  expect(mount.children.length).toBe(5);
   expect([...mount.children].map((el) => el.textContent?.trim())).toEqual([
+    "W",
     "A",
     "C",
     "D",
+    "X",
   ]);
 
   renderer.destroy();

@@ -53,14 +53,17 @@ it("incremental update works when cache matches dom count", () => {
     length: 0,
   });
   const { renderer, mount } = createRenderer();
-  renderer.renderFull("# Title\n\nHello\n\nFooter");
+  renderer.renderFull("Intro\n\n# Title\n\nPad\n\nHello\n\nFooter");
   expect(mount.childElementCount).toBe(renderer["session"].blocks.length);
 
-  const result = renderer.render("# Title\n\nHello world\n\nFooter", [
-    lineChange(3, 3, 3, 3),
-  ]);
+  const result = renderer.render(
+    "Intro\n\n# Title\n\nPad\n\nHello world\n\nFooter",
+    [lineChange(7, 7, 7, 7)],
+  );
   expect(result.partial).toBe(true);
-  expect(mount.querySelector("p")!.textContent).toContain("Hello world");
+  expect(mount.querySelector("p:nth-of-type(3)")!.textContent).toContain(
+    "Hello world",
+  );
   renderer.destroy();
 
   vi.useRealTimers();

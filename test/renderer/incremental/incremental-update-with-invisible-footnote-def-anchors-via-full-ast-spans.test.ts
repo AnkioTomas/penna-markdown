@@ -53,11 +53,12 @@ it("incremental update with invisible footnote def anchors via full ast spans", 
     length: 0,
   });
   const { renderer, mount } = createRenderer();
-  renderer.renderFull("Before\n\n[^a]: note\n\nAfter");
+  renderer.renderFull("Keep\n\nBefore\n\nMid\n\n[^a]: note\n\nAfter\n\nTail");
 
-  const result = renderer.render("Before edited\n\n[^a]: note\n\nAfter", [
-    lineChange(1, 1, 1, 1),
-  ]);
+  const result = renderer.render(
+    "Keep\n\nBefore edited\n\nMid\n\n[^a]: note\n\nAfter\n\nTail",
+    [lineChange(3, 3, 3, 3)],
+  );
   expect(result.partial).toBe(true);
   expect(mount.textContent).toContain("Before edited");
   expect(renderer.getMountedBlocks().length).toBe(mount.childElementCount);

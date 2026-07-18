@@ -53,15 +53,17 @@ it("patches incrementally when deleting text", () => {
     length: 0,
   });
   const { renderer, mount } = createRenderer();
-  renderer.render("# Title\n\nHello world");
+  renderer.render("Intro\n\n# Title\n\nPad\n\nHello world\n\nFooter");
 
   const h1 = mount.querySelector("h1")!;
   const h1Html = h1.outerHTML;
 
-  const result = renderer.render("# Title\n\nHello", [lineChange(3, 3, 3, 3)]);
+  const result = renderer.render("Intro\n\n# Title\n\nPad\n\nHello\n\nFooter", [
+    lineChange(7, 7, 7, 7),
+  ]);
   expect(result.partial).toBe(true);
   expect(mount.querySelector("h1")!.outerHTML).toBe(h1Html);
-  expect(mount.querySelector("p")!.textContent).toBe("Hello");
+  expect(mount.querySelector("p:nth-of-type(3)")!.textContent).toBe("Hello");
 
   renderer.destroy();
 

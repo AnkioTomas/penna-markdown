@@ -64,8 +64,14 @@ it("dirtyLinesFromChanges maps line edits to block bounds", () => {
   const affected = findAffectedSpanRange(spans, raw.startLine, raw.endLine)!;
   const block = spans[affected.startIdx]!;
 
-  expect(block.startLine).toBe(2);
-  expect(block.endLine).toBe(3);
+  // 闭区间邻接会先咬到段落前的 blank_line（[1,2)），再覆盖目标段落。
+  expect(block.startLine).toBe(1);
+  expect(block.endLine).toBe(2);
+  expect(
+    spans
+      .slice(affected.startIdx, affected.endIdx + 1)
+      .some((s) => s.startLine === 2 && s.endLine === 3),
+  ).toBe(true);
   expect(mapOldLineToNew(changes, 3)).toBe(3);
 
   vi.useRealTimers();

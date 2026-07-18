@@ -53,17 +53,19 @@ it("reorders blocks via line-based dom sync", () => {
     length: 0,
   });
   const { renderer, mount } = createRenderer();
-  renderer.render("Prefix\n\nA\n\nB\n\nC");
+  renderer.render("W\n\nPrefix\n\nA\n\nB\n\nC\n\nX");
 
-  const result = renderer.render("Prefix\n\nC\n\nB\n\nA", [
-    lineChange(3, 7, 3, 7),
+  const result = renderer.render("W\n\nPrefix\n\nC\n\nB\n\nA\n\nX", [
+    lineChange(5, 9, 5, 9),
   ]);
   expect(result.partial).toBe(true);
   expect([...mount.children].map((el) => el.textContent?.trim())).toEqual([
+    "W",
     "Prefix",
     "C",
     "B",
     "A",
+    "X",
   ]);
 
   renderer.destroy();

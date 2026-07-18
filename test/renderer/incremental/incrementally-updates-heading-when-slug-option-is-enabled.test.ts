@@ -53,12 +53,14 @@ it("incrementally updates heading when slug option is enabled", () => {
     length: 0,
   });
   const { renderer, mount } = createRenderer();
-  renderer.render("# Hello\n\nBody");
+  renderer.render("Intro\n\n# Hello\n\nBody\n\nFooter");
 
-  const result = renderer.render("# Hello!\n\nBody", [lineChange(1, 1, 1, 1)]);
+  const result = renderer.render("Intro\n\n# Hello!\n\nBody\n\nFooter", [
+    lineChange(3, 3, 3, 3),
+  ]);
   expect(result.partial).toBe(true);
   expect(mount.querySelector("h1")!.textContent).toBe("Hello!");
-  expect(mount.querySelector("p")!.textContent).toBe("Body");
+  expect(mount.querySelector("p:nth-of-type(2)")!.textContent).toBe("Body");
 
   renderer.destroy();
 
