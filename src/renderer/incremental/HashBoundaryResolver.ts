@@ -55,7 +55,7 @@ export function spanOverlapsDirty(
   startLine: number,
   endLine: number,
 ): boolean {
-  return span.startLine < endLine && span.endLine > startLine;
+  return span.startLine <= endLine && span.endLine >= startLine;
 }
 
 /** 找与脏区相交的连续 span 索引闭区间；无相交时 `null`。 */
