@@ -1,4 +1,5 @@
 @use "../../common/rem" as *;
+@use "../../common/tokens" as tokens;
 
 @mixin styles {
   .penna-footnotes {
@@ -64,6 +65,106 @@
       &:hover {
         text-decoration: underline;
       }
+    }
+  }
+}
+
+/**
+ * tooltip 挂在 document.body（与 image-preview overlay 相同），必须脱离 `.penna-render`。
+ * 自身注入 token；内容富文本靠元素上的 `penna-render` 类复用既有排版规则。
+ */
+@mixin tooltip {
+  .penna-footnote-tooltip {
+    @include tokens.theme-default;
+
+    position: fixed;
+    z-index: 1000;
+    box-sizing: border-box;
+    width: max-content;
+    max-width: min(#{rem(360)}, 80vw);
+    max-height: min(#{rem(240)}, 50vh);
+    overflow: auto;
+    padding: rem(10) rem(14);
+    border: rem(1) solid
+      color-mix(in srgb, var(--penna-c-text-3) 22%, transparent);
+    border-radius: rem(6);
+    background: var(--penna-c-bg-elevated);
+    color: var(--penna-c-text-1);
+    font-size: rem(13);
+    font-weight: 400;
+    line-height: 1.55;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    box-shadow: 0 rem(4) rem(16)
+      color-mix(in srgb, var(--penna-c-text-3) 15%, transparent);
+    transform: translate(-50%, -100%);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.15s ease,
+      visibility 0.15s ease;
+
+    &.penna-dark {
+      @include tokens.theme-dark;
+    }
+
+    &.is-visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .penna-footnote-tooltip__body {
+      > :first-child {
+        margin-top: 0;
+      }
+
+      > :last-child {
+        margin-bottom: 0;
+      }
+
+      p {
+        margin: 0 0 rem(6);
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      z-index: 2;
+      transform: translateX(-50%);
+      border: rem(6) solid transparent;
+      border-top-color: var(--penna-c-bg-elevated);
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      z-index: 1;
+      transform: translateX(-50%);
+      border: rem(7) solid transparent;
+      border-top-color: color-mix(
+        in srgb,
+        var(--penna-c-text-3) 22%,
+        transparent
+      );
+    }
+
+    .penna-footnote-tooltip__bridge {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      height: rem(10);
+      background: transparent;
     }
   }
 }

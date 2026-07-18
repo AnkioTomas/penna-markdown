@@ -86,6 +86,7 @@
 }
 
 @include image-preview.overlay;
+@include footnote.tooltip;
 
 // default 皮肤渲染层（其它主题有独立 render.css）
 .penna-theme-default .penna-render {

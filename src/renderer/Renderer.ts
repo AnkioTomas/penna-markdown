@@ -27,6 +27,7 @@ import { extractToc, extractTocFlat } from "@/renderer/toc/extract";
 import { replaceGraph } from "@/renderer/graph/graph";
 import { CodeListener } from "@/renderer/code/code";
 import { ImageListener } from "@/renderer/image/image";
+import { FootnoteListener } from "@/renderer/footnote/footnote";
 import hljs from "highlight.js/lib/common";
 import { RenderOption } from "@/renderer/RenderOption";
 import { IncrementalSession } from "@/renderer/incremental/IncrementalSession.js";
@@ -61,6 +62,8 @@ export class Renderer {
   private codeListener: CodeListener | null = null;
   /** 预览区图片 / SVG 点击放大 */
   private imageListener: ImageListener | null = null;
+  /** 脚注悬停提示 */
+  private footnoteListener: FootnoteListener | null = null;
 
   /**
    * @param options 挂载点、主题、事件总线、日志及可选解析器扩展
@@ -92,6 +95,7 @@ export class Renderer {
 
     this.codeListener = new CodeListener(this.mount);
     this.imageListener = new ImageListener(this.mount);
+    this.footnoteListener = new FootnoteListener(this.mount);
   }
 
   /** 明暗切换：同步 transformer 并重绘 Mermaid/ECharts 等图表 */
@@ -231,5 +235,6 @@ export class Renderer {
     this.session.reset();
     this.codeListener?.destroy();
     this.imageListener?.destroy();
+    this.footnoteListener?.destroy();
   }
 }
