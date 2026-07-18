@@ -5,9 +5,11 @@
  * 在预览挂载点做**事件委托**：悬停脚注引用时，在 `document.body` 显示浮层
  *（与 {@link ImageListener} 的 lightbox 同一挂载策略，避免预览区 overflow 裁切）。
  *
- * 浮层带 `penna-render` 复用富文本样式；主题 token 由 `.penna-footnote-tooltip`
- * 自身注入（见 `_footnote.scss` 的 `tooltip` mixin）。
+ * 浮层通过 {@link applyHostedThemeClasses} 挂上 `penna` / `penna-render` 及
+ * 根上的 `penna-theme-*` / `penna-dark`，复用既有 token 与富文本样式。
  */
+
+import { applyHostedThemeClasses } from "@/theme/applyHostedThemeClasses";
 
 export class FootnoteListener {
   private readonly tooltip: HTMLElement;
@@ -20,7 +22,7 @@ export class FootnoteListener {
   constructor(private readonly mount: HTMLElement) {
     const doc = this.mount.ownerDocument || document;
     this.tooltip = doc.createElement("div");
-    this.tooltip.className = "penna-footnote-tooltip penna-render";
+    this.tooltip.className = "penna-footnote-tooltip";
     this.tooltip.setAttribute("role", "tooltip");
 
     this.content = doc.createElement("div");
@@ -38,10 +40,7 @@ export class FootnoteListener {
   }
 
   private syncTheme(): void {
-    const dark =
-      this.mount.classList.contains("penna-dark") ||
-      !!this.mount.closest(".penna-dark");
-    this.tooltip.classList.toggle("penna-dark", dark);
+    applyHostedThemeClasses(this.tooltip, this.mount);
   }
 
   private attachTooltip(): void {
