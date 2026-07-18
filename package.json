@@ -1,6 +1,6 @@
 {
   "name": "penna-markdown",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Next-generation Markdown editor and renderer with GFM and Penna extensions",
   "license": "MIT",
   "author": "AnkioTomas",
