@@ -75,6 +75,8 @@
  */
 @mixin tooltip {
   .penna-footnote-tooltip {
+    // 根节点必须 overflow:visible：箭头 / bridge 在 top:100%，
+    // 若根上 overflow:auto，它们会并进 scrollHeight，短内容也会被撑出异常高度。
     position: fixed;
     z-index: 1000;
     box-sizing: border-box;
@@ -91,6 +93,7 @@
     font-size: rem(13);
     font-weight: 400;
     line-height: 1.55;
+    height: fit-content;
     text-align: left;
     white-space: normal;
     overflow-wrap: anywhere;
@@ -109,6 +112,9 @@
     }
 
     .penna-footnote-tooltip__body {
+      max-height: min(#{rem(160)}, 40vh);
+      overflow: auto;
+
       > :first-child {
         margin-top: 0;
       }

@@ -204,6 +204,28 @@ it("closes lightbox when clicking backdrop", () => {
   listener.destroy();
 });
 
+it("copies theme classes onto body-mounted overlay", () => {
+  const dom = new JSDOM(
+    `<div class="penna-theme-github penna-dark"><div class="penna"><div id="preview" class="penna-render"><img src="https://example.com/a.png" alt=""></div></div></div>`,
+    { url: "https://example.com" },
+  );
+  const { document } = dom.window;
+  const listener = new ImageListener(
+    document.getElementById("preview") as HTMLElement,
+  );
+
+  document.querySelector("img")?.click();
+  const overlay = document.querySelector(".penna-image-preview");
+  expect(overlay).not.toBeNull();
+  expect(overlay?.parentElement).toBe(document.body);
+  expect(overlay?.classList.contains("penna")).toBe(true);
+  expect(overlay?.classList.contains("penna-render")).toBe(true);
+  expect(overlay?.classList.contains("penna-theme-github")).toBe(true);
+  expect(overlay?.classList.contains("penna-dark")).toBe(true);
+
+  listener.destroy();
+});
+
 it("destroy without open does not clear body overflow", () => {
   const dom = new JSDOM(
     `<div id="preview" class="penna-render"><img src="https://example.com/a.png" alt=""></div>`,
