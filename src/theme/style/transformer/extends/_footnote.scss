@@ -1,5 +1,4 @@
 @use "../../common/rem" as *;
-@use "../../common/tokens" as tokens;
 
 @mixin styles {
   .penna-footnotes {
@@ -70,13 +69,12 @@
 }
 
 /**
- * tooltip 挂在 document.body（与 image-preview overlay 相同），必须脱离 `.penna-render`。
- * 自身注入 token；内容富文本靠元素上的 `penna-render` 类复用既有排版规则。
+ * tooltip 挂在 document.body（与 image-preview overlay 相同）。
+ * 主题 token 靠 JS 挂上 `penna` / `penna-render` / `penna-theme-*` / `penna-dark`，
+ * 不在此处再注入一套变量。
  */
 @mixin tooltip {
   .penna-footnote-tooltip {
-    @include tokens.theme-default;
-
     position: fixed;
     z-index: 1000;
     box-sizing: border-box;
@@ -104,10 +102,6 @@
     transition:
       opacity 0.15s ease,
       visibility 0.15s ease;
-
-    &.penna-dark {
-      @include tokens.theme-dark;
-    }
 
     &.is-visible {
       opacity: 1;
