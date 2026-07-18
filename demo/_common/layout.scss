@@ -10,12 +10,16 @@ body {
   height: 100%;
 }
 
+/**
+ * body 不注入主题 token。
+ * lightbox / footnote 等会挂到 document.body，若 body 自带变量会掩盖真实宿主问题。
+ * Demo 页面色用 Sass 字面量；chrome 变量挂在下面的 shell 上。
+ */
 body {
-  @include tokens.theme-default;
   display: flex;
   flex-direction: column;
-  background: var(--penna-c-bg);
-  color: var(--penna-c-text-1);
+  background: tokens.$penna-bg;
+  color: tokens.$penna-text-1;
   font-family:
     system-ui,
     -apple-system,
@@ -24,6 +28,28 @@ body {
 }
 
 body.demo-dark {
+  background: tokens.$penna-dark-bg;
+  color: tokens.$penna-dark-text-1;
+}
+
+/** Demo 壳层：只给页面 chrome，不给 body */
+.header,
+.layout,
+.app-container,
+.ast-layout,
+.docs-shell,
+.gfm-toolbar,
+.gfm-main {
+  @include tokens.theme-default;
+}
+
+body.demo-dark .header,
+body.demo-dark .layout,
+body.demo-dark .app-container,
+body.demo-dark .ast-layout,
+body.demo-dark .docs-shell,
+body.demo-dark .gfm-toolbar,
+body.demo-dark .gfm-main {
   @include tokens.theme-dark;
 }
 
