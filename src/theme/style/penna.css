@@ -545,25 +545,12 @@
 }
 
 .penna-ai-hunk-actions .penna-ai-diff-btn--reject {
-  background: color-mix(
-    in srgb,
-    var(--penna-c-danger, #c62828) 12%,
-    transparent
-  );
-  color: var(--penna-c-danger, #c62828);
-  border-color: color-mix(
-    in srgb,
-    var(--penna-c-danger, #c62828) 45%,
-    transparent
-  );
+  background: var(--penna-c-danger, #c62828);
+  color: #fff;
+  border-color: var(--penna-c-danger, #c62828);
 }
 .penna-ai-hunk-actions .penna-ai-diff-btn--reject:hover {
-  background: color-mix(
-    in srgb,
-    var(--penna-c-danger, #c62828) 20%,
-    transparent
-  );
-  border-color: var(--penna-c-danger, #c62828);
+  filter: brightness(1.08);
 }
 
 .penna-ai-hunk-actions .penna-ai-diff-btn-label {
