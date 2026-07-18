@@ -96,6 +96,11 @@ pnpm test        # vitest
 pnpm typecheck
 ```
 
+## 特别鸣谢
+
+- [LinuxDo](https://linux.do/)
+- [CherryMarkdown](https://github.com/Tencent/cherry-markdown/)
+
 ## License
 
 [MIT](./LICENSE) © AnkioTomas
