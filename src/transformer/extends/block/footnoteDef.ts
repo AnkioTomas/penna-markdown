@@ -109,7 +109,15 @@ function finalizeFootnotes(
     };
   }
 
-  if (num === 0) return root;
+  // 增量 finalize 会再次进入；先拆掉上次注入的合成尾块，保证幂等。
+  const baseChildren = (root.children ?? []).filter(
+    (child) => child.props?.synthesized !== true,
+  );
+
+  if (num === 0) {
+    root.children = baseChildren;
+    return root;
+  }
 
   const items: FootnoteItem[] = [...idToNum.entries()]
     .sort((a, b) => a[1] - b[1])
@@ -121,11 +129,11 @@ function finalizeFootnotes(
 
   ctx.store.set(FOOTNOTE_ITEMS_KEY, items);
   let lineIndex = 0;
-  for (const child of root.children ?? []) {
+  for (const child of baseChildren) {
     lineIndex += child.length > 0 ? child.length : 0;
   }
   root.children = [
-    ...(root.children ?? []),
+    ...baseChildren,
     createNode("footnotes", 0, undefined, undefined, {
       sourceStartLine: lineIndex,
       synthesized: true,
