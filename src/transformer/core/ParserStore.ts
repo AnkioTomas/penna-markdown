@@ -88,4 +88,8 @@ export class ParserStore {
   getAll(): Record<string, unknown> {
     return this.store;
   }
+
+  getAllFinalizers(): Record<string, ParseFinalizer> {
+    return this.finalizers;
+  }
 }

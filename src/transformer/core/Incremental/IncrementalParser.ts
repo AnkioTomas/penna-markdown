@@ -349,6 +349,10 @@ export class IncrementalParser {
     for (const [key, value] of Object.entries(prevStore.getAll())) {
       if (!store.has(key)) store.set(key, value);
     }
+
+    for (const [name, fn] of Object.entries(prevStore.getAllFinalizers())) {
+      store.registerFinalizer(name, fn);
+    }
   }
 
   /**
