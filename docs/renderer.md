@@ -26,34 +26,31 @@ Markdown → 带主题的 DOM，需要 TOC、代码复制、图片放大。
 
 ## 最小示例
 
-独立渲染需要自行组装 **Theme + EventBus + Log**，再交给 `Renderer`。开发本仓库时可直接抄 `demo/modules/renderer/main.ts` / `demo/_common/theme.ts`：
+独立渲染需要自行组装 **Theme + EventBus + Log**，再交给 `Renderer`：
 
 ```typescript
-import { Renderer } from "@/renderer/Renderer.js";
-import { createDemoTheme } from "../../_common/theme.js"; // demo 封装
+import { Renderer, Theme, EventBus, Log } from "penna-markdown/renderer";
 
 const mount = document.getElementById("preview")!;
-const kit = createDemoTheme(mount.parentElement!);
+const root = mount.parentElement!;
 mount.classList.add("penna-render");
+
+const log = new Log(false);
+const eventBus = new EventBus(false, "[penna]", log);
+const theme = new Theme(eventBus, log, root);
 
 const renderer = new Renderer({
   mount,
-  theme: kit.theme,
-  eventBus: kit.eventBus,
-  logger: kit.log,
+  theme,
+  eventBus,
+  logger: log,
 });
 
-kit.theme.setTheme("github");
+theme.setTheme("github");
 renderer.render("# Hello\n\n**world**");
 ```
 
-npm 包入口为：
-
-```typescript
-import { Renderer } from "penna-markdown/renderer";
-```
-
-`Theme` / `EventBus` / `Log` 在源码中位于 `src/theme`、`src/core`；发布包目前以编辑器入口内聚最完整，只读场景建议参考 demo 组装方式。
+开发本仓库时可直接抄 `demo/modules/renderer/main.ts` / `demo/_common/theme.ts`（`createDemoTheme` 封装了同上组装）。
 
 样式：
 

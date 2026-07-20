@@ -47,6 +47,20 @@ export type {
 export type { ToolbarOptions } from "@/editor/toolbar/ToolbarOptions";
 export type { StorageAPI } from "@/core/StorageAPI";
 export type { EditorLayoutMode } from "@/editor/Layout";
+export type { TransformerEngineOptions } from "@/transformer/TransformerEngineOptions";
+export type { LightDark } from "@/theme/event/ThemeLightDarkEvent";
+export { Theme, EventBus, Log };
+export {
+  BaseInlineParser,
+  BaseBlockParser,
+} from "@/transformer/core/ParserBase";
+export type {
+  SyntaxOptions,
+  InlineParseResult,
+  BlockParseResult,
+} from "@/transformer/core/ParserBase";
+export { createNode } from "@/transformer/core/MarkdownNode";
+export type { MarkdownNode } from "@/transformer/core/MarkdownNode";
 
 /**
  * 创建带 class 的 DOM 元素

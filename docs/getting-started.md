@@ -100,7 +100,18 @@ const penna = new Penna(document.getElementById("editor")!, {
 
 ## 最小只读渲染
 
-完整组装（`Theme` + `EventBus` + `Log` + `Renderer`）见 [`renderer.md`](renderer.md)。本地可直接打开 Demo「独立渲染器」对照。
+```typescript
+import { Renderer, Theme, EventBus, Log } from "penna-markdown/renderer";
+
+const mount = document.getElementById("preview")!;
+const log = new Log(false);
+const eventBus = new EventBus(false, "[penna]", log);
+const theme = new Theme(eventBus, log, mount.parentElement!);
+
+new Renderer({ mount, theme, eventBus, logger: log }).render("# Hello");
+```
+
+完整说明见 [`renderer.md`](renderer.md)。本地可直接打开 Demo「独立渲染器」对照。
 
 ---
 

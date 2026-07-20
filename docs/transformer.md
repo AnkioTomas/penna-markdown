@@ -80,7 +80,7 @@ priority → 块级 parser。
 ## AST 要点
 
 ```typescript
-import { createNode } from "@/transformer/core/MarkdownNode";
+import { createNode } from "penna-markdown/transformer";
 
 // length：块级 = 行数；行内 = 字符跨度（必须准确，否则增量边界错乱）
 createNode("paragraph", 1, undefined, children);

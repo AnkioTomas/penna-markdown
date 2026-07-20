@@ -29,7 +29,7 @@ import { CodeListener } from "@/renderer/code/code";
 import { ImageListener } from "@/renderer/image/image";
 import { FootnoteListener } from "@/renderer/footnote/footnote";
 import hljs from "highlight.js/lib/common";
-import { RenderOption } from "@/renderer/RenderOption";
+import type { RenderOption } from "@/renderer/RenderOption";
 import { IncrementalSession } from "@/renderer/incremental/IncrementalSession.js";
 import { BlockIndex } from "@/renderer/incremental/BlockIndex.js";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
@@ -37,10 +37,29 @@ import type { PennaChangeLineSet } from "@/renderer/incremental/PennaChangeSet";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { ParserStore } from "@/transformer/core/ParserStore";
 import { Theme } from "@/theme/Theme";
-import { RenderResult } from "@/renderer/RenderResult";
+import type { RenderResult } from "@/renderer/RenderResult";
 import { EventBus } from "@/core/event/EventBus";
 import { Log } from "@/core/Log";
 import { THEME_EVENT_LIGHT_DARK } from "@/theme/event/ThemeLightDarkEvent";
+
+/** 独立使用 Renderer 时需要的 options / 依赖类 / 扩展基类 */
+export type { RenderOption } from "@/renderer/RenderOption";
+export type { RenderResult } from "@/renderer/RenderResult";
+export type { PennaChangeLineSet } from "@/renderer/incremental/PennaChangeSet";
+export { Theme, EventBus, Log, THEME_EVENT_LIGHT_DARK };
+export type { LightDark } from "@/theme/event/ThemeLightDarkEvent";
+export { THEME_EVENT_SKIN } from "@/theme/event/ThemeSkinEvent";
+export {
+  BaseInlineParser,
+  BaseBlockParser,
+} from "@/transformer/core/ParserBase";
+export type {
+  SyntaxOptions,
+  InlineParseResult,
+  BlockParseResult,
+} from "@/transformer/core/ParserBase";
+export { createNode } from "@/transformer/core/MarkdownNode";
+export type { MarkdownNode } from "@/transformer/core/MarkdownNode";
 
 /**
  * Markdown 预览渲染器。

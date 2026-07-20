@@ -15,16 +15,16 @@ tags: [reference, api]
 
 ## 包入口
 
-| import                       | 主要符号            | IIFE 全局名            |
-| ---------------------------- | ------------------- | ---------------------- |
-| `penna-markdown`             | `Penna`, `el`       | `PennaNextEditor`      |
-| `penna-markdown/renderer`    | `Renderer`          | `PennaNextRenderer`    |
-| `penna-markdown/transformer` | `TransformerEngine` | `PennaNextTransformer` |
+| import                       | 主要符号                                                               | IIFE 全局名            |
+| ---------------------------- | ---------------------------------------------------------------------- | ---------------------- |
+| `penna-markdown`             | `Penna`, `PennaOptions`, `Theme`, `EventBus`, `Log`, `el`              | `PennaNextEditor`      |
+| `penna-markdown/renderer`    | `Renderer`, `RenderOption`, `Theme`, `EventBus`, `Log`                 | `PennaNextRenderer`    |
+| `penna-markdown/transformer` | `TransformerEngine`, `TransformerEngineOptions`, `BaseInlineParser`, … | `PennaNextTransformer` |
 
 样式见 [`themes.md`](themes.md) 与 `package.json` `exports`。
 
 > [!NOTE]
-> 独立渲染还需自行组装 `Theme` + `EventBus` + `Log`（见 demo `modules/renderer`）。编辑器内部已完成组装。
+> 独立渲染从 `penna-markdown/renderer` 取 `Theme` + `EventBus` + `Log`，自行组装后交给 `Renderer`。编辑器内部已完成组装。
 
 ---
 
@@ -123,14 +123,26 @@ const penna = new Penna(rootEl, options?: PennaOptions);
 ## Renderer
 
 ```typescript
+import {
+  Renderer,
+  Theme,
+  EventBus,
+  Log,
+  type RenderOption,
+} from "penna-markdown/renderer";
+
+const log = new Log(false);
+const eventBus = new EventBus(false, "[penna]", log);
+const theme = new Theme(eventBus, log, rootEl);
+
 new Renderer({
   mount,
   theme,
   eventBus,
-  logger,
+  logger: log,
   inlineParsers?,
   blockParsers?,
-});
+} satisfies RenderOption);
 ```
 
 | 方法                        | 说明        |
@@ -148,13 +160,18 @@ new Renderer({
 ## TransformerEngine
 
 ```typescript
+import {
+  TransformerEngine,
+  type TransformerEngineOptions,
+} from "penna-markdown/transformer";
+
 new TransformerEngine({
   inlineParsers?,
   blockParsers?,
   syntaxOptions?,
   renderOptions?,
   isDark?,
-});
+} satisfies TransformerEngineOptions);
 ```
 
 | 方法                     | 说明          |

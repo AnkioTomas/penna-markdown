@@ -38,11 +38,14 @@ tags: [guide, extend]
 ## 行内 Parser 骨架
 
 ```typescript
-import { BaseInlineParser } from "@/transformer/core/ParserBase";
-import { createNode, type MarkdownNode } from "@/transformer/core/MarkdownNode";
-import type { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
-import type { RenderContext } from "@/transformer/core/context/RenderContext";
-import type { InlineParseResult } from "@/transformer/core/ParserBase";
+import {
+  BaseInlineParser,
+  createNode,
+  type MarkdownNode,
+  type InlineParseContext,
+  type RenderContext,
+  type InlineParseResult,
+} from "penna-markdown/transformer";
 
 class AtParser extends BaseInlineParser {
   constructor() {

@@ -8,15 +8,38 @@ import { InlineParseEngine } from "@/transformer/core/InlineParser.js";
 
 import { ParserStore } from "@/transformer/core/ParserStore.js";
 import { Registry } from "@/transformer/core/Registry.js";
-import { TransformerEngineOptions } from "@/transformer/TransformerEngineOptions";
-import { RenderContext } from "@/transformer/core/context/RenderContext";
-import { MarkdownNode } from "@/transformer/core/MarkdownNode";
+import type { TransformerEngineOptions } from "@/transformer/TransformerEngineOptions";
+import type { RenderContext } from "@/transformer/core/context/RenderContext";
+import type { MarkdownNode } from "@/transformer/core/MarkdownNode";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
-import {
+import type {
   IncrementalParseRange,
   IncrementalParseResult,
 } from "@/transformer/core/Incremental/IncrementalParseRange";
 import { IncrementalParser } from "@/transformer/core/Incremental/IncrementalParser";
+
+/** 独立使用 TransformerEngine 时需要的 options / AST / 扩展基类 */
+export type { TransformerEngineOptions } from "@/transformer/TransformerEngineOptions";
+export {
+  BaseInlineParser,
+  BaseBlockParser,
+} from "@/transformer/core/ParserBase";
+export type {
+  SyntaxOptions,
+  ParserOptions,
+  InlineParseResult,
+  BlockParseResult,
+  LineRange,
+} from "@/transformer/core/ParserBase";
+export { createNode, inlineSourceSpan } from "@/transformer/core/MarkdownNode";
+export type { MarkdownNode } from "@/transformer/core/MarkdownNode";
+export type {
+  IncrementalParseRange,
+  IncrementalParseResult,
+} from "@/transformer/core/Incremental/IncrementalParseRange";
+export type { InlineParseContext } from "@/transformer/core/context/InlineParseContext";
+export type { BlockParseContext } from "@/transformer/core/context/BlockParseContext";
+export type { RenderContext } from "@/transformer/core/context/RenderContext";
 
 /**
  * Markdown 解析与 HTML 渲染核心引擎。
