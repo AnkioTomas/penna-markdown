@@ -282,7 +282,6 @@ function positionHunkPanel(
   panel.style.position = "fixed";
   panel.style.left = `${left}px`;
   panel.style.top = `${top}px`;
-  panel.style.zIndex = "10000";
 }
 
 export const aiDiffHunkActionsPlugin = ViewPlugin.fromClass(

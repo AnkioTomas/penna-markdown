@@ -13,6 +13,10 @@ dist-demo
 dist-ssr
 *.local
 
+# SCSS / 编译产物（源码只保留 .scss，CSS 与 sourcemap 由 build 输出到 dist）
+src/theme/**/*.css
+*.map
+
 # Penna directories and files
 .vscode/*
 !.vscode/extensions.json
