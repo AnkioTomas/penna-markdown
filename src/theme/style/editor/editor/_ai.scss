@@ -147,9 +147,12 @@
   box-shadow: inset 3px 0 0 var(--penna-c-danger, #c62828);
 }
 
-/* 悬浮确认条：每个变更块一对按钮，锚定在块首行右侧 */
+/* 悬浮确认条：每个变更块一对按钮，锚定在块首行右侧
+ * z-index 高于 toolbar(30)，低于 toolbar menu(200) / dialog(1000)
+ * 避免设置弹层打开时按钮飘在弹层之上 */
 .penna-ai-hunk-actions {
   position: fixed;
+  z-index: 40;
   display: none;
   align-items: center;
   gap: 4px;
