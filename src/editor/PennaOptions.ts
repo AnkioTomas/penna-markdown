@@ -3,26 +3,8 @@ import type { EditorOptions } from "@/editor/editor/EditorOptions";
 import type { PreviewOptions } from "@/editor/preview/PreviewOptions";
 import type { SideBarOptions } from "@/editor/sidebar/SideBarOptions";
 import type { ToolbarOptions } from "@/editor/toolbar/ToolbarOptions";
-import type { TransformerEngineOptions } from "@/transformer/TransformerEngineOptions";
 import { LightDark } from "@/theme/event/ThemeLightDarkEvent";
 import type { StorageAPI } from "@/core/StorageAPI";
-
-/** 文件解析/上传回调，由宿主实现 */
-export type OnParseFile = (file: File) => Promise<{ url: string; msg: string }>;
-
-/**
- * AI 请求回调，由宿主实现。
- * @param action  操作 id（内置或自定义 toolbar 子项 payload.action）
- * @param text    当前选中文本
- * @param prompts 仅「自定义」操作时传入用户输入
- * @param onUpdate 流式更新回调，应传入增量字符串 (delta) 而非全文。
- */
-export type OnAiRequest = (
-  action: string,
-  text: string,
-  prompts?: string,
-  onUpdate?: (contentDelta?: string, thinkingDelta?: string) => void,
-) => Promise<string>;
 
 /** {@link Penna} 构造选项 */
 export interface PennaOptions {
@@ -47,13 +29,6 @@ export interface PennaOptions {
   statusbar?: boolean;
   /** 本地存储 API，默认使用 `localStorage` */
   storage?: StorageAPI;
-  /**
-   * AI 请求回调；与 `editor.onAiRequest` 等价，`editor` 内配置优先。
-   * 未配置时 AI 工具栏命令会静默失败。
-   */
-  onAiRequest?: OnAiRequest;
-  /** 文件解析/上传回调；与 `editor.onParseFile` 等价，`editor` 内配置优先。 */
-  onParseFile?: OnParseFile;
   /** 编辑区选项 */
   editor?: EditorOptions;
   /** 预览区选项 */
