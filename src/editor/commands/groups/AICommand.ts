@@ -13,20 +13,22 @@ export function createAICommand(action: string): Command {
       ctx: CommandContext,
     ): boolean | Promise<boolean> {
       const onAiRequest = ctx.onAiRequest;
-      if (!onAiRequest) return false;
+      const theme = ctx.theme;
+      const eventBus = ctx.eventBus;
+      const logger = ctx.logger;
+      if (!onAiRequest || !theme || !logger) return false;
 
       if (action === "custom") {
-        const eventBus = ctx.eventBus;
         if (!eventBus) return false;
         return (async () => {
           const result = await requestDialog(eventBus, "aiCustom");
           if (!result?.prompts) return false;
-          runAIAction(view, action, onAiRequest, result.prompts);
+          runAIAction(view, action, onAiRequest, theme, logger, result.prompts);
           return true;
         })();
       }
 
-      runAIAction(view, action, onAiRequest);
+      runAIAction(view, action, onAiRequest, theme, logger);
       return true;
     },
   };

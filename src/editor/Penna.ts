@@ -240,6 +240,7 @@ export class Penna {
     this.commandBridge = new CommandBridge(
       this.eventBus,
       this.theme,
+      this.log,
       () => this.editor.getView(),
       () => this.preview.getStore(),
       this.onAiRequest,

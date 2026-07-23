@@ -71,22 +71,31 @@
   color: color-mix(in srgb, var(--penna-c-text-1) 70%, transparent);
   font-size: 14px;
   font-family: var(--penna-font-family);
-  white-space: pre-wrap;
   margin-bottom: 16px;
   border-left: 3px solid
     color-mix(in srgb, var(--penna-c-brand-1) 50%, transparent);
   padding-left: 12px;
 
-  &:empty {
+  &[hidden] {
     display: none;
   }
+}
+
+.penna .penna-ai-mask-thinking summary {
+  cursor: pointer;
+  font-weight: 500;
+  user-select: none;
+  outline: none;
+}
+
+.penna .penna-ai-mask-thinking-content {
+  margin-top: 8px;
 }
 
 .penna .penna-ai-mask-partial {
   color: var(--penna-c-text-1);
   font-size: 16px;
   line-height: 1.8;
-  white-space: pre-wrap;
   font-family: var(--penna-font-family);
 }
 

@@ -1,8 +1,11 @@
 import type { EditorView } from "@codemirror/view";
 import type { OnAiRequest } from "@/editor/PennaOptions";
+import type { Theme } from "@/theme/Theme";
+import type { Log } from "@/core/Log";
 import { enterDiffPhase } from "./codemirror/diff-ui";
 import {
   allocGenId,
+  aiMaskPlugin,
   aiStateField,
   isAILocked,
   setAIState,
@@ -44,6 +47,8 @@ export function getAITargetRange(view: EditorView): {
  * @param view 要读取和更新的编辑器视图。
  * @param action 要执行的 AI 操作标识。
  * @param aiRequest 调用 AI 服务的请求函数。
+ * @param theme 流式 Markdown 预览主题（两个 Renderer 共享）。
+ * @param logger 日志实例（两个 Renderer 共享）。
  * @param prompts 自定义操作附带的可选提示词。
  * @param range 覆盖当前选区的可选目标范围。
  */
@@ -51,6 +56,8 @@ export function runAIAction(
   view: EditorView,
   action: string,
   aiRequest: AIRequestFn,
+  theme: Theme,
+  logger: Log,
   prompts?: string,
   range?: { from: number; to: number; text: string },
 ) {
@@ -74,37 +81,14 @@ export function runAIAction(
     }),
   });
 
-  aiRequest(action, text, prompts, (content, thinking) => {
+  aiRequest(action, text, prompts, (contentDelta, thinkingDelta) => {
     const state = view.state.field(aiStateField);
     if (state.phase !== "generating" || state.genId !== genId) return;
 
-    const mask = view.dom
-      .closest(".penna")
-      ?.querySelector(".penna-ai-mask-global");
-    if (!mask) return;
-
-    const thinkingEl = mask.querySelector(".penna-ai-mask-thinking");
-    const partialEl = mask.querySelector(".penna-ai-mask-partial");
-    const bodyEl = mask.querySelector(".penna-ai-mask-body");
-
-    let changed = false;
-    if (thinkingEl && thinking) {
-      const oldThinking = thinkingEl.textContent;
-      if (oldThinking !== thinking) {
-        thinkingEl.textContent = thinking;
-        changed = true;
-      }
-    }
-    if (partialEl && content !== undefined) {
-      const oldText = partialEl.textContent;
-      if (oldText !== content) {
-        partialEl.textContent = content;
-        changed = true;
-      }
-    }
-
-    if (changed && bodyEl) {
-      bodyEl.scrollTop = bodyEl.scrollHeight;
+    if (contentDelta || thinkingDelta) {
+      view
+        .plugin(aiMaskPlugin)
+        ?.setStream(contentDelta, thinkingDelta, theme, logger);
     }
   })
     .then((result) => {

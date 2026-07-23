@@ -10,6 +10,7 @@ import type { EventBus } from "@/core/event/EventBus";
 import type { Theme } from "@/theme/Theme";
 import { ParserStore } from "@/transformer/core/ParserStore";
 import type { OnAiRequest } from "@/editor/PennaOptions";
+import type { Log } from "@/core/Log";
 
 /** 命令注册表中的命令名字符串，如 `"bold"`、`"link"`。 */
 export type EditorCommand = string;
@@ -24,6 +25,8 @@ export interface CommandContext {
   eventBus?: EventBus;
   /** 主题实例，用于 `setTheme` 等皮肤 API。 */
   theme?: Theme;
+  /** 日志实例，供命令内部使用。 */
+  logger?: Log;
   /**
    * 获取最近一次成功渲染的 ParserStore。
    * 尚未渲染或无 AST 时返回 `null`（禁止伪造空 store）。
