@@ -93,8 +93,7 @@ version: 0.1.0
 | \`storage\` | 带前缀的 localStorage | 持久化分栏比例等 |
 | \`editor.value\` | 加载占位文案 | 初始 Markdown |
 | \`editor.lineNumbers\` | \`true\` | 编辑区行号 |
-| \`editor.onAiRequest\` | mock AI | 启用 AI 工具栏与行级 diff |
-| \`editor.onAiRequestCancel\` | （未接） | 用户取消 AI 时回调；本 Demo 未绑定 |
+| \`editor.onAiRequest\` | mock AI（含 \`signal\`） | 启用 AI 工具栏与行级 diff；取消时 abort |
 | \`editor.onParseFile\` | mock 上传 | 粘贴/拖入图片等文件 |
 | \`preview.maxWidth\` | \`"720px"\` | **仅预览布局**下限制预览宽度 |
 | \`preview.transformerEngineOptions.inlineParsers\` | \`CustomAtParser\` | 注入自定义行内语法 |

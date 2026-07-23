@@ -15,11 +15,11 @@ tags: [reference, api]
 
 ## 包入口
 
-| import                       | 主要符号                                                                                                                                               | IIFE 全局名            |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- |
-| `penna-markdown`             | `Penna`, `PennaOptions`, `EditorOptions`, `OnAiRequest`, `OnAiRequestCancel`, `OnParseFile`, `DEFAULT_TOOLBAR_ITEMS`, `Theme`, `EventBus`, `Log`, `el` | `PennaNextEditor`      |
-| `penna-markdown/renderer`    | `Renderer`, `RenderOption`, `Theme`, `EventBus`, `Log`                                                                                                 | `PennaNextRenderer`    |
-| `penna-markdown/transformer` | `TransformerEngine`, `TransformerEngineOptions`, `BaseInlineParser`, …                                                                                 | `PennaNextTransformer` |
+| import                       | 主要符号                                                                                                                          | IIFE 全局名            |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `penna-markdown`             | `Penna`, `PennaOptions`, `EditorOptions`, `OnAiRequest`, `OnParseFile`, `DEFAULT_TOOLBAR_ITEMS`, `Theme`, `EventBus`, `Log`, `el` | `PennaNextEditor`      |
+| `penna-markdown/renderer`    | `Renderer`, `RenderOption`, `Theme`, `EventBus`, `Log`                                                                            | `PennaNextRenderer`    |
+| `penna-markdown/transformer` | `TransformerEngine`, `TransformerEngineOptions`, `BaseInlineParser`, …                                                            | `PennaNextTransformer` |
 
 样式见 [`themes.md`](themes.md) 与 `package.json` `exports`。
 
@@ -286,13 +286,8 @@ AST → HTML 字符串。
 :::
 
 ::: field OnAiRequest
-@type (action: string, text: string, prompts?: string, onUpdate?: (contentDelta?: string, thinkingDelta?: string) => void) => Promise<string>
-`editor.onAiRequest`：AI 生成；`onUpdate` 传增量 delta，非全文。
-:::
-
-::: field OnAiRequestCancel
-@type (action: string) => void
-`editor.onAiRequestCancel`：用户取消进行中的 AI 请求。
+@type (action: string, text: string, prompts?: string, onUpdate?: (contentDelta?: string, thinkingDelta?: string) => void, signal?: AbortSignal) => Promise<string>
+`editor.onAiRequest`：AI 生成；`onUpdate` 传增量 delta；`signal` 在用户取消时 abort。
 :::
 
 ::::

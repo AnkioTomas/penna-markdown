@@ -133,13 +133,7 @@ penna.destroy();
 ::: field onAiRequest
 @type OnAiRequest
 @optional
-AI 请求回调。省略时 AI 工具栏命令会静默失败。签名见 [回调类型](#回调类型)。
-:::
-
-::: field onAiRequestCancel
-@type OnAiRequestCancel
-@optional
-用户主动取消 AI 请求时的回调（例如关闭生成中的 diff 面板）。
+AI 请求回调。省略时 AI 工具栏命令会静默失败。签名见 [回调类型](#回调类型)。用户取消生成时编辑器会 `abort` 传入的 `signal`。
 :::
 
 ::: field onParseFile
@@ -350,11 +344,7 @@ SVG 字符串；未配置时按 `id` 回退默认图标。
 类型定义在 `EditorOptions`，并由包入口 re-export：
 
 ```typescript
-import type {
-  OnAiRequest,
-  OnAiRequestCancel,
-  OnParseFile,
-} from "penna-markdown";
+import type { OnAiRequest, OnParseFile } from "penna-markdown";
 ```
 
 :::: field-group
@@ -365,13 +355,8 @@ import type {
 :::
 
 ::: field OnAiRequest
-@type (action: string, text: string, prompts?: string, onUpdate?: (contentDelta?: string, thinkingDelta?: string) => void) => Promise<string>
-AI 请求。`action` 为内置或自定义操作 id；`text` 为选区（无选区则为全文）；`prompts` 仅「自定义」操作时传入用户输入；`onUpdate` 为流式增量回调（应传 delta，非全文）；最终 `Promise` resolve 为完整替换正文。
-:::
-
-::: field OnAiRequestCancel
-@type (action: string) => void
-用户主动取消进行中的 AI 请求时调用。
+@type (action: string, text: string, prompts?: string, onUpdate?: (contentDelta?: string, thinkingDelta?: string) => void, signal?: AbortSignal) => Promise<string>
+AI 请求。`action` 为内置或自定义操作 id；`text` 为选区（无选区则为全文）；`prompts` 仅「自定义」操作时传入用户输入；`onUpdate` 为流式增量回调（应传 delta，非全文）；`signal` 在用户取消（Esc / 关闭面板）时会被 abort，宿主应中止上游请求；最终 `Promise` resolve 为完整替换正文。
 :::
 
 ::::
@@ -468,13 +453,11 @@ new Penna(el, {
 ```typescript
 new Penna(el, {
   editor: {
-    onAiRequest: async (action, text, prompts, onUpdate) => {
+    onAiRequest: async (action, text, prompts, onUpdate, signal) => {
       // action: polish | proofread | translate | summarize | custom …
       // onUpdate?.(contentDelta, thinkingDelta) — 流式增量
-      return await callYourLLM(action, text, prompts, onUpdate);
-    },
-    onAiRequestCancel: (action) => {
-      abortYourLLM(action);
+      // signal — 用户取消时 abort；请传给 fetch / 上游 SDK
+      return await callYourLLM(action, text, prompts, onUpdate, signal);
     },
     onParseFile: async (file) => {
       const url = await upload(file);
@@ -484,7 +467,7 @@ new Penna(el, {
 });
 ```
 
-未配置 `editor.onAiRequest` 时，AI 工具栏命令会静默失败。
+未配置 `editor.onAiRequest` 时，AI 工具栏命令会静默失败。取消生成时编辑器会调用 `AbortController.abort()`，宿主应监听 `signal` 中止请求。
 
 ---
 
