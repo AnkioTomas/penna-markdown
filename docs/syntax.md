@@ -9,6 +9,7 @@ repo: https://github.com/AnkioTomas/penna-markdown
 # [[title]]
 
 > [[subtitle]] — 完整可渲染样例见 [simple.md](simple.md)；边界/压力见 [test.md](test.md)。
+> 正确写法一览（人机共用）：[help-ai.md](help-ai.md)。
 
 ---
 

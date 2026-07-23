@@ -65,12 +65,19 @@ function allSamples(): Sample[] {
   ];
 }
 
+function stripFencedCode(markdown: string): string {
+  return markdown
+    .replace(/^ {0,3}(`{3,}|~{3,}).*?\n[\s\S]*?^\s*\1\s*$/gm, "")
+    .replace(/```[\s\S]*?```/g, "");
+}
+
 function scanFieldIssues(markdown: string): string[] {
+  const body = stripFencedCode(markdown);
   const issues: string[] = [];
-  if (ILLEGAL_FIELD_DIRECTIVE_RE.test(markdown)) {
+  if (ILLEGAL_FIELD_DIRECTIVE_RE.test(body)) {
     issues.push("illegal field directive (@param/@returns/@readonly)");
   }
-  if (FIELD_NAME_WITH_SPACE_RE.test(markdown)) {
+  if (FIELD_NAME_WITH_SPACE_RE.test(body)) {
     issues.push("field name contains whitespace (breaks ::: field parser)");
   }
   return issues;
@@ -95,7 +102,8 @@ describe("docs/demo markdown smoke", () => {
       }).not.toThrow();
       expect(typeof html).toBe("string");
 
-      if (TIMELINE_WITH_ITEM_RE.test(sample.markdown)) {
+      const liveMarkdown = stripFencedCode(sample.markdown);
+      if (TIMELINE_WITH_ITEM_RE.test(liveMarkdown)) {
         expect(html).toContain("penna-timeline");
         expect(html).toContain("penna-timeline-time");
       }

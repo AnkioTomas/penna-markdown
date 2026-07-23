@@ -14,6 +14,7 @@
 - [API 速查](api.md)
 - [架构概览](architecture.md)
 - [语法索引](syntax.md)
+- [语法手册](help-ai.md)
 
 ## 样例与回归
 

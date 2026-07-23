@@ -70,6 +70,11 @@ Logo 色板、default 主题造型语言。
 对外接口，对齐源码。
 :::
 
+::: link-card AI 语法手册 link="help-ai.md"
+
+正确写法一览，人机共用，可整篇喂给模型。
+:::
+
 ::: link-card 架构概览 link="architecture.md"
 
 三层拆分与数据流（维护者）。
