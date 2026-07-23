@@ -532,75 +532,65 @@ pnpm dev
     markdown: `### 节点类型
 
 ::: timeline
-- 成功节点
-  time=2025-03-20 type=success
+
+- [2025-03-20:success] 成功节点
 
   成功类型，线条与圆点同色。
 
-- 警告节点
-  time=2025-04-20 type=warning
+- [2025-04-20:warning] 警告节点
 
   警告类型。
 
-- 危险节点
-  time=2025-05-01 type=danger
+- [2025-05-01:danger] 危险节点
 
   危险类型。
 
-- 重要节点
-  time=2025-06-01 type=important
+- [2025-06-01:important] 重要节点
 
   重要类型。
 
-- 提示节点
-  time=2025-07-01 type=tip
+- [2025-07-01:tip] 提示节点
 
   提示类型。
+
 :::
 
 ### 线条风格
 
 ::: timeline line="dotted"
-- 继承 dotted
-  time=2025-03-20
 
-  容器级 line=dotted
+- [2025-03-20] 继承 dotted
 
-- 覆盖 dashed
-  time=2025-04-20 line=dashed
+  容器级 \`line="dotted"\`，所有节点共用。
 
-  单项 line=dashed
+- [2025-04-20:success] 另一节点
+
+  仍继承容器线条风格（不支持单项覆盖）。
+
 :::
 
 ### 布局 placement
 
 ::: timeline placement="right"
-- 右侧节点
-  time=2025-03-20 type=success
+
+- [2025-03-20:success] 右侧节点
 
   内容在时间轴右侧。
+
 :::
 
 ::: timeline placement="between"
-- 右侧
-  time=2025-03-20 placement=right type=success
 
-  placement=right
+- [2025-03-20:success] 右侧
 
-- 左侧
-  time=2025-04-20 type=warning
+  两端模式下奇数项在右。
 
-  默认左侧
+- [2025-04-20:warning] 左侧
+
+  偶数项在左。
+
 :::
-
-### 自定义颜色
-
-::: timeline
-- 自定义
-  time=2025-03-20 color=#6366f1
-
-  \`color=#6366f1\` 覆盖线条与圆点。
-:::`,
+`,
   },
   {
     id: "enhanced-code",
