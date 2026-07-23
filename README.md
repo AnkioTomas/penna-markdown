@@ -26,7 +26,7 @@
 - **三入口分包**：编辑器 / 渲染器 / 转换器可单独引用
 - **增量预览**：脏块更新，失败自动全量兜底
 - **主题**：`default`（Logo 品牌色）/ `claude` / `github` / `morandi` / `latex` / `vue` / `notion`
-- **钩子**：`editor.onAiRequest`（行级 diff）、`editor.onParseFile`（粘贴/拖入上传）
+- **钩子**：`editor.onAiRequest` / `editor.onAiRequestCancel`（行级 diff）、`editor.onParseFile`（粘贴/拖入上传）
 - **可扩展**：按 priority 注册自定义行内/块级 Parser
 
 ## 安装

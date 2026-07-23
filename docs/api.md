@@ -15,11 +15,11 @@ tags: [reference, api]
 
 ## 包入口
 
-| import                       | 主要符号                                                               | IIFE 全局名            |
-| ---------------------------- | ---------------------------------------------------------------------- | ---------------------- |
-| `penna-markdown`             | `Penna`, `PennaOptions`, `Theme`, `EventBus`, `Log`, `el`              | `PennaNextEditor`      |
-| `penna-markdown/renderer`    | `Renderer`, `RenderOption`, `Theme`, `EventBus`, `Log`                 | `PennaNextRenderer`    |
-| `penna-markdown/transformer` | `TransformerEngine`, `TransformerEngineOptions`, `BaseInlineParser`, … | `PennaNextTransformer` |
+| import                       | 主要符号                                                                                                                                               | IIFE 全局名            |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- |
+| `penna-markdown`             | `Penna`, `PennaOptions`, `EditorOptions`, `OnAiRequest`, `OnAiRequestCancel`, `OnParseFile`, `DEFAULT_TOOLBAR_ITEMS`, `Theme`, `EventBus`, `Log`, `el` | `PennaNextEditor`      |
+| `penna-markdown/renderer`    | `Renderer`, `RenderOption`, `Theme`, `EventBus`, `Log`                                                                                                 | `PennaNextRenderer`    |
+| `penna-markdown/transformer` | `TransformerEngine`, `TransformerEngineOptions`, `BaseInlineParser`, …                                                                                 | `PennaNextTransformer` |
 
 样式见 [`themes.md`](themes.md) 与 `package.json` `exports`。
 
@@ -114,13 +114,31 @@ const penna = new Penna(rootEl, options?: PennaOptions);
 
 ### PennaOptions
 
-见 [`editor.md`](editor.md)。关键字段：`layout`、`appearance`、`themeId`、`themes`、`debug`、`toolbar`、`sidebar`、`statusbar`、`storage`、`onAiRequest`、`onParseFile`、`editor`、`preview`。
+完整字段说明见 [`editor.md`](editor.md)。结构一览：
+
+| 字段         | 类型                          | 说明                                                 |
+| ------------ | ----------------------------- | ---------------------------------------------------- |
+| `layout`     | `EditorLayoutMode`            | 初始布局，默认 `split`                               |
+| `appearance` | `light` \| `dark`             | 明暗，默认 `light`                                   |
+| `themeId`    | `string`                      | 皮肤 id，默认 `default`                              |
+| `themes`     | `string[]`                    | 主题白名单；省略 = 全部                              |
+| `debug`      | `boolean`                     | 调试日志                                             |
+| `toolbar`    | `ToolbarOptions` \| `false`   | 工具栏；`false` 关闭                                 |
+| `sidebar`    | `SideBarOptions` \| `boolean` | 侧栏；`false` 隐藏                                   |
+| `statusbar`  | `boolean`                     | 状态栏，默认 `true`                                  |
+| `storage`    | `StorageAPI`                  | 本地存储                                             |
+| `editor`     | `EditorOptions`               | 编辑区（含 AI / 上传回调）                           |
+| `preview`    | `PreviewOptions`              | 预览区（含 `transformerEngineOptions` / `maxWidth`） |
+
+嵌套选项同样在 [`editor.md`](editor.md) 分节列出：`EditorOptions`、`PreviewOptions`、`ToolbarOptions`、`SideBarOptions`、`StorageAPI`、回调类型。
 
 自定义解析：`preview.transformerEngineOptions`（**没有**顶层 `transformer` 字段）。
 
 ---
 
 ## Renderer
+
+构造选项完整说明见 [`renderer.md`](renderer.md)（`mount` / `theme` / `eventBus` / `logger` / `inlineParsers` / `blockParsers`）。
 
 ```typescript
 import {
@@ -159,6 +177,8 @@ new Renderer({
 
 ## TransformerEngine
 
+构造选项完整说明见 [`transformer.md`](transformer.md)（`inlineParsers` / `blockParsers` / `syntaxOptions` / `renderOptions` / `isDark`）。
+
 ```typescript
 import {
   TransformerEngine,
@@ -196,15 +216,32 @@ new TransformerEngine({
 
 ## 回调类型
 
+定义在 `EditorOptions`，由 `penna-markdown` 入口 re-export：
+
 ```typescript
+import type {
+  OnAiRequest,
+  OnAiRequestCancel,
+  OnParseFile,
+} from "penna-markdown";
+
 type OnParseFile = (file: File) => Promise<{ url: string; msg: string }>;
 
 type OnAiRequest = (
   action: string,
   text: string,
   prompts?: string,
+  onUpdate?: (contentDelta?: string, thinkingDelta?: string) => void,
 ) => Promise<string>;
+
+type OnAiRequestCancel = (action: string) => void;
 ```
+
+| 类型                | 用途                                                   |
+| ------------------- | ------------------------------------------------------ |
+| `OnParseFile`       | `editor.onParseFile`：粘贴/拖入文件上传                |
+| `OnAiRequest`       | `editor.onAiRequest`：AI 生成；`onUpdate` 传增量 delta |
+| `OnAiRequestCancel` | `editor.onAiRequestCancel`：用户取消进行中的 AI 请求   |
 
 ---
 

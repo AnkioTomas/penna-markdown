@@ -40,7 +40,7 @@ penna.destroy();
 
 ---
 
-## 构造选项一览
+## PennaOptions
 
 :::: field-group
 
@@ -65,61 +65,296 @@ penna.destroy();
 ::: field themes
 @type string[]
 @optional
-主题白名单；空数组或省略 = 全部内置主题。
+主题白名单，控制 `Theme` 与工具栏主题菜单；空数组或省略 = 全部内置主题。
 :::
 
 ::: field debug
 @type boolean
 @default false
-调试日志与状态栏渲染耗时。
+调试日志；开启后 `theme.logD` 与状态栏渲染耗时才会输出。
 :::
 
 ::: field toolbar
 @type ToolbarOptions | false
 @optional
-`false` 关闭工具栏；`items` 为整表替换（省略则用默认表）。基于默认增删请展开 `DEFAULT_TOOLBAR_ITEMS`。
+`false` 不实例化工具栏；对象见下方 [ToolbarOptions](#toolbaroptions)。省略则使用默认工具栏。
 :::
 
 ::: field sidebar
 @type SideBarOptions | boolean
 @optional
-`false` 隐藏；对象可配 `fetchFiles` / `onFileClick` / `maxWidth`。
+`false` 隐藏侧栏；`true` / 省略显示默认侧栏；对象见下方 [SideBarOptions](#sidebaroptions)。
 :::
 
 ::: field statusbar
 @type boolean
 @default true
-底部状态栏。
+底部状态栏；`false` 隐藏。
 :::
 
 ::: field storage
 @type StorageAPI
 @optional
-分栏比例等本地持久化；默认 `localStorage`。
-:::
-
-::: field onAiRequest
-@type OnAiRequest
-@optional
-AI 请求；与 `editor.onAiRequest` 等价，**editor 内优先**。
-:::
-
-::: field onParseFile
-@type OnParseFile
-@optional
-粘贴/拖入文件上传；与 `editor.onParseFile` 等价，**editor 内优先**。
+分栏比例等本地持久化；默认使用 `localStorage`（不可用时回退内存）。接口见下方 [StorageAPI](#storageapi)。
 :::
 
 ::: field editor
 @type EditorOptions
 @optional
-`value` / `lineNumbers` / `onAiRequest` / `onParseFile`。
+编辑区选项，见下方 [EditorOptions](#editoroptions)。
 :::
 
 ::: field preview
 @type PreviewOptions
 @optional
-`maxWidth` / `transformerEngineOptions`。
+预览区选项，见下方 [PreviewOptions](#previewoptions)。
+:::
+
+::::
+
+---
+
+## EditorOptions
+
+:::: field-group
+
+::: field value
+@type string
+@optional
+初始 Markdown 正文。
+:::
+
+::: field lineNumbers
+@type boolean
+@default true
+编辑区是否显示行号。
+:::
+
+::: field onAiRequest
+@type OnAiRequest
+@optional
+AI 请求回调。省略时 AI 工具栏命令会静默失败。签名见 [回调类型](#回调类型)。
+:::
+
+::: field onAiRequestCancel
+@type OnAiRequestCancel
+@optional
+用户主动取消 AI 请求时的回调（例如关闭生成中的 diff 面板）。
+:::
+
+::: field onParseFile
+@type OnParseFile
+@optional
+粘贴或拖入文件时的解析/上传回调。省略时不会发起上传。
+:::
+
+::::
+
+---
+
+## PreviewOptions
+
+:::: field-group
+
+::: field maxWidth
+@type number | string
+@optional
+**仅「纯预览」布局**下限制预览版心宽度，例如 `800` 或 `"720px"` / `"50rem"`。分栏与纯编辑布局忽略此值。
+:::
+
+::: field transformerEngineOptions
+@type TransformerEngineOptions
+@optional
+预览解析引擎选项（自定义行内/块级 parser、`syntaxOptions`、`isDark` 等）。详见 [`transformer.md`](transformer.md)。**没有**顶层 `transformer` 字段。
+:::
+
+::::
+
+---
+
+## ToolbarOptions
+
+:::: field-group
+
+::: field items
+@type ToolbarItem[]
+@optional
+工具栏完整项目列表。传入后**整表替换**默认项（含空数组）；省略则使用 `DEFAULT_TOOLBAR_ITEMS`。基于默认增删请先展开默认表。
+:::
+
+::: field onClick
+@type (id: string, ctx: ToolbarContext) => void
+@optional
+自定义按钮全局点击回调，在 `ctx.execute` **之后**旁路调用，**不会替代**命令分发。需要拦截行为时用 `items[].onClick`。
+:::
+
+::::
+
+### ToolbarItem
+
+`items` 中每一项为联合类型：`button` | `menu` | `separator`。
+
+:::: field-group
+
+::: field id
+@type string
+@required
+全局唯一 id，用于排序与覆盖。
+:::
+
+::: field type
+@type `"button" | "menu" | "separator"`
+@optional
+项目类型；按钮可省略（默认 button）。
+:::
+
+::: field label
+@type string
+@required（button / menu）
+按钮或菜单的显示文案。
+:::
+
+::: field title
+@type string
+@optional
+悬停提示。
+:::
+
+::: field icon
+@type string
+@optional
+SVG 字符串；未配置时按 `id` 回退默认图标。
+:::
+
+::: field mobileOverflow
+@type boolean
+@optional
+为 `true` 时在移动端收进「更多」菜单。
+:::
+
+::: field onClick
+@type (ctx: ToolbarContext) => void
+@optional
+仅 `button`：单项点击回调。可调用 `ctx.execute(commandId)` / `ctx.focus()`。
+:::
+
+::: field children
+@type ToolbarItem[]
+@required（menu）
+仅 `menu`：子菜单项列表。
+:::
+
+::::
+
+`ToolbarContext`：`eventBus`、`execute(id)`、`focus()`。
+
+---
+
+## SideBarOptions
+
+:::: field-group
+
+::: field maxWidth
+@type number
+@default 300
+侧栏最大宽度（px）。
+:::
+
+::: field fetchFiles
+@type () => Promise\<PennaFileItem[]\>
+@optional
+异步获取文件列表。未提供时侧栏**只显示大纲**。
+:::
+
+::: field onFileClick
+@type (fileId: string) => void
+@optional
+点击文件列表项时的回调。宿主应自行加载内容并调用 `setSidebarActiveFile`。
+:::
+
+::::
+
+### PennaFileItem
+
+:::: field-group
+
+::: field id
+@type string
+@required
+文件唯一标识。
+:::
+
+::: field title
+@type string
+@required
+文件名称。
+:::
+
+::: field updateTime
+@type string
+@required
+更新时间展示字符串。
+:::
+
+::: field summary
+@type string
+@required
+简介或前文预览片段。
+:::
+
+::::
+
+---
+
+## StorageAPI
+
+本地存储契约；默认由内部 `createDefaultStorage()` 适配。
+
+:::: field-group
+
+::: field getItem(key)
+@param key string
+@returns string | null
+读取键值。
+:::
+
+::: field setItem(key, value)
+@param key string
+@param value string
+写入键值。
+:::
+
+::::
+
+---
+
+## 回调类型
+
+类型定义在 `EditorOptions`，并由包入口 re-export：
+
+```typescript
+import type {
+  OnAiRequest,
+  OnAiRequestCancel,
+  OnParseFile,
+} from "penna-markdown";
+```
+
+:::: field-group
+
+::: field OnParseFile
+@type (file: File) => Promise\<{ url: string; msg: string }\>
+粘贴/拖入文件时由宿主上传或解析，返回可写入文档的 URL 与展示文案。
+:::
+
+::: field OnAiRequest
+@type (action, text, prompts?, onUpdate?) => Promise\<string\>
+AI 请求。`action` 为内置或自定义操作 id；`text` 为选区（无选区则为全文）；`prompts` 仅「自定义」操作时传入用户输入；`onUpdate(contentDelta?, thinkingDelta?)` 为流式增量回调（应传 delta，非全文）；最终 `Promise` resolve 为完整替换正文。
+:::
+
+::: field OnAiRequestCancel
+@type (action: string) => void
+用户主动取消进行中的 AI 请求时调用。
 :::
 
 ::::
@@ -207,7 +442,7 @@ new Penna(el, {
 });
 ```
 
-详见 [`extend.md`](extend.md)。
+详见 [`extend.md`](extend.md) 与 [`transformer.md`](transformer.md)。
 
 ---
 
@@ -216,9 +451,13 @@ new Penna(el, {
 ```typescript
 new Penna(el, {
   editor: {
-    onAiRequest: async (action, text, prompts) => {
+    onAiRequest: async (action, text, prompts, onUpdate) => {
       // action: polish | proofread | translate | summarize | custom …
-      return await callYourLLM(action, text, prompts);
+      // onUpdate?.(contentDelta, thinkingDelta) — 流式增量
+      return await callYourLLM(action, text, prompts, onUpdate);
+    },
+    onAiRequestCancel: (action) => {
+      abortYourLLM(action);
     },
     onParseFile: async (file) => {
       const url = await upload(file);
@@ -228,7 +467,7 @@ new Penna(el, {
 });
 ```
 
-未配置 `onAiRequest` 时，AI 工具栏命令会静默失败。
+未配置 `editor.onAiRequest` 时，AI 工具栏命令会静默失败。
 
 ---
 
