@@ -45,7 +45,7 @@ import { THEME_EVENT_LIGHT_DARK } from "@/theme/event/ThemeLightDarkEvent";
 /** 独立使用 Renderer 时需要的 options / 依赖类 / 扩展基类 */
 export type { RenderOption } from "@/renderer/RenderOption";
 export type { RenderResult } from "@/renderer/RenderResult";
-export type { PennaChangeLineSet } from "@/renderer/incremental/PennaChangeSet";
+export type { PennaChangeLineSet };
 export { Theme, EventBus, Log, THEME_EVENT_LIGHT_DARK };
 export type { LightDark } from "@/theme/event/ThemeLightDarkEvent";
 export { THEME_EVENT_SKIN } from "@/theme/event/ThemeSkinEvent";
@@ -186,32 +186,64 @@ export class Renderer {
   }
 
   /**
-   * 增量追加渲染（专用于 AI 流式输出场景）。
-   * 将新片段追加到当前文档末尾并触发增量更新。
+   * 在当前文档末尾追加任意字符，等同于编辑器在文档末尾输入字符。
    *
-   * @param chunk 要追加的 markdown 片段
+   * - 以 {@link session.lines} 为基准（与 render/renderFull 状态严格同步）
+   * - 直接构造追加位置的行变更，完全复用编辑器增量路径
+   * - 无缓存时退化为 renderFull
+   *
+   * @param chunk 要追加到文档末尾的字符串（delta，不是累计全文）
    */
   append(chunk: string): RenderResult {
-    const currentLines = this.session.lines;
-    const currentMarkdown = currentLines.join("\n");
-    const newMarkdown = currentMarkdown + chunk;
-
-    if (currentLines.length === 0) {
-      return this.render(newMarkdown);
+    if (!chunk) {
+      return this.session.blocks.length === 0
+        ? this.renderFull("")
+        : this.currentResult(true);
     }
 
-    const newLinesCount = newMarkdown.split(/\r?\n/).length;
+    const oldLines = this.session.lines;
 
-    const change: PennaChangeLineSet = {
-      fromA: currentLines.length,
-      toA: currentLines.length,
-      fromB: currentLines.length,
-      toB: newLinesCount,
-      deletedLines: 1,
-      insertedLines: newLinesCount - currentLines.length + 1,
+    if (oldLines.length === 0) {
+      return this.renderFull(chunk);
+    }
+
+    // session.lines 由 normalizeMarkdownLines 产生（末尾空行已 pop）。
+    // join("\n") 还原归一化文档，再追加 chunk。
+    const oldMd = oldLines.join("\n");
+    const newMd = `${oldMd}${chunk}`;
+
+    // newLines 必须走 normalizeMarkdownLines，与 tryUpdate 内部完全一致。
+    // 不能用 newMd.split("\n").length——normalizeMarkdownLines 会 pop 末尾空串。
+    const newLinesCount = normalizeMarkdownLines(newMd).length;
+
+    // 追加只影响最后一行（及其后延伸出的新行）。
+    // fromA = toA = 旧文档最后一行（1-based），fromB = 同行，toB = 新文档末行。
+    const fromA = oldLines.length;
+    const toA = fromA;
+    const fromB = fromA;
+    const toB = newLinesCount;
+
+    return this.render(newMd, [
+      {
+        fromA,
+        toA,
+        fromB,
+        toB,
+        deletedLines: 0,
+        insertedLines: toB - fromB,
+        isFullDocument: false,
+      },
+    ]);
+  }
+
+  private currentResult(partial: boolean): RenderResult {
+    return {
+      html: this.session.composeHtml(this.mount),
+      ast: this.lastAst!,
+      blocks: this.getMountedBlocks(),
+      partial,
+      changedStartLines: [],
     };
-
-    return this.render(newMarkdown, [change]);
   }
 
   /**
