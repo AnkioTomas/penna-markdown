@@ -1357,7 +1357,8 @@ GitHub 仓库地址来自 Frontmatter `[[repo]]`。
 
   - 部分 sanitize 测试依赖浏览器 DOMPurify
   - 超长文档 AST 调试台可能卡顿
-    :::
+
+:::
 
 ---
 
