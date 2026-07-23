@@ -408,6 +408,7 @@ export function createAIKeymap(): Extension {
       run(view) {
         const ai = view.state.field(aiStateField);
         if (ai.phase === "generating") {
+          if (ai.abortController) ai.abortController.abort();
           view.dispatch({ effects: setAIState.of(IDLE_STATE) });
           return true;
         }

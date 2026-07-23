@@ -2,10 +2,7 @@ import type { EditorView } from "@codemirror/view";
 import type { EventBus } from "@/core/event/EventBus";
 import type { Theme } from "@/theme/Theme";
 import type { Log } from "@/core/Log";
-import type {
-  OnAiRequest,
-  OnAiRequestCancel,
-} from "@/editor/editor/EditorOptions";
+import type { OnAiRequest } from "@/editor/editor/EditorOptions";
 import { runCommand } from "@/editor/commands";
 import type { ParserStore } from "@/transformer/core/ParserStore";
 import type { EditorCommandPayload } from "@/editor/events";
@@ -22,7 +19,6 @@ export class CommandBridge {
    * @param getView 延迟取得当前 CodeMirror 视图的函数。
    * @param getStore 延迟取得最近一次预览解析存储的可选函数。
    * @param onAiRequest 可选的 AI 请求回调。
-   * @param onAiRequestCancel 可选的 AI 取消请求回调。
    */
   constructor(
     private readonly eventBus: EventBus,
@@ -31,7 +27,6 @@ export class CommandBridge {
     private readonly getView: () => EditorView,
     private readonly getStore?: () => ParserStore | null,
     private readonly onAiRequest?: OnAiRequest,
-    private readonly onAiRequestCancel?: OnAiRequestCancel,
   ) {
     this.offs.push(
       eventBus.on<EditorCommandPayload>("editor:command", (payload) => {
@@ -41,7 +36,6 @@ export class CommandBridge {
           logger: this.logger,
           getStore: this.getStore,
           onAiRequest: this.onAiRequest,
-          onAiRequestCancel: this.onAiRequestCancel,
         });
       }),
     );

@@ -5,10 +5,7 @@ import { SideBar } from "@/editor/sidebar/SideBar";
 import { Toolbar } from "@/editor/toolbar/Toolbar";
 import { StatusBar } from "@/editor/statusbar/StatusBar";
 import type { PennaOptions } from "@/editor/PennaOptions";
-import type {
-  OnAiRequest,
-  OnAiRequestCancel,
-} from "@/editor/editor/EditorOptions";
+import type { OnAiRequest } from "@/editor/editor/EditorOptions";
 import type { EditorLayoutMode } from "@/editor/Layout";
 import { printPennaLogo } from "@/editor/Logo";
 import { ScrollSync } from "@/editor/sync/ScrollSync";
@@ -41,7 +38,6 @@ export type { PennaOptions } from "@/editor/PennaOptions";
 export type {
   EditorOptions,
   OnAiRequest,
-  OnAiRequestCancel,
   OnParseFile,
 } from "@/editor/editor/EditorOptions";
 export type { PreviewOptions } from "@/editor/preview/PreviewOptions";
@@ -126,7 +122,6 @@ export class Penna {
 
   private readonly log: Log;
   private readonly onAiRequest?: OnAiRequest;
-  private readonly onAiRequestCancel?: OnAiRequestCancel;
 
   private destroyed = false;
 
@@ -156,7 +151,6 @@ export class Penna {
 
     const initialLayout = options.layout ?? "split";
     this.onAiRequest = editorOptions.onAiRequest;
-    this.onAiRequestCancel = editorOptions.onAiRequestCancel;
 
     this.pennaEl = el("div", "penna");
     this.toolbarEl = el("div", "penna-toolbar");
@@ -247,7 +241,6 @@ export class Penna {
       () => this.editor.getView(),
       () => this.preview.getStore(),
       this.onAiRequest,
-      this.onAiRequestCancel,
     );
 
     this.eventBus.on<PennaLayoutPayload>("penna:layout", (payload) => {

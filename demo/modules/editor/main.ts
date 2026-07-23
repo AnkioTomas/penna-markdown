@@ -94,6 +94,7 @@ version: 0.1.0
 | \`editor.value\` | 加载占位文案 | 初始 Markdown |
 | \`editor.lineNumbers\` | \`true\` | 编辑区行号 |
 | \`editor.onAiRequest\` | mock AI | 启用 AI 工具栏与行级 diff |
+| \`editor.onAiRequestCancel\` | （未接） | 用户取消 AI 时回调；本 Demo 未绑定 |
 | \`editor.onParseFile\` | mock 上传 | 粘贴/拖入图片等文件 |
 | \`preview.maxWidth\` | \`"720px"\` | **仅预览布局**下限制预览宽度 |
 | \`preview.transformerEngineOptions.inlineParsers\` | \`CustomAtParser\` | 注入自定义行内语法 |
@@ -148,6 +149,8 @@ function delay(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
 
+let editor: Penna | undefined;
+
 function ensureChanged(text: string, result: string): string {
   if (result !== text) return result;
   if (!text.trim()) return text;
@@ -160,193 +163,210 @@ async function mockAIRequest(
   text: string,
   prompts?: string,
   onUpdate?: (contentDelta?: string, thinkingDelta?: string) => void,
+  signal?: AbortSignal,
 ): Promise<string> {
   if (onUpdate) {
     onUpdate(undefined, "AI思考中...\n\n");
   }
-  await delay(600 + Math.random() * 400);
 
-  let result: string;
+  try {
+    let waitTime = 600 + Math.random() * 400;
+    while (waitTime > 0 && !signal?.aborted) {
+      await delay(20);
+      waitTime -= 20;
+    }
+    if (signal?.aborted) return text;
 
-  switch (action) {
-    case "polish":
-      if (text.includes("有点啰嗦")) {
-        result =
-          "这段文字稍显冗长，部分表述存在笔误，例如「的得地」使用不当，此处多余的双空格已去除。";
-      } else if (text.includes("稍显冗长")) {
-        result = text
-          .replace(/稍显冗长/g, "仍略偏长")
-          .replace(/存在笔误/g, "仍有可改进之处");
-      } else {
-        result = text
-          .replace(/\s{2,}/g, " ")
-          .replace(/有点/g, "较为")
-          .replace(/写错了/g, "存在笔误")
-          .replace(/，，+/g, "，")
-          .replace(/。。+/g, "。");
+    let result: string;
+
+    switch (action) {
+      case "polish":
+        if (text.includes("有点啰嗦")) {
+          result =
+            "这段文字稍显冗长，部分表述存在笔误，例如「的得地」使用不当，此处多余的双空格已去除。";
+        } else if (text.includes("稍显冗长")) {
+          result = text
+            .replace(/稍显冗长/g, "仍略偏长")
+            .replace(/存在笔误/g, "仍有可改进之处");
+        } else {
+          result = text
+            .replace(/\s{2,}/g, " ")
+            .replace(/有点/g, "较为")
+            .replace(/写错了/g, "存在笔误")
+            .replace(/，，+/g, "，")
+            .replace(/。。+/g, "。");
+        }
+        break;
+
+      case "shorten":
+        if (text.includes("有点啰嗦")) {
+          result = "文字冗长且有笔误，「的得地」混用，双空格未清理。";
+        } else if (text.includes("The quick brown fox")) {
+          result = "The quick brown fox jumps over the lazy dog.";
+        } else {
+          result = text
+            .split("\n")
+            .filter((line) => line.trim())
+            .slice(0, Math.max(1, Math.ceil(text.split("\n").length / 2)))
+            .join("\n");
+        }
+        break;
+
+      case "expand":
+        if (text.trim() === "春天来了。") {
+          result =
+            "春天来了。万物复苏，枝头吐出新绿，空气里带着泥土与花草的气息，一切都显得生机勃勃。";
+        } else {
+          result = `${text.trim()}\n\n此外，还可以从背景、例证和细节展开，使论述更完整，层次更清晰。`;
+        }
+        break;
+
+      case "translate":
+        if (text.includes("The quick brown fox")) {
+          result = "敏捷的棕色狐狸跳过懒狗。这句话常用于打字练习。";
+        } else if (text.includes("敏捷的棕色狐狸")) {
+          result = "那只敏捷的棕色狐狸，一跃而过，从一只懒洋洋的狗身上跨过。";
+        } else {
+          result = text
+            .split("\n")
+            .map((line) => {
+              const t = line.trim();
+              if (!t) return line;
+              if (/[a-zA-Z]/.test(t)) return `（译文）${t}`;
+              return line;
+            })
+            .join("\n");
+        }
+        break;
+
+      case "summarize":
+        if (text.includes("有点啰嗦")) {
+          result = "原文冗长且有笔误，「的得地」混用，存在多余空格。";
+        } else if (text.includes("The quick brown fox")) {
+          result = "一句用于打字练习的英文谚语。";
+        } else if (text.includes("春天来了")) {
+          result = "春天到来。";
+        } else if (text.includes("支持行级 diff")) {
+          result =
+            "编辑器支持行级 diff、逐块确认，未确认前禁止编辑；无选区时处理全文。";
+        } else {
+          result = text
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, Math.min(80, text.length));
+        }
+        break;
+
+      case "rewrite":
+        if (text.includes("有点啰嗦")) {
+          result =
+            "本节文字偏长，个别地方表述不当，「的得地」用法有误，并残留了连续空格。";
+        } else if (text.trim() === "春天来了。") {
+          result = "春日已至。";
+        } else {
+          result = text
+            .split("\n")
+            .map((line) =>
+              line.trim() ? line.replace(/^[-*]\s*/, "• ") : line,
+            )
+            .join("\n");
+        }
+        break;
+
+      case "keyPoints":
+        if (text.includes("支持行级 diff")) {
+          result =
+            "1. 行级 diff，逐块确认\n2. 未全部确认前禁止编辑\n3. 无选区时处理全文";
+        } else {
+          result = text
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean)
+            .map((line, i) => `${i + 1}. ${line.replace(/^[-*#\d.]+\s*/, "")}`)
+            .join("\n");
+        }
+        break;
+
+      case "tone":
+        if (text.includes("有点啰嗦")) {
+          result =
+            "兹有文字一段，表述略嫌繁复，且部分用语欠妥，「的得地」用法亦有可改进之处，并存在多余空格。";
+        } else {
+          result = text
+            .split("\n")
+            .map((line) =>
+              line.trim()
+                ? `敬启者，${line.trim().replace(/[。！？]$/, "")}。此致敬礼。`
+                : line,
+            )
+            .join("\n");
+        }
+        break;
+
+      case "explain":
+        if (text.includes("The quick brown fox")) {
+          result =
+            "这是一句英文打字练习常用句，包含全部 26 个英文字母，便于测试键盘输入。";
+        } else if (text.trim() === "春天来了。") {
+          result =
+            "这句话表示季节更替，春天开始，常用来描写自然复苏、气温回暖的景象。";
+        } else {
+          result = `这段话的意思是：${text.replace(/\s+/g, " ").trim()}`;
+        }
+        break;
+
+      case "proofread":
+        if (text.includes("有点啰嗦")) {
+          result =
+            "这段文字有点啰嗦，而且有些地方写错了，比如「的得地」混用，还有多余的双空格在这里。";
+        } else {
+          result = text
+            .replace(/\s{2,}/g, " ")
+            .replace(/的的/g, "的")
+            .replace(/，，/g, "，");
+        }
+        break;
+
+      case "custom": {
+        const hint = prompts?.trim() || "优化表达";
+        if (text.includes("有点啰嗦") && /口语|通俗/.test(hint)) {
+          result =
+            "这段话写得有点绕，还有些错别字，「的得地」也没分清，空格也多了。";
+        } else if (text.trim() === "春天来了。" && /详细|扩写/.test(hint)) {
+          result = "春天来了，到处都活过来了，树发芽了，风也暖和了。";
+        } else {
+          result = text
+            .split("\n")
+            .map((line) =>
+              line.trim() ? line.replace(/。$/, `（${hint}）`) : line,
+            )
+            .join("\n");
+        }
+        break;
       }
-      break;
 
-    case "shorten":
-      if (text.includes("有点啰嗦")) {
-        result = "文字冗长且有笔误，「的得地」混用，双空格未清理。";
-      } else if (text.includes("The quick brown fox")) {
-        result = "The quick brown fox jumps over the lazy dog.";
-      } else {
-        result = text
-          .split("\n")
-          .filter((line) => line.trim())
-          .slice(0, Math.max(1, Math.ceil(text.split("\n").length / 2)))
-          .join("\n");
-      }
-      break;
-
-    case "expand":
-      if (text.trim() === "春天来了。") {
-        result =
-          "春天来了。万物复苏，枝头吐出新绿，空气里带着泥土与花草的气息，一切都显得生机勃勃。";
-      } else {
-        result = `${text.trim()}\n\n此外，还可以从背景、例证和细节展开，使论述更完整，层次更清晰。`;
-      }
-      break;
-
-    case "translate":
-      if (text.includes("The quick brown fox")) {
-        result = "敏捷的棕色狐狸跳过懒狗。这句话常用于打字练习。";
-      } else if (text.includes("敏捷的棕色狐狸")) {
-        result = "那只敏捷的棕色狐狸，一跃而过，从一只懒洋洋的狗身上跨过。";
-      } else {
-        result = text
-          .split("\n")
-          .map((line) => {
-            const t = line.trim();
-            if (!t) return line;
-            if (/[a-zA-Z]/.test(t)) return `（译文）${t}`;
-            return line;
-          })
-          .join("\n");
-      }
-      break;
-
-    case "summarize":
-      if (text.includes("有点啰嗦")) {
-        result = "原文冗长且有笔误，「的得地」混用，存在多余空格。";
-      } else if (text.includes("The quick brown fox")) {
-        result = "一句用于打字练习的英文谚语。";
-      } else if (text.includes("春天来了")) {
-        result = "春天到来。";
-      } else if (text.includes("支持行级 diff")) {
-        result =
-          "编辑器支持行级 diff、逐块确认，未确认前禁止编辑；无选区时处理全文。";
-      } else {
-        result = text
-          .replace(/\s+/g, " ")
-          .trim()
-          .slice(0, Math.min(80, text.length));
-      }
-      break;
-
-    case "rewrite":
-      if (text.includes("有点啰嗦")) {
-        result =
-          "本节文字偏长，个别地方表述不当，「的得地」用法有误，并残留了连续空格。";
-      } else if (text.trim() === "春天来了。") {
-        result = "春日已至。";
-      } else {
-        result = text
-          .split("\n")
-          .map((line) => (line.trim() ? line.replace(/^[-*]\s*/, "• ") : line))
-          .join("\n");
-      }
-      break;
-
-    case "keyPoints":
-      if (text.includes("支持行级 diff")) {
-        result =
-          "1. 行级 diff，逐块确认\n2. 未全部确认前禁止编辑\n3. 无选区时处理全文";
-      } else {
-        result = text
-          .split("\n")
-          .map((line) => line.trim())
-          .filter(Boolean)
-          .map((line, i) => `${i + 1}. ${line.replace(/^[-*#\d.]+\s*/, "")}`)
-          .join("\n");
-      }
-      break;
-
-    case "tone":
-      if (text.includes("有点啰嗦")) {
-        result =
-          "兹有文字一段，表述略嫌繁复，且部分用语欠妥，「的得地」用法亦有可改进之处，并存在多余空格。";
-      } else {
-        result = text
-          .split("\n")
-          .map((line) =>
-            line.trim()
-              ? `敬启者，${line.trim().replace(/[。！？]$/, "")}。此致敬礼。`
-              : line,
-          )
-          .join("\n");
-      }
-      break;
-
-    case "explain":
-      if (text.includes("The quick brown fox")) {
-        result =
-          "这是一句英文打字练习常用句，包含全部 26 个英文字母，便于测试键盘输入。";
-      } else if (text.trim() === "春天来了。") {
-        result =
-          "这句话表示季节更替，春天开始，常用来描写自然复苏、气温回暖的景象。";
-      } else {
-        result = `这段话的意思是：${text.replace(/\s+/g, " ").trim()}`;
-      }
-      break;
-
-    case "proofread":
-      if (text.includes("有点啰嗦")) {
-        result =
-          "这段文字有点啰嗦，而且有些地方写错了，比如「的得地」混用，还有多余的双空格在这里。";
-      } else {
-        result = text
-          .replace(/\s{2,}/g, " ")
-          .replace(/的的/g, "的")
-          .replace(/，，/g, "，");
-      }
-      break;
-
-    case "custom": {
-      const hint = prompts?.trim() || "优化表达";
-      if (text.includes("有点啰嗦") && /口语|通俗/.test(hint)) {
-        result =
-          "这段话写得有点绕，还有些错别字，「的得地」也没分清，空格也多了。";
-      } else if (text.trim() === "春天来了。" && /详细|扩写/.test(hint)) {
-        result = "春天来了，到处都活过来了，树发芽了，风也暖和了。";
-      } else {
-        result = text
-          .split("\n")
-          .map((line) =>
-            line.trim() ? line.replace(/。$/, `（${hint}）`) : line,
-          )
-          .join("\n");
-      }
-      break;
+      default:
+        result = text;
     }
 
-    default:
-      result = text;
-  }
+    result = ensureChanged(text, result);
 
-  result = ensureChanged(text, result);
-
-  if (onUpdate) {
-    onUpdate(undefined, "AI生成中...\n\n");
-    for (let i = 0; i < result.length; i++) {
-      onUpdate(result[i], undefined);
-      await delay(10 + Math.random() * 20);
+    if (onUpdate) {
+      onUpdate(undefined, "AI生成中...\n\n");
+      for (let i = 0; i < result.length; i++) {
+        if (signal?.aborted) return text;
+        onUpdate(result[i], undefined);
+        await delay(10 + Math.random() * 20);
+      }
     }
-  }
 
-  return result;
+    return result;
+  } catch (err: any) {
+    if (err.name === "AbortError") {
+      return text;
+    }
+    throw err;
+  }
 }
 
 async function localAIRequest(
@@ -354,12 +374,13 @@ async function localAIRequest(
   text: string,
   prompts?: string,
   onUpdate?: (contentDelta?: string, thinkingDelta?: string) => void,
+  signal?: AbortSignal,
 ): Promise<string> {
   const switchEl = document.getElementById(
     "local-ai-switch",
   ) as HTMLInputElement | null;
   if (!switchEl?.checked) {
-    return mockAIRequest(action, text, prompts, onUpdate);
+    return mockAIRequest(action, text, prompts, onUpdate, signal);
   }
 
   let prompt = `你是一个 Markdown 编辑器 AI 助手。请根据提供的操作和文本直接输出修改后的内容，不要包含额外的解释或 Markdown 代码块包裹。\n`;
@@ -378,6 +399,7 @@ async function localAIRequest(
         messages: [{ role: "user", content: prompt }],
         stream: true,
       }),
+      signal,
     });
 
     if (!response.ok) {
@@ -449,8 +471,11 @@ async function localAIRequest(
 
     return ensureChanged(text, contentResult);
   } catch (err: any) {
-    console.error("Local AI 请求失败，回退到 Mock", err);
-    return mockAIRequest(action, text, prompts, onUpdate);
+    if (err.name === "AbortError") {
+      console.log("[demo] local AI request aborted");
+      return text;
+    }
+    throw err;
   }
 }
 
@@ -498,8 +523,6 @@ function isBundledDemoDoc(id: string): boolean {
 }
 
 async function init() {
-  let editor: Penna;
-
   async function resolveContent(fileId: string): Promise<string> {
     switch (fileId) {
       case VIRTUAL.options:
@@ -518,8 +541,8 @@ async function init() {
   }
 
   async function loadDoc(fileId: string) {
-    editor.setMarkdown(await resolveContent(fileId));
-    editor.setSidebarActiveFile(fileId);
+    editor?.setMarkdown(await resolveContent(fileId));
+    editor?.setSidebarActiveFile(fileId);
   }
 
   editor = new Penna(document.querySelector("#penna-editor")!, {

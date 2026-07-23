@@ -9,7 +9,6 @@ import type { DiffHunk } from "../diff";
 import { hasPendingHunks } from "../diff";
 import { Renderer } from "@/renderer/Renderer";
 import type { Theme } from "@/theme/Theme";
-import type { OnAiRequestCancel } from "@/editor/editor/EditorOptions";
 import { EventBus } from "@/core/event/EventBus";
 import type { Log } from "@/core/Log";
 
@@ -23,7 +22,7 @@ export type AIState =
       genId: number;
       action: string;
       prompts?: string;
-      onAiRequestCancel?: OnAiRequestCancel;
+      abortController?: AbortController;
     }
   | {
       phase: "diff";
@@ -184,8 +183,8 @@ export const aiMaskPlugin = ViewPlugin.fromClass(
           e.preventDefault();
 
           const state = this.view.state.field(aiStateField);
-          if (state.phase === "generating" && state.onAiRequestCancel) {
-            state.onAiRequestCancel(state.action);
+          if (state.phase === "generating" && state.abortController) {
+            state.abortController.abort();
           }
 
           this.view.dispatch({ effects: setAIState.of(IDLE_STATE) });

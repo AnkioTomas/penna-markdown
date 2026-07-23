@@ -1,9 +1,5 @@
-import { StateEffect } from "@codemirror/state";
 import type { EditorView } from "@codemirror/view";
-import type {
-  OnAiRequest,
-  OnAiRequestCancel,
-} from "@/editor/editor/EditorOptions";
+import type { OnAiRequest } from "@/editor/editor/EditorOptions";
 import type { Theme } from "@/theme/Theme";
 import type { Log } from "@/core/Log";
 import { enterDiffPhase } from "./codemirror/diff-ui";
@@ -53,7 +49,6 @@ export function getAITargetRange(view: EditorView): {
  * @param aiRequest 调用 AI 服务的请求函数。
  * @param theme 流式 Markdown 预览主题（两个 Renderer 共享）。
  * @param logger 日志实例（两个 Renderer 共享）。
- * @param onAiRequestCancel 可选的取消回调。
  * @param prompts 自定义操作附带的可选提示词。
  * @param range 覆盖当前选区的可选目标范围。
  */
@@ -63,7 +58,6 @@ export function runAIAction(
   aiRequest: AIRequestFn,
   theme: Theme,
   logger: Log,
-  onAiRequestCancel?: OnAiRequestCancel,
   prompts?: string,
   range?: { from: number; to: number; text: string },
 ) {
@@ -75,6 +69,8 @@ export function runAIAction(
   if (!text && action !== "summarize" && action !== "custom") return;
 
   const genId = allocGenId();
+  const controller = new AbortController();
+
   view.dispatch({
     effects: setAIState.of({
       phase: "generating",
@@ -84,20 +80,26 @@ export function runAIAction(
       genId,
       action,
       prompts,
-      onAiRequestCancel,
+      abortController: controller,
     }),
   });
 
-  aiRequest(action, text, prompts, (contentDelta, thinkingDelta) => {
-    const state = view.state.field(aiStateField);
-    if (state.phase !== "generating" || state.genId !== genId) return;
+  aiRequest(
+    action,
+    text,
+    prompts,
+    (contentDelta, thinkingDelta) => {
+      const state = view.state.field(aiStateField);
+      if (state.phase !== "generating" || state.genId !== genId) return;
 
-    if (contentDelta || thinkingDelta) {
-      view
-        .plugin(aiMaskPlugin)
-        ?.setStream(contentDelta, thinkingDelta, theme, logger);
-    }
-  })
+      if (contentDelta || thinkingDelta) {
+        view
+          .plugin(aiMaskPlugin)
+          ?.setStream(contentDelta, thinkingDelta, theme, logger);
+      }
+    },
+    controller.signal,
+  )
     .then((result) => {
       const state = view.state.field(aiStateField);
       if (state.phase !== "generating" || state.genId !== genId) return;
