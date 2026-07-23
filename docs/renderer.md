@@ -95,13 +95,13 @@ renderer.render("# Hello\n\n**world**");
 :::
 
 ::: field inlineParsers
-@type Record\<number, BaseInlineParser\>
+@type Record<number, BaseInlineParser>
 @optional
 按 priority 注入行内 parser。
 :::
 
 ::: field blockParsers
-@type Record\<number, BaseBlockParser\>
+@type Record<number, BaseBlockParser>
 @optional
 按 priority 注入块级 parser。
 :::
@@ -112,15 +112,54 @@ renderer.render("# Hello\n\n**world**");
 
 ## 常用 API
 
-| 方法                         | 说明                         |
-| ---------------------------- | ---------------------------- |
-| `render(markdown, changes?)` | 增量优先，失败降级全量       |
-| `renderFull(markdown)`       | 强制全量                     |
-| `getToc()` / `getTocFlat()`  | 目录                         |
-| `getMountedBlocks()`         | 块索引                       |
-| `getStore()`                 | 最近一次解析的 `ParserStore` |
-| `getMount()`                 | 挂载点                       |
-| `destroy()`                  | 释放监听与 lightbox 等       |
+:::: field-group
+
+::: field render
+@type (markdown: string, changes?: PennaChangeLineSet[]) => RenderResult
+增量优先，失败降级全量。
+:::
+
+::: field renderFull
+@type (markdown: string) => RenderResult
+强制全量渲染。
+:::
+
+::: field append
+@type (chunk: string) => RenderResult
+在当前文档末尾追加字符。
+:::
+
+::: field getToc
+@type () => TocItem[]
+层级目录树（无 AST 时为空数组）。
+:::
+
+::: field getTocFlat
+@type () => TocFlatItem[]
+扁平目录。
+:::
+
+::: field getMountedBlocks
+@type () => BlockIndex[]
+当前挂载块索引。
+:::
+
+::: field getStore
+@type () => ParserStore | null
+最近一次解析的 `ParserStore`。
+:::
+
+::: field getMount
+@type () => HTMLElement
+挂载点。
+:::
+
+::: field destroy
+@type () => void
+释放监听与 lightbox 等。
+:::
+
+::::
 
 ---
 

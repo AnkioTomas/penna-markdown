@@ -33,13 +33,13 @@ const html = engine.render(ast);
 :::: field-group
 
 ::: field inlineParsers
-@type Record\<number, BaseInlineParser\>
+@type Record<number, BaseInlineParser>
 @optional
 priority → 行内 parser。
 :::
 
 ::: field blockParsers
-@type Record\<number, BaseBlockParser\>
+@type Record<number, BaseBlockParser>
 @optional
 priority → 块级 parser。
 :::
@@ -47,11 +47,11 @@ priority → 块级 parser。
 ::: field syntaxOptions
 @type SyntaxOptions
 @optional
-按 parser `type` / `syntaxKey` 分发配置（如 `atx_heading.slug`）。
+按 parser `type` / `syntaxKey` 分发配置（如 `atx_heading.slug`）。`SyntaxOptions` = `Record<string, ParserOptions>`。
 :::
 
 ::: field renderOptions
-@type Record\<string, unknown\>
+@type Record<string, unknown>
 @optional
 渲染期选项（如 `sourceLineMap`）。
 :::
@@ -68,12 +68,29 @@ priority → 块级 parser。
 
 ## 核心 API
 
-| 方法                     | 说明                         |
-| ------------------------ | ---------------------------- |
-| `parse(markdown)`        | 全文解析 → 根 `MarkdownNode` |
-| `parseIncremental(…)`    | 增量解析（编辑器内部使用）   |
-| `render(ast)`            | AST → HTML 字符串            |
-| `renderBlock(node, ast)` | 单块渲染                     |
+:::: field-group
+
+::: field parse
+@type (markdown: string) => MarkdownNode
+全文解析 → 根 AST。
+:::
+
+::: field parseIncremental
+@type (prevAst: MarkdownNode, markdown: string | string[], range: IncrementalParseRange) => IncrementalParseResult
+增量解析（编辑器内部使用）。
+:::
+
+::: field render
+@type (ast: MarkdownNode) => string
+AST → HTML 字符串。
+:::
+
+::: field renderBlock
+@type (node: MarkdownNode, ast: MarkdownNode) => string
+单块渲染。
+:::
+
+::::
 
 ---
 

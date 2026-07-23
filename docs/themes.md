@@ -77,10 +77,34 @@ import "penna-markdown/theme/github/render.css";
 | 挂载根（用户传入） | `penna-theme-{id}`、`penna-dark` | 皮肤变量与 chrome                   |
 | 预览节点           | `penna-render`（由调用方添加）   | 命中 `.penna-theme-* .penna-render` |
 
+:::: field-group
+
+::: field list
+@type () => string[]
+可用皮肤 id；白名单空/省略 = 全部内置。
+:::
+
+::: field setTheme
+@type (id: string) => void
+切换皮肤；未知 id 跳过并打错误日志。
+:::
+
+::: field setLightDark
+@type (mode: "light" | "dark") => void
+切换明暗。
+:::
+
+::: field getTheme
+@type () => { id: string; mode: LightDark; isDark: boolean; root: HTMLElement }
+当前主题快照。
+:::
+
+::::
+
 ```typescript
-theme.setTheme("github"); // 未知 id 会打错误日志并跳过
+theme.setTheme("github");
 theme.setLightDark("dark");
-theme.list(); // 可用 id；白名单为空/省略 = 全部内置
+theme.list();
 theme.getTheme(); // { id, mode, isDark, root }
 ```
 

@@ -39,98 +39,83 @@ const penna = new Penna(rootEl, options?: PennaOptions);
 ### 属性
 
 :::: field-group
+
 ::: field theme
 @type Theme
-@readonly
-皮肤与事件总线入口。
+只读。皮肤与事件总线入口。
 :::
 
 ::: field eventBus
 @type EventBus
-@readonly
-实例级总线。
+只读。实例级总线。
 :::
 
 ::: field storage
 @type StorageAPI
-@readonly
-本地存储适配器。
+只读。本地存储适配器。
 :::
+
 ::::
 
 ### 方法
 
 :::: field-group
-::: field getMarkdown()
-@returns string
+
+::: field getMarkdown
+@type () => string
 当前文档全文。
 :::
 
-::: field setMarkdown(markdown)
-@param markdown string
+::: field setMarkdown
+@type (markdown: string) => void
 整篇替换；内容相同则 no-op。
 :::
 
-::: field getLayout()
-@returns `"split" | "edit" | "preview"`
+::: field getLayout
+@type () => "split" | "edit" | "preview"
 当前布局。
 :::
 
-::: field setLayout(mode)
-@param mode EditorLayoutMode
+::: field setLayout
+@type (mode: EditorLayoutMode) => void
 切换布局。
 :::
 
-::: field isSidebarVisible()
-@returns boolean
+::: field isSidebarVisible
+@type () => boolean
 侧栏是否可见。
 :::
 
-::: field setSidebarVisible(show)
-@param show boolean
+::: field setSidebarVisible
+@type (show: boolean) => void
 显隐侧栏。
 :::
 
-::: field toggleSidebar()
+::: field toggleSidebar
+@type () => void
 切换侧栏。
 :::
 
-::: field setSidebarActiveFile(fileId)
-@param fileId string
+::: field setSidebarActiveFile
+@type (fileId: string) => void
 高亮侧栏文件项。
 :::
 
-::: field runCommand(command, payload?)
-@param command string
-@param payload unknown
-@returns boolean | Promise\<boolean\>
+::: field runCommand
+@type (command: string, payload?: unknown) => boolean | Promise<boolean>
 执行已注册命令。
 :::
 
-::: field destroy()
+::: field destroy
+@type () => void
 销毁实例。
 :::
+
 ::::
 
 ### PennaOptions
 
-完整字段说明见 [`editor.md`](editor.md)。结构一览：
-
-| 字段         | 类型                          | 说明                                                 |
-| ------------ | ----------------------------- | ---------------------------------------------------- |
-| `layout`     | `EditorLayoutMode`            | 初始布局，默认 `split`                               |
-| `appearance` | `light` \| `dark`             | 明暗，默认 `light`                                   |
-| `themeId`    | `string`                      | 皮肤 id，默认 `default`                              |
-| `themes`     | `string[]`                    | 主题白名单；省略 = 全部                              |
-| `debug`      | `boolean`                     | 调试日志                                             |
-| `toolbar`    | `ToolbarOptions` \| `false`   | 工具栏；`false` 关闭                                 |
-| `sidebar`    | `SideBarOptions` \| `boolean` | 侧栏；`false` 隐藏                                   |
-| `statusbar`  | `boolean`                     | 状态栏，默认 `true`                                  |
-| `storage`    | `StorageAPI`                  | 本地存储                                             |
-| `editor`     | `EditorOptions`               | 编辑区（含 AI / 上传回调）                           |
-| `preview`    | `PreviewOptions`              | 预览区（含 `transformerEngineOptions` / `maxWidth`） |
-
-嵌套选项同样在 [`editor.md`](editor.md) 分节列出：`EditorOptions`、`PreviewOptions`、`ToolbarOptions`、`SideBarOptions`、`StorageAPI`、回调类型。
+完整字段说明见 [`editor.md`](editor.md)（含 `EditorOptions`、`PreviewOptions`、`ToolbarOptions`、`SideBarOptions`、`StorageAPI`、回调类型）。
 
 自定义解析：`preview.transformerEngineOptions`（**没有**顶层 `transformer` 字段）。
 
@@ -138,7 +123,7 @@ const penna = new Penna(rootEl, options?: PennaOptions);
 
 ## Renderer
 
-构造选项完整说明见 [`renderer.md`](renderer.md)（`mount` / `theme` / `eventBus` / `logger` / `inlineParsers` / `blockParsers`）。
+构造选项见 [`renderer.md`](renderer.md)。
 
 ```typescript
 import {
@@ -163,21 +148,60 @@ new Renderer({
 } satisfies RenderOption);
 ```
 
-| 方法                        | 说明        |
-| --------------------------- | ----------- |
-| `render(md, changes?)`      | 增量优先    |
-| `renderFull(md)`            | 全量        |
-| `getToc()` / `getTocFlat()` | 目录        |
-| `getMountedBlocks()`        | 块索引      |
-| `getStore()`                | ParserStore |
-| `getMount()`                | 挂载点      |
-| `destroy()`                 | 销毁        |
+:::: field-group
+
+::: field render
+@type (markdown: string, changes?: PennaChangeLineSet[]) => RenderResult
+增量优先；失败自动降级全量。
+:::
+
+::: field renderFull
+@type (markdown: string) => RenderResult
+强制全量渲染。
+:::
+
+::: field append
+@type (chunk: string) => RenderResult
+在文档末尾追加字符（流式场景）。
+:::
+
+::: field getToc
+@type () => TocItem[]
+层级目录树（无 AST 时为空数组）。
+:::
+
+::: field getTocFlat
+@type () => TocFlatItem[]
+扁平目录。
+:::
+
+::: field getMountedBlocks
+@type () => BlockIndex[]
+当前挂载块索引。
+:::
+
+::: field getStore
+@type () => ParserStore | null
+最近一次解析的 `ParserStore`。
+:::
+
+::: field getMount
+@type () => HTMLElement
+挂载点。
+:::
+
+::: field destroy
+@type () => void
+释放监听与 lightbox 等。
+:::
+
+::::
 
 ---
 
 ## TransformerEngine
 
-构造选项完整说明见 [`transformer.md`](transformer.md)（`inlineParsers` / `blockParsers` / `syntaxOptions` / `renderOptions` / `isDark`）。
+构造选项见 [`transformer.md`](transformer.md)。
 
 ```typescript
 import {
@@ -194,54 +218,84 @@ new TransformerEngine({
 } satisfies TransformerEngineOptions);
 ```
 
-| 方法                     | 说明          |
-| ------------------------ | ------------- |
-| `parse(md)`              | → AST         |
-| `parseIncremental(…)`    | 增量 parse    |
-| `render(ast)`            | → HTML 字符串 |
-| `renderBlock(node, ast)` | 单块          |
+:::: field-group
+
+::: field parse
+@type (markdown: string) => MarkdownNode
+全文解析 → 根 AST。
+:::
+
+::: field parseIncremental
+@type (prevAst: MarkdownNode, markdown: string | string[], range: IncrementalParseRange) => IncrementalParseResult
+增量解析（编辑器内部使用）。
+:::
+
+::: field render
+@type (ast: MarkdownNode) => string
+AST → HTML 字符串。
+:::
+
+::: field renderBlock
+@type (node: MarkdownNode, ast: MarkdownNode) => string
+单块渲染。
+:::
+
+::::
 
 ---
 
 ## Theme
 
-| 方法                 | 说明                           |
-| -------------------- | ------------------------------ |
-| `list()`             | 可用皮肤；白名单空/省略 = 全部 |
-| `setTheme(id)`       | 未知 id 跳过并打错误日志       |
-| `setLightDark(mode)` | `light` \| `dark`              |
-| `getTheme()`         | `{ id, mode, isDark, root }`   |
+详见 [`themes.md`](themes.md)。
+
+:::: field-group
+
+::: field list
+@type () => string[]
+可用皮肤 id；白名单空/省略 = 全部内置。
+:::
+
+::: field setTheme
+@type (id: string) => void
+切换皮肤；未知 id 跳过并打错误日志。
+:::
+
+::: field setLightDark
+@type (mode: "light" | "dark") => void
+切换明暗。
+:::
+
+::: field getTheme
+@type () => { id: string; mode: LightDark; isDark: boolean; root: HTMLElement }
+当前主题快照。
+:::
+
+::::
 
 ---
 
 ## 回调类型
 
-定义在 `EditorOptions`，由 `penna-markdown` 入口 re-export：
+定义在 `EditorOptions`，由 `penna-markdown` 入口 re-export。完整说明亦见 [`editor.md`](editor.md)。
 
-```typescript
-import type {
-  OnAiRequest,
-  OnAiRequestCancel,
-  OnParseFile,
-} from "penna-markdown";
+:::: field-group
 
-type OnParseFile = (file: File) => Promise<{ url: string; msg: string }>;
+::: field OnParseFile
+@type (file: File) => Promise<{ url: string; msg: string }>
+`editor.onParseFile`：粘贴/拖入文件上传。
+:::
 
-type OnAiRequest = (
-  action: string,
-  text: string,
-  prompts?: string,
-  onUpdate?: (contentDelta?: string, thinkingDelta?: string) => void,
-) => Promise<string>;
+::: field OnAiRequest
+@type (action: string, text: string, prompts?: string, onUpdate?: (contentDelta?: string, thinkingDelta?: string) => void) => Promise<string>
+`editor.onAiRequest`：AI 生成；`onUpdate` 传增量 delta，非全文。
+:::
 
-type OnAiRequestCancel = (action: string) => void;
-```
+::: field OnAiRequestCancel
+@type (action: string) => void
+`editor.onAiRequestCancel`：用户取消进行中的 AI 请求。
+:::
 
-| 类型                | 用途                                                   |
-| ------------------- | ------------------------------------------------------ |
-| `OnParseFile`       | `editor.onParseFile`：粘贴/拖入文件上传                |
-| `OnAiRequest`       | `editor.onAiRequest`：AI 生成；`onUpdate` 传增量 delta |
-| `OnAiRequestCancel` | `editor.onAiRequestCancel`：用户取消进行中的 AI 请求   |
+::::
 
 ---
 
