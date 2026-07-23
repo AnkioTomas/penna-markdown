@@ -186,6 +186,35 @@ export class Renderer {
   }
 
   /**
+   * 增量追加渲染（专用于 AI 流式输出场景）。
+   * 将新片段追加到当前文档末尾并触发增量更新。
+   *
+   * @param chunk 要追加的 markdown 片段
+   */
+  append(chunk: string): RenderResult {
+    const currentLines = this.session.lines;
+    const currentMarkdown = currentLines.join("\n");
+    const newMarkdown = currentMarkdown + chunk;
+
+    if (currentLines.length === 0) {
+      return this.render(newMarkdown);
+    }
+
+    const newLinesCount = newMarkdown.split(/\r?\n/).length;
+
+    const change: PennaChangeLineSet = {
+      fromA: currentLines.length,
+      toA: currentLines.length,
+      fromB: currentLines.length,
+      toB: newLinesCount,
+      deletedLines: 1,
+      insertedLines: newLinesCount - currentLines.length + 1,
+    };
+
+    return this.render(newMarkdown, [change]);
+  }
+
+  /**
    * 全量 parse + DOM 挂载，并接管增量会话快照。
    *
    * @param markdown 完整 markdown 源码
