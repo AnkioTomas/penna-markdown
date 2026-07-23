@@ -83,12 +83,12 @@ export const aiLockedReadOnly = EditorState.readOnly.compute(
 export const aiMaskPlugin = ViewPlugin.fromClass(
   class {
     mask: HTMLElement | null = null;
-    private thinkingDetails: HTMLDetailsElement | null = null;
-    private thinkingMount: HTMLElement | null = null;
-    private partialMount: HTMLElement | null = null;
-    private bodyEl: HTMLElement | null = null;
-    private thinkingRenderer: Renderer | null = null;
-    private partialRenderer: Renderer | null = null;
+    thinkingDetails: HTMLDetailsElement | null = null;
+    thinkingMount: HTMLElement | null = null;
+    partialMount: HTMLElement | null = null;
+    bodyEl: HTMLElement | null = null;
+    thinkingRenderer: Renderer | null = null;
+    partialRenderer: Renderer | null = null;
 
     constructor(readonly view: EditorView) {
       this.sync();
@@ -155,7 +155,7 @@ export const aiMaskPlugin = ViewPlugin.fromClass(
       }
     }
 
-    private createMask() {
+    createMask() {
       const root = this.view.dom.closest(".penna") || this.view.dom;
       const mask = document.createElement("div");
       mask.className = "penna-ai-mask-global";
@@ -207,7 +207,7 @@ export const aiMaskPlugin = ViewPlugin.fromClass(
       this.mask = mask;
     }
 
-    private destroyMask() {
+    destroyMask() {
       this.thinkingRenderer?.destroy();
       this.partialRenderer?.destroy();
       this.thinkingRenderer = null;
