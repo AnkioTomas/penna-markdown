@@ -9,7 +9,10 @@ import type { EditorView } from "@codemirror/view";
 import type { EventBus } from "@/core/event/EventBus";
 import type { Theme } from "@/theme/Theme";
 import { ParserStore } from "@/transformer/core/ParserStore";
-import type { OnAiRequest } from "@/editor/PennaOptions";
+import type {
+  OnAiRequest,
+  OnAiRequestCancel,
+} from "@/editor/editor/EditorOptions";
 import type { Log } from "@/core/Log";
 
 /** 命令注册表中的命令名字符串，如 `"bold"`、`"link"`。 */
@@ -34,6 +37,8 @@ export interface CommandContext {
   getStore?: () => ParserStore | null;
   /** AI 请求回调，AI 命令执行时使用。 */
   onAiRequest?: OnAiRequest;
+  /** AI 请求取消回调，用于停止 AI 生成。 */
+  onAiRequestCancel?: OnAiRequestCancel;
 }
 
 /** 光标所在行的位置与文本信息。 */

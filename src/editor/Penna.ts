@@ -4,7 +4,11 @@ import { Preview } from "@/editor/preview/Preview";
 import { SideBar } from "@/editor/sidebar/SideBar";
 import { Toolbar } from "@/editor/toolbar/Toolbar";
 import { StatusBar } from "@/editor/statusbar/StatusBar";
-import type { PennaOptions, OnAiRequest } from "@/editor/PennaOptions";
+import type { PennaOptions } from "@/editor/PennaOptions";
+import type {
+  OnAiRequest,
+  OnAiRequestCancel,
+} from "@/editor/editor/EditorOptions";
 import type { EditorLayoutMode } from "@/editor/Layout";
 import { printPennaLogo } from "@/editor/Logo";
 import { ScrollSync } from "@/editor/sync/ScrollSync";
@@ -33,12 +37,13 @@ export type {
   ToolbarSeparatorItem,
   ToolbarContext,
 } from "@/editor/toolbar/ToolbarItem";
+export type { PennaOptions } from "@/editor/PennaOptions";
 export type {
-  PennaOptions,
+  EditorOptions,
   OnAiRequest,
+  OnAiRequestCancel,
   OnParseFile,
-} from "@/editor/PennaOptions";
-export type { EditorOptions } from "@/editor/editor/EditorOptions";
+} from "@/editor/editor/EditorOptions";
 export type { PreviewOptions } from "@/editor/preview/PreviewOptions";
 export type {
   SideBarOptions,
@@ -121,6 +126,7 @@ export class Penna {
 
   private readonly log: Log;
   private readonly onAiRequest?: OnAiRequest;
+  private readonly onAiRequestCancel?: OnAiRequestCancel;
 
   private destroyed = false;
 
@@ -146,14 +152,11 @@ export class Penna {
       statusbar = true,
     } = options;
 
-    const editorOptions = {
-      ...(options.editor ?? {}),
-      onAiRequest: options.editor?.onAiRequest ?? options.onAiRequest,
-      onParseFile: options.editor?.onParseFile ?? options.onParseFile,
-    };
+    const editorOptions = options.editor ?? {};
 
     const initialLayout = options.layout ?? "split";
     this.onAiRequest = editorOptions.onAiRequest;
+    this.onAiRequestCancel = editorOptions.onAiRequestCancel;
 
     this.pennaEl = el("div", "penna");
     this.toolbarEl = el("div", "penna-toolbar");
@@ -244,6 +247,7 @@ export class Penna {
       () => this.editor.getView(),
       () => this.preview.getStore(),
       this.onAiRequest,
+      this.onAiRequestCancel,
     );
 
     this.eventBus.on<PennaLayoutPayload>("penna:layout", (payload) => {

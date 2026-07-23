@@ -6,7 +6,7 @@ import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { expect, it, vi } from "vitest";
 import { clipboardExtension } from "@/editor/editor/clipboard.js";
-import type { OnParseFile } from "@/editor/PennaOptions.js";
+import type { OnParseFile } from "@/editor/editor/EditorOptions.js";
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
