@@ -159,10 +159,10 @@ async function mockAIRequest(
   action: string,
   text: string,
   prompts?: string,
-  onUpdate?: (content: string, thinking?: string) => void,
+  onUpdate?: (contentDelta?: string, thinkingDelta?: string) => void,
 ): Promise<string> {
   if (onUpdate) {
-    onUpdate("", "AI思考中...");
+    onUpdate(undefined, "AI思考中...\n\n");
   }
   await delay(600 + Math.random() * 400);
 
@@ -339,11 +339,9 @@ async function mockAIRequest(
   result = ensureChanged(text, result);
 
   if (onUpdate) {
-    onUpdate("", "AI生成中...");
-    let current = "";
+    onUpdate(undefined, "AI生成中...\n\n");
     for (let i = 0; i < result.length; i++) {
-      current += result[i];
-      onUpdate(current, "AI生成中...");
+      onUpdate(result[i], undefined);
       await delay(10 + Math.random() * 20);
     }
   }
@@ -355,7 +353,7 @@ async function localAIRequest(
   action: string,
   text: string,
   prompts?: string,
-  onUpdate?: (content: string, thinking?: string) => void,
+  onUpdate?: (contentDelta?: string, thinkingDelta?: string) => void,
 ): Promise<string> {
   const switchEl = document.getElementById(
     "local-ai-switch",
@@ -369,7 +367,7 @@ async function localAIRequest(
   if (prompts) prompt += `补充说明：${prompts}\n`;
   prompt += `目标文本：\n${text}`;
 
-  if (onUpdate) onUpdate("", "正在连接本地AI...");
+  if (onUpdate) onUpdate(undefined, "正在连接本地AI...\n\n");
 
   try {
     const response = await fetch("http://127.0.0.1:8000/v1/chat/completions", {
@@ -425,18 +423,23 @@ async function localAIRequest(
           const delta = data.choices?.[0]?.delta;
           if (!delta) continue;
 
+          let thinkingDelta: string | undefined;
+          let contentDelta: string | undefined;
           let updated = false;
+
           if (delta.reasoning_content) {
-            thinkingResult += delta.reasoning_content;
+            thinkingDelta = delta.reasoning_content;
+            thinkingResult += thinkingDelta;
             updated = true;
           }
           if (delta.content) {
-            contentResult += delta.content;
+            contentDelta = delta.content;
+            contentResult += contentDelta;
             updated = true;
           }
 
           if (updated && onUpdate) {
-            onUpdate(contentResult, thinkingResult || "正在思考...");
+            onUpdate(contentDelta, thinkingDelta);
           }
         } catch (e) {
           // ignore partial json
