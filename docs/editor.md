@@ -469,6 +469,31 @@ new Penna(el, {
 
 未配置 `editor.onAiRequest` 时，AI 工具栏命令会静默失败。取消生成时编辑器会调用 `AbortController.abort()`，宿主应监听 `signal` 中止请求。
 
+### 自定义 AI 动作
+
+内置 `ai-polish` / `ai-proofread` / `ai-translate` / `ai-summarize` / `ai-custom` 之外，任何 id 以 `ai-` 开头的工具栏项都会被派发到 `onAiRequest`，`action` 为去掉 `ai-` 前缀的部分。无需注册命令，只要往工具栏加一项即可：
+
+```typescript
+new Penna(el, {
+  toolbar: {
+    items: DEFAULT_TOOLBAR_ITEMS.map((it) =>
+      it.id === "ai"
+        ? {
+            ...it,
+            children: [
+              ...it.children,
+              { id: "ai-frontmatter", label: "更新 Frontmatter" }, // → onAiRequest("frontmatter", …)
+            ],
+          }
+        : it,
+    ),
+  },
+  editor: { onAiRequest },
+});
+```
+
+`ai-custom` 是唯一特例：会先弹出提示词对话框，再以 `action="custom"` 携带 `prompts` 调用 `onAiRequest`。
+
 ---
 
 ## 实例方法

@@ -131,7 +131,10 @@ import {
   createThemeCommand,
 } from "@/editor/commands/groups/SetThemeCommand";
 import { insertTextCommand } from "@/editor/commands/groups/InsertTextCommand";
-import { AI_COMMANDS } from "@/editor/commands/groups/AICommand";
+import {
+  AI_COMMANDS,
+  createAICommand,
+} from "@/editor/commands/groups/AICommand";
 import REGISTERED_THEMES from "@/theme/ThemeRegister.js";
 import {
   heading1Command,
@@ -288,7 +291,11 @@ export function runCommand(
   payload?: unknown,
   ctx?: import("./Command.js").CommandContext,
 ): boolean | Promise<boolean> {
-  const handler = COMMANDS[command];
+  // 未注册的 ai-* 命令按约定转 onAiRequest，action 为去掉 "ai-" 前缀的部分。
+  // 宿主只需在工具栏加一个 id 为 ai-xxx 的项即可扩展 AI 动作，无需改内置白名单。
+  const handler =
+    COMMANDS[command] ??
+    (command.startsWith("ai-") ? createAICommand(command.slice(3)) : undefined);
   if (!handler) return false;
   view.focus();
   return handler.execute(view, payload, ctx ?? {});
