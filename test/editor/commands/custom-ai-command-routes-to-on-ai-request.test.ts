@@ -5,14 +5,15 @@
 import { expect, it, vi } from "vitest";
 import { Penna } from "@/editor/Penna";
 import { AI_MENU_IDS } from "@/editor/toolbar/defaults";
+import type { OnAiRequest } from "@/editor/editor/EditorOptions";
 
-it("custom ai-* command (not in AI_MENU_IDS) routes to onAiRequest", async () => {
+it("custom ai-* command routes to onAiRequest, even on empty doc", async () => {
   expect(AI_MENU_IDS).not.toContain("ai-frontmatter");
 
   document.body.innerHTML = '<div id="penna-editor"></div>';
-  const onAiRequest = vi.fn(() => Promise.resolve("done"));
+  const onAiRequest = vi.fn<OnAiRequest>(() => Promise.resolve("done"));
   const penna = new Penna(document.getElementById("penna-editor")!, {
-    editor: { value: "# Title\n\nBody", onAiRequest },
+    editor: { value: "", onAiRequest },
     toolbar: false,
     statusbar: false,
     sidebar: false,

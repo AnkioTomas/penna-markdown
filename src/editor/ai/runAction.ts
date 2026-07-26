@@ -66,7 +66,6 @@ export function runAIAction(
 
   const target = range ?? getAITargetRange(view);
   const { from, to, text } = target;
-  if (!text && action !== "summarize" && action !== "custom") return;
 
   const genId = allocGenId();
   const controller = new AbortController();
