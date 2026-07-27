@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>流式输出 · Penna Markdown</title>
+  </head>
+  <body>
+    <div class="header">
+      <a class="back" href="../../index.html">返回入口</a>
+      <div class="title">流式输出</div>
+      <div class="subtitle">模拟 AI 逐段吐字 · 观察增量渲染</div>
+
+      <div class="stream-controls">
+        <button
+          id="play-btn"
+          type="button"
+          class="stream-btn stream-btn--primary"
+        >
+          播放
+        </button>
+        <button id="restart-btn" type="button" class="stream-btn">
+          重新开始
+        </button>
+        <label class="skin-label">
+          速度
+          <select id="speed-select" class="skin-select">
+            <option value="8">慢</option>
+            <option value="20" selected>中</option>
+            <option value="60">快</option>
+            <option value="200">极速</option>
+          </select>
+        </label>
+      </div>
+
+      <button
+        id="theme-btn"
+        type="button"
+        class="theme-btn"
+        aria-pressed="false"
+      >
+        夜间模式
+      </button>
+      <label class="skin-label">
+        主题
+        <select
+          id="theme-select"
+          class="skin-select"
+          aria-label="渲染主题"
+        ></select>
+      </label>
+      <label class="skin-label">
+        明暗
+        <select id="appearance-select" class="skin-select">
+          <option value="light">浅色</option>
+          <option value="dark">深色</option>
+          <option value="auto">跟随系统</option>
+        </select>
+      </label>
+      <div id="timing" class="timing" title="单次 renderer.render() 耗时">
+        — ms
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div id="progress-bar" class="progress-bar"></div>
+      <div id="progress-text" class="progress-text">0 / 0 字符 (0%)</div>
+    </div>
+
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-title">已输出源码（simple.md 前缀）</div>
+        <textarea
+          id="source"
+          class="textarea"
+          spellcheck="false"
+          readonly
+        ></textarea>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">增量预览（Renderer 挂载点）</div>
+        <div id="preview-wrap" class="preview-wrap">
+          <div id="preview" class="preview penna-render"></div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

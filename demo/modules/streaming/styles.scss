@@ -1,0 +1,134 @@
+@use "../../../src/theme/style/common/tokens" as tokens;
+@import "../../_common/split-page.scss";
+
+.progress-wrap {
+  @include tokens.theme-default;
+}
+
+body.demo-dark .progress-wrap {
+  @include tokens.theme-dark;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: var(--penna-c-text-3);
+  font-weight: 400;
+}
+
+.stream-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stream-btn {
+  padding: 6px 14px;
+  border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 35%, transparent);
+  border-radius: 999px;
+  background: var(--penna-c-bg);
+  color: var(--penna-c-text-1);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--penna-c-brand-2);
+    background: var(--penna-c-bg-elevated);
+  }
+
+  &--primary {
+    border-color: transparent;
+    background: var(--penna-c-brand-1);
+    color: var(--penna-c-contrast-light);
+
+    &:hover {
+      background: var(--penna-c-brand-2);
+    }
+  }
+}
+
+.theme-btn {
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 35%, transparent);
+  border-radius: 999px;
+  background: var(--penna-c-bg);
+  color: var(--penna-c-text-1);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--penna-c-brand-2);
+    background: var(--penna-c-bg-elevated);
+  }
+}
+
+.skin-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--penna-c-text-2);
+}
+
+.skin-select {
+  padding: 5px 8px;
+  border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 35%, transparent);
+  border-radius: 8px;
+  background: var(--penna-c-bg);
+  color: var(--penna-c-text-1);
+  font-size: 12px;
+}
+
+.progress-wrap {
+  position: relative;
+  height: 4px;
+  background: color-mix(in srgb, var(--penna-c-text-3) 18%, transparent);
+  flex-shrink: 0;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background: var(--penna-c-brand-1);
+  transition: width 0.08s linear;
+}
+
+.progress-text {
+  position: absolute;
+  top: 8px;
+  right: 18px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  color: var(--penna-c-text-3);
+}
+
+.textarea {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  border: none;
+  padding: 14px;
+  outline: none;
+  font-size: 13px;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  resize: none;
+  background: var(--penna-c-bg);
+  color: var(--penna-c-text-2);
+}
+
+.preview-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
