@@ -1,0 +1,43 @@
+@use "../../common/rem" as *;
+
+@mixin styles {
+  .penna-cols {
+    display: flex;
+    gap: rem(16);
+    margin: rem(16) 0;
+  }
+
+  .penna-cols__col {
+    flex: 1 1 0;
+    min-width: 0;
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // 相邻列之间的轻量分隔线
+  .penna-cols__col + .penna-cols__col {
+    padding-left: rem(16);
+    border-left: rem(1) solid
+      color-mix(in srgb, var(--penna-c-text-3) 16%, transparent);
+  }
+
+  @media (max-width: rem(640)) {
+    .penna-cols {
+      flex-direction: column;
+    }
+
+    .penna-cols__col + .penna-cols__col {
+      padding-left: 0;
+      padding-top: rem(16);
+      border-left: 0;
+      border-top: rem(1) solid
+        color-mix(in srgb, var(--penna-c-text-3) 16%, transparent);
+    }
+  }
+}
