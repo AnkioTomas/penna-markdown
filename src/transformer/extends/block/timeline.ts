@@ -196,7 +196,6 @@ class TimelineBlockParser extends BaseBlockParser {
           time: section.time,
           itemType: section.type,
           line: container.line,
-          placement: container.placement,
         },
       );
     });
@@ -226,21 +225,21 @@ class TimelineBlockParser extends BaseBlockParser {
       `penna-timeline--placement-${containerPlacement}`,
     ].join(" ");
 
-    const rendered = items.map((item) => {
+    const rendered = items.map((item, index) => {
       const type = String(item.props?.itemType ?? "info");
       const line = String(item.props?.line ?? "solid");
-      const itemPlacement = String(item.props?.placement ?? "left");
       const time = String(item.props?.time ?? "");
       const titleLineNodes =
         (item.props?.titleLineNodes as MarkdownNode[][] | undefined) ?? [];
+
+      const itemPlacement =
+        containerPlacement === "between" && index % 2 === 1 ? "right" : "left";
 
       const classes = [
         "penna-timeline-item",
         `penna-timeline-item--${type}`,
         `penna-timeline-item--line-${line}`,
-        containerPlacement === "between"
-          ? `penna-timeline-item--placement-${itemPlacement}`
-          : "penna-timeline-item--placement-left",
+        `penna-timeline-item--placement-${itemPlacement}`,
       ].join(" ");
 
       const timeHtml = time
