@@ -71,6 +71,7 @@ repo: https://github.com/AnkioTomas/penna-markdown
 | 容器                    | `::: tip` · 对齐 `::: center`                         |
 | 折叠                    | `::: collapse`                                        |
 | Tabs / Steps / Timeline | `::: tabs` · `::: steps` · `::: timeline`             |
+| 列布局                  | `::: cols` + `@col`（属性如 `max-width=200px`）       |
 | 增强代码                | info string · 行高亮 · 折叠                           |
 | Mermaid / ECharts       | ` ```mermaid` · ` ```echarts`                         |
 | 媒体                    | `!video` `!audio` `!iframe`                           |

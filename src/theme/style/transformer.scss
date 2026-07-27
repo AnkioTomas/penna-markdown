@@ -29,6 +29,7 @@
 @use "transformer/extends/card-masonry";
 @use "transformer/extends/steps";
 @use "transformer/extends/tabs";
+@use "transformer/extends/cols";
 @use "transformer/extends/field";
 @use "transformer/extends/timeline";
 @use "transformer/extends/collapse";
@@ -75,6 +76,7 @@
   @include card-masonry.styles;
   @include steps.styles;
   @include tabs.styles;
+  @include cols.styles;
   @include field.styles;
   @include timeline.styles;
   @include collapse.styles;

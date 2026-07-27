@@ -358,6 +358,54 @@ Penna Markdown[^penna] 支持 GFM 风格脚注[^gfm]。
 :::`,
   },
   {
+    id: "cols",
+    name: "列布局 (Cols)",
+    markdown: `### 基础两列（自动均分）
+
+::: cols
+@col
+左列，未标宽度 → flex:1 自动均分。
+@col
+右列，同样自动均分。
+:::
+
+### 指定列宽（CSS 键值对）
+
+::: cols gap=24px
+@col max-width=200px
+固定最大 200px 的侧栏。
+@col
+主内容区占满剩余空间。
+:::
+
+### 列内上下堆叠 + 分隔线
+
+::: cols
+@col
+上段
+
+---
+
+下段（\`---\` 仍是普通 hr，列内竖排是 Markdown 默认流）。
+@col
+右列内容。
+:::
+
+### 嵌套：列里再分列
+
+::: cols
+@col max-width=240px
+外层侧栏。
+@col
+::: cols
+@col
+内左
+@col
+内右
+:::
+:::`,
+  },
+  {
     id: "collapse",
     name: "折叠面板 (Collapse)",
     markdown: `### 默认折叠

@@ -38,6 +38,7 @@ import footnoteDefBlock, {
   footnotesSectionBlockParser,
 } from "@/transformer/extends/block/footnoteDef.js";
 import containerBlock from "@/transformer/extends/block/container.js";
+import colsBlock from "@/transformer/extends/block/cols.js";
 import tabsBlock from "@/transformer/extends/block/tabs.js";
 import stepsBlock from "@/transformer/extends/block/steps.js";
 import timelineBlock from "@/transformer/extends/block/timeline.js";
@@ -71,6 +72,7 @@ export const extendInlineSyntax: Record<number, BaseInlineParser> = {
 
 /** 全部扩展块级语法 */
 export const extendBlockSyntax: Record<number, BaseBlockParser> = {
+  99: colsBlock,
   910: frontmatterBlock,
   906: commentBlockParser,
   905: mathBlockParser,
