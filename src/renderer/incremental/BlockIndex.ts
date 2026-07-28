@@ -80,36 +80,6 @@ export function iterateTopLevelLines(ast: MarkdownNode): TopLevelBlockLine[] {
 }
 
 /**
- * 在 `Map<hash, T>` 中按精确 hash 或 {@link contentHashPrefix} 查找。
- *
- * @param map           hash 键映射
- * @param hash          目标 hash
- * @param removeOnMatch 命中后是否从 map 删除（DOM pool 复用时为 `true`）
- */
-export function lookupByHashPrefix<T>(
-  map: Map<string, T>,
-  hash: string,
-  removeOnMatch = false,
-): T | undefined {
-  const exact = map.get(hash);
-  if (exact) {
-    if (removeOnMatch) map.delete(hash);
-    return exact;
-  }
-
-  const prefix = contentHashPrefix(hash);
-  if (prefix === hash) return undefined;
-
-  for (const [key, value] of map) {
-    if (!key.startsWith(prefix)) continue;
-    if (removeOnMatch) map.delete(key);
-    return value;
-  }
-
-  return undefined;
-}
-
-/**
  * 块级索引条目。
  *
  * 数组顺序与预览区 `mount.children` 一致（仅含实际挂载的可见块）。

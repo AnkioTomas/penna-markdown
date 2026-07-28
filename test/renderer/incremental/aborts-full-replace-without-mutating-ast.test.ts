@@ -75,7 +75,7 @@ it("tryUpdate full-replace aborts without updating session snapshot or DOM", () 
 
   const update = session.tryUpdate(
     mount,
-    markdown,
+    normalizeMarkdownLines(markdown),
     renderer["transformer"],
     log,
     changes,

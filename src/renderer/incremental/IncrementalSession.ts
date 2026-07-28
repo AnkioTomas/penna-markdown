@@ -104,14 +104,14 @@ export class IncrementalSession {
    * 成功时更新 `lines` / `ast` / `blocks`；失败时不 mutate session。
    *
    * @param mount       预览区挂载点
-   * @param markdown    编辑后的完整 markdown
+   * @param newLines    编辑后的完整文档行（`normalizeMarkdownLines` 口径）
    * @param transformer 解析与渲染引擎
    * @param log
    * @param changes     CM 行变更集；缺失时直接失败
    */
   tryUpdate(
     mount: HTMLElement,
-    markdown: string,
+    newLines: string[],
     transformer: TransformerEngine,
     log: Log,
     changes?: PennaChangeLineSet[],
@@ -160,8 +160,6 @@ export class IncrementalSession {
         failReason: "full-replace",
       };
     }
-
-    const newLines = normalizeMarkdownLines(markdown);
 
     if (dirtyTouchesGlobalEffect(prevAst, changes)) {
       log.logD("render:incremental", "abort", { reason: "global-effect" });

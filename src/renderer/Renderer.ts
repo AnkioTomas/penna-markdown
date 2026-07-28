@@ -63,30 +63,25 @@ export { createNode } from "@/transformer/core/MarkdownNode";
 export type { MarkdownNode } from "@/transformer/core/MarkdownNode";
 
 /**
- * 追加 `chunk` 后文档新增的行数。
+ * 在已有行数组尾部追加 `chunk`，结果等价于 `normalizeMarkdownLines(oldMd + chunk)`。
  *
- * `normalizeMarkdownLines(md).length` 恒等于「md 中的换行数 + (md 以换行结尾 ? 0 : 1)」，
- * 两式相减，公共部分抵消，只需扫描 chunk 而不必重切整篇文档。
+ * 追加只会改到最后一行，前面的行直接复用（数组拼接，不重切字符串）。
+ * 60k 文档实测：重切 0.076ms/次，这里 0.002ms/次。
  *
- * 出现 `\r` 时退回精确计算：归一化会把 `\r\n` / `\r` 折成 `\n`，
- * 且 chunk 边界可能落在 `\r` 与 `\n` 之间，单独数 chunk 会算错。
+ * `oldMd` 以换行结尾时末行已闭合，chunk 从新行开始；否则 chunk 续在末行上。
+ * 出现 `\r` 时退回全量归一化：`\r\n` 会被折成一个 `\n`，
+ * 而 chunk 边界可能正好落在 `\r` 与 `\n` 之间。
  */
-function appendedLineCount(oldMd: string, chunk: string): number {
+function appendLines(lines: string[], oldMd: string, chunk: string): string[] {
   if (chunk.includes("\r") || oldMd.endsWith("\r")) {
-    return (
-      normalizeMarkdownLines(`${oldMd}${chunk}`).length -
-      normalizeMarkdownLines(oldMd).length
-    );
+    return normalizeMarkdownLines(`${oldMd}${chunk}`);
   }
 
-  let newlines = 0;
-  for (let i = chunk.indexOf("\n"); i >= 0; i = chunk.indexOf("\n", i + 1)) {
-    newlines++;
-  }
+  const closed = oldMd.endsWith("\n");
+  const head = closed ? lines : lines.slice(0, -1);
+  const tail = closed ? chunk : `${lines[lines.length - 1] ?? ""}${chunk}`;
 
-  return (
-    newlines + (chunk.endsWith("\n") ? 0 : 1) - (oldMd.endsWith("\n") ? 0 : 1)
-  );
+  return head.concat(normalizeMarkdownLines(tail));
 }
 
 /**
@@ -187,6 +182,20 @@ export class Renderer {
    * @param changes  CM 行变更集；增量路径必需
    */
   render(markdown: string, changes?: PennaChangeLineSet[]): RenderResult {
+    return this.update(markdown, normalizeMarkdownLines(markdown), changes);
+  }
+
+  /**
+   * `render` / `append` 的共同实现。
+   *
+   * 行数组由调用方给出：`append` 能在 O(chunk) 内拼出来，
+   * 不必像 `render` 那样把整篇文档重新切一遍。
+   */
+  private update(
+    markdown: string,
+    lines: string[],
+    changes?: PennaChangeLineSet[],
+  ): RenderResult {
     this.lastMarkdown = markdown;
 
     if (this.session.blocks.length === 0) {
@@ -198,7 +207,7 @@ export class Renderer {
 
     const incremental = this.session.tryUpdate(
       this.mount,
-      markdown,
+      lines,
       this.transformer,
       this.logger,
       changes,
@@ -264,15 +273,14 @@ export class Renderer {
     }
 
     const newMd = `${this.lastMarkdown}${chunk}`;
+    const newLines = appendLines(this.session.lines, this.lastMarkdown, chunk);
 
-    // 行数不能重新切整篇文档：流式追加时那是每个 chunk 一次 O(全文) 分配。
-    // 旧行数 session.lines 已经有；新行数按 chunk 内的换行推算即可。
     const fromA = this.session.lines.length;
-    const toB = fromA + appendedLineCount(this.lastMarkdown, chunk);
+    const toB = newLines.length;
 
     // 追加只影响最后一行（及其后延伸出的新行）。
     // fromA = toA = 旧文档最后一行（1-based），fromB = 同行，toB = 新文档末行。
-    return this.render(newMd, [
+    return this.update(newMd, newLines, [
       {
         fromA,
         toA: fromA,
