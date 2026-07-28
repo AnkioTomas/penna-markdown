@@ -92,7 +92,11 @@ function feed(): void {
   const ms = performance.now() - start;
 
   cursor = next;
-  updateChrome(ms, result.partial, result.changedStartLines?.length ?? 0);
+  updateChrome(
+    ms,
+    result.partial ?? false,
+    result.changedStartLines?.length ?? 0,
+  );
   autoScroll();
 
   if (cursor >= fullText.length) stop();
