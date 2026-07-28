@@ -23,6 +23,13 @@
           重新开始
         </button>
         <label class="skin-label">
+          文档
+          <select id="doc-select" class="skin-select">
+            <option value="simple" selected>simple.md · 语法速览</option>
+            <option value="full">test.md · 语法全景</option>
+          </select>
+        </label>
+        <label class="skin-label">
           速度
           <select id="speed-select" class="skin-select">
             <option value="8">慢</option>
@@ -69,7 +76,7 @@
 
     <div class="layout">
       <div class="panel">
-        <div class="panel-title">已输出源码（simple.md 前缀）</div>
+        <div class="panel-title">已输出源码（文档前缀）</div>
         <textarea
           id="source"
           class="textarea"
