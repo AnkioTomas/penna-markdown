@@ -284,7 +284,8 @@ export class IncrementalSession {
 
     log.logD("render:incremental", "ok", {
       changedStartLines: sync.changedStartLines,
-      unchangedBlocks: sync.blocks.length - sync.changedStartLines.length,
+      replacedCount: sync.replacedCount,
+      unchangedBlocks: sync.blocks.length - sync.replacedCount,
     });
 
     return {

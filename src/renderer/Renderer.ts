@@ -278,6 +278,7 @@ export class Renderer {
     const html = this.session.composeHtml(this.mount);
     this.logger.logD("render:full", "done", {
       blockCount: result.blocks.length,
+      replacedCount: result.replacedCount,
     });
     return { html, ast, blocks: this.getMountedBlocks(), partial: false };
   }

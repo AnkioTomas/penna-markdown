@@ -35,6 +35,8 @@ export interface DomReconcileResult {
   blocks: BlockIndex[];
   /** 新建/替换或行号漂移的块起始行（0-based，供 scroll-sync / 事件） */
   changedStartLines: number[];
+  /** DOM 被新建/替换的块数；仅行号漂移的复用块不计入 */
+  replacedCount: number;
   /** 失败原因（`ok === false` 时） */
   failReason?: string;
 }
@@ -140,6 +142,7 @@ export function reconcileDom(
   const blocks: BlockIndex[] = [];
   const changedStartLines: number[] = [];
   const doc = mount.ownerDocument;
+  let replacedCount = 0;
 
   for (const block of BlockIndex.fromAst(ast)) {
     const hash = block.hash;
@@ -170,13 +173,14 @@ export function reconcileDom(
     ordered.push(fresh);
     blocks.push(block.withRenderedHtml(stripHashAttr(html.trim())));
     changedStartLines.push(block.startLine);
+    replacedCount++;
   }
 
   for (const leftover of pool.values()) leftover.remove();
 
   syncMountOrder(mount, ordered);
 
-  return { ok: true, blocks, changedStartLines };
+  return { ok: true, blocks, changedStartLines, replacedCount };
 }
 
 /**
@@ -208,6 +212,7 @@ export function reconcileDomFull(
   const blocks: BlockIndex[] = [];
   const changedStartLines: number[] = [];
   const doc = mount.ownerDocument;
+  let replacedCount = 0;
 
   for (const block of BlockIndex.fromAst(ast)) {
     const hash = block.hash;
@@ -238,11 +243,12 @@ export function reconcileDomFull(
     ordered.push(fresh);
     blocks.push(block.withRenderedHtml(rendered));
     changedStartLines.push(block.startLine);
+    replacedCount++;
   }
 
   for (const leftover of pool.values()) leftover.remove();
 
   syncMountOrder(mount, ordered);
 
-  return { ok: true, blocks, changedStartLines };
+  return { ok: true, blocks, changedStartLines, replacedCount };
 }
