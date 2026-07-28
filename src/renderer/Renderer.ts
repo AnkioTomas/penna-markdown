@@ -78,6 +78,13 @@ export class Renderer {
   private readonly session = new IncrementalSession();
   /** 最近一次成功渲染的 AST 根，供 TOC / ParserStore 查询 */
   private lastAst: MarkdownNode | null = null;
+  /**
+   * 最近一次渲染的原始 markdown，供 {@link append} 拼接。
+   *
+   * 不能用 `session.lines.join("\n")` 还原：归一化会 pop 末尾空串，
+   * 文档是否以 `\n` 结尾的信息在 lines 里已经丢失。
+   */
+  private lastMarkdown = "";
   /** 代码块复制按钮等客户端增强 */
   private codeListener: CodeListener | null = null;
   /** 预览区图片 / SVG 点击放大 */
@@ -153,6 +160,8 @@ export class Renderer {
    * @param changes  CM 行变更集；增量路径必需
    */
   render(markdown: string, changes?: PennaChangeLineSet[]): RenderResult {
+    this.lastMarkdown = markdown;
+
     if (this.session.blocks.length === 0) {
       this.logger.logD("render:full", "no-cache");
       return this.renderFull(markdown);
@@ -189,9 +198,9 @@ export class Renderer {
   /**
    * 在当前文档末尾追加任意字符，等同于编辑器在文档末尾输入字符。
    *
-   * - 以 {@link session.lines} 为基准（与 render/renderFull 状态严格同步）
+   * - 以 {@link lastMarkdown} 为基准（与 render/renderFull 状态严格同步）
    * - 直接构造追加位置的行变更，完全复用编辑器增量路径
-   * - 无缓存时退化为 renderFull
+   * - 无缓存时由 {@link render} 退化为 renderFull
    *
    * @param chunk 要追加到文档末尾的字符串（delta，不是累计全文）
    */
@@ -202,36 +211,23 @@ export class Renderer {
         : this.currentResult(true);
     }
 
-    const oldLines = this.session.lines;
+    const newMd = `${this.lastMarkdown}${chunk}`;
 
-    if (oldLines.length === 0) {
-      return this.renderFull(chunk);
-    }
-
-    // session.lines 由 normalizeMarkdownLines 产生（末尾空行已 pop）。
-    // join("\n") 还原归一化文档，再追加 chunk。
-    const oldMd = oldLines.join("\n");
-    const newMd = `${oldMd}${chunk}`;
-
-    // newLines 必须走 normalizeMarkdownLines，与 tryUpdate 内部完全一致。
-    // 不能用 newMd.split("\n").length——normalizeMarkdownLines 会 pop 末尾空串。
-    const newLinesCount = normalizeMarkdownLines(newMd).length;
+    // 行数必须走 normalizeMarkdownLines，与 tryUpdate 内部完全一致。
+    // 不能用 split("\n").length——normalizeMarkdownLines 会 pop 末尾空串。
+    const fromA = normalizeMarkdownLines(this.lastMarkdown).length;
+    const toB = normalizeMarkdownLines(newMd).length;
 
     // 追加只影响最后一行（及其后延伸出的新行）。
     // fromA = toA = 旧文档最后一行（1-based），fromB = 同行，toB = 新文档末行。
-    const fromA = oldLines.length;
-    const toA = fromA;
-    const fromB = fromA;
-    const toB = newLinesCount;
-
     return this.render(newMd, [
       {
         fromA,
-        toA,
-        fromB,
+        toA: fromA,
+        fromB: fromA,
         toB,
         deletedLines: 0,
-        insertedLines: toB - fromB,
+        insertedLines: toB - fromA,
         isFullDocument: false,
       },
     ]);
@@ -257,6 +253,7 @@ export class Renderer {
    * @param markdown 完整 markdown 源码
    */
   renderFull(markdown: string): RenderResult {
+    this.lastMarkdown = markdown;
     this.syncDarkFromTheme();
     const lines = normalizeMarkdownLines(markdown);
     const ast = this.transformer.parse(markdown);
@@ -320,6 +317,7 @@ export class Renderer {
     this.eventBus.off(THEME_EVENT_LIGHT_DARK, this.onLightDarkChanged);
 
     this.lastAst = null;
+    this.lastMarkdown = "";
     this.session.reset();
     this.codeListener?.destroy();
     this.imageListener?.destroy();
