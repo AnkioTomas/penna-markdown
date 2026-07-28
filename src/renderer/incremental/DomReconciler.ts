@@ -80,6 +80,63 @@ function prevBlockByHash(prevBlocks: BlockIndex[]): Map<string, BlockIndex> {
   return map;
 }
 
+/** `prevBlocks[i]` 与 `mount.children[i]` 的配对，供按渲染内容复用。 */
+interface PrevPair {
+  el: HTMLElement;
+  prev: BlockIndex;
+}
+
+/**
+ * 按上次的 `renderedHtml` 建索引：渲染内容 → 旧 DOM 队列。
+ *
+ * `prevBlocks` 与 `mount.children` 严格一一对应（调用方已校验长度），
+ * 故按下标配对。重复内容的块用队列保序取用。
+ */
+function buildHtmlPool(
+  mount: HTMLElement,
+  prevBlocks: BlockIndex[],
+): Map<string, PrevPair[]> {
+  const byHtml = new Map<string, PrevPair[]>();
+  if (prevBlocks.length !== mount.childElementCount) return byHtml;
+
+  for (let i = 0; i < prevBlocks.length; i++) {
+    const prev = prevBlocks[i]!;
+    if (!prev.renderedHtml) continue;
+    const el = mount.children[i] as HTMLElement;
+    const queue = byHtml.get(prev.renderedHtml);
+    if (queue) queue.push({ el, prev });
+    else byHtml.set(prev.renderedHtml, [{ el, prev }]);
+  }
+  return byHtml;
+}
+
+/**
+ * 取一个渲染内容相同、且尚未被占用的旧节点。
+ *
+ * 不能用 `pool` 判可用：finalizer 生成的块（如 footnotes）没有 `props.id`，
+ * 其 DOM 上也就没有 `data-hash`，压根不在 pool 里——那正是最需要复用的一类。
+ */
+function takeTwin(
+  byHtml: Map<string, PrevPair[]>,
+  pool: Map<string, HTMLElement>,
+  consumed: Set<HTMLElement>,
+  rendered: string,
+): PrevPair | undefined {
+  const queue = byHtml.get(rendered);
+  while (queue?.length) {
+    const pair = queue.shift()!;
+    if (consumed.has(pair.el)) continue;
+
+    // 取走后要同步从 pool 摘除，否则末尾的 leftover 清理会把它删掉
+    const key = pair.el.getAttribute(BLOCK_HASH_ATTR);
+    if (key && pool.get(key) === pair.el) pool.delete(key);
+
+    consumed.add(pair.el);
+    return pair;
+  }
+  return undefined;
+}
+
 /** 判断 mount 子元素顺序是否与目标序列一致（引用相等）。 */
 function mountOrderMatches(
   mount: HTMLElement,
@@ -137,6 +194,8 @@ export function reconcileDom(
 
   const pool = buildDomPool(mount);
   const prevByHash = prevBlockByHash(prevBlocks);
+  const byHtml = buildHtmlPool(mount, prevBlocks);
+  const consumed = new Set<HTMLElement>();
 
   const ordered: HTMLElement[] = [];
   const blocks: BlockIndex[] = [];
@@ -144,34 +203,57 @@ export function reconcileDom(
   const doc = mount.ownerDocument;
   let replacedCount = 0;
 
+  const keepNode = (
+    el: HTMLElement,
+    block: BlockIndex,
+    prev: BlockIndex | undefined,
+    renderedHtml: string,
+  ): void => {
+    syncHashAttr(el, block.hash);
+    if (
+      prev &&
+      (prev.startLine !== block.startLine || prev.endLine !== block.endLine)
+    ) {
+      changedStartLines.push(block.startLine);
+    }
+    ordered.push(el);
+    blocks.push(block.withRenderedHtml(renderedHtml));
+  };
+
   for (const block of BlockIndex.fromAst(ast)) {
     const hash = block.hash;
 
     if (hash) {
       const reused = lookupByHashPrefix(pool, hash, true);
       if (reused) {
+        consumed.add(reused);
         const prev = lookupByHashPrefix(prevByHash, hash);
-        syncHashAttr(reused, hash);
-        if (
-          prev &&
-          (prev.startLine !== block.startLine || prev.endLine !== block.endLine)
-        ) {
-          changedStartLines.push(block.startLine);
-        }
-        ordered.push(reused);
-        // 复用块内容未变，renderedHtml 继承自上次；供后续全量降级按内容比较。
-        blocks.push(block.withRenderedHtml(prev?.renderedHtml ?? ""));
+        // 复用块内容未变，renderedHtml 继承自上次；供后续按内容比较。
+        keepNode(reused, block, prev, prev?.renderedHtml ?? "");
         continue;
       }
     }
 
     const html = transformer.renderBlock(block.node, ast);
+    const rendered = stripHashAttr(html.trim());
+
+    // hash 变了不代表渲染结果变了：脏区一并重解析的邻块拿到新 hash，
+    // 但渲染内容与上次完全相同。此时必须复用旧节点，否则 img/iframe/video
+    // 每次 append 都被重建，浏览器要重新请求并解码资源。
+    if (rendered) {
+      const twin = takeTwin(byHtml, pool, consumed, rendered);
+      if (twin) {
+        keepNode(twin.el, block, twin.prev, rendered);
+        continue;
+      }
+    }
+
     const fresh = BlockIndex.parseSingleRootHtml(doc, html);
     if (!fresh) continue;
 
     syncHashAttr(fresh, hash);
     ordered.push(fresh);
-    blocks.push(block.withRenderedHtml(stripHashAttr(html.trim())));
+    blocks.push(block.withRenderedHtml(rendered));
     changedStartLines.push(block.startLine);
     replacedCount++;
   }
@@ -206,7 +288,8 @@ export function reconcileDomFull(
   prevBlocks: BlockIndex[] = [],
 ): DomReconcileResult {
   const pool = buildDomPool(mount);
-  const prevByHash = prevBlockByHash(prevBlocks);
+  const byHtml = buildHtmlPool(mount, prevBlocks);
+  const consumed = new Set<HTMLElement>();
 
   const ordered: HTMLElement[] = [];
   const blocks: BlockIndex[] = [];
@@ -219,18 +302,20 @@ export function reconcileDomFull(
     const rawHtml = renderPart(block.node);
     const rendered = stripHashAttr(rawHtml.trim());
 
-    const prev = lookupByHashPrefix(prevByHash, hash);
-    if (rendered !== "" && prev && prev.renderedHtml === rendered) {
-      const reused = lookupByHashPrefix(pool, hash, true);
-      if (reused) {
-        syncHashAttr(reused, hash);
+    // 判据只有一个：渲染内容是否与某个旧节点相同。
+    // 不看 hash——finalizer 生成的块（footnotes）根本没有 hash，
+    // 而 hash 相同也不代表渲染相同（globalEffect store 会变）。
+    if (rendered) {
+      const twin = takeTwin(byHtml, pool, consumed, rendered);
+      if (twin) {
+        syncHashAttr(twin.el, hash);
         if (
-          prev.startLine !== block.startLine ||
-          prev.endLine !== block.endLine
+          twin.prev.startLine !== block.startLine ||
+          twin.prev.endLine !== block.endLine
         ) {
           changedStartLines.push(block.startLine);
         }
-        ordered.push(reused);
+        ordered.push(twin.el);
         blocks.push(block.withRenderedHtml(rendered));
         continue;
       }

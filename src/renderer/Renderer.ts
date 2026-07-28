@@ -63,6 +63,33 @@ export { createNode } from "@/transformer/core/MarkdownNode";
 export type { MarkdownNode } from "@/transformer/core/MarkdownNode";
 
 /**
+ * 追加 `chunk` 后文档新增的行数。
+ *
+ * `normalizeMarkdownLines(md).length` 恒等于「md 中的换行数 + (md 以换行结尾 ? 0 : 1)」，
+ * 两式相减，公共部分抵消，只需扫描 chunk 而不必重切整篇文档。
+ *
+ * 出现 `\r` 时退回精确计算：归一化会把 `\r\n` / `\r` 折成 `\n`，
+ * 且 chunk 边界可能落在 `\r` 与 `\n` 之间，单独数 chunk 会算错。
+ */
+function appendedLineCount(oldMd: string, chunk: string): number {
+  if (chunk.includes("\r") || oldMd.endsWith("\r")) {
+    return (
+      normalizeMarkdownLines(`${oldMd}${chunk}`).length -
+      normalizeMarkdownLines(oldMd).length
+    );
+  }
+
+  let newlines = 0;
+  for (let i = chunk.indexOf("\n"); i >= 0; i = chunk.indexOf("\n", i + 1)) {
+    newlines++;
+  }
+
+  return (
+    newlines + (chunk.endsWith("\n") ? 0 : 1) - (oldMd.endsWith("\n") ? 0 : 1)
+  );
+}
+
+/**
  * Markdown 预览渲染器。
  *
  * 持有 {@link TransformerEngine} 与 {@link IncrementalSession}，
@@ -186,12 +213,37 @@ export class Renderer {
     this.logger.logD("render:incremental", "done", {
       changedStartLines: incremental.changedStartLines,
     });
+    return this.buildResult(
+      incremental.ast,
+      true,
+      incremental.changedStartLines,
+    );
+  }
+
+  /**
+   * 组装 {@link RenderResult}；`html` 惰性求值。
+   *
+   * `composeHtml` 要序列化整个预览区，代价与文档长度成正比。流式追加时
+   * 每个 chunk 都算一次会产生 GB 级临时字符串，而库内无人消费该字段。
+   * 读取时才计算，并缓存到本次结果上。
+   */
+  private buildResult(
+    ast: MarkdownNode,
+    partial: boolean,
+    changedStartLines: number[],
+  ): RenderResult {
+    const compose = (): string => this.session.composeHtml(this.mount);
+    let html: string | null = null;
+
     return {
-      html: incremental.html,
-      ast: incremental.ast,
+      get html(): string {
+        html ??= compose();
+        return html;
+      },
+      ast,
       blocks: this.getMountedBlocks(),
-      partial: true,
-      changedStartLines: incremental.changedStartLines,
+      partial,
+      changedStartLines,
     };
   }
 
@@ -208,15 +260,15 @@ export class Renderer {
     if (!chunk) {
       return this.session.blocks.length === 0
         ? this.renderFull("")
-        : this.currentResult(true);
+        : this.buildResult(this.lastAst!, true, []);
     }
 
     const newMd = `${this.lastMarkdown}${chunk}`;
 
-    // 行数必须走 normalizeMarkdownLines，与 tryUpdate 内部完全一致。
-    // 不能用 split("\n").length——normalizeMarkdownLines 会 pop 末尾空串。
-    const fromA = normalizeMarkdownLines(this.lastMarkdown).length;
-    const toB = normalizeMarkdownLines(newMd).length;
+    // 行数不能重新切整篇文档：流式追加时那是每个 chunk 一次 O(全文) 分配。
+    // 旧行数 session.lines 已经有；新行数按 chunk 内的换行推算即可。
+    const fromA = this.session.lines.length;
+    const toB = fromA + appendedLineCount(this.lastMarkdown, chunk);
 
     // 追加只影响最后一行（及其后延伸出的新行）。
     // fromA = toA = 旧文档最后一行（1-based），fromB = 同行，toB = 新文档末行。
@@ -231,16 +283,6 @@ export class Renderer {
         isFullDocument: false,
       },
     ]);
-  }
-
-  private currentResult(partial: boolean): RenderResult {
-    return {
-      html: this.session.composeHtml(this.mount),
-      ast: this.lastAst!,
-      blocks: this.getMountedBlocks(),
-      partial,
-      changedStartLines: [],
-    };
   }
 
   /**
@@ -272,12 +314,11 @@ export class Renderer {
     );
 
     this.session.adoptFullParse(lines, ast, result.blocks);
-    const html = this.session.composeHtml(this.mount);
     this.logger.logD("render:full", "done", {
       blockCount: result.blocks.length,
       replacedCount: result.replacedCount,
     });
-    return { html, ast, blocks: this.getMountedBlocks(), partial: false };
+    return this.buildResult(ast, false, []);
   }
 
   /** 当前挂载块索引，顺序与 `mount.children` 一致 */

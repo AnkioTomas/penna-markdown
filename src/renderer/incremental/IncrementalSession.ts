@@ -37,8 +37,6 @@ export interface IncrementalUpdateResult {
   ok: boolean;
   /** 更新后的 AST 根（失败时为上次 AST） */
   ast: MarkdownNode;
-  /** 预览区 HTML（失败时为空串） */
-  html: string;
   /** 本次 DOM 变更的块起始行（0-based） */
   changedStartLines: number[];
   /**
@@ -127,7 +125,6 @@ export class IncrementalSession {
       return {
         ok: false,
         ast: prevAst!,
-        html: "",
         changedStartLines: [],
         failReason: "no-cache",
       };
@@ -140,7 +137,6 @@ export class IncrementalSession {
       return {
         ok: false,
         ast: prevAst,
-        html: "",
         changedStartLines: [],
         failReason: `dom-cache-mismatch:dom=${prevDomCount},cache=${prevBlocks.length}`,
       };
@@ -150,7 +146,6 @@ export class IncrementalSession {
       return {
         ok: false,
         ast: prevAst,
-        html: "",
         changedStartLines: [],
         failReason: "no-changes",
       };
@@ -161,7 +156,6 @@ export class IncrementalSession {
       return {
         ok: false,
         ast: prevAst,
-        html: "",
         changedStartLines: [],
         failReason: "full-replace",
       };
@@ -174,7 +168,6 @@ export class IncrementalSession {
       return {
         ok: false,
         ast: prevAst,
-        html: "",
         changedStartLines: [],
         failReason: "global-effect",
       };
@@ -188,7 +181,6 @@ export class IncrementalSession {
       return {
         ok: true,
         ast: prevAst,
-        html: this.composeHtml(mount),
         changedStartLines: [],
       };
     }
@@ -209,7 +201,6 @@ export class IncrementalSession {
       return {
         ok: false,
         ast: prevAst,
-        html: "",
         changedStartLines: [],
         failReason:
           err instanceof Error ? err.message : "parse-incremental-failed",
@@ -220,7 +211,6 @@ export class IncrementalSession {
       return {
         ok: false,
         ast: prevAst,
-        html: "",
         changedStartLines: [],
         failReason: "no-dirty-range",
       };
@@ -234,7 +224,6 @@ export class IncrementalSession {
       return {
         ok: false,
         ast: prevAst,
-        html: "",
         changedStartLines: [],
         failReason: "full-replace",
       };
@@ -259,7 +248,6 @@ export class IncrementalSession {
       return {
         ok: false,
         ast,
-        html: "",
         changedStartLines: [],
         failReason: sync.failReason ?? "dom-sync-failed",
       };
@@ -272,7 +260,6 @@ export class IncrementalSession {
       return {
         ok: false,
         ast,
-        html: "",
         changedStartLines: [],
         failReason: "dom-blocks-mismatch",
       };
@@ -291,7 +278,6 @@ export class IncrementalSession {
     return {
       ok: true,
       ast,
-      html: this.composeHtml(mount),
       changedStartLines: sync.changedStartLines,
     };
   }
