@@ -54,7 +54,7 @@ repo: https://github.com/AnkioTomas/penna-markdown
 | 徽章             | `[新]{.tip}`                    |
 | 剧透             | `!! text !!` · `{click}`        |
 | 数学             | `$E=mc^2$`                      |
-| 上下标           | `H~2~O` · `E=mc^2^`             |
+| 上下标           | 下标 `H~2~O` · 上标 `E=mc^2^`   |
 | 注释             | `%% hidden %%`                  |
 | 脚注引用         | `[^1]`                          |
 
@@ -62,24 +62,44 @@ repo: https://github.com/AnkioTomas/penna-markdown
 
 ## Penna 块级
 
-| 语法                    | 写法                                                  |
-| ----------------------- | ----------------------------------------------------- |
-| YAML Frontmatter        | 文首 `---`                                            |
-| Alert                   | `> [!NOTE]` 等                                        |
-| 扩展任务                | `- [/]` `- [>]` `- [!]` …                             |
-| 块级公式                | `$$ … $$`                                             |
-| 容器                    | `::: tip` · 对齐 `::: center`                         |
-| 折叠                    | `::: collapse`                                        |
-| Tabs / Steps / Timeline | `::: tabs` · `::: steps` · `::: timeline`             |
-| 列布局                  | `::: cols` + `@col`（属性如 `max-width=200px`）       |
-| 增强代码                | info string · 行高亮 · 折叠                           |
-| Mermaid / ECharts       | ` ```mermaid` · ` ```echarts`                         |
-| 媒体                    | `!video` `!audio` `!iframe`                           |
-| 卡片                    | `::: card` · `link-card` · `image-card` · `repo-card` |
-| 网格 / 瀑布             | `:::: card-grid` · `card-masonry`                     |
-| 字段文档                | `::: field` · `:::: field-group`                      |
-| 脚注定义                | `[^1]: …`                                             |
-| 块注释                  | `%%% … %%%`                                           |
+| 语法              | 写法                                                  |
+| ----------------- | ----------------------------------------------------- |
+| YAML Frontmatter  | 文首 `---`                                            |
+| Alert             | `> [!NOTE]` 等                                        |
+| 扩展任务          | `- [/]` `- [>]` `- [!]` …                             |
+| 块级公式          | `$$ … $$`                                             |
+| 容器              | `::: tip` · 对齐 `::: center`                         |
+| 折叠              | `::: collapse`                                        |
+| Tabs / Steps      | `::: tabs` + `@tab` · `::: steps` + `1.`              |
+| Timeline          | `::: timeline` + `- [时间:类型] 标题`                 |
+| 列布局            | `::: cols` + `@col`（属性如 `max-width=200px`）       |
+| 增强代码          | `title=` · 行高亮 `{1,3-5}` · `:collapsed-lines`      |
+| Mermaid / ECharts | ` ```mermaid` · ` ```echarts`（支持 `max-width`）     |
+| 媒体              | `!video` `!audio` `!iframe`                           |
+| 卡片              | `::: card` · `link-card` · `image-card` · `repo-card` |
+| 网格 / 瀑布       | `:::: card-grid` · `card-masonry`                     |
+| 字段文档          | `::: field` · `:::: field-group`                      |
+| 脚注定义          | `[^1]: …`                                             |
+| 块注释            | `%%% … %%%`                                           |
+
+---
+
+## 容易写错的地方
+
+| 写法                            | 实际结果                                 |
+| ------------------------------- | ---------------------------------------- |
+| `H~~2~~O`                       | 删除线，不是下标；下标只用一个 `~`       |
+| `:赞:`                          | 原样输出；短码表只有 GitHub 英文名       |
+| `::: tabs 标题`                 | 退化成普通容器；标题只能写在 `@tab` 上   |
+| `::: steps 标题`                | 同上                                     |
+| `- [2025-01-01]`                | 时间轴节点被丢弃；标题必填               |
+| `::: timeline` 忘了闭合         | 整块退化成普通容器（其余容器会吞到文末） |
+| `link=https://x`                | 卡片属性值必须双引号，否则并入标题       |
+| `card-masonry gap="16px"`       | 只认纯数字，回落默认 16                  |
+| `card-grid cols="5"`            | 上限 3                                   |
+| `::: collapse accordion expand` | `accordion` 优先，`expand` 无效          |
+
+完整正确写法见 [help-ai.md](help-ai.md)。
 
 ---
 

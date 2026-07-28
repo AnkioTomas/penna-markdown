@@ -22,7 +22,7 @@ repo: https://github.com/AnkioTomas/penna-markdown
 | **GFM**        | ATX/Setext 标题、强调、链接/图片、列表、引用、表格、分隔线、围栏/缩进代码、基础任务                 |
 | **Penna 行内** | Frontmatter 变量 `[[key]]`、高亮、Emoji、HTML 属性、剧透、数学、徽章、上下标、注释、脚注引用        |
 | **Penna 块级** | YAML Frontmatter、Alert×5、扩展任务列表、块级公式、脚注定义、媒体/iframe、增强代码、Mermaid/ECharts |
-| **布局**       | 容器（note/tip/warning/对齐/嵌套）、Tabs、Steps、Timeline、Collapse                                 |
+| **布局**       | 容器（note/tip/warning/对齐/嵌套）、Tabs、Steps、Timeline、Collapse、Cols 并排分栏                  |
 | **卡片/文档**  | card / link-card / image-card / repo-card / card-grid / card-masonry / field / field-group          |
 
 ---
@@ -55,7 +55,7 @@ Setext 一级
 
 _斜体_ **粗体** _**粗斜体**_ ~~删除线~~ · 嵌套 **粗 _斜_ 粗**
 
-H~~2~~O 与 ~~删除~~ 不冲突 · 转义 \*literal\*
+删除线 `~~x~~` 用双波浪线，下标 `~x~` 用单波浪线：~~删除~~ 与 H~~2~~O 不冲突 · 转义 \*literal\*
 
 行末硬换行：第一行\
 仍属同段
@@ -135,7 +135,9 @@ export const sum = (a, b) => a + b;
 
 ### Emoji
 
-:smile: :rocket: :heart: :warning: :bulb: :+1: :赞:
+短码用 GitHub 英文名，未命中原样输出（如 `:赞:` → :赞:）。
+
+:smile: :rocket: :heart: :warning: :bulb: :+1: :100:
 
 ### HTML 属性
 
@@ -302,26 +304,32 @@ pnpm install
 
 :::
 
+标题必填；空行之后才是节点正文，紧跟的续行仍算标题（渲染成 `<br>`）。
+
 ::: timeline
 
 - [2024-01-01] 阶段一
+
   项目启动，完成基础架构设计。
 
 - [2024-06-15:success] 阶段二
+  续行仍属标题
+
   核心模块开发完成，进入测试阶段。
 
 - [2024-12-31:important] 阶段三
-  正式发布 1.0 版本。
 
 :::
 
 ::: timeline line="dotted" placement="between"
 
-- [2025-01:important] 右侧
-  容器 \`placement="between"\`。
+- [2025-01:important] 第一项在左
 
-- [2025-06:success] 左侧
-  默认左侧。
+  `placement="between"` 时节点左右交替，另可选 `left` / `right`。
+
+- [2025-06:success] 第二项在右
+
+  `line` 可选 `solid` / `dashed` / `dotted`。
 
 :::
 
@@ -370,13 +378,25 @@ export default {
 }
 ```
 
+默认折叠超过 10 行的部分：
+
 ```css :collapsed-lines
 html {
   margin: 0;
 }
-/* ... 折叠的冗长代码 ... */
 body {
   color: inherit;
+}
+```
+
+单起一行的 `...` 手动指定折叠位置（该行渲染为空行）：
+
+```css :collapsed-lines
+:root {
+  --a: 1;
+}
+... .rest {
+  display: none;
 }
 ```
 

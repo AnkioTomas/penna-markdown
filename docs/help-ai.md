@@ -13,6 +13,8 @@ tags: [reference, syntax]
 
 - 围栏关闭标记 `:::` / `::::` 前最多 **3 个空格**
 - 外层网格、瀑布、字段组用 **四个冒号** `::::`，内部卡片/字段用三个冒号 `:::`
+- `::: tabs` / `::: steps` 的开标记行**只能写类型**，后面跟标题会退化成普通容器
+- 卡片、网格、瀑布、时间轴的 `key=value` 属性，**值必须用双引号**（`cols="2"`），例外是 `::: cols` 与围栏代码块的 `max-width`，它们允许裸值
 
 ---
 
@@ -155,8 +157,10 @@ _斜体_ _斜体_ **粗体** **粗体** ~~删除线~~
 
 ### Emoji
 
+短码表用 GitHub 的英文名（`smile` / `rocket` / `+1` / `100` …）。未命中的短码原样输出，不要自造中文短码。
+
 ```markdown
-:smile: :rocket: :中文短码:
+:smile: :rocket: :heart: :warning: :bulb: :+1: :100:
 ```
 
 ### 剧透
@@ -168,6 +172,8 @@ _斜体_ _斜体_ **粗体** **粗体** ~~删除线~~
 ```
 
 ### 数学与上下标
+
+下标是**单个**波浪线，双波浪线 `~~文字~~` 是删除线。
 
 ```markdown
 $E=mc^2$
@@ -327,7 +333,7 @@ H~~2~~O
   :::
 ```
 
-手风琴（同时只展开一个）：
+手风琴（同时只展开一个）。`accordion` 优先于 `expand`，两个一起写时 `expand` 无效：
 
 ```markdown
 ::: collapse accordion
@@ -357,6 +363,8 @@ H~~2~~O
 ---
 
 ## 选项卡
+
+开标记只能是 `::: tabs`，标题写在 `@tab` 上。
 
 ```markdown
 ::: tabs
@@ -390,7 +398,7 @@ H~~2~~O
 
 ## 步骤条
 
-以 `1.` `2.` … 划分步骤：
+开标记只能是 `::: steps`，以 `1.` `2.` … 划分步骤：
 
 ```markdown
 ::: steps
@@ -414,7 +422,9 @@ H~~2~~O
 
 ## 时间轴
 
-节点格式：`- [时间]` 或 `- [时间:类型] 标题`
+节点格式：`- [时间] 标题` 或 `- [时间:类型] 标题`。**标题不能省**，`- [2025-04-01]` 这种光秃秃的节点会被直接丢弃。
+
+时间轴还必须写闭合的 `:::`，否则整块会退化成普通容器。
 
 类型：`info` `tip` `success` `warning` `danger` `caution` `important`（省略则默认为 `info`）
 
@@ -425,7 +435,7 @@ H~~2~~O
 
   说明正文。
 
-- [2025-04-01] 仅标题节点
+- [2025-04-01] 只有标题没有正文
 
 - [2025-05-01:caution] 注意项
   续行仍属标题
@@ -444,6 +454,39 @@ H~~2~~O
 ::: timeline placement="right"
 ::: timeline placement="between"
 ::: timeline line=dotted placement=right
+```
+
+---
+
+## 列布局
+
+`@col` 分列，未写宽度的列自动均分剩余空间。属性写裸值即可，不需要引号。
+
+```markdown
+::: cols gap=24px
+@col max-width=200px
+左列固定最大宽度
+@col
+右列自动均分
+:::
+```
+
+容器属性只认 `gap` `align-items` `justify-content` `flex-wrap`；列属性只认 `width` `min-width` `max-width` `flex` `flex-basis` `flex-grow` `flex-shrink` `align-self` `order`。其余键会被丢弃。
+
+列内可以再嵌 `::: cols`，`---` 在列内仍是普通分隔线：
+
+```markdown
+::: cols
+@col
+::: cols
+@col
+内左
+@col
+内右
+:::
+@col
+右列
+:::
 ```
 
 ---
@@ -472,7 +515,7 @@ H~~2~~O
 ```
 
 ```js :collapsed-lines
-默认折叠，超出部分收起
+默认折叠，超过 10 行的部分收起
 ```
 
 ```js :collapsed-lines=5
@@ -485,6 +528,18 @@ H~~2~~O
 
 ```ts
 波浪线围栏也可以;
+```
+````
+
+折叠位置也可以自己指定：在代码里单起一行写 `...`，折叠边界就落在那一行，`:collapsed-lines=N` 的行数限制随之失效。该标记行渲染成空行，不影响行号与行高亮。
+
+````markdown
+```py :collapsed-lines
+import os
+print(os.getcwd())
+
+...
+这些默认收起
 ```
 ````
 
@@ -517,6 +572,8 @@ flowchart TD
 { "series": [{ "type": "pie", "data": [{ "value": 1, "name": "A" }] }] }
 ```
 ````
+
+`max-width` 只对 `mermaid` / `graph` / `echarts` 生效，纯数字按 px 处理，也可写 `640px` / `80%`。
 
 公式请用 `$…$` / `$$…$$`，不要用 ` ```math ` 当作公式语法。
 
@@ -575,7 +632,7 @@ $$
 
 ### 链接卡片
 
-使用 `link=` 或 `href=`；`image=` 等同 `icon=`。
+使用 `link=` 或 `href=`；`image=` 等同 `icon=`。属性值必须加双引号，否则整段会被当成标题文字。
 
 ```markdown
 ::: link-card 文档标题 link="https://example.com" icon="https://example.com/icon.png"
@@ -587,6 +644,8 @@ $$
 ```
 
 ### 图片卡片
+
+`desc=` 是 `description=` 的别名；写了正文时正文优先，属性描述被忽略。
 
 ```markdown
 ::: image-card image="https://example.com/a.jpg" title="标题" href="https://example.com" author="作者" date="2024/08/16" description="摘要"
@@ -610,6 +669,8 @@ $$
 ```
 
 ### 网格与瀑布流
+
+`cols` 上限是 3，超出按 3 处理；不写时按 `{ sm: 1, md: 2, lg: 2 }`。瀑布流的 `gap` 只接受纯数字（单位 px），写 `16px` 会被忽略并回落到默认 16。
 
 ```markdown
 :::: card-grid
@@ -708,6 +769,7 @@ $$
 | 选项卡         | `::: tabs` + `@tab`                   |
 | 步骤           | `::: steps`                           |
 | 时间线         | `::: timeline` + `- [日期:类型] 标题` |
+| 并排分栏       | `::: cols` + `@col`                   |
 | API 字段       | `::: field` / `:::: field-group`      |
 | 流程图         | ` ```mermaid `                        |
 | 图表           | ` ```echarts `                        |
