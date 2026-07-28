@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>对话输出 · Penna Markdown</title>
+  </head>
+  <body class="chat-demo">
+    <div class="header">
+      <a class="back" href="../../index.html">返回入口</a>
+      <div class="title">对话输出</div>
+      <div class="subtitle">每条回答一个 Renderer · 逐 token append</div>
+      <div class="header-controls">
+        <label>
+          速度
+          <select id="speed-select" aria-label="流式速度">
+            <option value="3">慢</option>
+            <option value="8" selected>中</option>
+            <option value="24">快</option>
+            <option value="120">极速</option>
+          </select>
+        </label>
+        <label>
+          主题
+          <select id="theme-select" aria-label="渲染主题"></select>
+        </label>
+        <label>
+          明暗
+          <select id="appearance-select" aria-label="明暗模式">
+            <option value="light">浅色</option>
+            <option value="dark">深色</option>
+            <option value="auto">跟随系统</option>
+          </select>
+        </label>
+      </div>
+      <div id="timing" class="timing" title="本轮流式统计">— ms</div>
+    </div>
+
+    <div class="app-container chat-shell" id="chat-shell">
+      <div class="chat-scroll" id="chat-scroll">
+        <div class="messages" id="messages"></div>
+      </div>
+
+      <form class="composer" id="composer">
+        <div class="presets" id="presets"></div>
+        <div class="composer-row">
+          <textarea
+            id="prompt"
+            class="composer-input"
+            rows="1"
+            spellcheck="false"
+            placeholder="问点什么…（Enter 发送 · Shift + Enter 换行）"
+          ></textarea>
+          <button id="stop-btn" type="button" class="chat-btn" disabled>
+            停止
+          </button>
+          <button
+            id="send-btn"
+            type="submit"
+            class="chat-btn chat-btn--primary"
+          >
+            发送
+          </button>
+        </div>
+        <p class="composer-hint">
+          回答内容为预置 Markdown，按顺序取用，用于演示流式渲染。
+        </p>
+      </form>
+    </div>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
