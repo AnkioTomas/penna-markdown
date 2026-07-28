@@ -114,7 +114,8 @@ export function readTripleColonBlock(
     i += 1;
   }
 
-  return null;
+  // 未闭合：与 fenced code / %%% 注释块一致，吞到 EOF 成块。
+  return { attrs: match[1] ?? "", innerLines, nextIndex: lines.length };
 }
 
 export function readQuadColonBlock(
@@ -162,7 +163,8 @@ export function readQuadColonBlock(
     i += 1;
   }
 
-  return null;
+  // 未闭合：与 fenced code / %%% 注释块一致，吞到 EOF 成块。
+  return { attrs: match[1] ?? "", innerLines, nextIndex: lines.length };
 }
 
 export type { MarkdownNode };

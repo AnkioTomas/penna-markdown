@@ -24,6 +24,7 @@ import {
   BLOCK_HASH_ATTR,
   BlockIndex,
   lookupByHashPrefix,
+  stripHashAttr,
 } from "@/renderer/incremental/BlockIndex";
 
 /** {@link reconcileDom} 的返回值。 */
@@ -155,7 +156,8 @@ export function reconcileDom(
           changedStartLines.push(block.startLine);
         }
         ordered.push(reused);
-        blocks.push(block);
+        // 复用块内容未变，renderedHtml 继承自上次；供后续全量降级按内容比较。
+        blocks.push(block.withRenderedHtml(prev?.renderedHtml ?? ""));
         continue;
       }
     }
@@ -166,7 +168,75 @@ export function reconcileDom(
 
     syncHashAttr(fresh, hash);
     ordered.push(fresh);
-    blocks.push(block);
+    blocks.push(block.withRenderedHtml(stripHashAttr(html.trim())));
+    changedStartLines.push(block.startLine);
+  }
+
+  for (const leftover of pool.values()) leftover.remove();
+
+  syncMountOrder(mount, ordered);
+
+  return { ok: true, blocks, changedStartLines };
+}
+
+/**
+ * 全量 parse 后的 DOM reconcile：按 `renderBlock` 内容复用节点，替代 `replaceChildren`。
+ *
+ * 与 {@link reconcileDom} 的区别：**逐块重渲染**并按剥离 `data-hash` 后的
+ * 渲染 HTML 比较，仅当内容真正相同才复用旧节点。这样即便 hash 未变但渲染依赖
+ * globalEffect store（frontmatter 变量、脚注引用）而变化，也能正确替换；
+ * 反之未变块（含挂载后被客户端增强的图表/代码块）保留原节点，不闪、不重载媒体。
+ *
+ * 全量降级（`full-replace` / `global-effect` / 首次挂载）统一走此路径。
+ * `mount` 为空 + `prevBlocks` 为空时等价全新挂载。
+ *
+ * @param mount      预览区挂载点
+ * @param ast        全量 parse 的 AST 根
+ * @param renderPart 共享 ctx 下渲染单块 HTML（与全量一致）
+ * @param prevBlocks 上次挂载的块索引（含 `renderedHtml`）
+ */
+export function reconcileDomFull(
+  mount: HTMLElement,
+  ast: MarkdownNode,
+  renderPart: (node: MarkdownNode) => string,
+  prevBlocks: BlockIndex[] = [],
+): DomReconcileResult {
+  const pool = buildDomPool(mount);
+  const prevByHash = prevBlockByHash(prevBlocks);
+
+  const ordered: HTMLElement[] = [];
+  const blocks: BlockIndex[] = [];
+  const changedStartLines: number[] = [];
+  const doc = mount.ownerDocument;
+
+  for (const block of BlockIndex.fromAst(ast)) {
+    const hash = block.hash;
+    const rawHtml = renderPart(block.node);
+    const rendered = stripHashAttr(rawHtml.trim());
+
+    const prev = lookupByHashPrefix(prevByHash, hash);
+    if (rendered !== "" && prev && prev.renderedHtml === rendered) {
+      const reused = lookupByHashPrefix(pool, hash, true);
+      if (reused) {
+        syncHashAttr(reused, hash);
+        if (
+          prev.startLine !== block.startLine ||
+          prev.endLine !== block.endLine
+        ) {
+          changedStartLines.push(block.startLine);
+        }
+        ordered.push(reused);
+        blocks.push(block.withRenderedHtml(rendered));
+        continue;
+      }
+    }
+
+    const fresh = BlockIndex.parseSingleRootHtml(doc, rawHtml);
+    if (!fresh) continue;
+
+    syncHashAttr(fresh, hash);
+    ordered.push(fresh);
+    blocks.push(block.withRenderedHtml(rendered));
     changedStartLines.push(block.startLine);
   }
 

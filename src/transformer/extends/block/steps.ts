@@ -71,7 +71,8 @@ function readStepsInnerLines(
     i += 1;
   }
 
-  return null;
+  // 未闭合：与 fenced code / %%% 注释块一致，吞到 EOF 成块。
+  return { innerLines, nextIndex: lines.length };
 }
 
 function parseStepSections(lines: string[]) {

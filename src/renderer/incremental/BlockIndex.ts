@@ -35,6 +35,18 @@ export function contentHashPrefix(hash: string): string {
   return i > 0 ? hash.slice(0, i + 1) : hash;
 }
 
+/**
+ * 剥离 HTML 中的 `data-hash` 属性，用于按渲染内容比较块。
+ *
+ * `data-hash` 值为 `hash(源码) + "_" + random16`，随机后缀每次 parse 变化，
+ * 直接比较原始 HTML 永远不等；剥离后可判断两次 `renderBlock` 的实际渲染是否相同。
+ *
+ * @param html `renderBlock` 输出的单块 HTML
+ */
+export function stripHashAttr(html: string): string {
+  return html.replace(/\s+data-hash="[^"]*"/g, "");
+}
+
 /** 顶层块行 walk 条目（0-based 半开 `[startLine, endLine)`）。 */
 export interface TopLevelBlockLine {
   readonly node: MarkdownNode;
@@ -153,43 +165,6 @@ export class BlockIndex {
   }
 
   /**
-   * 全量挂载：共享渲染上下文逐块产出 HTML，小块 template 解析后 append。
-   *
-   * 比 `transformer.render(ast)` + 整段 `innerHTML` 更快：
-   * 只渲染 {@link fromAst} 可见块，且每块独立小 DOM 解析。
-   *
-   * @param doc        所属文档
-   * @param ast        文档 AST 根
-   * @param mount      预览挂载点（调用方应先 `replaceChildren`）
-   * @param renderPart 在共享 ctx 下渲染单块 HTML
-   */
-  static mountFromAstWithContext(
-    ast: MarkdownNode,
-    doc: Document,
-    mount: HTMLElement,
-    renderPart: (node: MarkdownNode) => string,
-  ): { html: string; mountedBlocks: BlockIndex[] } {
-    const mountedBlocks: BlockIndex[] = [];
-    const htmlParts: string[] = [];
-
-    for (const block of BlockIndex.fromAst(ast)) {
-      const part = renderPart(block.node);
-      const trimmed = part.trim();
-      const el = BlockIndex.parseSingleRootHtml(doc, part);
-      if (!el) continue;
-
-      mount.appendChild(el);
-      mountedBlocks.push(block);
-      htmlParts.push(trimmed);
-    }
-
-    return {
-      html: htmlParts.length > 0 ? `${htmlParts.join("\n")}\n` : "",
-      mountedBlocks,
-    };
-  }
-
-  /**
    * 判断渲染 HTML 是否可挂载到预览区（恰好一个元素根）。
    *
    * @param html 单块渲染 HTML
@@ -212,11 +187,12 @@ export class BlockIndex {
   }
 
   /**
-   * @param hash      块内容 hash，等于 `node.props.id`
-   * @param startLine 源码起始行（0-based，含）
-   * @param endLine   源码结束行（0-based，不含）
-   * @param type      AST 节点类型
-   * @param node      对应 AST 顶层块节点
+   * @param hash         块内容 hash，等于 `node.props.id`
+   * @param startLine    源码起始行（0-based，含）
+   * @param endLine      源码结束行（0-based，不含）
+   * @param type         AST 节点类型
+   * @param node         对应 AST 顶层块节点
+   * @param renderedHtml `renderBlock` 输出（已剥离 `data-hash`），供全量降级按内容复用 DOM
    */
   constructor(
     readonly hash: string,
@@ -224,5 +200,18 @@ export class BlockIndex {
     readonly endLine: number,
     readonly type: string,
     readonly node: MarkdownNode,
+    readonly renderedHtml: string = "",
   ) {}
+
+  /** 返回带指定 `renderedHtml` 的副本，其余字段不变。 */
+  withRenderedHtml(renderedHtml: string): BlockIndex {
+    return new BlockIndex(
+      this.hash,
+      this.startLine,
+      this.endLine,
+      this.type,
+      this.node,
+      renderedHtml,
+    );
+  }
 }

@@ -32,6 +32,7 @@ import hljs from "highlight.js/lib/common";
 import type { RenderOption } from "@/renderer/RenderOption";
 import { IncrementalSession } from "@/renderer/incremental/IncrementalSession.js";
 import { BlockIndex } from "@/renderer/incremental/BlockIndex.js";
+import { reconcileDomFull } from "@/renderer/incremental/DomReconciler.js";
 import { normalizeMarkdownLines } from "@/transformer/utils/markdownLines.js";
 import type { PennaChangeLineSet } from "@/renderer/incremental/PennaChangeSet";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
@@ -247,7 +248,11 @@ export class Renderer {
   }
 
   /**
-   * 全量 parse + DOM 挂载，并接管增量会话快照。
+   * 全量 parse + DOM reconcile，并接管增量会话快照。
+   *
+   * 不再 `replaceChildren` 整片重建：全量 parse 保证 store 正确，DOM 层经
+   * {@link reconcileDomFull} 按渲染内容复用未变节点，仅替换真正变化的块。
+   * 消除 `full-replace` / `global-effect` 降级时整文档 DOM 重建的闪烁与媒体重载。
    *
    * @param markdown 完整 markdown 源码
    */
@@ -255,22 +260,24 @@ export class Renderer {
     this.syncDarkFromTheme();
     const lines = normalizeMarkdownLines(markdown);
     const ast = this.transformer.parse(markdown);
-
     this.lastAst = ast;
-    this.mount.replaceChildren();
 
     const store = ast.props?.store as ParserStore;
     const ctx = store ? this.transformer.createRenderContext(store) : null;
-    const { html, mountedBlocks } = BlockIndex.mountFromAstWithContext(
-      ast,
-      this.mount.ownerDocument,
+    const renderPart = (node: MarkdownNode): string =>
+      ctx ? this.transformer.renderBlockWithContext(node, ctx) : "";
+
+    const result = reconcileDomFull(
       this.mount,
-      (node) => (ctx ? this.transformer.renderBlockWithContext(node, ctx) : ""),
+      ast,
+      renderPart,
+      this.session.blocks,
     );
 
-    this.session.adoptFullParse(lines, ast, mountedBlocks);
+    this.session.adoptFullParse(lines, ast, result.blocks);
+    const html = this.session.composeHtml(this.mount);
     this.logger.logD("render:full", "done", {
-      blockCount: mountedBlocks.length,
+      blockCount: result.blocks.length,
     });
     return { html, ast, blocks: this.getMountedBlocks(), partial: false };
   }
