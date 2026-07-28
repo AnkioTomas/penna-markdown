@@ -109,11 +109,11 @@ repo: https://github.com/Tencent/penna-markdown
     name: "表情符号 (Emoji)",
     markdown: `### 常用 Emoji
 
-:smile: :thumbsup: :+1: :-1: :heart: :rocket: :tada: :fire: :sparkles: :check: :warning: :bulb: :star:
+:smile: :thumbsup: :+1: :-1: :heart: :rocket: :tada: :fire: :sparkles: :white_check_mark: :warning: :bulb: :star: :100:
 
-### 中文短码
+### 短码表只有 GitHub 英文名
 
-:赞: :微笑: :哭: :思考:
+中文短码不在表内，原样输出：:赞: :微笑: :哭: :思考:
 
 ### 连续匹配
 

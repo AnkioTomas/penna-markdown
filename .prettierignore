@@ -1,4 +1,9 @@
 node_modules
 dist
+dist-demo
 .idea
 .git
+
+# Prettier 只认 GFM：它会把 Penna 的下标 `~x~` 按删除线归一成 `~~x~~`，
+# 连 ```markdown 围栏里的示例也改。Markdown 一律手写，不交给 Prettier。
+*.md

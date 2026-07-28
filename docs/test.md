@@ -191,7 +191,7 @@ _**粗斜体**_ 与 _**另一种粗斜体**_
 
 Intra-word：un*frigging*believable、**bold**ness
 
-删除线：~~已删除~~（与下标 H~~2~~O 不冲突）
+删除线：~~已删除~~（与下标 H~2~O 不冲突）
 
 转义：\*不斜体\*、\*\*不粗体\*\*、\~不下标\~、\^不上标\^
 
@@ -399,9 +399,9 @@ pnpm dev
 
 ### Emoji 短码
 
-常用：:smile: :thumbsup: :+1: :heart: :rocket: :tada: :fire: :sparkles: :check: :warning: :bulb: :star:
+常用：:smile: :thumbsup: :+1: :heart: :rocket: :tada: :fire: :sparkles: :white_check_mark: :warning: :bulb: :star: :100:
 
-中文：:赞: :微笑: :哭: :思考:
+未命中原样输出（表内只有 GitHub 英文名）：:赞: :微笑: :哭: :思考:
 
 连续：:smile::heart:（无空格时按规则逐段匹配）
 
@@ -419,11 +419,11 @@ pnpm dev
 
 ### 上下标
 
-化学式 H~~2~~SO~~4~~，物理 E=mc^2^，数学 x^2^ + y^2^ = z^2^
+化学式 H~2~SO~4~，物理 E=mc^2^，数学 x^2^ + y^2^ = z^2^
 
 嵌套：x^_important_^、a~`code`~
 
-与删除线：~~删除~~ 不影响 H~~2~~O
+与删除线：~~删除~~ 不影响 H~2~O
 
 ### 行内注释与块级注释
 
@@ -452,7 +452,7 @@ Euler's identity $e^{i\pi}+1=0$ is beautiful in $\mathbb{R}^2$.
 
 下面这一段**故意**堆叠多种行内语法，测试优先级与嵌套：
 
-> 发布 **Penna Markdown** [v0.1.0]{.tip .top} ：支持 ==高亮==、!! 剧透 !! {click}、:rocket:、$E=mc^2$、H~~2~~O、[^ref] 脚注引用、%% 内部备注 %% 以及 [文档]([[repo]]){.important}。
+> 发布 **Penna Markdown** [v0.1.0]{.tip .top} ：支持 ==高亮==、!! 剧透 !! {click}、:rocket:、$E=mc^2$、H~2~O、[^ref] 脚注引用、%% 内部备注 %% 以及 [文档]([[repo]]){.important}。
 
 [^ref]: 混搭段落中的脚注定义。
 
@@ -472,7 +472,7 @@ Euler's identity $e^{i\pi}+1=0$ is beautiful in $\mathbb{R}^2$.
 | ----------- | ----------------------- |
 | 高亮+徽章   | ==重要== [New]{.danger} |
 | 剧透+emoji  | !! 秘密 !! :smile:      |
-| 公式+上下标 | $a^2$ / H~~2~~O         |
+| 公式+上下标 | $a^2$ / H~2~O         |
 
 ---
 
@@ -1409,7 +1409,7 @@ GFM 强调边界：
 - `***foo***` → em > strong 嵌套
 - `*(*foo*)*` → 合法嵌套括号
 
-~~删除~~ vs H~~2~~O vs text[^1] — 三种 `~` 语义互不干扰。
+~~删除~~ vs H~2~O vs text[^1] — 三种 `~` 语义互不干扰。
 
 未定义脚注：`missing[^undefined]` → 字面 `[^undefined]`，**无**脚注区。
 
@@ -2367,7 +2367,7 @@ $$
 
 !! 证明细节 !! {click}：利用指示函数 $\mathbf{1}_A$ 与 $P(A)=\mathbb{E}[\mathbf{1}_A]$。
 
-化学：H~~2~~SO~~4~~ 与 $c = \frac{n}{V}$ 可同段出现。
+化学：H~2~SO~4~ 与 $c = \frac{n}{V}$ 可同段出现。
 :::
 
 ---
@@ -2712,7 +2712,7 @@ English · **中文粗体** · _日本語斜体_ · Русский · Ελλην
 | C1    | C2    | C3    | C4    | C5                 | C6    | C7     | C8    | C9      | C10         |
 | ----- | ----- | ----- | ----- | ------------------ | ----- | ------ | ----- | ------- | ----------- |
 | r1c1  | r1c2  | r1c3  | r1c4  | r1c5               | r1c6  | r1c7   | r1c8  | r1c9    | r1c10       |
-| r2c1  | **b** | _i_   | `c`   | [L](https://e.com) | ==h== | :fire: | $n$   | H~~2~~O | [tag]{.tip} |
+| r2c1  | **b** | _i_   | `c`   | [L](https://e.com) | ==h== | :fire: | $n$   | H~2~O | [tag]{.tip} |
 | r3c1  | r3c2  | r3c3  | r3c4  | r3c5               | r3c6  | r3c7   | r3c8  | r3c9    | r3c10       |
 | r4c1  | r4c2  | r4c3  | r4c4  | r4c5               | r4c6  | r4c7   | r4c8  | r4c9    | r4c10       |
 | r5c1  | r5c2  | r5c3  | r5c4  | r5c5               | r5c6  | r5c7   | r5c8  | r5c9    | r5c10       |
@@ -2816,7 +2816,7 @@ Inner container
 
 ### 超长单行段落（换行压力）
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. **Penna Markdown** 在同一句话里再塞入 ==高亮==、$a^2+b^2=c^2$、!!spoiler!! {click}、:rocket:、[链接](https://example.com){.important}、H~~2~~O、[^perf-long] 与 %%隐藏备注%%，用于观察单行内多种 token 扫描是否稳定。
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. **Penna Markdown** 在同一句话里再塞入 ==高亮==、$a^2+b^2=c^2$、!!spoiler!! {click}、:rocket:、[链接](https://example.com){.important}、H~2~O、[^perf-long] 与 %%隐藏备注%%，用于观察单行内多种 token 扫描是否稳定。
 
 [^perf-long]: 超长段落末尾脚注：解析与渲染耗时应线性可接受，不应出现明显卡顿或栈溢出。
 

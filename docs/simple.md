@@ -55,7 +55,7 @@ Setext 一级
 
 _斜体_ **粗体** _**粗斜体**_ ~~删除线~~ · 嵌套 **粗 _斜_ 粗**
 
-删除线 `~~x~~` 用双波浪线，下标 `~x~` 用单波浪线：~~删除~~ 与 H~~2~~O 不冲突 · 转义 \*literal\*
+~~删除线~~ 用双波浪线（单波浪线是下标，见「上下标」）· 转义 \*literal\*
 
 行末硬换行：第一行\
 仍属同段
@@ -157,7 +157,7 @@ $$
 
 [New]{.tip .top} [note]{.note} [important]{.important} [warning]{.warning} [caution]{.caution} [danger]{.danger .bottom}
 
-H~~2~~O · E=mc^2^ · x^_n_^
+下标 H~2~O · 上标 E=mc^2^ · x^_n_^ · 双波浪线是删除线 ~~del~~
 
 ### 注释 · 脚注引用
 
