@@ -10,7 +10,7 @@ export interface PennaFileItem {
 }
 
 export interface SideBarOptions {
-  /** 侧栏最大宽度（px），默认 300 */
+  /** 侧栏最大宽度（px），同时作为初始宽度，默认 300；用户可拖拽窄至 160 */
   maxWidth?: number;
   /** 异步获取文件列表的钩子，如果未提供，则只显示大纲面板 */
   fetchFiles?: () => Promise<PennaFileItem[]>;

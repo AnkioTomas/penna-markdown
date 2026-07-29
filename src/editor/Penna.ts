@@ -2,6 +2,7 @@ import { Divider } from "@/editor/divider/Divider";
 import { Editor } from "@/editor/editor/Editor";
 import { Preview } from "@/editor/preview/Preview";
 import { SideBar } from "@/editor/sidebar/SideBar";
+import { SideBarResizer } from "@/editor/sidebar/SideBarResizer";
 import { Toolbar } from "@/editor/toolbar/Toolbar";
 import { StatusBar } from "@/editor/statusbar/StatusBar";
 import type { PennaOptions } from "@/editor/PennaOptions";
@@ -90,7 +91,7 @@ export function el<K extends keyof HTMLElementTagNameMap>(
  * ```
  * .penna
  * ├── toolbar
- * ├── body → mask | sidebar | editor | divider | preview
+ * ├── body → mask | sidebar | sidebar-resizer | editor | divider | preview
  * ├── statusbar（可选）
  * └── dialog-host
  * ```
@@ -104,6 +105,7 @@ export class Penna {
   private readonly toolbarEl: HTMLElement;
   private readonly bodyEl: HTMLElement;
   private readonly sidebarEl: HTMLElement;
+  private readonly sidebarResizerEl: HTMLElement;
   private readonly sidebarMaskEl: HTMLElement;
   private readonly editorEl: HTMLElement;
   private readonly dividerEl: HTMLElement;
@@ -114,6 +116,7 @@ export class Penna {
   private readonly editor: Editor;
   private readonly toolbar: Toolbar | null;
   private readonly sidebar: SideBar | null;
+  private readonly sidebarResizer: SideBarResizer;
   private readonly divider: Divider;
   private readonly statusbar: StatusBar | null = null;
   private readonly commandBridge: CommandBridge;
@@ -157,6 +160,7 @@ export class Penna {
     this.bodyEl = el("div", "penna-body");
     this.sidebarMaskEl = el("div", "penna-sidebar-mask");
     this.sidebarEl = el("div", "penna-sidebar");
+    this.sidebarResizerEl = el("div", "penna-sidebar-resizer");
     this.editorEl = el("div", "penna-editor");
     this.dividerEl = el("div", "penna-divider");
     // 外层滚动、内层版心：限宽只缩 .penna-render，滚动条留在 .penna-preview
@@ -169,6 +173,7 @@ export class Penna {
     this.pennaEl.appendChild(this.toolbarEl);
     this.bodyEl.appendChild(this.sidebarMaskEl);
     this.bodyEl.appendChild(this.sidebarEl);
+    this.bodyEl.appendChild(this.sidebarResizerEl);
     this.bodyEl.appendChild(this.editorEl);
     this.bodyEl.appendChild(this.dividerEl);
     this.bodyEl.appendChild(this.previewEl);
@@ -221,10 +226,14 @@ export class Penna {
             () => this.editor.focus(),
           );
 
-    this.sidebar = new SideBar(
+    const sidebarOptions =
+      typeof options.sidebar === "object" ? options.sidebar : {};
+    this.sidebar = new SideBar(this.sidebarEl, this.eventBus, sidebarOptions);
+    this.sidebarResizer = new SideBarResizer(
+      this.sidebarResizerEl,
       this.sidebarEl,
-      this.eventBus,
-      typeof options.sidebar === "object" ? options.sidebar : {},
+      this.storage,
+      sidebarOptions.maxWidth,
     );
 
     this.scrollSync = new ScrollSync(
@@ -305,6 +314,7 @@ export class Penna {
    */
   setSidebarVisible(show: boolean): void {
     this.sidebarEl.style.display = show ? "" : "none";
+    this.sidebarResizerEl.style.display = show ? "" : "none";
     this.sidebarMaskEl.classList.toggle("is-active", show);
     if (this.getLayout() === "split") {
       this.divider.setSplit(this.divider.getSplit());
@@ -373,6 +383,7 @@ export class Penna {
     this.dialogHost.destroy();
     this.toolbar?.destroy();
     this.sidebar?.destroy();
+    this.sidebarResizer.destroy();
     this.divider.destroy();
     this.scrollSync.destroy();
     this.editor.destroy();

@@ -43,6 +43,7 @@ export class Preview {
   ) {
     this.eventBus = eventBus;
     this.debug = eventBus.isDebug();
+    mount.classList.toggle("penna-code-wrap", options.codeWrap === true);
     this.scrollEl = mount.parentElement?.classList.contains("penna-preview")
       ? mount.parentElement
       : mount;

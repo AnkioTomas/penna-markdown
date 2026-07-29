@@ -21,6 +21,16 @@ function clampSplit(ratio: number): number {
 }
 
 /**
+ * 读取元素的布局宽度，元素缺失或不可见时按 0 计。
+ *
+ * @param el 待测量的元素。
+ * @returns 元素占用的横向宽度（px）。
+ */
+function visibleWidth(el: HTMLElement | null): number {
+  return el && el.offsetParent !== null ? el.offsetWidth : 0;
+}
+
+/**
  * 从存储读取上次使用的分栏比例。
  *
  * 值缺失或非法时回退到默认比例。
@@ -39,6 +49,7 @@ function readStoredSplit(storage: StorageAPI): number {
 export class Divider {
   private readonly bodyEl: HTMLElement;
   private readonly sidebarEl: HTMLElement | null;
+  private readonly sidebarResizerEl: HTMLElement | null;
 
   private mode: EditorLayoutMode = "split";
   private split: number;
@@ -68,6 +79,7 @@ export class Divider {
     this.split = readStoredSplit(this.storage);
     this.bodyEl = mount.parentElement;
     this.sidebarEl = this.bodyEl.querySelector(".penna-sidebar");
+    this.sidebarResizerEl = this.bodyEl.querySelector(".penna-sidebar-resizer");
 
     mount.setAttribute("role", "separator");
     mount.setAttribute("aria-orientation", "vertical");
@@ -157,26 +169,6 @@ export class Divider {
   }
 
   /**
-   * 计算拖拽可用轨道及侧边栏的尺寸。
-   *
-   * @returns 容器总宽度、可用轨道宽度和可见侧边栏宽度。
-   */
-  private getTrackMetrics(): {
-    bodyWidth: number;
-    track: number;
-    sidebarWidth: number;
-  } {
-    const bodyWidth = this.bodyEl.getBoundingClientRect().width;
-    const sidebarWidth =
-      this.sidebarEl && this.sidebarEl.offsetParent !== null
-        ? this.sidebarEl.offsetWidth
-        : 0;
-    const dividerWidth = this.mount.offsetWidth;
-    const track = bodyWidth - sidebarWidth - dividerWidth;
-    return { bodyWidth, track, sidebarWidth };
-  }
-
-  /**
    * 开始主指针拖拽，并注册文档级移动和结束监听。
    *
    * @param e 触发拖拽的指针事件。
@@ -242,10 +234,11 @@ export class Divider {
    */
   private updateSplitFromPointer(clientX: number): void {
     const bodyRect = this.bodyEl.getBoundingClientRect();
-    const { track, sidebarWidth } = this.getTrackMetrics();
+    const leading =
+      visibleWidth(this.sidebarEl) + visibleWidth(this.sidebarResizerEl);
+    const track = bodyRect.width - leading - this.mount.offsetWidth;
     if (track <= 0) return;
 
-    const offset = clientX - bodyRect.left - sidebarWidth;
-    this.setSplit(offset / track);
+    this.setSplit((clientX - bodyRect.left - leading) / track);
   }
 }
