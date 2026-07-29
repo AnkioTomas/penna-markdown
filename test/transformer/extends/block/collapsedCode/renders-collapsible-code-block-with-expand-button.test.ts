@@ -30,8 +30,13 @@ it("renders collapsible code block with expand button", () => {
   expect(html).toContain('class="penna-code-block__expand"');
   expect(html).toContain('data-penna-collapsed="1"');
   expect(html).toContain('class="penna-code-block__body"');
-  expect(html).toContain('class="penna-code-block__gutter"');
-  expect(html).toContain("--penna-collapsed-visible:4");
+  // 前 4 行（marker 之前）正常显示，marker 及之后折叠
+  expect(html.match(/class="penna-code-block__line"/g)).toHaveLength(4);
+  expect(
+    html.match(
+      /class="penna-code-block__line penna-code-block__line--folded"/g,
+    ),
+  ).toHaveLength(4);
   expect(html).not.toContain("... more code");
   expect(html).toContain("body {");
 });

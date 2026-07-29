@@ -91,7 +91,6 @@
   }
 
   .penna-sidebar {
-    border-right: rem(1) solid var(--penna-c-border-soft);
     background: var(--penna-c-bg);
     font-family: var(--notion-font-sans);
   }
@@ -150,7 +149,8 @@
     background: var(--penna-c-bg);
   }
 
-  .penna-divider {
+  .penna-divider,
+  .penna-sidebar-resizer {
     width: rem(4);
     background: var(--penna-c-border-soft);
     box-shadow: none;

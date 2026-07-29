@@ -24,9 +24,17 @@ it("renders line highlights for js{1,4,6-8}", () => {
   const html = renderMarkdown(createEnhancedEngine(), md);
   expect(html).toContain('data-penna-highlight-lines="1,4,6,7,8"');
   expect(html).toContain('class="penna-code-block__body"');
-  expect(html).toContain('class="penna-code-block__gutter"');
-  expect(html).toContain("--penna-line-count:");
-  expect(html).toContain("--penna-line-highlight-bg:linear-gradient");
-  expect(html).toContain("export default {");
+  // 源码只有 7 行，spec 里的第 8 行不存在
+  expect(
+    html.match(
+      /class="penna-code-block__line penna-code-block__line--highlight"/g,
+    ),
+  ).toHaveLength(4);
+  expect(html).toContain(
+    '<span class="penna-code-block__line penna-code-block__line--highlight">export default {</span>',
+  );
+  expect(html).toContain(
+    '<span class="penna-code-block__line">  data () {</span>',
+  );
   expect(html).toContain('class="penna-code-block__lang">js</span>');
 });

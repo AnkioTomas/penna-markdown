@@ -21,6 +21,12 @@
     }
   }
 
+  /* 无语言的普通围栏块没有行号，换行只是一个 white-space */
+  &.penna-code-wrap pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
   :not(pre) > code {
     padding: 0.2em 0.4em;
     font-size: 0.9em;

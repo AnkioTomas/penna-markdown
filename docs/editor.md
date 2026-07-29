@@ -156,6 +156,12 @@ AI 请求回调。省略时 AI 工具栏命令会静默失败。签名见 [回�
 **仅「纯预览」布局**下限制预览版心宽度，例如 `800` 或 `"720px"` / `"50rem"`。分栏与纯编辑布局忽略此值。
 :::
 
+::: field codeWrap
+@type boolean
+@default false
+代码块超长行自动换行。关闭时代码块横向滚动；开启后行号、行高亮、折叠仍与换行后的行对齐。等价于给 `.penna-render` 加 `penna-code-wrap` 类，独立使用渲染器时可自行添加。
+:::
+
 ::: field transformerEngineOptions
 @type TransformerEngineOptions
 @optional
@@ -270,7 +276,7 @@ SVG 字符串；未配置时按 `id` 回退默认图标。
 ::: field maxWidth
 @type number
 @default 300
-侧栏最大宽度（px）。
+侧栏最大宽度（px），同时作为初始宽度。侧栏右侧有拖拽条，用户可在 160px 与该值之间调整，结果按 `penna-sidebar-width` 键写入 `storage`。
 :::
 
 ::: field fetchFiles

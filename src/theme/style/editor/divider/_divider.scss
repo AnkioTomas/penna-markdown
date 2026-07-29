@@ -40,7 +40,8 @@
   border-right: none;
 }
 
-.penna-divider {
+.penna-divider,
+.penna-sidebar-resizer {
   position: relative;
   flex-shrink: 0;
   align-self: stretch;
@@ -60,11 +61,11 @@
     left: -6px;
     right: -6px;
   }
-}
 
-.penna-divider:hover,
-.penna-divider.is-dragging {
-  background: var(--penna-c-brand-1);
+  &:hover,
+  &.is-dragging {
+    background: var(--penna-c-brand-1);
+  }
 }
 
 .penna-divider.is-disabled {

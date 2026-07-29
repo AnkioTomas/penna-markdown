@@ -88,7 +88,7 @@ version: 0.1.0
 | \`themes\` | 全部内置主题 | 工具栏主题菜单白名单 |
 | \`debug\` | \`true\` | 打开调试日志；状态栏显示渲染耗时 |
 | \`toolbar\` | 默认表 + 自定义按钮 + \`onClick\` | \`items\` 整表替换；展开 \`DEFAULT_TOOLBAR_ITEMS\` 再追加 |
-| \`sidebar\` | 文件列表 + 大纲 | \`fetchFiles\` / \`onFileClick\` / \`maxWidth\` |
+| \`sidebar\` | 文件列表 + 大纲 | \`fetchFiles\` / \`onFileClick\` / \`maxWidth\`；侧栏右侧可拖拽调宽窄 |
 | \`statusbar\` | \`true\` | 底部字数 / 选区 / 调试信息 |
 | \`storage\` | 带前缀的 localStorage | 持久化分栏比例等 |
 | \`editor.value\` | 加载占位文案 | 初始 Markdown |
@@ -96,6 +96,7 @@ version: 0.1.0
 | \`editor.onAiRequest\` | mock AI（含 \`signal\`） | 启用 AI 工具栏与行级 diff；取消时 abort |
 | \`editor.onParseFile\` | mock 上传 | 粘贴/拖入图片等文件 |
 | \`preview.maxWidth\` | \`"720px"\` | **仅预览布局**下限制预览宽度 |
+| \`preview.codeWrap\` | \`true\` | 代码块超长行自动换行（默认 \`false\`） |
 | \`preview.transformerEngineOptions.inlineParsers\` | \`CustomAtParser\` | 注入自定义行内语法 |
 
 ## 建议体验路径
@@ -615,6 +616,7 @@ async function init() {
     preview: {
       /** 仅在纯预览布局下生效 */
       maxWidth: "720px",
+      codeWrap: true,
       transformerEngineOptions: {
         inlineParsers: {
           1001: new CustomAtParser(),

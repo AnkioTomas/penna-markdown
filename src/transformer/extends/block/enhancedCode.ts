@@ -85,48 +85,6 @@ export function formatHighlightLinesAttr(lines: number[]): string {
   return lines.join(",");
 }
 
-export function buildLineHighlightRanges(
-  lines: number[],
-): Array<{ start: number; end: number }> {
-  if (lines.length === 0) return [];
-  const sorted = [...lines].sort((a, b) => a - b);
-  const ranges: Array<{ start: number; end: number }> = [];
-  let start = sorted[0]!;
-  let end = sorted[0]!;
-  for (let i = 1; i < sorted.length; i += 1) {
-    const line = sorted[i]!;
-    if (line === end + 1) {
-      end = line;
-    } else {
-      ranges.push({ start, end });
-      start = line;
-      end = line;
-    }
-  }
-  ranges.push({ start, end });
-  return ranges;
-}
-
-/** 生成行高亮背景渐变（配合 `--cb-line-step` / `--cb-body-pad-y` 使用） */
-export function buildLineHighlightGradient(highlightLines: number[]): string {
-  const ranges = buildLineHighlightRanges(highlightLines);
-  if (ranges.length === 0) return "";
-
-  const step = "var(--cb-line-step)";
-  const offset = "var(--cb-body-pad-y, 0px)";
-  const color = "var(--cb-line-highlight)";
-  const stops = [`transparent ${offset}`];
-
-  for (const { start, end } of ranges) {
-    stops.push(`transparent calc(${offset} + (${start} - 1) * ${step})`);
-    stops.push(`${color} calc(${offset} + (${start} - 1) * ${step})`);
-    stops.push(`${color} calc(${offset} + ${end} * ${step})`);
-    stops.push(`transparent calc(${offset} + ${end} * ${step})`);
-  }
-
-  return `linear-gradient(to bottom,${stops.join(",")})`;
-}
-
 // --- 折叠分析 ---
 
 export function isCollapseMarkerLine(line: string): boolean {
@@ -179,25 +137,45 @@ export function normalizeCodeLines(content: string): string[] {
     .map((line) => (isCollapseMarkerLine(line) ? "" : line));
 }
 
-export function buildGutterText(lineCount: number): string {
-  return Array.from({ length: lineCount }, (_, index) =>
-    String(index + 1),
-  ).join("\n");
-}
-export function buildCodeBodyStyle(
-  highlightLines: number[],
-  collapse: CollapsedCodeAnalysis | null,
-  lineCount: number,
-): string {
-  const parts: string[] = [`--penna-line-count:${lineCount}`];
-  const gradient = buildLineHighlightGradient(highlightLines);
-  if (gradient) {
-    parts.push(`--penna-line-highlight-bg:${gradient}`);
+const HTML_TOKEN_RE = /<\/?[a-zA-Z][^>]*>|\n|[^<\n]+|</g;
+const OPEN_TAG_NAME_RE = /^<([a-zA-Z][\w-]*)/;
+const CLOSE_TAG_NAME_RE = /^<\/([a-zA-Z][\w-]*)/;
+
+/**
+ * 把高亮后的 HTML 按换行切成逐行片段。
+ *
+ * 高亮库的 `<span>` 会跨行（块注释、多行字符串），所以行尾要闭合全部未关标签、
+ * 行首再原样重开，保证每行片段单独成立。
+ *
+ * @param html 高亮函数产出的行内 HTML。
+ * @returns 与源码行一一对应的 HTML 片段。
+ */
+export function splitHighlightedHtml(html: string): string[] {
+  const lines: string[] = [];
+  const open: Array<{ name: string; tag: string }> = [];
+  let buf = "";
+
+  for (const [token] of html.matchAll(HTML_TOKEN_RE)) {
+    if (token === "\n") {
+      for (let i = open.length - 1; i >= 0; i -= 1)
+        buf += `</${open[i]!.name}>`;
+      lines.push(buf);
+      buf = open.map((entry) => entry.tag).join("");
+      continue;
+    }
+
+    const closeName = CLOSE_TAG_NAME_RE.exec(token)?.[1];
+    if (closeName) {
+      open.pop();
+    } else {
+      const openName = OPEN_TAG_NAME_RE.exec(token)?.[1];
+      if (openName) open.push({ name: openName, tag: token });
+    }
+    buf += token;
   }
-  if (collapse?.enabled && collapse.hasMore) {
-    parts.push(`--penna-collapsed-visible:${collapse.visibleCount}`);
-  }
-  return parts.length > 0 ? ` style="${parts.join(";")}"` : "";
+
+  lines.push(buf);
+  return lines;
 }
 
 /** 渲染普通 GFM 代码块内部 HTML：有高亮函数时内联高亮，否则转义纯文本。 */
@@ -213,37 +191,48 @@ export function renderCodeInnerHtml(
   return `${escapeHtml(content)}${suffix}`;
 }
 
+/**
+ * 渲染代码块正文：每行一个 `span`，行号交给 CSS counter，行高亮和折叠是行的状态。
+ *
+ * 行不再依赖「第 i 行位于固定 y 偏移」这个假设，所以开启自动换行后仍然对齐。
+ */
 export function renderCodeBlockBodyHtml(
   content: string,
   langClass: string,
   highlightLines: number[] = [],
   collapse: CollapsedCodeAnalysis | null = null,
   highlighter?: (code: string, lang: string) => string,
-): { html: string; collapse: CollapsedCodeAnalysis; lineCount: number } {
+): { html: string; collapse: CollapsedCodeAnalysis } {
   const analysis = collapse ?? analyzeCollapsedCode(content, {});
-  const lines = normalizeCodeLines(content);
-  const lineCount = lines.length;
-  const gutter = escapeHtml(buildGutterText(lineCount));
-  const codeText = highlighter
-    ? highlighter(content, langClass)
-    : lines.map((line) => escapeHtml(line)).join("\n");
+  const lines = highlighter
+    ? splitHighlightedHtml(highlighter(content, langClass))
+    : normalizeCodeLines(content).map((line) => escapeHtml(line));
   const codeClass = highlighter
     ? `language-${langClass} hljs penna-code-block__highlighted`
     : `language-${langClass}`;
   const highlightedAttr = highlighter ? ' data-penna-highlighted="1"' : "";
-  const bodyStyle = buildCodeBodyStyle(
-    highlightLines,
-    collapse?.enabled ? analysis : null,
-    lineCount,
-  );
+
+  const highlighted = new Set(highlightLines);
+  const foldFrom =
+    collapse?.enabled && analysis.hasMore
+      ? analysis.visibleCount
+      : lines.length;
+  const codeText = lines
+    .map((lineHtml, index) => {
+      let cls = "penna-code-block__line";
+      if (highlighted.has(index + 1))
+        cls += " penna-code-block__line--highlight";
+      if (index >= foldFrom) cls += " penna-code-block__line--folded";
+      return `<span class="${cls}">${lineHtml}</span>`;
+    })
+    .join("");
 
   const html =
-    `<div class="penna-code-block__body"${bodyStyle}>` +
-    `<div class="penna-code-block__gutter" aria-hidden="true">${gutter}</div>` +
+    `<div class="penna-code-block__body">` +
     `<pre class="penna-code-block__pre"><code class="${codeClass}"${highlightedAttr} data-penna-code>${codeText}</code></pre>` +
     `</div>`;
 
-  return { html, collapse: analysis, lineCount };
+  return { html, collapse: analysis };
 }
 
 // --- 围栏 meta ---

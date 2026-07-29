@@ -10,7 +10,7 @@ it("delegates copy button clicks", async () => {
     `<div id="preview">
       <div class="penna-code-block__panel">
         <button type="button" class="penna-copy-code-button" aria-label="复制代码"></button>
-        <pre><code data-penna-code>const x = 1;</code></pre>
+        <pre><code data-penna-code><span class="penna-code-block__line">const x = 1;</span><span class="penna-code-block__line">const y = 2;</span></code></pre>
       </div>
     </div>`,
     { url: "https://example.com" },
@@ -30,6 +30,8 @@ it("delegates copy button clicks", async () => {
   btn.click();
   await new Promise((r) => setTimeout(r, 0));
 
-  expect(navigator.clipboard.writeText).toHaveBeenCalledWith("const x = 1;");
+  expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+    "const x = 1;\nconst y = 2;",
+  );
   expect(btn.classList.contains("is-copied")).toBe(true);
 });

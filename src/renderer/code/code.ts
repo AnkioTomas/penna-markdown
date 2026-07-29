@@ -50,7 +50,9 @@ export class CodeListener {
   }
 
   /**
-   * 复制同 panel 内 `code[data-penna-code]` 的 `textContent`。
+   * 复制同 panel 内 `code[data-penna-code]` 的源码。
+   *
+   * 代码按 `.penna-code-block__line` 逐行渲染，DOM 里没有换行符，需要拼回来。
    *
    * 成功后切换 `is-copied` 与 `aria-label`，2s 后恢复。
    */
@@ -60,7 +62,10 @@ export class CodeListener {
     if (!panel) return;
     const codeEl = panel.querySelector<HTMLElement>("code[data-penna-code]");
     if (!codeEl) return;
-    const code = codeEl.textContent;
+    const code = Array.from(
+      codeEl.querySelectorAll(".penna-code-block__line"),
+      (line) => line.textContent,
+    ).join("\n");
 
     try {
       await copyText(code, doc);

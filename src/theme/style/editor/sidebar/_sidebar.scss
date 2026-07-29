@@ -1,20 +1,12 @@
+/* 宽度由 SideBarResizer 写入 --penna-sidebar-width，拖拽条见 divider/_divider.scss */
 .penna-sidebar {
-  --penna-sidebar-width: var(--penna-sidebar-max-width, 300px);
-
-  width: var(--penna-sidebar-width);
-  max-width: var(--penna-sidebar-width);
+  width: var(--penna-sidebar-width, 300px);
   min-width: 0;
-  flex: 0 0 var(--penna-sidebar-width);
-  flex-shrink: 0;
+  flex: 0 0 var(--penna-sidebar-width, 300px);
   display: flex;
   flex-direction: column;
   background: var(--penna-c-bg);
-  border-right: 1px solid
-    color-mix(in srgb, var(--penna-c-text-3) 18%, transparent);
   overflow: hidden;
-  transition:
-    width 0.2s ease,
-    transform 0.2s ease;
 }
 
 @media (max-width: 640px) {
@@ -26,6 +18,11 @@
     height: 100%;
     z-index: 15;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* 移动端侧栏是浮层抽屉，拖宽没有意义 */
+  .penna-sidebar-resizer {
+    display: none;
   }
 
   .penna-sidebar-mask.is-active {

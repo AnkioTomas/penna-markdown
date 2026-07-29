@@ -1,6 +1,5 @@
 import { expect, it } from "vitest";
 import {
-  buildLineHighlightGradient,
   mergeLineHighlightSpecs,
   parseFenceMeta,
   parseHighlightLinesAttr,

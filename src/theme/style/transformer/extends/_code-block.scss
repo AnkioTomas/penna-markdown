@@ -104,62 +104,23 @@
     }
 
     --cb-line-height: 1.35;
-    --cb-line-step: calc(var(--cb-line-height) * 1em);
     --cb-body-pad-y: #{rem(12)};
     --cb-body-pad-x: #{rem(16)};
+    --cb-gutter-width: #{rem(48)};
 
     &__body {
-      display: flex;
-      align-items: stretch;
       overflow: auto;
-      padding: var(--cb-body-pad-y) var(--cb-body-pad-x);
+      padding: var(--cb-body-pad-y) 0;
       font-family:
         ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
         "Liberation Mono", monospace;
       font-size: rem(13);
       line-height: var(--cb-line-height);
       color: var(--penna-c-text-1);
-      background-image: var(--penna-line-highlight-bg, none);
-      background-repeat: no-repeat;
-      background-size: 100%
-        calc(
-          var(--cb-body-pad-y) * 2 + var(--penna-line-count, 1) *
-            var(--cb-line-step)
-        );
-    }
-
-    &__panel--collapsed .penna-code-block__body {
-      max-height: calc(
-        var(--cb-body-pad-y) * 2 + var(--penna-collapsed-visible, 10) *
-          var(--cb-line-step)
-      );
-      overflow: hidden;
-    }
-
-    &__panel--collapsible:not(.penna-code-block__panel--collapsed)
-      .penna-code-block__body {
-      max-height: none;
-      overflow: auto;
-    }
-
-    &__gutter {
-      flex: 0 0 rem(36);
-      margin: 0;
-      padding: 0 rem(12) 0 0;
-      font: inherit;
-      font-variant-numeric: tabular-nums;
-      line-height: var(--cb-line-height);
-      color: var(--penna-c-text-3);
-      text-align: right;
-      white-space: pre;
-      user-select: none;
-      pointer-events: none;
     }
 
     &__pre,
     &__panel > pre {
-      flex: 1 1 auto;
-      min-width: 0;
       margin: 0;
       padding: 0;
       overflow: visible;
@@ -170,6 +131,7 @@
       background: transparent;
       border: 0;
       border-radius: 0;
+      counter-reset: penna-code-line;
 
       code {
         display: block;
@@ -188,6 +150,41 @@
         line-height: inherit;
         background: transparent;
       }
+    }
+
+    /* 每行独立成块：行号是 counter，高亮和折叠是行的状态，换行后依然对齐 */
+    &__line {
+      display: block;
+      position: relative;
+      box-sizing: border-box;
+      width: max-content;
+      min-width: 100%;
+      min-height: calc(var(--cb-line-height) * 1em);
+      padding-left: calc(var(--cb-gutter-width) + var(--cb-body-pad-x));
+      padding-right: var(--cb-body-pad-x);
+      counter-increment: penna-code-line;
+
+      &::before {
+        content: counter(penna-code-line);
+        position: absolute;
+        left: 0;
+        box-sizing: border-box;
+        width: var(--cb-gutter-width);
+        padding-right: rem(12);
+        font-variant-numeric: tabular-nums;
+        color: var(--penna-c-text-3);
+        text-align: right;
+        user-select: none;
+        pointer-events: none;
+      }
+    }
+
+    &__line--highlight {
+      background: var(--cb-line-highlight);
+    }
+
+    &__panel--collapsed .penna-code-block__line--folded {
+      display: none;
     }
 
     // Shiki 布局（token 颜色由外部高亮库负责）
@@ -289,6 +286,19 @@
       &::before {
         mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
       }
+    }
+  }
+
+  /* 自动换行：由 PreviewOptions.codeWrap 挂在 .penna-render 上 */
+  &.penna-code-wrap {
+    .penna-code-block__body {
+      overflow-x: hidden;
+    }
+
+    .penna-code-block__line {
+      width: auto;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
   }
 
