@@ -48,6 +48,15 @@ priority → 块级 parser。
 @type SyntaxOptions
 @optional
 按 parser `type` / `syntaxKey` 分发配置（如 `atx_heading.slug`）。`SyntaxOptions` = `Record<string, ParserOptions>`。
+
+`code`（增强围栏代码块）支持：
+
+| key | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `enable` | `boolean` | `false` | 关闭时退回朴素 `<pre><code>` |
+| `highlightJs` | `(code, lang) => string` | — | 高亮回调，返回行内 HTML |
+| `wrap` | `boolean` | `false` | 超长行自动换行，替代横向滚动；行号与行高亮仍与换行后的行对齐 |
+| `lineNumbers` | `boolean` | `true` | 左侧行号 |
 :::
 
 ::: field renderOptions

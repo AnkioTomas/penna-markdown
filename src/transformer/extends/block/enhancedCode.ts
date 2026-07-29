@@ -21,8 +21,15 @@ import { decodeHtmlEntities } from "@/transformer/utils/htmlEntities.js";
 
 /** `syntaxOptions.code`（增强围栏代码块） */
 export interface CodeOptions extends ParserOptions {
+  /** 走增强渲染（顶栏 / 复制 / 行号 / 行高亮 / 折叠 / 图表），关闭时输出朴素 GFM 代码块，默认 false */
+  enhanced?: boolean;
+  /** @deprecated 语义是「是否增强渲染」而不是「是否启用解析」，改用 {@link CodeOptions.enhanced} */
   enable?: boolean;
   highlightJs?: (code: string, lang: string) => string;
+  /** 超长行自动换行，默认 false（横向滚动） */
+  wrap?: boolean;
+  /** 显示行号栏，默认 true */
+  lineNumbers?: boolean;
 }
 
 const SPECIAL_LANGS = new Set(["echarts", "mermaid", "graph"]);
@@ -460,7 +467,11 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
     const titleAttr = title ? ` data-title="${escapeHtml(title)}"` : "";
     const langData = ` data-lang="${langClass}"`;
 
-    return `<div class="penna-code-block"${titleAttr}${langData}${this.sourceLineAttrs(node)}>${panel}</div>`;
+    let blockClass = "penna-code-block";
+    if (opts.wrap) blockClass += " penna-code-wrap";
+    if (opts.lineNumbers === false) blockClass += " penna-code-no-line-numbers";
+
+    return `<div class="${blockClass}"${titleAttr}${langData}${this.sourceLineAttrs(node)}>${panel}</div>`;
   }
 
   private renderPlainGfmCode(node: MarkdownNode, ctx: RenderContext): string {
@@ -473,12 +484,15 @@ class EnhancedCodeBlockParser extends BaseBlockParser {
     const opts = this.getOptions() as CodeOptions;
     const inner = renderCodeInnerHtml(content, lang, opts.highlightJs);
     const hljsClass = opts.highlightJs && content ? " hljs" : "";
-    return `<pre${this.sourceLineAttrs(node)}><code${classAttr}${hljsClass}>${inner}</code></pre>`;
+    const preClass = opts.wrap ? ' class="penna-code-wrap"' : "";
+    return `<pre${preClass}${this.sourceLineAttrs(node)}><code${classAttr}${hljsClass}>${inner}</code></pre>`;
   }
 
   render(node: MarkdownNode, ctx: RenderContext) {
     const opts = this.getOptions() as CodeOptions;
-    if (!opts.enable) return this.renderPlainGfmCode(node, ctx);
+    if (!(opts.enhanced ?? opts.enable)) {
+      return this.renderPlainGfmCode(node, ctx);
+    }
     const lang = String(node.props?.lang ?? "")
       .trim()
       .toLowerCase();

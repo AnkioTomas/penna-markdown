@@ -96,7 +96,7 @@ version: 0.1.0
 | \`editor.onAiRequest\` | mock AI（含 \`signal\`） | 启用 AI 工具栏与行级 diff；取消时 abort |
 | \`editor.onParseFile\` | mock 上传 | 粘贴/拖入图片等文件 |
 | \`preview.maxWidth\` | \`"720px"\` | **仅预览布局**下限制预览宽度 |
-| \`preview.codeWrap\` | \`true\` | 代码块超长行自动换行（默认 \`false\`） |
+| \`preview.transformerEngineOptions.syntaxOptions.code\` | \`{ wrap: true, lineNumbers: true }\` | 代码块自动换行（默认 \`false\`）与行号栏（默认 \`true\`） |
 | \`preview.transformerEngineOptions.inlineParsers\` | \`CustomAtParser\` | 注入自定义行内语法 |
 
 ## 建议体验路径
@@ -616,8 +616,10 @@ async function init() {
     preview: {
       /** 仅在纯预览布局下生效 */
       maxWidth: "720px",
-      codeWrap: true,
       transformerEngineOptions: {
+        syntaxOptions: {
+          code: { wrap: true, lineNumbers: true },
+        },
         inlineParsers: {
           1001: new CustomAtParser(),
         },

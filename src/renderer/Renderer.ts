@@ -122,14 +122,17 @@ export class Renderer {
     this.eventBus = options.eventBus;
     this.logger = options.logger;
     this.theme = options.theme;
+    const syntaxOptions = options.syntaxOptions ?? {};
     this.transformer = new TransformerEngine({
       inlineParsers: options.inlineParsers,
       blockParsers: options.blockParsers,
       syntaxOptions: {
-        atx_heading: { slug: true },
+        ...syntaxOptions,
+        atx_heading: { slug: true, ...syntaxOptions.atx_heading },
         code: {
-          enable: true,
+          enhanced: true,
           highlightJs: this.highlightCodeHtml,
+          ...syntaxOptions.code,
         },
       },
       renderOptions: {

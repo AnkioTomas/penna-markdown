@@ -16,7 +16,6 @@
       var(--penna-c-brand-1) 14%,
       transparent
     );
-
     @include tokens.when-dark {
       --cb-border: color-mix(in srgb, var(--penna-c-text-3) 28%, transparent);
       --cb-line-highlight: color-mix(
@@ -187,6 +186,28 @@
       display: none;
     }
 
+    /* 由 syntaxOptions.code.lineNumbers = false 打在块根上 */
+    &.penna-code-no-line-numbers {
+      --cb-gutter-width: 0px;
+
+      .penna-code-block__line::before {
+        display: none;
+      }
+    }
+
+    /* 由 syntaxOptions.code.wrap = true 打在块根上 */
+    &.penna-code-wrap {
+      .penna-code-block__body {
+        overflow-x: hidden;
+      }
+
+      .penna-code-block__line {
+        width: auto;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+    }
+
     // Shiki 布局（token 颜色由外部高亮库负责）
     .shiki,
     .shiki code {
@@ -286,19 +307,6 @@
       &::before {
         mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
       }
-    }
-  }
-
-  /* 自动换行：由 PreviewOptions.codeWrap 挂在 .penna-render 上 */
-  &.penna-code-wrap {
-    .penna-code-block__body {
-      overflow-x: hidden;
-    }
-
-    .penna-code-block__line {
-      width: auto;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
     }
   }
 

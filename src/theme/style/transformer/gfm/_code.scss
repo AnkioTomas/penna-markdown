@@ -22,7 +22,7 @@
   }
 
   /* 无语言的普通围栏块没有行号，换行只是一个 white-space */
-  &.penna-code-wrap pre {
+  pre.penna-code-wrap {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
   }

@@ -156,16 +156,23 @@ AI 请求回调。省略时 AI 工具栏命令会静默失败。签名见 [回�
 **仅「纯预览」布局**下限制预览版心宽度，例如 `800` 或 `"720px"` / `"50rem"`。分栏与纯编辑布局忽略此值。
 :::
 
-::: field codeWrap
-@type boolean
-@default false
-代码块超长行自动换行。关闭时代码块横向滚动；开启后行号、行高亮、折叠仍与换行后的行对齐。等价于给 `.penna-render` 加 `penna-code-wrap` 类，独立使用渲染器时可自行添加。
-:::
-
 ::: field transformerEngineOptions
 @type TransformerEngineOptions
 @optional
-预览解析引擎选项（自定义行内/块级 parser、`syntaxOptions`、`isDark` 等）。详见 [`transformer.md`](transformer.md)。**没有**顶层 `transformer` 字段。
+预览解析引擎选项（自定义行内/块级 parser、`syntaxOptions` 等）。`syntaxOptions` 按 key 合并到渲染器默认值之上，所以只写要改的项即可，`code.enable` / `code.highlightJs` 等默认值不会丢。代码块换行与行号在 `syntaxOptions.code`，详见 [`transformer.md`](transformer.md)。**没有**顶层 `transformer` 字段。
+
+```typescript
+new Penna(el, {
+  preview: {
+    transformerEngineOptions: {
+      syntaxOptions: {
+        code: { wrap: true, lineNumbers: false },
+      },
+    },
+  },
+});
+```
+
 :::
 
 ::::
