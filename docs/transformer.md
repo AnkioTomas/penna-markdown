@@ -53,7 +53,7 @@ priority → 块级 parser。
 
 | key | 类型 | 默认 | 说明 |
 | --- | --- | --- | --- |
-| `enable` | `boolean` | `false` | 关闭时退回朴素 `<pre><code>` |
+| `enhanced` | `boolean` | `false` | 走增强渲染（顶栏 / 复制 / 行号 / 行高亮 / 折叠 / 图表）；关闭时输出朴素 `<pre><code>`。旧名 `enable` 仍可用但已废弃 |
 | `highlightJs` | `(code, lang) => string` | — | 高亮回调，返回行内 HTML |
 | `wrap` | `boolean` | `false` | 超长行自动换行，替代横向滚动；行号与行高亮仍与换行后的行对齐 |
 | `lineNumbers` | `boolean` | `true` | 左侧行号 |

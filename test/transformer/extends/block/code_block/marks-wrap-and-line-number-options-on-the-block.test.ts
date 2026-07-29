@@ -7,7 +7,7 @@ const MD = ["```js", "const x = 1;", "```", "", "```", "plain", "```"].join(
 
 it("marks wrap and line number options on the block", () => {
   const defaults = renderMarkdown(
-    createEngine({ syntaxOptions: { code: { enable: true } } }),
+    createEngine({ syntaxOptions: { code: { enhanced: true } } }),
     MD,
   );
   expect(defaults).toContain('class="penna-code-block"');
@@ -16,7 +16,9 @@ it("marks wrap and line number options on the block", () => {
 
   const custom = renderMarkdown(
     createEngine({
-      syntaxOptions: { code: { enable: true, wrap: true, lineNumbers: false } },
+      syntaxOptions: {
+        code: { enhanced: true, wrap: true, lineNumbers: false },
+      },
     }),
     MD,
   );

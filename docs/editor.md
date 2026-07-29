@@ -159,7 +159,7 @@ AI 请求回调。省略时 AI 工具栏命令会静默失败。签名见 [回�
 ::: field transformerEngineOptions
 @type TransformerEngineOptions
 @optional
-预览解析引擎选项（自定义行内/块级 parser、`syntaxOptions` 等）。`syntaxOptions` 按 key 合并到渲染器默认值之上，所以只写要改的项即可，`code.enable` / `code.highlightJs` 等默认值不会丢。代码块换行与行号在 `syntaxOptions.code`，详见 [`transformer.md`](transformer.md)。**没有**顶层 `transformer` 字段。
+预览解析引擎选项（自定义行内/块级 parser、`syntaxOptions` 等）。`syntaxOptions` 按 key 合并到渲染器默认值之上，所以只写要改的项即可，`code.enhanced` / `code.highlightJs` 等默认值不会丢。代码块换行与行号在 `syntaxOptions.code`，详见 [`transformer.md`](transformer.md)。**没有**顶层 `transformer` 字段。
 
 ```typescript
 new Penna(el, {

@@ -14,7 +14,7 @@ export function createEnhancedEngine(
     ...options,
     syntaxOptions: {
       ...options?.syntaxOptions,
-      code: { enable: true, ...options?.syntaxOptions?.code },
+      code: { enhanced: true, ...options?.syntaxOptions?.code },
     },
   });
 }
