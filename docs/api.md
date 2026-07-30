@@ -167,12 +167,12 @@ new Renderer({
 
 ::: field getToc
 @type () => TocItem[]
-层级目录树（无 AST 时为空数组）。
+层级目录树（无 AST 时为空数组）。只统计文档根层级的标题，引用块 / 容器 / 列表项内部的标题不参与。
 :::
 
 ::: field getTocFlat
 @type () => TocFlatItem[]
-扁平目录。
+扁平目录，取值范围同 `getToc`。
 :::
 
 ::: field getMountedBlocks

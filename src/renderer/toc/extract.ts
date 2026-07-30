@@ -15,36 +15,27 @@ function headingText(node: MarkdownNode, ctx: RenderContext): string {
   return htmlToPlainText(ctx.renderInline(node.children ?? []));
 }
 
-function collectHeadings(
-  nodes: MarkdownNode[] | undefined,
-  out: TocFlatItem[],
-  ctx: RenderContext,
-): void {
-  for (const node of nodes ?? []) {
-    if (HEADING_NODE_TYPES.has(node.type)) {
-      const text = headingText(node, ctx);
-      const level = Number(node.props?.level ?? 1);
-      const slug = node.props?.slug;
-      out.push({
-        level,
-        text,
-        id: typeof slug === "string" ? slug : "",
-      });
-    }
-    collectHeadings(node.children, out, ctx);
-  }
-}
-
 /**
  * 从 AST 提取扁平 TOC。
  * 须在全量/增量 parse 之后调用；`ctx` 用于与预览区相同的行内渲染。
+ *
+ * 只取文档根层级的标题：引用块 / 容器 / 列表项里的标题属于局部内容，
+ * 混进目录会打乱层级，也让每次渲染都要遍历整棵 AST。
  */
 export function extractTocFlat(
   ast: MarkdownNode,
   ctx: RenderContext,
 ): TocFlatItem[] {
   const items: TocFlatItem[] = [];
-  collectHeadings(ast.children, items, ctx);
+  for (const node of ast.children ?? []) {
+    if (!HEADING_NODE_TYPES.has(node.type)) continue;
+    const slug = node.props?.slug;
+    items.push({
+      level: Number(node.props?.level ?? 1),
+      text: headingText(node, ctx),
+      id: typeof slug === "string" ? slug : "",
+    });
+  }
   return items;
 }
 
