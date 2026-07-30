@@ -263,6 +263,13 @@ Penna Markdown[^penna] 支持 GFM 风格脚注[^gfm]。
 > [!CAUTION]
 > 风险提示，某些行为可能有负面后果。
 
+### 自定义标题
+
+> [!WARNING] 防御建议
+> - SSRF：限制请求协议（仅允许 HTTP/HTTPS），禁止访问内网 IP，禁用重定向
+> - SSTI：对用户输入进行严格过滤，避免直接拼接模板
+> - MySQL：对内网数据库设置访问白名单，禁止外网直接访问
+
 ### 多段 Alert
 
 > [!TIP]

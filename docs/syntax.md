@@ -65,7 +65,7 @@ repo: https://github.com/AnkioTomas/penna-markdown
 | 语法              | 写法                                                  |
 | ----------------- | ----------------------------------------------------- |
 | YAML Frontmatter  | 文首 `---`                                            |
-| Alert             | `> [!NOTE]` 等                                        |
+| Alert             | `> [!NOTE]` · `> [!WARNING] 标题`                     |
 | 扩展任务          | `- [/]` `- [>]` `- [!]` …                             |
 | 块级公式          | `$$ … $$`                                             |
 | 容器              | `::: tip` · 对齐 `::: center`                         |

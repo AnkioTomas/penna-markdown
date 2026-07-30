@@ -1,6 +1,13 @@
 /**
  * @file 块级语法拓展：GitHub 风格警报 / Admonition
  * @module transformer/extends/block/alert
+ *
+ * 标记行可带可选标题（Obsidian / VitePress 惯例）：
+ * ```
+ * > [!WARNING] 防御建议
+ * > - SSRF：……
+ * ```
+ * 无标题时沿用类型默认名（Note / Tip / …）。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
@@ -31,16 +38,25 @@ export const ALERT_TYPES = {
   caution: "Caution",
 };
 
-/** 引用块内警报标记行：`[!NOTE]` 等 */
-const ALERT_MARKER_RE = /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*$/i;
+/** 引用块内警报标记行：`[!NOTE]` 或 `[!WARNING] 自定义标题` */
+const ALERT_MARKER_RE =
+  /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\](?:\s+(.*))?$/i;
 
-function parseAlertType(line: string): string | null {
+function parseAlertMarker(
+  line: string,
+): { alertType: string; title: string } | null {
   if (!BLOCKQUOTE_LINE.test(line)) return null;
   const stripped = stripBlockquoteMarker(line);
   const marker = stripped.match(ALERT_MARKER_RE);
   if (!marker) return null;
+
   const alertType = marker[1].toLowerCase();
-  return ALERT_TYPES[alertType as keyof typeof ALERT_TYPES] ? alertType : null;
+  if (!ALERT_TYPES[alertType as keyof typeof ALERT_TYPES]) return null;
+
+  return {
+    alertType,
+    title: (marker[2] ?? "").trim(),
+  };
 }
 
 /**
@@ -53,13 +69,13 @@ class AlertBlockParser extends BaseBlockParser {
 
   /** @inheritdoc */
   canOpenAt(lines: string[], index: number, _ctx: BlockParseContext): boolean {
-    return parseAlertType(lines[index] ?? "") !== null;
+    return parseAlertMarker(lines[index] ?? "") !== null;
   }
 
   /** @inheritdoc */
   parse(lines: string[], index: number, ctx: BlockParseContext) {
-    const alertType = parseAlertType(lines[index] ?? "");
-    if (!alertType) return null;
+    const marker = parseAlertMarker(lines[index] ?? "");
+    if (!marker) return null;
 
     return withBlockquoteFrame(ctx, () => {
       const innerLines: string[] = [];
@@ -110,12 +126,20 @@ class AlertBlockParser extends BaseBlockParser {
         break;
       }
 
+      const titleNodes = marker.title
+        ? ctx.parseInline(marker.title)
+        : undefined;
+
       const node = createNode(
         this.type,
         i - index,
         undefined,
         ctx.parseBlocks(normalizeInnerLines(innerLines)),
-        { alertType },
+        {
+          alertType: marker.alertType,
+          title: marker.title,
+          titleNodes,
+        },
       );
 
       return { node, nextIndex: i };
@@ -125,12 +149,16 @@ class AlertBlockParser extends BaseBlockParser {
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext) {
     const alertType = String(node.props?.alertType ?? "note");
-    const title =
-      ALERT_TYPES[alertType as keyof typeof ALERT_TYPES] ?? alertType;
+    const titleNodes = node.props?.titleNodes as MarkdownNode[] | undefined;
+    const title = titleNodes?.length
+      ? ctx.renderInline(titleNodes)
+      : escapeHtml(
+          ALERT_TYPES[alertType as keyof typeof ALERT_TYPES] ?? alertType,
+        );
     const inner = ctx.renderBlock(node.children ?? []);
     const parts: string[] = [
       `<div class="penna-alert penna-alert--${escapeHtml(alertType)}"${this.sourceLineAttrs(node)}>`,
-      `<p class="penna-alert__title">${escapeHtml(title)}</p>`,
+      `<p class="penna-alert__title">${title}</p>`,
     ];
     if (inner) parts.push(inner);
     parts.push("</div>");
