@@ -79,7 +79,7 @@ class MediaFormDialog extends FormDialog<MediaDialogResult> {
       },
     ];
 
-    if (this.kind === "video") {
+    if (this.kind === "video" || this.kind === "audio") {
       list.push({
         name: "poster",
         label: "封面（可选）",
