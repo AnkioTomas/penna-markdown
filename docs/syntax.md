@@ -69,7 +69,7 @@ repo: https://github.com/AnkioTomas/penna-markdown
 | 扩展任务          | `- [/]` `- [>]` `- [!]` …                             |
 | 块级公式          | `$$ … $$`                                             |
 | 容器              | `::: tip` · 对齐 `::: center`                         |
-| 折叠              | `::: collapse`                                        |
+| 折叠              | `::: collapse 标题` · 多面板 `@item`                   |
 | Tabs / Steps      | `::: tabs` + `@tab` · `::: steps` + `1.`              |
 | Timeline          | `::: timeline` + `- [时间:类型] 标题`                 |
 | 列布局            | `::: cols` + `@col`（属性如 `max-width=200px`）       |
@@ -98,6 +98,8 @@ repo: https://github.com/AnkioTomas/penna-markdown
 | `card-masonry gap="16px"`       | 只认纯数字，回落默认 16                  |
 | `card-grid cols="5"`            | 上限 3                                   |
 | `::: collapse accordion expand` | `accordion` 优先，`expand` 无效          |
+| `::: collapse 标题 expand`      | `expand` 并入标题；标志必须写在标题前     |
+| `::: collapse` + 顶层列表正文   | 旧写法把每个顶格 `-` 切成面板；用 `@item` |
 
 完整正确写法见 [help-ai.md](help-ai.md)。
 

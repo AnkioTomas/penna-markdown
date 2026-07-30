@@ -408,75 +408,67 @@ Penna Markdown[^penna] 支持 GFM 风格脚注[^gfm]。
   {
     id: "collapse",
     name: "折叠面板 (Collapse)",
-    markdown: `### 默认折叠
+    markdown: `### 单面板：标题写在开标记上
+
+::: collapse 常见问题排查
+
+正文是任意 Markdown，不需要缩进：
+
+- **误删了文件但没提交？**
+
+  执行 \`git restore <file>\` 恢复。
+
+- **如何忽略已追踪的文件？**
+  1. 编辑 \`.gitignore\` 添加规则。
+  2. 执行 \`git rm -r --cached .\` 清除缓存。
+
+:::
+
+### 多面板：@item 分隔
 
 ::: collapse
-- 什么是 AST？
-
-  抽象语法树——Markdown 的结构化中间表示。
-
-- 如何调试？
-
-  打开 AST 调试台，左侧编辑右侧看树。
+@item 什么是 AST？
+抽象语法树——Markdown 的结构化中间表示。
+@item 如何调试？
+1. 打开 AST 调试台
+2. 左侧编辑右侧看树
 :::
 
 ### 默认全部展开 expand
 
 ::: collapse expand
-- 展开项 1
-
-  内容 1
-
-- 展开项 2
-
-  内容 2
+@item 展开项 1
+内容 1
+@item:closed 强制折叠
+\`@item:closed\` 覆盖 expand。
 :::
 
 ### 手风琴 accordion
 
 ::: collapse accordion
-- 手风琴 A
+@item:open 手风琴 A
+\`@item:open\` 默认打开。
 
-  同时只展开一个。
-
-- 手风琴 B
-
-  内容 B
-
-- 手风琴 C
-
-  内容 C
+\`\`\`js
+console.log("正文可以是代码块");
+\`\`\`
+@item 手风琴 B
+内容 B
+@item 手风琴 C
+内容 C
 :::
 
-### :+ / :- 标记
-
-::: collapse
-- 默认折叠
-
-  正文
-
-- :+ 强制展开
-
-  即使默认折叠也展开。
-:::
-
-::: collapse expand
-- 默认展开
-
-  正文
-
-- :- 强制折叠
-
-  expand 模式下仍折叠。
-:::
-
-### 多行标题
+### 旧写法：列表项面板
 
 ::: collapse
 - 主标题
   副标题（同属 summary）
 
   正文内容
+
+- :+ 强制展开
+
+  即使默认折叠也展开。
 :::`,
   },
   {

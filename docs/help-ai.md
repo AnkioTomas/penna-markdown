@@ -303,52 +303,58 @@ H~2~O
 
 ## 折叠面板
 
-条目必须以列表项开头：`- 标题`，或 `- :+ 标题` / `- :- 标题`。标题与正文之间空一行。
+单面板：标题写在开标记上，正文是任意 Markdown，不用缩进。
+
+```markdown
+::: collapse 常见问题排查
+
+- **误删了文件但没提交？**
+
+  执行 `git restore <file>` 恢复。
+
+- **Rebase 与 Merge 的区别？**
+  1. `merge` 保留分支结构。
+  2. `rebase` 保持线性历史。
+
+:::
+```
+
+多面板：用 `@item` 分隔，正文同样是任意 Markdown。`@item:open` 强制展开，`@item:closed` 强制折叠。
 
 ```markdown
 ::: collapse
-
-- 默认折叠
-
-  正文 A
-
-- :+ 强制展开
-
-  正文 B
-  :::
+@item 默认折叠
+正文 A
+@item:open 强制展开
+正文 B
+:::
 ```
 
 全部默认展开：
 
 ```markdown
 ::: collapse expand
-
-- 面板一
-
-  内容
-
-- :- 此项强制折叠
-
-  内容
-  :::
+@item 面板一
+内容
+@item:closed 此项强制折叠
+内容
+:::
 ```
 
 手风琴（同时只展开一个）。`accordion` 优先于 `expand`，两个一起写时 `expand` 无效：
 
 ```markdown
 ::: collapse accordion
-
-- :+ 默认打开的一项
-
-  内容 A
-
-- 另一项
-
-  内容 B
-  :::
+@item:open 默认打开的一项
+内容 A
+@item 另一项
+内容 B
+:::
 ```
 
-多行标题：
+标志必须写在标题前面：`::: collapse expand 标题`。有 `@item` 时开标记上的标题无效。
+
+旧写法仍可用：`- 标题` / `- :+ 标题` / `- :- 标题`，标题与正文之间空一行，正文缩进两格。它把顶格的 `-` 当面板分隔，正文含顶层列表时会被切碎，复杂内容用上面两种写法。
 
 ```markdown
 ::: collapse
@@ -764,8 +770,8 @@ $$
 | 提示框         | `> [!NOTE]` 等                        |
 | 彩色面板       | `::: tip 标题`                        |
 | 对齐           | `::: center`                          |
-| 折叠 / FAQ     | `::: collapse`                        |
-| 手风琴         | `::: collapse accordion`              |
+| 折叠 / FAQ     | `::: collapse 标题` · 多面板 `@item`  |
+| 手风琴         | `::: collapse accordion` + `@item`    |
 | 选项卡         | `::: tabs` + `@tab`                   |
 | 步骤           | `::: steps`                           |
 | 时间线         | `::: timeline` + `- [日期:类型] 标题` |

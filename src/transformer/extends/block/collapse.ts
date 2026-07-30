@@ -1,6 +1,26 @@
 /**
  * @file 块级语法拓展：折叠面板
  * @module transformer/extends/block/collapse
+ *
+ * 三种面板切分方式，按优先级依次尝试：
+ *
+ * 1. `@item` 分隔的多面板，正文是任意 Markdown：
+ *    ```
+ *    ::: collapse accordion
+ *    @item 面板一
+ *    - 列表、代码块、嵌套容器都正常
+ *    @item:open 面板二
+ *    默认展开
+ *    :::
+ *    ```
+ * 2. 开标记带标题的单面板，正文是任意 Markdown：
+ *    ```
+ *    ::: collapse 常见问题排查
+ *    - 列表、代码块、嵌套容器都正常
+ *    :::
+ *    ```
+ * 3. `- 标题` 列表项分隔的多面板（旧写法）。`-` 与真实 Markdown 列表冲突，
+ *    正文含顶层列表时会被切成多个面板，复杂内容请改用前两种。
  */
 
 import { BaseBlockParser } from "@/transformer/core/ParserBase.js";
@@ -11,98 +31,125 @@ import {
 import type { BlockParseContext } from "@/transformer/core/context/BlockParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import { normalizeInnerLines } from "@/transformer/utils/normalize.js";
-import { blockLength } from "@/transformer/extends/block/card/shared";
+import {
+  blockLength,
+  readTripleColonBlock,
+} from "@/transformer/extends/block/card/shared.js";
 
+/** 折叠面板开标记行：`::: collapse [标志] [标题]` */
 const OPEN_RE = /^ {0,3}:::(?!:)\s+collapse(?:\s+(.*))?$/;
+
+/** 三冒号闭标记行 */
 const CLOSE_RE = /^ {0,3}:::\s*$/;
+
+/** 嵌套三冒号开标记（排除四冒号块） */
 const NESTED_OPEN_RE = /^ {0,3}:::(?!:)\s+\S/;
-const ITEM_HEAD_RE = /^ {0,3}-\s+(?::([+-])\s+)?(.+)$/;
+
+/** 面板分隔标记行：`@item` / `@item:open` / `@item:closed` + 可选标题 */
+const ITEM_HEAD_RE = /^@item(?::(open|closed))?(?:\s+(.*))?$/;
+
+/** 旧写法的面板头：`- 标题` / `- :+ 标题` / `- :- 标题` */
+const LEGACY_HEAD_RE = /^-\s+(?::([+-])\s+)?(.+)$/;
+
+/** 开标记上标题之前的容器标志 */
+const FLAG_RE = /^(accordion|expand)(?:\s+|$)/;
 
 let collapseGroupSeq = 0;
 
-function hasCollapseFlag(raw: string, name: string): boolean {
-  return new RegExp(`\\b${name}\\b`).test(String(raw ?? ""));
+interface CollapseContainer {
+  accordion: boolean;
+  expand: boolean;
+  title: string;
 }
 
-function parseCollapseContainer(raw: string) {
-  const attrs = String(raw ?? "").trim();
-  const accordion = hasCollapseFlag(attrs, "accordion");
+interface CollapseSection {
+  /** `open` / `closed` 为显式标记，空串表示跟随容器 */
+  marker: string;
+  titleLines: string[];
+  contentLines: string[];
+}
 
-  return {
-    accordion,
-    expand: !accordion && hasCollapseFlag(attrs, "expand"),
-  };
+/**
+ * 拆开标记行：标题前的 `accordion` / `expand` 是标志，其余是标题。
+ * `accordion` 优先，同时出现时 `expand` 无效。
+ */
+function parseCollapseContainer(raw: string): CollapseContainer {
+  let rest = String(raw ?? "").trim();
+  let accordion = false;
+  let expand = false;
+
+  for (let flag = rest.match(FLAG_RE); flag; flag = rest.match(FLAG_RE)) {
+    if (flag[1] === "accordion") accordion = true;
+    else expand = true;
+    rest = rest.slice(flag[0].length);
+  }
+
+  return { accordion, expand: expand && !accordion, title: rest.trim() };
 }
 
 function resolveItemOpen(
-  container: { accordion: boolean; expand: boolean },
+  container: CollapseContainer,
   marker: string,
 ): boolean {
-  if (container.accordion) {
-    return marker === "+";
-  }
-  if (container.expand) {
-    return marker !== "-";
-  }
-  return marker === "+";
+  if (marker) return marker === "open";
+  return container.expand;
 }
 
-function readCollapseInnerLines(
-  lines: string[],
-  start: number,
-): { innerLines: string[]; nextIndex: number } | null {
-  const innerLines: string[] = [];
+/**
+ * 按 `@item` 切分面板。**只在 `:::` 深度为 0 时切**，
+ * 使嵌套容器内部的 `@item` 归属内层。首个 `@item` 之前的内容丢弃（与 tabs 一致）。
+ */
+function splitByItemHead(lines: string[]): CollapseSection[] {
+  const sections: CollapseSection[] = [];
+  let current: CollapseSection | null = null;
   let depth = 0;
-  let i = start;
 
-  while (i < lines.length) {
-    const line = lines[i] ?? "";
-
-    if (CLOSE_RE.test(line)) {
-      if (depth === 0) {
-        return { innerLines, nextIndex: i + 1 };
+  for (const line of lines) {
+    if (depth === 0) {
+      const head = line.match(ITEM_HEAD_RE);
+      if (head) {
+        const title = head[2]?.trim() ?? "";
+        current = {
+          marker: head[1] ?? "",
+          titleLines: title ? [title] : [],
+          contentLines: [],
+        };
+        sections.push(current);
+        continue;
       }
-      depth -= 1;
-      innerLines.push(line);
-      i += 1;
-      continue;
     }
 
-    if (NESTED_OPEN_RE.test(line)) {
-      depth += 1;
-    }
+    if (NESTED_OPEN_RE.test(line)) depth += 1;
+    else if (CLOSE_RE.test(line) && depth > 0) depth -= 1;
 
-    innerLines.push(line);
-    i += 1;
+    if (current) current.contentLines.push(line);
   }
 
-  // 未闭合：与 fenced code / %%% 注释块一致，吞到 EOF 成块。
-  return { innerLines, nextIndex: lines.length };
+  return sections;
 }
 
-function parseCollapseSections(lines: string[]) {
-  const sections: Array<{
-    marker: string;
-    title: string;
-    contentLines: string[];
-  }> = [];
+/**
+ * 旧写法：顶层 `- 标题` 起一个面板，紧跟的非空行并入标题，空行之后是正文。
+ * 面板头必须顶格，缩进的 `-` 属于正文里的嵌套列表。
+ */
+function splitByListItem(lines: string[]): CollapseSection[] {
+  const sections: CollapseSection[] = [];
   let i = 0;
 
   while (i < lines.length) {
-    const head = lines[i]?.match(ITEM_HEAD_RE);
+    const head = lines[i]?.match(LEGACY_HEAD_RE);
     if (!head) {
       i += 1;
       continue;
     }
 
     const titleLines = [head[2].trim()];
-    const marker = head[1] ?? "";
+    const marker = head[1] === "+" ? "open" : head[1] ? "closed" : "";
     i += 1;
 
     while (i < lines.length) {
       const line = lines[i] ?? "";
-      if (ITEM_HEAD_RE.test(line)) break;
-      if (line.trim() === "") break;
+      if (LEGACY_HEAD_RE.test(line) || line.trim() === "") break;
       titleLines.push(line.trim());
       i += 1;
     }
@@ -112,21 +159,29 @@ function parseCollapseSections(lines: string[]) {
     }
 
     const contentLines: string[] = [];
-    while (i < lines.length) {
-      const line = lines[i] ?? "";
-      if (ITEM_HEAD_RE.test(line)) break;
-      contentLines.push(line);
+    while (i < lines.length && !LEGACY_HEAD_RE.test(lines[i] ?? "")) {
+      contentLines.push(lines[i] ?? "");
       i += 1;
     }
 
-    sections.push({
-      marker,
-      title: titleLines.join("\n"),
-      contentLines,
-    });
+    sections.push({ marker, titleLines, contentLines });
   }
 
   return sections;
+}
+
+function parseCollapseSections(
+  lines: string[],
+  container: CollapseContainer,
+): CollapseSection[] {
+  const items = splitByItemHead(lines);
+  if (items.length > 0) return items;
+
+  if (container.title) {
+    return [{ marker: "", titleLines: [container.title], contentLines: lines }];
+  }
+
+  return splitByListItem(lines);
 }
 
 function renderCollapseTitle(
@@ -148,37 +203,31 @@ class CollapseBlockParser extends BaseBlockParser {
   }
 
   parse(lines: string[], index: number, ctx: BlockParseContext) {
-    const line = lines[index] ?? "";
-    const open = line.match(OPEN_RE);
-    if (!open) return null;
-
-    const block = readCollapseInnerLines(lines, index + 1);
+    const block = readTripleColonBlock(lines, index, OPEN_RE);
     if (!block) return null;
 
-    const container = parseCollapseContainer(open[1] ?? "");
+    const container = parseCollapseContainer(block.attrs);
     const sections = parseCollapseSections(
       normalizeInnerLines(block.innerLines),
+      container,
     );
     if (sections.length === 0) return null;
 
-    const items = sections.map((section) => {
-      const titleLines = section.title
-        .split("\n")
-        .map((item) => item.trim())
-        .filter(Boolean);
-
-      return createNode(
+    const items = sections.map((section) =>
+      createNode(
         "collapse_item",
         0,
         undefined,
         ctx.parseBlocks(normalizeInnerLines(section.contentLines)),
         {
           open: resolveItemOpen(container, section.marker),
-          title: section.title,
-          titleLineNodes: titleLines.map((item) => ctx.parseInline(item)),
+          title: section.titleLines.join("\n"),
+          titleLineNodes: section.titleLines.map((item) =>
+            ctx.parseInline(item),
+          ),
         },
-      );
-    });
+      ),
+    );
 
     return {
       node: createNode(

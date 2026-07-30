@@ -11,6 +11,18 @@ import {
 
 export type CollapseVariant = "default" | "expanded" | "expand";
 
+/** 用 `@item` 分隔面板，正文无需缩进，可直接容纳列表、代码块等复杂内容。 */
+function buildSnippet(variant: CollapseVariant, content: string): string {
+  switch (variant) {
+    case "expanded":
+      return `::: collapse accordion\n@item:open 手风琴 A\n${content}\n@item 手风琴 B\n面板内容\n:::\n`;
+    case "expand":
+      return `::: collapse expand\n@item 面板 A\n${content}\n@item:closed 面板 B\n面板内容\n:::\n`;
+    default:
+      return `::: collapse accordion\n@item 手风琴 A\n${content}\n@item 手风琴 B\n面板内容\n:::\n`;
+  }
+}
+
 export class CollapseCommand implements Command {
   /**
    * 创建固定折叠面板样式的命令。
@@ -26,29 +38,18 @@ export class CollapseCommand implements Command {
    * @returns 始终返回 true，表示已插入面板模板
    */
   execute(view: EditorView, _payload: unknown, _ctx: CommandContext): boolean {
-    const state = view.state;
-    const selection = state.selection.main;
-    const selectedText = state.sliceDoc(selection.from, selection.to);
-    const content = selectedText || "面板内容";
-    const indentedContent = content.replace(/\n/g, "\n  ");
+    const selection = view.state.selection.main;
+    const content =
+      view.state.sliceDoc(selection.from, selection.to) || "面板内容";
 
-    let snippet = "";
-    if (this.variant === "default") {
-      snippet = `::: collapse accordion\n- 手风琴 A\n\n  ${indentedContent}\n\n- 手风琴 B\n\n  面板内容\n:::\n`;
-    } else if (this.variant === "expanded") {
-      snippet = `::: collapse accordion\n- :+ 手风琴 A\n\n  ${indentedContent}\n\n- 手风琴 B\n\n  面板内容\n:::\n`;
-    } else if (this.variant === "expand") {
-      snippet = `::: collapse expand\n- 面板 A\n\n  ${indentedContent}\n\n- :- 面板 B\n\n  面板内容\n:::\n`;
-    }
-
-    insertSnippet(view, snippet);
+    insertSnippet(view, buildSnippet(this.variant, content));
     return true;
   }
 }
 
 /** `collapseDefault` — 手风琴，默认折叠 */
 export const collapseDefaultCommand = new CollapseCommand("default");
-/** `collapseExpanded` — 手风琴，首面板默认展开（:+） */
+/** `collapseExpanded` — 手风琴，首面板默认展开（@item:open） */
 export const collapseExpandedCommand = new CollapseCommand("expanded");
 /** `collapseExpand` — 多面板独立展开（expand 模式） */
 export const collapseExpandCommand = new CollapseCommand("expand");

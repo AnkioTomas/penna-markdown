@@ -253,33 +253,34 @@ $$
 
 ### 折叠面板
 
-::: collapse
+::: collapse 单面板标题
 
-- 默认折叠
+正文是任意 Markdown：
 
-  普通折叠面板。
-  :::
+1. 列表
+2. 代码块
+
+:::
 
 ::: collapse expand
-
-- 默认展开
-
-  expand 模式。
-  :::
+@item 默认展开
+expand 模式。
+@item:closed 强制折叠
+`@item:closed` 覆盖 expand。
+:::
 
 ::: collapse accordion
+@item 面板 A
+内容 A
+@item:open 面板 B
+强制展开（`@item:open`）
+:::
 
-- 面板 A
+::: collapse
 
-  内容 A
+- 旧写法：列表项面板
 
-- :+ 面板 B
-
-  强制展开（`:+`）
-
-- :- 面板 C
-
-  accordion 下强制折叠（`:-`）
+  标题与正文之间空一行。
   :::
 
 ### Tabs · Steps · Timeline
