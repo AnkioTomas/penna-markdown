@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+  <a href="https://penna.ankio.net/"><img src="https://img.shields.io/badge/website-penna.ankio.net-0ea5e9?style=flat-square" alt="website" /></a>
   <a href="https://www.npmjs.com/package/penna-markdown"><img src="https://img.shields.io/npm/v/penna-markdown.svg?style=flat-square" alt="npm version" /></a>
   <a href="https://www.npmjs.com/package/penna-markdown"><img src="https://img.shields.io/npm/dm/penna-markdown.svg?style=flat-square" alt="npm downloads" /></a>
   <a href="https://www.npmjs.com/package/penna-markdown"><img src="https://img.shields.io/npm/l/penna-markdown.svg?style=flat-square" alt="license" /></a>
@@ -18,7 +19,7 @@
 | `penna-markdown/renderer`    | Markdown → DOM（增量更新）                  |
 | `penna-markdown/transformer` | Markdown → AST → HTML 字符串                |
 
-仓库：[AnkioTomas/penna-markdown](https://github.com/AnkioTomas/penna-markdown)
+官网：[penna.ankio.net](https://penna.ankio.net/) · 仓库：[AnkioTomas/penna-markdown](https://github.com/AnkioTomas/penna-markdown)
 
 ## 特性
 
@@ -78,7 +79,8 @@ const html = engine.render(ast);
 
 ## 文档与演示
 
-- 项目文档：[`docs/`](docs/)（用 Penna 语法编写，可在 Demo「文档预览」中阅读）
+- 官网文档：[https://penna.ankio.net/](https://penna.ankio.net/)
+- 仓库文档：[`docs/`](docs/)（用 Penna 语法编写，可在 Demo「文档预览」中阅读）
 - 语法活样例：[`docs/simple.md`](docs/simple.md)
 - 本地演示站：
 
