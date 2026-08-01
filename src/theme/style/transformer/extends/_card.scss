@@ -12,6 +12,14 @@
     font-size: rem(14);
     line-height: 1.6;
 
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+
     &__title {
       margin: 0 0 rem(12);
       font-weight: 600;

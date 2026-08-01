@@ -17,6 +17,14 @@
     margin: rem(16) 0;
     padding: rem(16) rem(16) rem(8);
 
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+
     &__title {
       display: flex;
       align-items: center;
@@ -96,6 +104,14 @@
     margin: rem(16) 0;
     font-size: rem(14);
     line-height: 1.6;
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
 
     &--left {
       text-align: left;
