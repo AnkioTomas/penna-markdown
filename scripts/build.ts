@@ -7,7 +7,7 @@
  */
 import * as esbuild from "esbuild";
 import { mkdirSync, rmSync, statSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import { build as viteBuild } from "vite";
@@ -15,6 +15,9 @@ import REGISTERED_THEMES from "../src/theme/ThemeRegister.js";
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = resolve(rootDir, "dist");
 const themeViteConfig = resolve(rootDir, "scripts/vite.theme.config.ts");
+/** 本地包入口，避免依赖 PATH 上可能损坏的全局 pnpm/npx。 */
+const tscBin = join(rootDir, "node_modules/typescript/bin/tsc");
+const tscAliasBin = join(rootDir, "node_modules/tsc-alias/dist/bin/index.js");
 const alias = {
   "@": resolve(rootDir, "src"),
 };
@@ -124,10 +127,10 @@ function runOrThrow(command: string, args: string[], label: string) {
 
 /** 生成可被消费者引用的 .d.ts（并把 @/ 别名改成相对路径） */
 function buildDeclarations() {
-  runOrThrow("pnpm", ["exec", "tsc", "-p", "tsconfig.dts.json"], "dts:tsc");
+  runOrThrow(process.execPath, [tscBin, "-p", "tsconfig.dts.json"], "dts:tsc");
   runOrThrow(
-    "pnpm",
-    ["exec", "tsc-alias", "-p", "tsconfig.dts.json"],
+    process.execPath,
+    [tscAliasBin, "-p", "tsconfig.dts.json"],
     "dts:alias",
   );
 }
