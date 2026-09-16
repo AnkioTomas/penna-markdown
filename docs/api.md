@@ -17,7 +17,7 @@ tags: [reference, api]
 
 | import                       | 主要符号                                                                                                                          | IIFE 全局名            |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| `penna-markdown`             | `Penna`, `PennaOptions`, `EditorOptions`, `OnAiRequest`, `OnParseFile`, `DEFAULT_TOOLBAR_ITEMS`, `Theme`, `EventBus`, `Log`, `el` | `PennaNextEditor`      |
+| `penna-markdown`             | `Penna`, `PennaOptions`, `EditorOptions`, `OnAiRequest`, `OnParseFile`, `DEFAULT_TOOLBAR_ITEMS`, `DEFAULT_SHORTCUTS`, `resolveShortcuts`, `toTauriAccelerator`, `Theme`, `EventBus`, `Log`, `el` | `PennaNextEditor`      |
 | `penna-markdown/renderer`    | `Renderer`, `RenderOption`, `Theme`, `EventBus`, `Log`                                                                            | `PennaNextRenderer`    |
 | `penna-markdown/transformer` | `TransformerEngine`, `TransformerEngineOptions`, `BaseInlineParser`, …                                                            | `PennaNextTransformer` |
 

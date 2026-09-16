@@ -1,3 +1,5 @@
+import type { ShortcutsOption } from "./shortcuts";
+
 /** 文件解析/上传回调，由宿主实现 */
 export type OnParseFile = (file: File) => Promise<{ url: string; msg: string }>;
 
@@ -22,6 +24,14 @@ export interface EditorOptions {
   value?: string;
   /** 显示行号，默认 `true` */
   lineNumbers?: boolean;
+
+  /**
+   * 编辑命令快捷键。
+   * - 省略：启用默认表 `DEFAULT_SHORTCUTS`
+   * - `false`：关闭
+   * - 对象：覆盖默认表（`null` / `""` 删除单条）
+   */
+  shortcuts?: ShortcutsOption;
 
   /** 文件解析/上传回调，粘贴或拖入文件时调用 */
   onParseFile?: OnParseFile;

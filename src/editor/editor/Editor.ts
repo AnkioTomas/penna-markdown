@@ -33,6 +33,7 @@ import { createAIExtension } from "@/editor/ai";
 import type { EditorChangePayload } from "@/editor/events";
 import type { EditorOptions } from "./EditorOptions";
 import type { EventBus } from "@/core/event/EventBus";
+import { createCommandKeymap, resolveShortcuts } from "./shortcuts";
 
 /**
  * 编辑器核心：组装 CodeMirror 6 扩展，并把文档变更翻译为 `editor:change`。
@@ -105,6 +106,11 @@ export class Editor {
 
     if (options.onAiRequest) {
       extensions.push(...createAIExtension());
+    }
+
+    const shortcutMap = resolveShortcuts(options.shortcuts);
+    if (Object.keys(shortcutMap).length > 0) {
+      extensions.push(createCommandKeymap(eventBus, shortcutMap));
     }
 
     const state = EditorState.create({

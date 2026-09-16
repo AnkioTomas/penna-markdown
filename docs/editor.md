@@ -130,6 +130,30 @@ penna.destroy();
 编辑区是否显示行号。
 :::
 
+::: field shortcuts
+@type false | Partial&lt;Record&lt;string, string | null&gt;&gt;
+@optional
+编辑命令快捷键。省略时启用 `DEFAULT_SHORTCUTS`；`false` 关闭；对象覆盖默认表（值为 `null` / `""` 删除单条）。键位用 CodeMirror 写法（如 `Mod-b`）。宿主可用导出的 `resolveShortcuts` / `toTauriAccelerator` 生成原生菜单加速键。
+
+默认表对齐 Typora Windows（删除线跟 Obsidian），并避开命令面板（`Shift-Mod-p`）、重开关闭标签（`Shift-Mod-t`）、打开文件夹（`Shift-Mod-o`）等宿主键：
+
+| 命令 | 默认键 |
+| --- | --- |
+| bold / italic / link | `Mod-b` / `Mod-i` / `Mod-k` |
+| strikethrough | `Shift-Mod-x` |
+| code | `Shift-Mod-\`` |
+| heading1–6 | `Mod-1` … `Mod-6` |
+| blockquote | `Shift-Mod-q` |
+| unorderedList / orderedList | `Shift-Mod-]` / `Shift-Mod-[` |
+| taskList | `Shift-Mod-c` |
+| image | `Shift-Mod-i` |
+| table | `Mod-t` |
+| mathBlock | `Shift-Mod-m` |
+| codeBlockBasic | `Shift-Mod-k` |
+
+行内公式（`math`）无默认绑定，需要时在 `shortcuts` 里自行加。
+:::
+
 ::: field onAiRequest
 @type OnAiRequest
 @optional

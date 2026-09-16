@@ -28,6 +28,12 @@ import type {
 } from "@/editor/events";
 
 export { DEFAULT_TOOLBAR_ITEMS } from "@/editor/toolbar/defaults";
+export {
+  DEFAULT_SHORTCUTS,
+  resolveShortcuts,
+  toTauriAccelerator,
+} from "@/editor/editor/shortcuts";
+export type { ShortcutKey, ShortcutsOption } from "@/editor/editor/shortcuts";
 export type {
   ToolbarItem,
   ToolbarButtonItem,
