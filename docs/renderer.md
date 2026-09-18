@@ -106,6 +106,62 @@ renderer.render("# Hello\n\n**world**");
 按 priority 注入块级 parser。
 :::
 
+::: field syntaxOptions
+@type SyntaxOptions
+@optional
+按 parser key 覆盖语法配置。
+:::
+
+::: field engines
+@type GraphEngines
+@optional
+本地图表引擎。传入后对应语法**不再请求远程 API**，由 Renderer 在 DOM 上水合。
+
+| 字段 | 典型库 | 约定 |
+|------|--------|------|
+| `math` | KaTeX | `renderToString` 或 `render` |
+| `mermaid` | Mermaid ≥10 | `render(id, text) → Promise<{ svg }>` |
+| `echarts` | ECharts | `init(dom, theme?)` |
+
+未传的项仍走默认远程图（`math-api` / `mermaid.ink` / `echarts-api`）。也可继续用 `syntaxOptions` 的 `apiHost` / `*ApiHost` 指向自建镜像；`false` 表示禁用远程。
+
+```typescript
+import katex from "katex";
+import mermaid from "mermaid";
+import * as echarts from "echarts";
+import "katex/dist/katex.min.css";
+
+new Renderer({
+  mount,
+  theme,
+  eventBus,
+  logger: log,
+  engines: { math: katex, mermaid, echarts },
+});
+```
+
+CDN / IIFE：
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+<script>
+  new PennaNextRenderer.Renderer({
+    mount,
+    theme,
+    eventBus,
+    logger,
+    engines: {
+      math: window.katex,
+      mermaid: window.mermaid,
+      echarts: window.echarts,
+    },
+  });
+</script>
+```
+:::
+
 ::::
 
 ---

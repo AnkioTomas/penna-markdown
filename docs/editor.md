@@ -199,6 +199,24 @@ new Penna(el, {
 
 :::
 
+::: field engines
+@type GraphEngines
+@optional
+本地图表引擎，透传给 Renderer。传入 `math` / `mermaid` / `echarts` 后对应语法走本地库水合，不再请求远程 API。详见 [`renderer.md`](renderer.md) 的 `engines`。
+
+```typescript
+import katex from "katex";
+import mermaid from "mermaid";
+import * as echarts from "echarts";
+
+new Penna(el, {
+  preview: {
+    engines: { math: katex, mermaid, echarts },
+  },
+});
+```
+:::
+
 ::::
 
 ---

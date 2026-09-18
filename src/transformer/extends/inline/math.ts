@@ -57,15 +57,16 @@ class MathInlineParser extends BaseInlineParser {
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext) {
     const latex = (node.value ?? "").trim();
+    if (!latex) return "";
     const color = ctx.isDark ? "white" : undefined;
     const src = mathBlockParser.buildMathImageSrc(latex, {
       inline: true,
       color,
     });
-    if (!src) return "";
     const alt = escapeHtml(latex);
     const attrs = `class="penna-math-latex" data-latex="${alt}" data-inline="true" alt="${alt}"`;
-    return `<span class="penna-math penna-math-inline" data-type="mathInline"><img ${attrs} src="${src}" loading="lazy" /></span>`;
+    const srcAttr = src ? ` src="${src}"` : "";
+    return `<span class="penna-math penna-math-inline" data-type="mathInline"><img ${attrs}${srcAttr} loading="lazy" /></span>`;
   }
 }
 

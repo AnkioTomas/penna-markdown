@@ -54,6 +54,7 @@ export class Preview {
       inlineParsers: options.transformerEngineOptions?.inlineParsers,
       blockParsers: options.transformerEngineOptions?.blockParsers,
       syntaxOptions: options.transformerEngineOptions?.syntaxOptions,
+      engines: options.engines,
     });
 
     this.offs.add(

@@ -68,10 +68,20 @@ priority → 块级 parser。
 ::: field isDark
 @type boolean
 @optional
-影响公式 / Mermaid / ECharts 等远程图主题。
+影响公式 / Mermaid / ECharts 等远程图主题。若 Renderer 配置了 `engines` 本地库，主题切换改为重水合，不再依赖远程 URL。
 :::
 
 ::::
+
+远程图基址（无本地引擎时）：
+
+| 语法 | 配置键 | 默认 |
+|------|--------|------|
+| `$…$` / `$$…$$` | `syntaxOptions.math_block.apiHost` | `https://math-api-delta.vercel.app` |
+| ` ```mermaid` | `syntaxOptions.code.mermaidApiHost` | `https://mermaid.ink` |
+| ` ```echarts` | `syntaxOptions.code.echartsApiHost` | `https://echarts-api.vercel.app` |
+
+设为 `false` 可禁用远程（配合 Renderer `engines` 本地渲染）。
 
 ---
 

@@ -24,7 +24,12 @@
 import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { extractToc, extractTocFlat } from "@/renderer/toc/extract";
-import { replaceGraph } from "@/renderer/graph/graph";
+import {
+  disposeCharts,
+  hydrateGraphs,
+  replaceGraph,
+  type GraphEngines,
+} from "@/renderer/graph/graph";
 import { CodeListener } from "@/renderer/code/code";
 import { ImageListener } from "@/renderer/image/image";
 import { FootnoteListener } from "@/renderer/footnote/footnote";
@@ -47,18 +52,21 @@ import { THEME_EVENT_LIGHT_DARK } from "@/theme/event/ThemeLightDarkEvent";
 export type { RenderOption } from "@/renderer/RenderOption";
 export type { RenderResult } from "@/renderer/RenderResult";
 export type { PennaChangeLineSet };
+export type { GraphEngines } from "@/renderer/graph/graph";
 export { Theme, EventBus, Log, THEME_EVENT_LIGHT_DARK };
 export type { LightDark } from "@/theme/event/ThemeLightDarkEvent";
 export { THEME_EVENT_SKIN } from "@/theme/event/ThemeSkinEvent";
-export {
+import {
   BaseInlineParser,
   BaseBlockParser,
 } from "@/transformer/core/ParserBase";
-export type {
+import type {
   SyntaxOptions,
   InlineParseResult,
   BlockParseResult,
 } from "@/transformer/core/ParserBase";
+export { BaseInlineParser, BaseBlockParser };
+export type { SyntaxOptions, InlineParseResult, BlockParseResult };
 export { createNode } from "@/transformer/core/MarkdownNode";
 export type { MarkdownNode } from "@/transformer/core/MarkdownNode";
 
@@ -113,6 +121,8 @@ export class Renderer {
   private imageListener: ImageListener | null = null;
   /** 脚注悬停提示 */
   private footnoteListener: FootnoteListener | null = null;
+  /** 本地图表引擎（可选） */
+  private readonly engines: GraphEngines | undefined;
 
   /**
    * @param options 挂载点、主题、事件总线、日志及可选解析器扩展
@@ -122,7 +132,11 @@ export class Renderer {
     this.eventBus = options.eventBus;
     this.logger = options.logger;
     this.theme = options.theme;
-    const syntaxOptions = options.syntaxOptions ?? {};
+    this.engines = options.engines;
+    const syntaxOptions = mergeSyntaxForEngines(
+      options.syntaxOptions ?? {},
+      this.engines,
+    );
     this.transformer = new TransformerEngine({
       inlineParsers: options.inlineParsers,
       blockParsers: options.blockParsers,
@@ -150,10 +164,10 @@ export class Renderer {
     this.footnoteListener = new FootnoteListener(this.mount);
   }
 
-  /** 明暗切换：同步 transformer 并重绘 Mermaid/ECharts 等图表 */
+  /** 明暗切换：远程改 URL；本地引擎等下次 render（Preview 会重渲） */
   private readonly onLightDarkChanged = ({ isDark }): void => {
     this.syncDarkFromTheme();
-    replaceGraph(this.mount, isDark);
+    if (!this.engines) replaceGraph(this.mount, isDark);
   };
 
   /**
@@ -176,6 +190,11 @@ export class Renderer {
   /** 将 {@link Theme} 当前明暗写入 `transformer.isDark` */
   private syncDarkFromTheme(): void {
     this.transformer.isDark = this.theme.getTheme().isDark;
+  }
+
+  /** DOM 就绪后用水合本地引擎（无 engines 时 no-op） */
+  private runHydrateGraphs(): void {
+    hydrateGraphs(this.mount, this.engines, this.theme.getTheme().isDark);
   }
 
   /**
@@ -225,6 +244,7 @@ export class Renderer {
     this.logger.logD("render:incremental", "done", {
       changedStartLines: incremental.changedStartLines,
     });
+    this.runHydrateGraphs();
     return this.buildResult(
       incremental.ast,
       true,
@@ -329,6 +349,7 @@ export class Renderer {
       blockCount: result.blocks.length,
       replacedCount: result.replacedCount,
     });
+    this.runHydrateGraphs();
     return this.buildResult(ast, false, []);
   }
 
@@ -371,8 +392,44 @@ export class Renderer {
     this.lastAst = null;
     this.lastMarkdown = "";
     this.session.reset();
+    disposeCharts(this.mount);
     this.codeListener?.destroy();
     this.imageListener?.destroy();
     this.footnoteListener?.destroy();
   }
+}
+
+/**
+ * 配置了本地引擎时关掉对应远程 apiHost，避免先发无效图片请求再水合。
+ * 用户显式写了 apiHost 字符串则保留（自建镜像优先）。
+ */
+function mergeSyntaxForEngines(
+  syntaxOptions: SyntaxOptions,
+  engines: GraphEngines | undefined,
+): SyntaxOptions {
+  if (!engines) return syntaxOptions;
+
+  const mathBlock = { ...(syntaxOptions.math_block ?? {}) } as {
+    apiHost?: string | false;
+  };
+  const code = { ...(syntaxOptions.code ?? {}) } as {
+    mermaidApiHost?: string | false;
+    echartsApiHost?: string | false;
+  };
+
+  if (engines.math && mathBlock.apiHost === undefined) {
+    mathBlock.apiHost = false;
+  }
+  if (engines.mermaid && code.mermaidApiHost === undefined) {
+    code.mermaidApiHost = false;
+  }
+  if (engines.echarts && code.echartsApiHost === undefined) {
+    code.echartsApiHost = false;
+  }
+
+  return {
+    ...syntaxOptions,
+    math_block: mathBlock,
+    code,
+  };
 }

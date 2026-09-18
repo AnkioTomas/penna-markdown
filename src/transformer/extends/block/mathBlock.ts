@@ -3,7 +3,8 @@
  * @module transformer/extends/block/mathBlock
  *
  * 语法：`$$ ... $$`
- * 远程渲染：https://math-api-delta.vercel.app
+ * 默认远程渲染：https://math-api-delta.vercel.app
+ * 本地库：Renderer `engines.math`（会把 apiHost 置 false）
  * 配置：`syntaxOptions.math_block`
  */
 
@@ -16,13 +17,13 @@ import { escapeHtml } from "@/transformer/utils/escape.js";
 /** 数学公式渲染 API 基址。 */
 export const MATH_API_HOST = "https://math-api-delta.vercel.app";
 
-/** `syntaxOptions.math_block` */
+/** `syntaxOptions.math_block`；`apiHost: false` 禁用远程图（配合 Renderer.engines.math） */
 export interface MathBlockOptions extends Record<string, unknown> {
-  apiHost?: string;
+  apiHost?: string | false;
 }
 
 export interface MathImageOptions {
-  apiHost?: string;
+  apiHost?: string | false;
   inline?: boolean;
   color?: string;
 }
@@ -57,6 +58,7 @@ class MathBlockParser extends BaseBlockParser {
       apiHost ??
       (this.getOptions() as MathBlockOptions).apiHost ??
       MATH_API_HOST;
+    if (host === false || host === "") return "";
     const param = inline ? "inline" : "from";
     let url = `${host}/?${param}=${encodeURIComponent(latex)}`;
     if (color) url += `&color=${encodeURIComponent(color)}`;
@@ -114,10 +116,11 @@ class MathBlockParser extends BaseBlockParser {
   /** @inheritdoc */
   render(node: MarkdownNode, ctx: RenderContext) {
     const latex = (node.value ?? "").trim();
+    if (!latex) return "";
     const color = ctx.isDark ? "white" : undefined;
     const src = this.buildMathImageSrc(latex, { color });
-    if (!src) return "";
-    return `<div class="penna-math penna-math-block" data-type="mathBlock"${this.sourceLineAttrs(node)}><img ${mathImgAttrs(latex, false)} src="${src}" loading="lazy" /></div>`;
+    const srcAttr = src ? ` src="${src}"` : "";
+    return `<div class="penna-math penna-math-block" data-type="mathBlock"${this.sourceLineAttrs(node)}><img ${mathImgAttrs(latex, false)}${srcAttr} loading="lazy" /></div>`;
   }
 }
 

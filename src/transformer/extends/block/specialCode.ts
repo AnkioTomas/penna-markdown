@@ -1,8 +1,9 @@
 /**
- * @file 块级语法拓展：Penna 特殊代码块 + Web API 远程渲染
+ * @file 块级语法拓展：Penna 特殊代码块 + 远程 / 本地渲染
  * @module transformer/extends/block/specialCode
  *
  * 在 GFM 代码块基础上，对 echarts / mermaid 等语言使用专用渲染器。
+ * 默认输出远程 `<img src>`；Renderer `engines` 可关掉 API 并本地水合。
  * 配置：`syntaxOptions.code`
  */
 
@@ -20,21 +21,24 @@ export const ECHARTS_API_HOST = "https://echarts-api.vercel.app";
 /** Mermaid 图表渲染 API 基址。 */
 export const MERMAID_API_HOST = "https://mermaid.ink";
 
-/** `syntaxOptions.code`（echarts / mermaid 等特殊语言） */
+/**
+ * `syntaxOptions.code`（echarts / mermaid 等特殊语言）
+ * `*ApiHost: false` 禁用远程图（配合 Renderer.engines）
+ */
 export interface SpecialCodeOptions extends Record<string, unknown> {
-  echartsApiHost?: string;
-  mermaidApiHost?: string;
+  echartsApiHost?: string | false;
+  mermaidApiHost?: string | false;
   echartsWidth?: number;
   echartsHeight?: number;
 }
 
 export interface MermaidImageOptions {
-  apiHost?: string;
+  apiHost?: string | false;
   theme?: "dark";
 }
 
 export interface EchartsImageOptions {
-  apiHost?: string;
+  apiHost?: string | false;
   theme?: "dark";
   width?: number;
   height?: number;
@@ -119,6 +123,7 @@ class SpecialCodeBlockParser extends BaseBlockParser {
     const trimmed = code.trim();
     if (!trimmed) return "";
     const host = apiHost ?? this.cfg().mermaidApiHost ?? MERMAID_API_HOST;
+    if (host === false || host === "") return "";
     const payload = base64UrlEncode(
       JSON.stringify({ code: trimmed, mermaid: { theme: "default" } }),
     );
@@ -133,6 +138,7 @@ class SpecialCodeBlockParser extends BaseBlockParser {
   ): string {
     const opts = this.cfg();
     const host = apiHost ?? opts.echartsApiHost ?? ECHARTS_API_HOST;
+    if (host === false || host === "") return "";
     const data: {
       width: number;
       height: number;
@@ -155,7 +161,8 @@ class SpecialCodeBlockParser extends BaseBlockParser {
     const code = content.trim();
     const src = this.buildMermaidImageSrc(code, options);
     const payload = base64UrlEncode(code);
-    return `<figure data-type="mermaid" class="penna-mermaid-block"${lineAttrs}><img class="penna-mermaid__img" data-mermaid="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></figure>`;
+    const srcAttr = src ? ` src="${src}"` : "";
+    return `<figure data-type="mermaid" class="penna-mermaid-block"${lineAttrs}><img class="penna-mermaid__img" data-mermaid="${payload}" style="max-width: 100%"${srcAttr} alt="" loading="lazy" /></figure>`;
   }
 
   renderEchartsBlock(
@@ -165,7 +172,8 @@ class SpecialCodeBlockParser extends BaseBlockParser {
   ): string {
     const src = this.buildEchartsImageSrc(content, options);
     const payload = base64UrlEncode(content.trim());
-    return `<div data-type="echarts" class="penna-echarts-block"${lineAttrs}><img class="penna-echarts__img" data-echarts="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></div>`;
+    const srcAttr = src ? ` src="${src}"` : "";
+    return `<div data-type="echarts" class="penna-echarts-block"${lineAttrs}><img class="penna-echarts__img" data-echarts="${payload}" style="max-width: 100%"${srcAttr} alt="" loading="lazy" /></div>`;
   }
 
   /** @inheritdoc */

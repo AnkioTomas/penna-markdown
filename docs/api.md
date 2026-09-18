@@ -145,6 +145,8 @@ new Renderer({
   logger: log,
   inlineParsers?,
   blockParsers?,
+  syntaxOptions?,
+  engines?, // { math?, mermaid?, echarts? } 本地库，见 renderer.md
 } satisfies RenderOption);
 ```
 

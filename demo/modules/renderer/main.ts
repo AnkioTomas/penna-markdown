@@ -3,21 +3,32 @@ import "../../_common/penna-demo.scss";
 import "../../_common/layout.scss";
 
 import { createDemoTheme } from "../../_common/theme.js";
+import {
+  LOCAL_ENGINES_SAMPLE,
+  loadLocalEngines,
+} from "../../_common/localEngines.js";
 import { THEME_EVENT_LIGHT_DARK } from "@/theme/event/ThemeLightDarkEvent.js";
 import { THEME_EVENT_SKIN } from "@/theme/event/ThemeSkinEvent.js";
 import type { Theme } from "@/theme/Theme.js";
 import { Renderer } from "@/renderer/Renderer.js";
+import type { GraphEngines } from "@/renderer/graph/graph.js";
 import { requiredEl } from "../../_common/dom.js";
 import example from "../../../docs/test.md?raw";
 
 const APPEARANCE_KEY = "penna-renderer-demo-appearance";
 const THEME_KEY = "penna-renderer-demo-theme";
+const ENGINE_KEY = "penna-renderer-demo-engines";
 type AppearanceMode = "light" | "dark" | "auto";
+type EngineMode = "remote" | "local";
 
 function readAppearance(): AppearanceMode {
   const saved = localStorage.getItem(APPEARANCE_KEY);
   if (saved === "dark" || saved === "auto") return saved;
   return "light";
+}
+
+function readEngineMode(): EngineMode {
+  return localStorage.getItem(ENGINE_KEY) === "local" ? "local" : "remote";
 }
 
 function resolveAppearance(mode: AppearanceMode): "light" | "dark" {
@@ -38,9 +49,11 @@ const timingEl = requiredEl<HTMLElement>("#timing");
 const themeBtn = requiredEl<HTMLButtonElement>("#theme-btn");
 const themeSelect = requiredEl<HTMLSelectElement>("#theme-select");
 const appearanceSelect = requiredEl<HTMLSelectElement>("#appearance-select");
+const engineSelect = requiredEl<HTMLSelectElement>("#engine-select");
 const resetBtn = requiredEl<HTMLButtonElement>("#reset-btn");
 
 let appearance = readAppearance();
+let engineMode = readEngineMode();
 const kit = createDemoTheme(previewWrap);
 const { theme, eventBus, log } = kit;
 
@@ -52,12 +65,21 @@ function readThemeId(): string {
 
 theme.setTheme(readThemeId());
 
-const renderer = new Renderer({
-  mount: preview,
-  theme,
-  eventBus,
-  logger: log,
-});
+let renderer = createRenderer(undefined);
+
+function createRenderer(engines: GraphEngines | undefined): Renderer {
+  return new Renderer({
+    mount: preview,
+    theme,
+    eventBus,
+    logger: log,
+    engines,
+  });
+}
+
+function defaultMarkdownFor(mode: EngineMode): string {
+  return mode === "local" ? LOCAL_ENGINES_SAMPLE : example;
+}
 
 function escapeHtml(text: string): string {
   return text
@@ -86,6 +108,10 @@ function syncAppearanceSelect(): void {
   appearanceSelect.value = appearance;
 }
 
+function syncEngineSelect(): void {
+  engineSelect.value = engineMode;
+}
+
 function syncThemeButton(): void {
   const snapshot = theme.getTheme();
   themeBtn.textContent = snapshot.isDark ? "白天模式" : "夜间模式";
@@ -97,6 +123,7 @@ function syncDemoChrome(): void {
   syncThemeButton();
   syncAppearanceSelect();
   syncThemeSelect();
+  syncEngineSelect();
 }
 
 function renderToc(): void {
@@ -118,6 +145,7 @@ function renderStats(blocks: number, htmlLength: number): void {
   const snapshot = theme.getTheme();
   statsEl.innerHTML = `
     <dl>
+      <dt>图表引擎</dt><dd>${engineMode === "local" ? "本地 JS 库" : "远程 API"}</dd>
       <dt>主题</dt><dd>${escapeHtml(snapshot.id)}</dd>
       <dt>明暗</dt><dd>${appearance === "auto" ? `auto (${snapshot.mode})` : snapshot.mode}</dd>
       <dt>顶层块</dt><dd>${blocks}</dd>
@@ -168,6 +196,44 @@ function applyThemeId(next: string): void {
   localStorage.setItem(THEME_KEY, next);
 }
 
+async function applyEngineMode(next: EngineMode): Promise<void> {
+  const prevDefault = defaultMarkdownFor(engineMode);
+  const wasOnDefault = markdownInput.value.trim() === prevDefault.trim();
+  const modeChanged = next !== engineMode;
+
+  if (!modeChanged && next === "remote") {
+    syncEngineSelect();
+    return;
+  }
+
+  engineSelect.disabled = true;
+  try {
+    const engines = next === "local" ? await loadLocalEngines() : undefined;
+    renderer.destroy();
+    preview.replaceChildren();
+    renderer = createRenderer(engines);
+    engineMode = next;
+    localStorage.setItem(ENGINE_KEY, next);
+
+    if (modeChanged && wasOnDefault) {
+      markdownInput.value = defaultMarkdownFor(next);
+    }
+    renderNow();
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    preview.innerHTML = `<p class="renderer-error">加载本地引擎失败：${escapeHtml(message)}</p>`;
+    engineMode = "remote";
+    localStorage.setItem(ENGINE_KEY, "remote");
+    renderer.destroy();
+    preview.replaceChildren();
+    renderer = createRenderer(undefined);
+    renderNow();
+  } finally {
+    engineSelect.disabled = false;
+    syncEngineSelect();
+  }
+}
+
 themeBtn.addEventListener("click", toggleAppearance);
 
 themeSelect.addEventListener("change", () => {
@@ -178,8 +244,12 @@ appearanceSelect.addEventListener("change", () => {
   applyAppearance(appearanceSelect.value as AppearanceMode);
 });
 
+engineSelect.addEventListener("change", () => {
+  void applyEngineMode(engineSelect.value as EngineMode);
+});
+
 resetBtn.addEventListener("click", () => {
-  markdownInput.value = example;
+  markdownInput.value = defaultMarkdownFor(engineMode);
   renderNow();
 });
 
@@ -206,13 +276,20 @@ function onThemeChanged(): void {
   renderNow();
 }
 
-function boot(): void {
+async function boot(): Promise<void> {
   populateThemeSelect();
-  markdownInput.value = example;
   eventBus.on(THEME_EVENT_LIGHT_DARK, onThemeChanged);
   eventBus.on(THEME_EVENT_SKIN, onThemeChanged);
   theme.setLightDark(resolveAppearance(appearance));
-  renderNow();
+  markdownInput.value = defaultMarkdownFor(engineMode);
+  syncEngineSelect();
+
+  if (engineMode === "local") {
+    // 启动时已是 local：仍需装载引擎并重建 Renderer
+    await applyEngineMode("local");
+  } else {
+    renderNow();
+  }
 
   window
     .matchMedia("(prefers-color-scheme: dark)")
@@ -222,14 +299,16 @@ function boot(): void {
     });
 }
 
-boot();
+void boot();
 
 declare global {
   interface Window {
     pennaRendererDemo?: {
       get theme(): Theme;
       get renderer(): Renderer;
+      get engineMode(): EngineMode;
       renderNow: typeof renderNow;
+      applyEngineMode: typeof applyEngineMode;
     };
   }
 }
@@ -241,5 +320,9 @@ window.pennaRendererDemo = {
   get renderer() {
     return renderer;
   },
+  get engineMode() {
+    return engineMode;
+  },
   renderNow,
+  applyEngineMode,
 };

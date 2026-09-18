@@ -9,7 +9,7 @@
     <div class="header">
       <a class="back" href="../../index.html">返回入口</a>
       <div class="title">渲染器</div>
-      <div class="subtitle">Renderer · TOC · 高亮 · 主题</div>
+      <div class="subtitle">Renderer · TOC · 远程 API / 本地引擎</div>
       <button
         id="theme-btn"
         type="button"
@@ -32,6 +32,13 @@
           <option value="light">浅色</option>
           <option value="dark">深色</option>
           <option value="auto">跟随系统</option>
+        </select>
+      </label>
+      <label class="skin-label">
+        图表引擎
+        <select id="engine-select" class="skin-select" aria-label="图表引擎">
+          <option value="remote">远程 API</option>
+          <option value="local">本地 JS 库</option>
         </select>
       </label>
       <div id="timing" class="timing" title="renderer.render() 耗时">— ms</div>
