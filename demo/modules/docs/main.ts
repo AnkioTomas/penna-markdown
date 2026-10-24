@@ -20,6 +20,7 @@ import {
   type DocTreeFile,
   type DocTreeNode,
 } from "../../_common/api.js";
+import { demoEngines, mountEngineSwitch } from "../../_common/engines.js";
 
 const DOCS_DIR = "/docs/";
 const ACTIVE_KEY = "penna-docs-demo-href";
@@ -39,6 +40,10 @@ const renderer = new Renderer({
   theme,
   eventBus,
   logger: log,
+  engines: demoEngines(),
+});
+mountEngineSwitch((e) => {
+  renderer.setEngines(e);
 });
 
 let docTree: DocTreeNode[] = [];

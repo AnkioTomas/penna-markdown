@@ -1,8 +1,9 @@
 /**
- * @file 块级语法拓展：Penna 特殊代码块 + Web API 远程渲染
+ * @file 块级语法拓展：Penna 特殊代码块 + 远程 / 本地渲染
  * @module transformer/extends/block/specialCode
  *
  * 在 GFM 代码块基础上，对 echarts / mermaid 等语言使用专用渲染器。
+ * 默认输出远程 `<img src>`；Renderer `engines` 可关掉 API 并本地水合。
  * 配置：`syntaxOptions.code`
  */
 
@@ -20,21 +21,24 @@ export const ECHARTS_API_HOST = "https://echarts-api.vercel.app";
 /** Mermaid 图表渲染 API 基址。 */
 export const MERMAID_API_HOST = "https://mermaid.ink";
 
-/** `syntaxOptions.code`（echarts / mermaid 等特殊语言） */
+/**
+ * `syntaxOptions.code`（echarts / mermaid 等特殊语言）
+ * `*ApiHost: false` 禁用远程图（配合 Renderer.engines）
+ */
 export interface SpecialCodeOptions extends Record<string, unknown> {
-  echartsApiHost?: string;
-  mermaidApiHost?: string;
+  echartsApiHost?: string | false;
+  mermaidApiHost?: string | false;
   echartsWidth?: number;
   echartsHeight?: number;
 }
 
 export interface MermaidImageOptions {
-  apiHost?: string;
+  apiHost?: string | false;
   theme?: "dark";
 }
 
 export interface EchartsImageOptions {
-  apiHost?: string;
+  apiHost?: string | false;
   theme?: "dark";
   width?: number;
   height?: number;
@@ -42,6 +46,81 @@ export interface EchartsImageOptions {
 
 const SPECIAL_LANGS = new Set(["echarts", "mermaid", "graph"]);
 
+/**
+ * 把 JS 对象字面量风格（无引号 key、单引号字符串、尾逗号、注释）转成严格 JSON。
+ * 只接受数据：函数、变量、表达式一律抛错，不执行任何代码。
+ */
+function relaxedToJson(src: string): string {
+  let out = "";
+  let i = 0;
+  const n = src.length;
+  const nextSignificant = (from: number): string => {
+    let j = from;
+    while (j < n) {
+      if (/\s/.test(src[j]!)) j++;
+      else if (src[j] === "/" && src[j + 1] === "/") {
+        while (j < n && src[j] !== "\n") j++;
+      } else if (src[j] === "/" && src[j + 1] === "*") {
+        const end = src.indexOf("*/", j + 2);
+        j = end < 0 ? n : end + 2;
+      } else break;
+    }
+    return src[j] ?? "";
+  };
+
+  while (i < n) {
+    const c = src[i]!;
+    if (/\s/.test(c)) {
+      out += c;
+      i++;
+    } else if (c === "/" && src[i + 1] === "/") {
+      while (i < n && src[i] !== "\n") i++;
+    } else if (c === "/" && src[i + 1] === "*") {
+      const end = src.indexOf("*/", i + 2);
+      i = end < 0 ? n : end + 2;
+    } else if (c === '"' || c === "'") {
+      let j = i + 1;
+      let text = "";
+      while (j < n && src[j] !== c) {
+        if (src[j] === "\\" && j + 1 < n) {
+          const e = src[j + 1]!;
+          text += e === "'" ? "'" : `\\${e}`;
+          j += 2;
+        } else text += src[j++];
+      }
+      if (j >= n) throw new Error("unterminated string");
+      // 双引号串原样保留；单引号串需转义内部的双引号
+      out += c === '"' ? `"${text}"` : `"${text.replace(/"/g, '\\"')}"`;
+      i = j + 1;
+    } else if (c === ",") {
+      const next = nextSignificant(i + 1);
+      if (next !== "}" && next !== "]") out += c;
+      i++;
+    } else if (/[A-Za-z_$]/.test(c)) {
+      let j = i;
+      while (j < n && /[\w$]/.test(src[j]!)) j++;
+      const word = src.slice(i, j);
+      if (nextSignificant(j) === ":") out += JSON.stringify(word);
+      else if (word === "true" || word === "false" || word === "null")
+        out += word;
+      else throw new Error(`unsupported token: ${word}`);
+      i = j;
+    } else if (/[0-9.+\-]/.test(c)) {
+      const m = /^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?/.exec(src.slice(i));
+      if (!m) throw new Error("bad number");
+      out += m[0].replace(/^\+/, "");
+      i += m[0].length;
+    } else if ("{}[]:".includes(c)) {
+      out += c;
+      i++;
+    } else {
+      throw new Error(`unsupported char: ${c}`);
+    }
+  }
+  return out;
+}
+
+/** 解析 ECharts option：严格 JSON，或宽松的对象字面量（不执行代码）。失败返回 `{}`。 */
 export function parseEchartsJson(src: string): Record<string, unknown> {
   const trimmed = src.trim();
   if (!trimmed) return {};
@@ -49,10 +128,7 @@ export function parseEchartsJson(src: string): Record<string, unknown> {
     return JSON.parse(trimmed) as Record<string, unknown>;
   } catch {
     try {
-      return Function(`"use strict"; return ${trimmed}`)() as Record<
-        string,
-        unknown
-      >;
+      return JSON.parse(relaxedToJson(trimmed)) as Record<string, unknown>;
     } catch {
       return {};
     }
@@ -119,6 +195,7 @@ class SpecialCodeBlockParser extends BaseBlockParser {
     const trimmed = code.trim();
     if (!trimmed) return "";
     const host = apiHost ?? this.cfg().mermaidApiHost ?? MERMAID_API_HOST;
+    if (host === false || host === "") return "";
     const payload = base64UrlEncode(
       JSON.stringify({ code: trimmed, mermaid: { theme: "default" } }),
     );
@@ -133,6 +210,7 @@ class SpecialCodeBlockParser extends BaseBlockParser {
   ): string {
     const opts = this.cfg();
     const host = apiHost ?? opts.echartsApiHost ?? ECHARTS_API_HOST;
+    if (host === false || host === "") return "";
     const data: {
       width: number;
       height: number;
@@ -155,7 +233,8 @@ class SpecialCodeBlockParser extends BaseBlockParser {
     const code = content.trim();
     const src = this.buildMermaidImageSrc(code, options);
     const payload = base64UrlEncode(code);
-    return `<figure data-type="mermaid" class="penna-mermaid-block"${lineAttrs}><img class="penna-mermaid__img" data-mermaid="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></figure>`;
+    const srcAttr = src ? ` src="${src}"` : "";
+    return `<figure data-type="mermaid" class="penna-mermaid-block"${lineAttrs}><img class="penna-mermaid__img" data-mermaid="${payload}" style="max-width: 100%"${srcAttr} alt="" loading="lazy" /></figure>`;
   }
 
   renderEchartsBlock(
@@ -165,7 +244,8 @@ class SpecialCodeBlockParser extends BaseBlockParser {
   ): string {
     const src = this.buildEchartsImageSrc(content, options);
     const payload = base64UrlEncode(content.trim());
-    return `<div data-type="echarts" class="penna-echarts-block"${lineAttrs}><img class="penna-echarts__img" data-echarts="${payload}" style="max-width: 100%" src="${src}" alt="" loading="lazy" /></div>`;
+    const srcAttr = src ? ` src="${src}"` : "";
+    return `<div data-type="echarts" class="penna-echarts-block"${lineAttrs}><img class="penna-echarts__img" data-echarts="${payload}" style="max-width: 100%"${srcAttr} alt="" loading="lazy" /></div>`;
   }
 
   /** @inheritdoc */

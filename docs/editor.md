@@ -180,6 +180,12 @@ AI 请求回调。省略时 AI 工具栏命令会静默失败。签名见 [回�
 **仅「纯预览」布局**下限制预览版心宽度，例如 `800` 或 `"720px"` / `"50rem"`。分栏与纯编辑布局忽略此值。
 :::
 
+::: field engines
+@type GraphEngines
+@optional
+外部图表库（KaTeX / Mermaid / ECharts），透传给 Renderer，详见 [`renderer.md`](renderer.md) 的 `engines`。运行时可用 `penna.setEngines()` 热切换。
+:::
+
 ::: field transformerEngineOptions
 @type TransformerEngineOptions
 @optional

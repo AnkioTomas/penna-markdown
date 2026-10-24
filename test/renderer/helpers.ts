@@ -3,10 +3,12 @@ import { EventBus } from "@/core/event/EventBus";
 import { Log } from "@/core/Log";
 import { Theme } from "@/theme/Theme";
 import { Renderer } from "@/renderer/Renderer";
+import type { GraphEngines } from "@/renderer/graph/engines";
 
 export function createJsdomRenderer(
   debug = false,
   html = `<div id="preview" class="penna"></div>`,
+  engines?: GraphEngines,
 ) {
   const dom = new JSDOM(html, { url: "http://localhost/" });
   const mount = dom.window.document.getElementById("preview") as HTMLElement;
@@ -14,6 +16,12 @@ export function createJsdomRenderer(
   const eventBus = new EventBus(debug, "[test]", log);
   const theme = new Theme(eventBus, log, mount);
   theme.setTheme("default");
-  const renderer = new Renderer({ mount, theme, eventBus, logger: log });
+  const renderer = new Renderer({
+    mount,
+    theme,
+    eventBus,
+    logger: log,
+    engines,
+  });
   return { renderer, mount, theme, eventBus, log, dom };
 }

@@ -25,6 +25,9 @@ import { TransformerEngine } from "@/transformer/TransformerEngine.js";
 import type { MarkdownNode } from "@/transformer/core/MarkdownNode.js";
 import { extractToc, extractTocFlat } from "@/renderer/toc/extract";
 import { replaceGraph } from "@/renderer/graph/graph";
+import type { SyntaxOptions } from "@/transformer/core/ParserBase";
+import { GraphHydrator } from "@/renderer/graph/GraphHydrator";
+import type { GraphEngines } from "@/renderer/graph/engines";
 import { CodeListener } from "@/renderer/code/code";
 import { ImageListener } from "@/renderer/image/image";
 import { FootnoteListener } from "@/renderer/footnote/footnote";
@@ -46,6 +49,13 @@ import { THEME_EVENT_LIGHT_DARK } from "@/theme/event/ThemeLightDarkEvent";
 /** 独立使用 Renderer 时需要的 options / 依赖类 / 扩展基类 */
 export type { RenderOption } from "@/renderer/RenderOption";
 export type { RenderResult } from "@/renderer/RenderResult";
+export type {
+  GraphEngines,
+  EngineSource,
+  MathEngine,
+  MermaidEngine,
+  EchartsEngine,
+} from "@/renderer/graph/engines";
 export type { PennaChangeLineSet };
 export { Theme, EventBus, Log, THEME_EVENT_LIGHT_DARK };
 export type { LightDark } from "@/theme/event/ThemeLightDarkEvent";
@@ -113,6 +123,10 @@ export class Renderer {
   private imageListener: ImageListener | null = null;
   /** 脚注悬停提示 */
   private footnoteListener: FootnoteListener | null = null;
+  /** 外部图表库水合（KaTeX / Mermaid / ECharts） */
+  private readonly graphs: GraphHydrator;
+  /** 用户传入的 syntaxOptions，`setEngines` 时据此重算图表 apiHost */
+  private readonly userSyntax: SyntaxOptions;
 
   /**
    * @param options 挂载点、主题、事件总线、日志及可选解析器扩展
@@ -123,16 +137,21 @@ export class Renderer {
     this.logger = options.logger;
     this.theme = options.theme;
     const syntaxOptions = options.syntaxOptions ?? {};
+    this.userSyntax = syntaxOptions;
+    this.graphs = new GraphHydrator(this.mount);
+    this.graphs.setEngines(options.engines);
     this.transformer = new TransformerEngine({
       inlineParsers: options.inlineParsers,
       blockParsers: options.blockParsers,
       syntaxOptions: {
         ...syntaxOptions,
+        ...this.engineSyntax(),
         atx_heading: { slug: true, ...syntaxOptions.atx_heading },
         code: {
           enhanced: true,
           highlightJs: this.highlightCodeHtml,
           ...syntaxOptions.code,
+          ...this.engineSyntax().code,
         },
       },
       renderOptions: {
@@ -154,7 +173,49 @@ export class Renderer {
   private readonly onLightDarkChanged = ({ isDark }): void => {
     this.syncDarkFromTheme();
     replaceGraph(this.mount, isDark);
+    this.graphs.retheme(isDark);
   };
+
+  /**
+   * 由本地库接管的图表关掉远程 apiHost，避免先发无效图片请求再水合。
+   * 用户显式写了 apiHost 则保留（自建镜像优先）。
+   */
+  private engineSyntax(): SyntaxOptions {
+    const u = this.userSyntax;
+    const math = u.math_block as { apiHost?: string | false } | undefined;
+    const code = u.code as
+      | { mermaidApiHost?: string | false; echartsApiHost?: string | false }
+      | undefined;
+    return {
+      math_block: {
+        ...u.math_block,
+        apiHost: math?.apiHost ?? (this.graphs.has("math") ? false : undefined),
+      },
+      code: {
+        ...u.code,
+        mermaidApiHost:
+          code?.mermaidApiHost ??
+          (this.graphs.has("mermaid") ? false : undefined),
+        echartsApiHost:
+          code?.echartsApiHost ??
+          (this.graphs.has("echarts") ? false : undefined),
+      },
+    };
+  }
+
+  /**
+   * 热切换外部图表库（传 `undefined` 恢复远程 API）。
+   * 会立即用当前 markdown 全量重渲。
+   */
+  setEngines(engines: GraphEngines | undefined): void {
+    this.graphs.setEngines(engines);
+    this.transformer.registry.setOptions(this.engineSyntax());
+    if (this.session.blocks.length === 0) return;
+    // 按 hash 前缀会复用旧节点（含已水合的），此处需要整体重建
+    const markdown = this.lastMarkdown;
+    this.session.reset();
+    this.renderFull(markdown);
+  }
 
   /**
    * highlight.js 回调，注入围栏代码块高亮 HTML。
@@ -225,6 +286,7 @@ export class Renderer {
     this.logger.logD("render:incremental", "done", {
       changedStartLines: incremental.changedStartLines,
     });
+    this.graphs.hydrate(this.theme.getTheme().isDark);
     return this.buildResult(
       incremental.ast,
       true,
@@ -329,6 +391,7 @@ export class Renderer {
       blockCount: result.blocks.length,
       replacedCount: result.replacedCount,
     });
+    this.graphs.hydrate(this.theme.getTheme().isDark);
     return this.buildResult(ast, false, []);
   }
 
@@ -371,6 +434,7 @@ export class Renderer {
     this.lastAst = null;
     this.lastMarkdown = "";
     this.session.reset();
+    this.graphs.destroy();
     this.codeListener?.destroy();
     this.imageListener?.destroy();
     this.footnoteListener?.destroy();

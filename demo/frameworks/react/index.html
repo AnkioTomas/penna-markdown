@@ -46,6 +46,7 @@
       import "../../_common/layout.scss";
       import "../../_common/penna-demo.scss";
       import { Penna } from "@/editor/Penna.js";
+      import { demoEngines, mountEngineSwitch } from "../../_common/engines.js";
       import { setupThemeAndAppearance } from "../../_common/theme.js";
       import { fetchDocContent } from "../../_common/api.js";
 
@@ -66,8 +67,10 @@
             if (!mounted || !editorRef.current) return;
             editorInstance.current = new Penna(editorRef.current, {
               editor: { value: initialContent },
+              preview: { engines: demoEngines() },
             });
             setupThemeAndAppearance(editorInstance.current);
+            mountEngineSwitch((e) => editorInstance.current?.setEngines(e));
           });
 
           return () => {

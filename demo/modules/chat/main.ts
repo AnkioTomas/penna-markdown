@@ -9,8 +9,16 @@ import {
 import { Renderer } from "@/renderer/Renderer.js";
 import { requiredEl } from "../../_common/dom.js";
 import { TURNS } from "./data.js";
+import { demoEngines, mountEngineSwitch } from "../../_common/engines.js";
 
 const TICK_MS = 26;
+
+let currentEngines = demoEngines();
+const renderers = new Set<Renderer>();
+mountEngineSwitch((e) => {
+  currentEngines = e;
+  for (const r of renderers) r.setEngines(e);
+});
 
 const shell = requiredEl<HTMLElement>("#chat-shell");
 const scroll = requiredEl<HTMLElement>("#chat-scroll");
@@ -110,6 +118,18 @@ function tick(): void {
   if (stream.cursor >= stream.text.length) endStream("完成 ·");
 }
 
+function newRenderer(mount: HTMLElement): Renderer {
+  const r = new Renderer({
+    mount,
+    theme,
+    eventBus,
+    logger: log,
+    engines: currentEngines,
+  });
+  renderers.add(r);
+  return r;
+}
+
 function ask(question: string, answer: string): void {
   endStream("中断 ·");
 
@@ -121,12 +141,7 @@ function ask(question: string, answer: string): void {
   stream = {
     // 各条回答各自持有 Renderer，但共享 theme 与 eventBus：
     // 切换明暗时，历史消息里的图表也会跟着重绘。
-    renderer: new Renderer({
-      mount: assistant.body,
-      theme,
-      eventBus,
-      logger: log,
-    }),
+    renderer: newRenderer(assistant.body),
     row: assistant.row,
     text: answer,
     cursor: 0,

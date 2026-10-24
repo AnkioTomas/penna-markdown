@@ -19,6 +19,7 @@ import {
 import type { InlineParseContext } from "@/transformer/core/context/InlineParseContext.js";
 import type { RenderContext } from "@/transformer/core/context/RenderContext.js";
 import type { InlineParseResult } from "@/transformer/core/ParserBase.js";
+import { demoEngines, mountEngineSwitch } from "../../_common/engines.js";
 
 const DOCS_DIR = "/docs/";
 
@@ -616,6 +617,7 @@ async function init() {
     preview: {
       /** 仅在纯预览布局下生效 */
       maxWidth: "720px",
+      engines: demoEngines(),
       transformerEngineOptions: {
         syntaxOptions: {
           code: { wrap: true, lineNumbers: true },
@@ -628,6 +630,7 @@ async function init() {
   });
 
   setupThemeAndAppearance(editor);
+  mountEngineSwitch((e) => editor?.setEngines(e));
 
   await loadDoc(VIRTUAL.simple);
 }

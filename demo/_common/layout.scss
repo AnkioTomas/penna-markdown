@@ -116,6 +116,24 @@ body.demo-dark .gfm-main {
   color: var(--penna-c-text-1);
 }
 
+.demo-engine-switch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--penna-c-text-2);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.demo-engine-switch select {
+  font: inherit;
+  padding: 4px 8px;
+  border: 1px solid color-mix(in srgb, var(--penna-c-text-3) 35%, transparent);
+  border-radius: 6px;
+  background: var(--penna-c-bg);
+  color: var(--penna-c-text-1);
+}
+
 /** 耗时徽章：brand-on-bg 是实心按钮字色，不能拿来配 soft 底 */
 .timing,
 .ast-timing {

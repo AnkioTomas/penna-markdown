@@ -9,6 +9,7 @@ import type { Theme } from "@/theme/Theme.js";
 import { Renderer } from "@/renderer/Renderer.js";
 import { requiredEl } from "../../_common/dom.js";
 import example from "../../../docs/test.md?raw";
+import { demoEngines, mountEngineSwitch } from "../../_common/engines.js";
 
 const APPEARANCE_KEY = "penna-renderer-demo-appearance";
 const THEME_KEY = "penna-renderer-demo-theme";
@@ -57,6 +58,10 @@ const renderer = new Renderer({
   theme,
   eventBus,
   logger: log,
+  engines: demoEngines(),
+});
+mountEngineSwitch((e) => {
+  renderer.setEngines(e);
 });
 
 function escapeHtml(text: string): string {

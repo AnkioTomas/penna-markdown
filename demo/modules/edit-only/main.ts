@@ -4,6 +4,7 @@ import "../../_common/layout.scss";
 import { Penna } from "@/editor/Penna.js";
 import type { EditorLayoutMode } from "@/editor/Layout.js";
 import { setupThemeAndAppearance } from "../../_common/theme.js";
+import { demoEngines, mountEngineSwitch } from "../../_common/engines.js";
 
 const GUIDE = `---
 title: 仅编辑布局
@@ -60,10 +61,12 @@ const editor = new Penna(root, {
   },
   preview: {
     maxWidth: "720px",
+    engines: demoEngines(),
   },
 });
 
 setupThemeAndAppearance(editor);
+mountEngineSwitch((e) => editor.setEngines(e));
 
 function describePreviewVisibility(): string {
   const preview = root.querySelector(".penna-preview") as HTMLElement | null;

@@ -106,6 +106,36 @@ renderer.render("# Hello\n\n**world**");
 按 priority 注入块级 parser。
 :::
 
+::: field engines
+@type GraphEngines
+@optional
+外部图表库。配置的项由本地库渲染，**不再请求远程 API**；未配置的仍走默认远程图（`math-api` / `mermaid.ink` / `echarts-api`）。
+
+每项可以是**库实例**、**加载函数**（可返回 ES module，用于懒加载）或 `"global"`（读取 `window.katex / mermaid / echarts`，对应 `<script>` / CDN 引入）。
+
+| 字段 | 库 | 约定 |
+|------|----|------|
+| `math` | KaTeX | `renderToString(tex, { displayMode, throwOnError, trust })` |
+| `mermaid` | Mermaid ≥10 | `render(id, text) → Promise<{ svg }>`，Penna 会以 `securityLevel: "strict"` 初始化 |
+| `echarts` | ECharts | `init(dom, theme?)` |
+
+```typescript
+new Renderer({
+  mount, theme, eventBus, logger,
+  engines: {
+    math: () => import("katex"),
+    mermaid: () => import("mermaid"),
+    echarts: "global", // 页面已 <script> 引入 echarts
+  },
+});
+```
+
+行为：只处理尚未水合的占位节点，结果按「源码 + 主题」缓存；明暗切换时 Mermaid / ECharts 按新主题重新渲染（KaTeX 继承文字色）；渲染或加载失败时回退为源码文本（`pre.penna-graph-fallback`）。也可用 `syntaxOptions` 的 `apiHost` / `*ApiHost` 指向自建镜像，`false` 表示禁用远程。
+
+> [!WARNING]
+> ECharts 代码块的 option 按「严格 JSON 或对象字面量」解析，**不执行代码**，因此 `formatter: function(){}` 这类函数写法不再支持。
+:::
+
 ::::
 
 ---
@@ -117,6 +147,11 @@ renderer.render("# Hello\n\n**world**");
 ::: field render
 @type (markdown: string, changes?: PennaChangeLineSet[]) => RenderResult
 增量优先，失败降级全量。
+:::
+
+::: field setEngines
+@type (engines: GraphEngines | undefined) => void
+热切换外部图表库（`undefined` 恢复远程 API），并用当前 markdown 全量重渲。
 :::
 
 ::: field renderFull

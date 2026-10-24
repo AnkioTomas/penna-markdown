@@ -8,6 +8,7 @@ import {
 } from "../../_common/theme.js";
 import { requiredEl } from "../../_common/dom.js";
 import { EXTENDS_DATA } from "./data.js";
+import { demoEngines, mountEngineSwitch } from "../../_common/engines.js";
 
 async function init() {
   const menuList = requiredEl<HTMLElement>("#menu-list");
@@ -20,7 +21,9 @@ async function init() {
     theme: kit.theme,
     eventBus: kit.eventBus,
     logger: kit.log,
+    engines: demoEngines(),
   });
+  mountEngineSwitch((e) => renderer.setEngines(e));
 
   let activeId = EXTENDS_DATA[0].id;
 

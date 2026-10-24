@@ -10,6 +10,7 @@ import { Renderer } from "@/renderer/Renderer.js";
 import { requiredEl } from "../../_common/dom.js";
 import simpleDoc from "../../../docs/simple.md?raw";
 import fullDoc from "../../../docs/test.md?raw";
+import { demoEngines, mountEngineSwitch } from "../../_common/engines.js";
 
 const TICK_MS = 30;
 
@@ -32,7 +33,16 @@ const previewWrap = requiredEl<HTMLElement>("#preview-wrap");
 
 const kit = createDemoTheme(previewWrap);
 const { theme, eventBus, log } = kit;
-const renderer = new Renderer({ mount: preview, theme, eventBus, logger: log });
+const renderer = new Renderer({
+  mount: preview,
+  theme,
+  eventBus,
+  logger: log,
+  engines: demoEngines(),
+});
+mountEngineSwitch((e) => {
+  renderer.setEngines(e);
+});
 
 let doc = DOCS[docSelect.value] ?? simpleDoc;
 let cursor = 0;

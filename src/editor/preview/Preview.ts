@@ -1,5 +1,6 @@
 import type { Transaction } from "@codemirror/state";
 import { Renderer } from "@/renderer/Renderer";
+import type { GraphEngines } from "@/renderer/graph/engines";
 import type { PreviewOptions } from "./PreviewOptions";
 import { THEME_EVENT_LIGHT_DARK } from "@/theme/event/ThemeLightDarkEvent";
 import { THEME_EVENT_SKIN } from "@/theme/event/ThemeSkinEvent";
@@ -54,6 +55,7 @@ export class Preview {
       inlineParsers: options.transformerEngineOptions?.inlineParsers,
       blockParsers: options.transformerEngineOptions?.blockParsers,
       syntaxOptions: options.transformerEngineOptions?.syntaxOptions,
+      engines: options.engines,
     });
 
     this.offs.add(
@@ -105,6 +107,11 @@ export class Preview {
    */
   getStore(): ParserStore | null {
     return this.renderer.getStore();
+  }
+
+  /** 热切换外部图表库并重渲，见 {@link Renderer.setEngines} */
+  setEngines(engines: GraphEngines | undefined): void {
+    this.renderer.setEngines(engines);
   }
 
   private pendingTransactions: Transaction[] = [];

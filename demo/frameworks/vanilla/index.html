@@ -46,14 +46,17 @@
       import "../../_common/layout.scss";
       import "../../_common/penna-demo.scss";
       import { Penna } from "@/editor/Penna.js";
+      import { demoEngines, mountEngineSwitch } from "../../_common/engines.js";
       import { setupThemeAndAppearance } from "../../_common/theme.js";
       import { fetchDocContent } from "../../_common/api.js";
 
       const mount = document.getElementById("penna-editor");
       const editor = new Penna(mount, {
         editor: { value: await fetchDocContent("/docs/simple.md") },
+        preview: { engines: demoEngines() },
       });
       setupThemeAndAppearance(editor);
+      mountEngineSwitch((e) => editor.setEngines(e));
 
       window.addEventListener("beforeunload", () => editor.destroy(), {
         once: true,

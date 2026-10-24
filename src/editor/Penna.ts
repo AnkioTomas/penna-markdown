@@ -1,6 +1,7 @@
 import { Divider } from "@/editor/divider/Divider";
 import { Editor } from "@/editor/editor/Editor";
 import { Preview } from "@/editor/preview/Preview";
+import type { GraphEngines } from "@/renderer/graph/engines";
 import { SideBar } from "@/editor/sidebar/SideBar";
 import { SideBarResizer } from "@/editor/sidebar/SideBarResizer";
 import { Toolbar } from "@/editor/toolbar/Toolbar";
@@ -48,6 +49,7 @@ export type {
   OnParseFile,
 } from "@/editor/editor/EditorOptions";
 export type { PreviewOptions } from "@/editor/preview/PreviewOptions";
+export type { GraphEngines } from "@/renderer/graph/engines";
 export type {
   SideBarOptions,
   PennaFileItem,
@@ -278,6 +280,11 @@ export class Penna {
         el: this.pennaEl,
       } satisfies EditorLifecyclePayload);
     });
+  }
+
+  /** 热切换预览区的外部图表库（KaTeX / Mermaid / ECharts）；传 `undefined` 恢复远程 API。 */
+  setEngines(engines: GraphEngines | undefined): void {
+    this.preview.setEngines(engines);
   }
 
   /** 获取当前 CodeMirror 中保存的 Markdown 文本。 */
