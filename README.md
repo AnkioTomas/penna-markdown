@@ -77,6 +77,41 @@ const html = engine.render(ast);
 
 独立 DOM 渲染见 [`docs/renderer.md`](docs/renderer.md)。
 
+### 图表库：每种库按自己的 API 接入
+
+图表渲染有两条不同路径：默认远程图片 API 不需要引入图表依赖；本地渲染则由宿主引入需要的 JS 库，并通过 `engines` 交给 Penna。三种库的调用方式不同：
+
+| 配置项 | 库 API | Penna 如何调用 |
+| --- | --- | --- |
+| `math` | KaTeX `renderToString(tex, options)` | 同步生成公式 HTML；宿主还需引入 KaTeX CSS |
+| `mermaid` | Mermaid `render(id, text)` | 异步生成 SVG；Penna 负责初始化严格安全模式和主题 |
+| `echarts` | ECharts `init(dom, theme)` | 在容器初始化实例，再调用 `setOption`；Penna 管理实例销毁 |
+
+按需选择配置，未配置的类型仍走远程图片 API：
+
+```typescript
+import katex from "katex";
+import "katex/dist/katex.min.css";
+import mermaid from "mermaid";
+import * as echarts from "echarts";
+import { Renderer, type GraphEngines } from "penna-markdown/renderer";
+
+const engines: GraphEngines = {
+  math: katex,
+  mermaid,
+  echarts,
+};
+
+const renderer = new Renderer({
+  mount, theme, eventBus, logger,
+  engines,
+});
+```
+
+`TransformerEngine` 及 `Renderer.render()` 本身仍同步返回结果；配置外部库后，图表水合（尤其 Mermaid）会异步完成并更新 DOM。`Renderer` 用 `engines`；完整编辑器用 `preview.engines`，切换时调用 `renderer.setEngines(engines)` 或 `penna.setEngines(engines)`。也可传 `() => import("mermaid")` 延迟加载，或传 `"global"` 使用页面 `<script>` 已挂载的 `window.katex` / `window.mermaid` / `window.echarts`。ECharts 配置块只解析数据对象，不执行 `formatter: function(){}` 等函数代码。
+
+详细的逐库示例、API 差异和错误回退行为见 [`docs/renderer.md`](docs/renderer.md) 与 [`docs/editor.md`](docs/editor.md)；官网文档见 [渲染器集成指南](https://penna.ankio.net/guide/renderer)。
+
 ## 文档与演示
 
 - 官网文档：[https://penna.ankio.net/](https://penna.ankio.net/)

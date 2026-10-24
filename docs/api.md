@@ -131,6 +131,7 @@ import {
   Theme,
   EventBus,
   Log,
+  type GraphEngines,
   type RenderOption,
 } from "penna-markdown/renderer";
 
@@ -165,6 +166,11 @@ new Renderer({
 在文档末尾追加字符（流式场景）。
 :::
 
+::: field setEngines
+@type (engines: GraphEngines | undefined) => void
+热切换外部图表库；传 `undefined` 恢复远程图片 API，并重渲当前 Markdown。
+:::
+
 ::: field getToc
 @type () => TocItem[]
 层级目录树（无 AST 时为空数组）。只统计文档根层级的标题，引用块 / 容器 / 列表项内部的标题不参与。
@@ -196,6 +202,8 @@ new Renderer({
 :::
 
 ::::
+
+`GraphEngines` 的三个字段遵循不同的库 API：KaTeX `renderToString()` 同步返回 HTML，Mermaid `render()` 异步返回 SVG，ECharts `init()` 创建图表实例。可分别配置实例、懒加载函数或 `"global"`；没有配置的图表类型继续走远程图片 API。逐库接入示例见 [`renderer.md`](renderer.md)。
 
 ---
 

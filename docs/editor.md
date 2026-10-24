@@ -183,7 +183,18 @@ AI 请求回调。省略时 AI 工具栏命令会静默失败。签名见 [回�
 ::: field engines
 @type GraphEngines
 @optional
-外部图表库（KaTeX / Mermaid / ECharts），透传给 Renderer，详见 [`renderer.md`](renderer.md) 的 `engines`。运行时可用 `penna.setEngines()` 热切换。
+外部图表库（KaTeX / Mermaid / ECharts），透传给 Renderer。每种库的 API 不同：KaTeX 的 `renderToString` 同步返回 HTML，Mermaid 的 `render` 异步返回 SVG，ECharts 的 `init` 创建图表实例。可分别配置，不必一次引入全部三种库；运行时可用 `penna.setEngines()` 热切换。逐库接入示例见 [`renderer.md`](renderer.md)。
+
+```typescript
+import katex from "katex";
+import "katex/dist/katex.min.css";
+
+new Penna(el, {
+  preview: {
+    engines: { math: katex },
+  },
+});
+```
 :::
 
 ::: field transformerEngineOptions

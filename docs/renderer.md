@@ -111,29 +111,93 @@ renderer.render("# Hello\n\n**world**");
 @optional
 外部图表库。配置的项由本地库渲染，**不再请求远程 API**；未配置的仍走默认远程图（`math-api` / `mermaid.ink` / `echarts-api`）。
 
-每项可以是**库实例**、**加载函数**（可返回 ES module，用于懒加载）或 `"global"`（读取 `window.katex / mermaid / echarts`，对应 `<script>` / CDN 引入）。
+三种库的 API 不同，分别对应公式字符串、异步 SVG 和 DOM 图表实例。每项可以传库实例、返回实例或 ES module 的加载函数（用于懒加载），或传 `"global"` 读取对应的 `window` 全局变量。
 
-| 字段 | 库 | 约定 |
-|------|----|------|
-| `math` | KaTeX | `renderToString(tex, { displayMode, throwOnError, trust })` |
-| `mermaid` | Mermaid ≥10 | `render(id, text) → Promise<{ svg }>`，Penna 会以 `securityLevel: "strict"` 初始化 |
-| `echarts` | ECharts | `init(dom, theme?)` |
+| 配置项 | API 契约 | Penna 的处理方式 |
+| --- | --- | --- |
+| `math` | KaTeX `renderToString(tex, { displayMode, throwOnError, trust })`，同步返回 HTML 字符串 | 按行内/块级公式设置 `displayMode`，固定 `trust: false`；宿主需额外引入 KaTeX CSS |
+| `mermaid` | Mermaid `render(id, text) → Promise<{ svg }>`，异步返回 SVG | 串行调用并生成唯一 id；设置 `securityLevel: "strict"` 和当前主题，不需要宿主另行初始化 |
+| `echarts` | ECharts `init(dom, theme?) → chart`，实例提供 `setOption()` / `dispose()` | Penna 在容器上初始化实例、传入解析后的 option，并在主题切换或卸载时释放实例 |
+
+::: tabs
+@tab:active KaTeX
+
+KaTeX 同步返回公式 HTML，因此除 npm 模块外还要引入 KaTeX 样式：
+
+```typescript title="katex.ts"
+import katex from "katex";
+import "katex/dist/katex.min.css";
+
+new Renderer({
+  mount, theme, eventBus, logger,
+  engines: { math: katex },
+});
+```
+
+@tab Mermaid
+
+Mermaid 的 `render` 是异步 API。Penna 会初始化安全级别和主题，不要在传入前用 `initialize` 覆盖全局配置：
+
+```typescript title="mermaid.ts"
+import mermaid from "mermaid";
+
+new Renderer({
+  mount, theme, eventBus, logger,
+  engines: { mermaid },
+});
+```
+
+@tab ECharts
+
+ECharts 先用 `init` 创建 DOM 实例，再由 `setOption` 设置图表数据；这些步骤由 Penna 完成：
+
+```typescript title="echarts.ts"
+import * as echarts from "echarts";
+
+new Renderer({
+  mount, theme, eventBus, logger,
+  engines: { echarts },
+});
+```
+
+```echarts
+{
+  title: { text: "无需在配置块里写函数" },
+  xAxis: { type: "category", data: ["A", "B", "C"] },
+  yAxis: { type: "value" },
+  series: [{ type: "bar", data: [12, 24, 18] }]
+}
+```
+
+@tab `<script>` 全局变量
+
+如果页面已经用 `<script>` 引入库，可按各库自己的全局变量名使用 `"global"`：
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+```
 
 ```typescript
 new Renderer({
   mount, theme, eventBus, logger,
   engines: {
-    math: () => import("katex"),
-    mermaid: () => import("mermaid"),
-    echarts: "global", // 页面已 <script> 引入 echarts
+    math: "global",    // window.katex
+    mermaid: "global", // window.mermaid
+    echarts: "global", // window.echarts
   },
 });
 ```
 
-行为：只处理尚未水合的占位节点，结果按「源码 + 主题」缓存；明暗切换时 Mermaid / ECharts 按新主题重新渲染（KaTeX 继承文字色）；渲染或加载失败时回退为源码文本（`pre.penna-graph-fallback`）。也可用 `syntaxOptions` 的 `apiHost` / `*ApiHost` 指向自建镜像，`false` 表示禁用远程。
+:::
+
+加载函数可以把大型库延迟到第一次出现对应语法时再加载，例如 `mermaid: () => import("mermaid")`。可以只配置其中一项，或混合实例、加载函数和全局变量。
+
+渲染结果按源码与主题缓存；明暗切换时 Mermaid / ECharts 会重新渲染，KaTeX 继承文字颜色。库加载或渲染失败时保留源码文本，不会静默回退到远程 API。可在 `syntaxOptions` 中用 `math_block.apiHost`、`code.mermaidApiHost`、`code.echartsApiHost` 分别指定远程图片服务；显式设置 `false` 可关闭对应远程图。
 
 > [!WARNING]
-> ECharts 代码块的 option 按「严格 JSON 或对象字面量」解析，**不执行代码**，因此 `formatter: function(){}` 这类函数写法不再支持。
+> ECharts 配置块只接受 JSON 或对象字面量形式的数据，不执行代码；`formatter: function(){}` 这类函数写法不支持。需要 formatter 时，应在宿主代码中构造 option 并通过自定义渲染方案处理，不要把可执行代码放进 Markdown。
 :::
 
 ::::
@@ -151,7 +215,7 @@ new Renderer({
 
 ::: field setEngines
 @type (engines: GraphEngines | undefined) => void
-热切换外部图表库（`undefined` 恢复远程 API），并用当前 markdown 全量重渲。
+热切换外部图表库（`undefined` 恢复远程 API），并用当前 Markdown 全量重渲。
 :::
 
 ::: field renderFull
