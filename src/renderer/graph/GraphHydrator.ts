@@ -121,12 +121,17 @@ export class GraphHydrator {
     }
   }
 
-  /** 渲染后调用：处理所有尚未水合的占位节点 */
+  /**
+   * 渲染后调用：处理所有尚未水合的占位节点。
+   *
+   * 没有待水合节点的引擎不碰：`engine()` 第一次调用会触发加载函数，
+   * 文档里没有 mermaid 就不该把几 MB 的 mermaid 下下来。
+   */
   hydrate(dark: boolean): void {
     this.dark = dark;
     this.disposeDetached();
     for (const kind of ["math", "echarts", "mermaid"] as const) {
-      if (!this.has(kind)) continue;
+      if (!this.has(kind) || this.pending(kind).length === 0) continue;
       const gen = this.generation;
       void this.engine(kind).then(
         (engine) => {
